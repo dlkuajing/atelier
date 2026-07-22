@@ -1,0 +1,119 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "50551137",
+  "root_id": "US-9217844",
+  "publication_id": "US-9217844-B2",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/e17fa2ef7bb1a323/US-9217844-B2.html",
+    "bytes": 34457,
+    "sha256": "e17fa2ef7bb1a323eccb87f1db2e4ba5329f40eea0ef4bac8c39698795f38443",
+    "normalized_characters": 20744,
+    "normalized_sha256": "f4a89a6c475a5a1ad3aa735db1bea70b56eec72bca0fee55f06da66d70d0d41d"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "14/174457",
+    "filed": "2014-02-06",
+    "same_application_prior_publication": "US-20150077868-A1",
+    "foreign_priority_country": "TW",
+    "foreign_priority_application": "102217635 U",
+    "foreign_priority_date": "2013-09-18",
+    "priority_confirmation_background_paragraph": 1
+  },
+  "ordered_prescriptions": [
+    {
+      "source_item": 1,
+      "label": "First Preferred Embodiment",
+      "description_range": [19, 25],
+      "surface_table": 1,
+      "asphere_table": 2,
+      "figures": ["1", "2", "3"]
+    },
+    {
+      "source_item": 2,
+      "label": "Second Preferred Embodiment",
+      "description_range": [26, 32],
+      "surface_table": 3,
+      "asphere_table": 4,
+      "figures": ["4", "5", "6"]
+    }
+  ],
+  "directly_published_for_each_embodiment": [
+    "eleven ordered radius/thickness coordinate rows",
+    "one directly identified Constant-Aperture Diaphragm 2 row",
+    "five Nd/Vd material rows",
+    "K and A/B/C/D/E/F/G/H/J for all six lens surfaces",
+    "TL=3.23 mm",
+    "Dg=3.50 mm as a full image-plane diagonal length"
+  ],
+  "embodiment_specific_direct_values": {
+    "first": {
+      "r3_mm": -0.55,
+      "r4_mm": -0.68,
+      "ct1_mm": 0.548,
+      "ct2_mm": 0.260,
+      "ct3_mm": 0.778
+    },
+    "second": {
+      "r3_mm": -0.54,
+      "r4_mm": -0.73,
+      "ct1_mm": 0.504,
+      "ct2_mm": 0.264,
+      "ct3_mm": 0.817
+    }
+  },
+  "asphere_definition_boundary": {
+    "mathml_sha256": "4637e923e386679c611f68bbba761fba9bb20c62bc41bf5f9fa032db5006bebd",
+    "mathml_directly_prints_e_h12": true,
+    "table_2_directly_prints_e_row": true,
+    "table_4_directly_prints_e_row": true,
+    "following_prose_list": "A, B, C, D, F, G, H and J",
+    "following_prose_omits_e": true
+  },
+  "required_but_unpublished_for_each_embodiment": [
+    "an exact prescription-specific effective focal length",
+    "an exact prescription-specific F-number",
+    "a numeric whole or half angular field",
+    "a direct absolute image semi-height in length units"
+  ],
+  "not_source_available": [
+    "permission to solve effective focal length from the printed surface prescription",
+    "permission to infer F-number from any geometric or entrance-pupil construction",
+    "permission to measure angular field from an aberration plot or drawing",
+    "permission to halve or rename Dg as the required image semi-height",
+    "an independent ordered prescription for a generic module or wrapper",
+    "permission to repair the prose omission of coefficient E",
+    "numeric borrowing from the A1, Taiwanese priority application or another publication"
+  ],
+  "table_lock": {
+    "formal_table_sha256": [
+      "30f8c27649238b4a23f2a301761bc30065241f203090185fb0ab1ff480d057ce",
+      "5094e61049ca9782171b550379c33d5c7719cf06e0472095381d3e941266fbb0",
+      "af4dc99ba4afc358a7c9e03a58b4b65b81358a99f8537658d21141bcfd570fbb",
+      "864de82aa3e72ca9576da1859bc2710ec2d91839c502e54f36cf14fa2752e0b2"
+    ],
+    "surface_rows_per_odd_table": 11,
+    "material_rows_per_odd_table": 5,
+    "asphere_surfaces_per_even_table": 6,
+    "coefficient_rows_per_even_table": 10,
+    "coefficient_cells_per_even_table": 60
+  },
+  "repair_policy": {
+    "image_diagonal_halved_or_renamed": false,
+    "focal_length_solved": false,
+    "f_number_derived": false,
+    "angular_field_measured_or_derived": false,
+    "asphere_prose_repaired": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 2,
+    "ordered_prescriptions": 2,
+    "complete_source_bound_prescriptions": 0,
+    "metadata_unpublished_items": 2,
+    "confirmed_no_prescription_items": 0,
+    "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_absolute_image_height_absent"
+  }
+}

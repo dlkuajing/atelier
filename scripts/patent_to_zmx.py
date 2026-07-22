@@ -592,6 +592,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_ability_three_lens_missing_metadata_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
             raw_text,
@@ -76827,6 +76833,725 @@ def _classify_maxell_bright_six_lens_attempts(
                 embodiment_number=number,
                 embodiment=label,
                 error=error,
+            )
+        )
+    return attempts
+
+
+_ABILITY_THREE_LENS_ITEMS = (
+    (
+        1,
+        "Ability three-lens first preferred embodiment",
+        (19, 25),
+        ("1", "2", "3"),
+        (1, 2),
+        (1, 2),
+    ),
+    (
+        2,
+        "Ability three-lens second preferred embodiment",
+        (26, 32),
+        ("4", "5", "6"),
+        (3, 4),
+        (1, 2),
+    ),
+)
+_ABILITY_THREE_LENS_MISSING_METADATA_REASON = (
+    "metadata_unpublished.prescription_specific_efl_f_number_angular_field_"
+    "and_absolute_image_height_absent"
+)
+_ABILITY_THREE_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-9217844-B2": {
+        "family_id": "50551137",
+        "application_number": "14/174457",
+        "prior_publication": "US 20150077868 A1",
+        "priority_application": "TW 102217635 U",
+        "title_text": "Imaging lens module",
+        "raw_document_sha256": (
+            "e17fa2ef7bb1a323eccb87f1db2e4ba5329f40eea0ef4bac8c39698795f38443"
+        ),
+        "normalized_text_sha256": (
+            "f4a89a6c475a5a1ad3aa735db1bea70b56eec72bca0fee55f06da66d70d0d41d"
+        ),
+        "section_markers": {
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATION"
+            ),
+            "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+            "claims": "Claims 1. An imaging lens module",
+        },
+        "section_sha256": {
+            "background": (
+                "a6ccfc9334f4949005f16c84f1cef9644d475e820094a9b985cd7aec6ff05c38"
+            ),
+            "description": (
+                "d5a9dd224af4eb29234a97e56a90c3eedc94225cd833db07a53155427f1f2d9e"
+            ),
+            "claims": (
+                "9dff140e5973302694c7f5f2f37f214f9638dca38b4f9d26ba3aafd1ca7ec4e7"
+            ),
+        },
+        "raw_section_body_sha256": {
+            "background": (
+                "eb1c6c3871fdfec6e685d4732035e475e0788bff29f0af5d7027b5961ef9dbac"
+            ),
+            "description": (
+                "5ada50a5ff2c9fef5b00756a8c5e7b8d80a6465d6916d72920bc08977e64a7e0"
+            ),
+            "claims": (
+                "5310b0204b77e1c67d0e035f8c902f606edce1b4b9bcfaf515d1f31dacb9f000"
+            ),
+        },
+        "background_span_sha256": {
+            (1, 6): "5f5d6997ad3ec3170e8e6b0ed38dfd9cd0cf50bbfb5b14211bf40df73ca98633",
+            (7, 12): "8445134c7c92cb9f754b1fe169b744cdd518e48dc1fa4d59adc889fa3474818d",
+            (1, 12): "3d849a91b993dd60a6275d5f90df99802ffecb564bc51b8860038cd144cd309a",
+        },
+        "description_span_sha256": {
+            (1, 7): "c2e9ce648c95e0998909387bb9dd175d3a561e61b861215f001d9ffacb46e28b",
+            (8, 18): "e895696bf3d6bc901fc34f29875cbed434d7563eea8e699366eae68f07f70676",
+            (19, 25): "c39a64225b68152882ae88a8fa771f6fdb1e44d4de8c2d2892238824cafda488",
+            (26, 32): "7c44b7b82a9b56c8c687293d1876f6c09c411765dff2345b29c8c46d810d0ef6",
+            (33, 37): "4a4f244b1aefa24e68ebbfbbb3cf9144e807972bf487023e1185608680f07833",
+            (1, 37): "0098899b4c6c9160dbc9dcb2e1f9e3ca150571efa6130a68fe48a8a8b30b00f7",
+        },
+        "claim_numbers": (1, 2),
+        "independent_claim_numbers": (1,),
+        "claim_sha256": (
+            "2ea98f5f9e28aaba91defb683915719996ed76dcd1b80964b8d658d88f278011",
+            "0a48d89e05735b5c6e52d0d70fa30a247702d8a580bf632645619524953773b3",
+        ),
+        "figure_panels": ("1", "2", "3", "4", "5", "6"),
+        "figref_count": 13,
+        "identity_markers": {
+            "Family ID: 50551137": 1,
+            "Appl. No.: 14/174457": 1,
+            "US 20150077868 A1": 1,
+            "TW 102217635 U": 1,
+            "Sep. 18, 2013": 2,
+            "Liao; Kuo-Yu": 2,
+            "Ability Opto-Electronics Technology Co., LTD.": 2,
+        },
+        "table_paragraph_numbers": (23, 25, 30, 32),
+        "formal_table_sha256": (
+            "30f8c27649238b4a23f2a301761bc30065241f203090185fb0ab1ff480d057ce",
+            "5094e61049ca9782171b550379c33d5c7719cf06e0472095381d3e941266fbb0",
+            "af4dc99ba4afc358a7c9e03a58b4b65b81358a99f8537658d21141bcfd570fbb",
+            "864de82aa3e72ca9576da1859bc2710ec2d91839c502e54f36cf14fa2752e0b2",
+        ),
+        "maths_object_sha256": (
+            "4637e923e386679c611f68bbba761fba9bb20c62bc41bf5f9fa032db5006bebd",
+        ),
+        "inline_formula_lead_count": 10,
+        "custom_character_image_count": 14,
+        "system_values": {
+            "TL": (3.23, 3.23),
+            "Dg": (3.50, 3.50),
+            "R3": (-0.55, -0.54),
+            "R4": (-0.68, -0.73),
+            "ct1": (0.548, 0.504),
+            "ct2": (0.260, 0.264),
+            "ct3": (0.778, 0.817),
+        },
+        "official_pdf_captures": (
+            {
+                "path": (
+                    ".planning/quick/260721-patent-generic-family-50551137/"
+                    "source-review/US-9217844-B2-official-1.pdf"
+                ),
+                "bytes": 400389,
+                "container_sha256": (
+                    "3f3c05d3aabec6b2fba77f8262848cb4b8cee7db691f0d8c15eccc6624bcd466"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260721-patent-generic-family-50551137/"
+                    "source-review/US-9217844-B2-official-2.pdf"
+                ),
+                "bytes": 400389,
+                "container_sha256": (
+                    "13b20b33a49746fb83b1dd282688ad2145539a1c260149cf24e0c8812035fba4"
+                ),
+            },
+        ),
+        "pdf_page_count": 11,
+        "pdf_raster_dimensions": (2560, 3300),
+        "pdf_page_raster_sha256": (
+            "c4d742ecf16cf4e2f6af917f43192b68b7dca29a1e59ea566ec8e3aea8abfde3",
+            "2727e83b8deff7e5b64e0f78824fe48dceb6d4164805fba67822772bfbf05bc6",
+            "58473e50a4a8172f128b2669c919b6ed6e0a594b9bb79d6b69e62c828d88c587",
+            "4d0935d894e3336bee877391644cf1e0fdd9d6fca2a9bb7583c89217bc29cbaf",
+            "0966a3c519de4196539f0cea3141f25f125f06122991e0389e3885bdce97b573",
+            "b66834947d3378abf26e31306c0e1bcd00d5b6b449020e672e6332e1ac5c3263",
+            "c62018560b41c7982d3752975a146667a7c4a02b824365028b2874f9eb47081a",
+            "4068a051a1ef0b9ac7573e268e1bebc9dcda8303d38cda9fdf07ba96575fe782",
+            "e5c8aab6b8d7126d498ef1fcc2317b62128bb129e699dad8970a3ef85933068c",
+            "6ca9183512d5854b9d194e6239e50640f48a24d9a3f61fb08f3f5dc710cdceec",
+            "000aefeade93edc8ae0bde3a425feecc1de0332db43fa81780f349b23a020cd8",
+        ),
+        "pdf_raster_set_sha256": (
+            "ec489ad2e38dd9650e8f469df02520c64cf5645b03370897de25e1599039b592"
+        ),
+        "pdf_drawing_page_numbers": tuple(range(2, 8)),
+        "pdf_table_page_numbers": (9, 10, 11),
+        "pdf_claims_page_numbers": (11,),
+    }
+}
+
+
+def _ability_three_lens_section_body(raw_text: str, section: str) -> str:
+    """Return the single exact source body used by Family 50551137."""
+
+    if section == "background":
+        pattern = r"<h3>Background/Summary</h3>\s*<p></p>\s*<p>(.*?)</p>"
+    else:
+        pattern = rf"<h3>{re.escape(section.title())}</h3>\s*<p[^>]*>(.*?)</p>"
+    matches = re.findall(pattern, raw_text, re.IGNORECASE | re.DOTALL)
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Ability three-lens {section} raw section count changed"
+        )
+    return matches[0]
+
+
+def _ability_three_lens_numbered_paragraphs(
+    body: str,
+    *,
+    section: str,
+    expected_last: int,
+) -> dict[int, str]:
+    """Split actual numbered paragraphs, excluding parenthesized equations."""
+
+    markers = list(re.finditer(r"<br />\((\d+)\) ", body))
+    numbers = tuple(int(marker.group(1)) for marker in markers)
+    if numbers != tuple(range(1, expected_last + 1)):
+        raise PatentParseError(
+            f"Ability three-lens {section} paragraph denominator changed"
+        )
+    return {
+        number: normalize_patent_text(
+            body[
+                marker.end() : (
+                    markers[index + 1].start()
+                    if index + 1 < len(markers)
+                    else len(body)
+                )
+            ]
+        )
+        for index, (number, marker) in enumerate(
+            zip(numbers, markers, strict=True)
+        )
+    }
+
+
+def _parse_ability_three_lens_surface_table(
+    table: str,
+    *,
+    table_number: int,
+) -> tuple[tuple[str, str, str, str | None, str | None], ...]:
+    """Validate all 11 ordered coordinates and five material rows."""
+
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"Abbe\s+Radius\s+of\s+Thick-\s+Refractive\s+Number\s+"
+        r"Curvature\s+ness\s+Index\s+\(Nd\)\s+\(Vd\)\s+",
+        table,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Ability three-lens TABLE {table_number} surface header changed"
+        )
+    material = (
+        rf"(?P<radius>Infinity|{NUMBER_PATTERN})\s+"
+        rf"(?P<thickness>{NUMBER_PATTERN})\s+"
+        rf"(?P<nd>{NUMBER_PATTERN})\s+(?P<vd>{NUMBER_PATTERN})"
+    )
+    plain = (
+        rf"(?P<radius>Infinity|{NUMBER_PATTERN})\s+"
+        rf"(?P<thickness>{NUMBER_PATTERN})"
+    )
+    patterns = (
+        ("111", rf"First\s+Object-\s+{material}\s+Optical\s+Side\s+Lens\s+11\s+Surface\s+111"),
+        ("112", rf"Image-\s+{plain}\s+Side\s+Surface\s+112"),
+        ("STOP", rf"Constant-Aperture\s+{plain}\s+Diaphragm\s+2"),
+        ("121", rf"Second\s+Object-\s+{material}\s+Optical\s+Side\s+Lens\s+12\s+Surface\s+121"),
+        ("122", rf"Image-\s+{plain}\s+Side\s+Surface\s+122"),
+        ("131", rf"Third\s+Object-\s+{material}\s+Optical\s+Side\s+Lens\s+13\s+Surface\s+131"),
+        ("132", rf"Image-\s+{plain}\s+Side\s+Surface\s+132"),
+        ("31", rf"Filter\s+3\s+Object-\s+{material}\s+Side\s+Surface\s+31"),
+        ("32", rf"Image-\s+{plain}\s+Side\s+Surface\s+32"),
+        ("41", rf"Cover\s+Object-\s+{material}\s+glasses\s+4\s+Side\s+Surface\s+41"),
+        ("42", rf"Image-\s+{plain}\s+Side\s+Surface\s+42"),
+    )
+    body = table[header.end() :]
+    position = 0
+    rows: list[tuple[str, str, str, str | None, str | None]] = []
+    for label, pattern in patterns:
+        match = re.match(rf"\s*{pattern}", body[position:], re.IGNORECASE)
+        if match is None:
+            raise PatentParseError(
+                f"Ability three-lens TABLE {table_number} row {label} changed near "
+                f"{body[position : position + 100]!r}"
+            )
+        rows.append(
+            (
+                label,
+                match.group("radius"),
+                match.group("thickness"),
+                match.groupdict().get("nd"),
+                match.groupdict().get("vd"),
+            )
+        )
+        position += match.end()
+    if body[position:].strip():
+        raise PatentParseError(
+            f"Ability three-lens TABLE {table_number} has trailing surface tokens: "
+            f"{body[position:]!r}"
+        )
+    return tuple(rows)
+
+
+def _parse_ability_three_lens_asphere_table(
+    table: str,
+    *,
+    table_number: int,
+) -> dict[str, tuple[str, ...]]:
+    """Validate K and A/B/C/D/E/F/G/H/J on all six lens surfaces."""
+
+    header = re.match(
+        rf"\ATABLE-US-{table_number:05d}\s+TABLE\s+{table_number}\s+"
+        r"First\s+Optical\s+Second\s+Optical\s+Third\s+Optical\s+"
+        r"Lens\s+11\s+Lens\s+12\s+Lens\s+13\s+"
+        r"Object-\s+Image-\s+Object-\s+Image-\s+Object-\s+Image-\s+"
+        r"Side\s+Side\s+Side\s+Side\s+Side\s+Side\s+"
+        r"Surface\s+Surface\s+Surface\s+Surface\s+Surface\s+Surface\s+"
+        r"111\s+112\s+121\s+122\s+131\s+132\s+",
+        table,
+        re.IGNORECASE,
+    )
+    if header is None:
+        raise PatentParseError(
+            f"Ability three-lens TABLE {table_number} asphere header changed"
+        )
+    position = header.end()
+    coefficients: dict[str, tuple[str, ...]] = {}
+    for label in ("k", "A", "B", "C", "D", "E", "F", "G", "H", "J"):
+        row = re.match(
+            rf"{label}\s+"
+            rf"(?P<one>{NUMBER_PATTERN})\s+"
+            rf"(?P<two>{NUMBER_PATTERN})\s+"
+            rf"(?P<three>{NUMBER_PATTERN})\s+"
+            rf"(?P<four>{NUMBER_PATTERN})\s+"
+            rf"(?P<five>{NUMBER_PATTERN})\s+"
+            rf"(?P<six>{NUMBER_PATTERN})(?:\s+|\Z)",
+            table[position:],
+            re.IGNORECASE,
+        )
+        if row is None:
+            raise PatentParseError(
+                f"Ability three-lens TABLE {table_number} coefficient row "
+                f"{label} changed near {table[position : position + 100]!r}"
+            )
+        coefficients[label.upper()] = tuple(
+            row.group(name)
+            for name in ("one", "two", "three", "four", "five", "six")
+        )
+        position += row.end()
+    if table[position:].strip():
+        raise PatentParseError(
+            f"Ability three-lens TABLE {table_number} has trailing asphere tokens: "
+            f"{table[position:]!r}"
+        )
+    return coefficients
+
+
+def _classify_ability_three_lens_missing_metadata_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 50551137 without deriving four absent system fields."""
+
+    profile = _ABILITY_THREE_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _tables, _claims in (
+                _ABILITY_THREE_LENS_ITEMS
+            )
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Ability three-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Ability three-lens normalized text hash changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Ability three-lens title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Ability three-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Ability three-lens normalized section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError("Ability three-lens section ordering changed")
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            digest = hashlib.sha256(sections[section_name].encode("utf-8")).hexdigest()
+            if digest != expected_digest:
+                raise PatentParseError(
+                    f"Ability three-lens {section_name} normalized section changed"
+                )
+
+        raw_sections = {
+            name: _ability_three_lens_section_body(raw_text, name)
+            for name in ("background", "description", "claims")
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_body_sha256"
+        ].items():
+            digest = hashlib.sha256(raw_sections[section_name].encode()).hexdigest()
+            if digest != expected_digest:
+                raise PatentParseError(
+                    f"Ability three-lens {section_name} raw section changed"
+                )
+        background = _ability_three_lens_numbered_paragraphs(
+            raw_sections["background"], section="background", expected_last=12
+        )
+        description = _ability_three_lens_numbered_paragraphs(
+            raw_sections["description"], section="description", expected_last=37
+        )
+        for bounds, expected_digest in profile["background_span_sha256"].items():
+            payload = "".join(
+                background[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Ability three-lens background span {bounds} changed"
+                )
+        for bounds, expected_digest in profile["description_span_sha256"].items():
+            payload = "".join(
+                description[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Ability three-lens description span {bounds} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s*(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Ability three-lens claim denominator changed")
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        if tuple(
+            hashlib.sha256(claim.encode()).hexdigest() for claim in claim_texts
+        ) != profile["claim_sha256"]:
+            raise PatentParseError("Ability three-lens claim text changed")
+        independent = tuple(
+            number
+            for number, claim in zip(claim_numbers, claim_texts, strict=True)
+            if re.search(r"\bas\s+claimed\s+in\s+claim\s+\d+", claim, re.I)
+            is None
+        )
+        if independent != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Ability three-lens independent claim denominator changed"
+            )
+
+        brief = sections["description"].split(
+            "DETAILED DESCRIPTION OF THE PREFERRED EMBODIMENTS", maxsplit=1
+        )
+        if len(brief) != 2:
+            raise PatentParseError("Ability three-lens brief/detailed boundary changed")
+        figure_panels = tuple(
+            re.findall(r"FIG\.\s*(\d+)\s+(?:is|shows)\b", brief[0], re.I)
+        )
+        if figure_panels != profile["figure_panels"]:
+            raise PatentParseError("Ability three-lens figure denominator changed")
+        if len(re.findall(r"<figref\b", raw_text, re.I)) != profile["figref_count"]:
+            raise PatentParseError("Ability three-lens FIGREF denominator changed")
+        if len(re.findall(r"<table\b", raw_text, re.I)) != 0:
+            raise PatentParseError("Ability three-lens HTML table denominator changed")
+        if re.findall(r"TABLE-US-(\d+)", raw_text, re.I) != [
+            f"{number:05d}" for number in range(1, 5)
+        ]:
+            raise PatentParseError("Ability three-lens TABLES 1-4 changed")
+
+        formal_tables = tuple(
+            description[paragraph]
+            for paragraph in profile["table_paragraph_numbers"]
+        )
+        if not formal_tables[1].endswith(" Second Preferred Embodiment"):
+            raise PatentParseError(
+                "Ability three-lens second-embodiment heading boundary changed"
+            )
+        formal_tables = (
+            formal_tables[0],
+            formal_tables[1].removesuffix(" Second Preferred Embodiment"),
+            formal_tables[2],
+            formal_tables[3],
+        )
+        if tuple(
+            hashlib.sha256(table.encode()).hexdigest() for table in formal_tables
+        ) != profile["formal_table_sha256"]:
+            raise PatentParseError("Ability three-lens formal table content changed")
+        for surface_table_number in (1, 3):
+            rows = _parse_ability_three_lens_surface_table(
+                formal_tables[surface_table_number - 1],
+                table_number=surface_table_number,
+            )
+            if tuple(row[0] for row in rows) != (
+                "111",
+                "112",
+                "STOP",
+                "121",
+                "122",
+                "131",
+                "132",
+                "31",
+                "32",
+                "41",
+                "42",
+            ):
+                raise PatentParseError(
+                    f"Ability three-lens TABLE {surface_table_number} row order changed"
+                )
+            if tuple(row[0] for row in rows if row[3] is not None) != (
+                "111",
+                "121",
+                "131",
+                "31",
+                "41",
+            ):
+                raise PatentParseError(
+                    f"Ability three-lens TABLE {surface_table_number} material "
+                    "occupancy changed"
+                )
+            coefficients = _parse_ability_three_lens_asphere_table(
+                formal_tables[surface_table_number],
+                table_number=surface_table_number + 1,
+            )
+            if tuple(coefficients) != ("K", "A", "B", "C", "D", "E", "F", "G", "H", "J"):
+                raise PatentParseError(
+                    f"Ability three-lens TABLE {surface_table_number + 1} "
+                    "coefficient denominator changed"
+                )
+            if any(len(values) != 6 for values in coefficients.values()):
+                raise PatentParseError(
+                    f"Ability three-lens TABLE {surface_table_number + 1} "
+                    "asphere surface denominator changed"
+                )
+
+        maths_objects = tuple(
+            re.findall(
+                r"<maths(?:\s|>).*?</maths>",
+                raw_text,
+                re.IGNORECASE | re.DOTALL,
+            )
+        )
+        if tuple(
+            hashlib.sha256(value.encode()).hexdigest() for value in maths_objects
+        ) != profile["maths_object_sha256"]:
+            raise PatentParseError("Ability three-lens MathML denominator changed")
+        if re.search(
+            r"<mi>Eh</mi>\s*<mn>12</mn>", maths_objects[0], re.I
+        ) is None:
+            raise PatentParseError("Ability three-lens MathML E h^12 term changed")
+        prose_definition = "A, B, C, D, F, G, H and J are aspheric coefficients"
+        if len(re.findall(re.escape(prose_definition), text, re.I)) != 1:
+            raise PatentParseError(
+                "Ability three-lens asphere prose-omission boundary changed"
+            )
+        if re.search(
+            r"A,\s*B,\s*C,\s*D,\s*E,\s*F,\s*G,\s*H\s+and\s+J\s+are\s+"
+            r"aspheric\s+coefficients",
+            text,
+            re.I,
+        ) is not None:
+            raise PatentParseError(
+                "Ability three-lens prose may now define coefficient E"
+            )
+        if len(
+            re.findall(
+                r'<\?in-line-formulae description="In-line Formulae" end="lead"\?>',
+                raw_text,
+                re.I,
+            )
+        ) != profile["inline_formula_lead_count"]:
+            raise PatentParseError(
+                "Ability three-lens inline-formula denominator changed"
+            )
+        if len(re.findall(r"<img\b[^>]*>", raw_text, re.I)) != profile[
+            "custom_character_image_count"
+        ]:
+            raise PatentParseError(
+                "Ability three-lens custom-character denominator changed"
+            )
+        for phrase, expected in {
+            "TL=3.23 mm": 2,
+            "Dg=3.50 mm": 2,
+            "Constant-Aperture Diaphragm 2": 8,
+        }.items():
+            observed = len(re.findall(re.escape(phrase), text, re.I))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Ability three-lens source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        absent_patterns = (
+            r"\beffective\s+focal\s+length\b",
+            r"\bfocal\s+length\b",
+            r"\bF\s*[- ]?number\b",
+            rf"{NUMBER_PATTERN}\s*(?:degrees?|deg\.?|°)",
+            r"\bimage\s+(?:semi-?)?height\b",
+            r"\bIMGHT\b",
+        )
+        if any(re.search(pattern, text, re.I) for pattern in absent_patterns):
+            raise PatentParseError(
+                "Ability three-lens source may now publish required system metadata"
+            )
+
+        observed_pdf_hashes: list[tuple[str, ...]] = []
+        for capture in profile["official_pdf_captures"]:
+            payload = (ROOT / capture["path"]).read_bytes()
+            if len(payload) != capture["bytes"]:
+                raise PatentParseError("Ability three-lens official PDF size changed")
+            if hashlib.sha256(payload).hexdigest() != capture["container_sha256"]:
+                raise PatentParseError("Ability three-lens official PDF hash changed")
+            reader = pypdf.PdfReader(io.BytesIO(payload))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError(
+                    "Ability three-lens official PDF page count changed"
+                )
+            page_hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Ability three-lens PDF page {page_number} raster count changed"
+                    )
+                if (
+                    images[0].image.size != profile["pdf_raster_dimensions"]
+                    or images[0].image.mode != "1"
+                ):
+                    raise PatentParseError(
+                        f"Ability three-lens PDF page {page_number} raster changed"
+                    )
+                page_hashes.append(_canonical_raster_sha256(images[0].data))
+                text_characters += len(page.extract_text() or "")
+            if tuple(page_hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError(
+                    "Ability three-lens official PDF page rasters changed"
+                )
+            digest = hashlib.sha256(
+                ("\n".join(page_hashes) + "\n").encode()
+            ).hexdigest()
+            if digest != profile["pdf_raster_set_sha256"] or text_characters != 0:
+                raise PatentParseError(
+                    "Ability three-lens official PDF raster set changed"
+                )
+            observed_pdf_hashes.append(tuple(page_hashes))
+        if len(set(observed_pdf_hashes)) != 1:
+            raise PatentParseError(
+                "Ability three-lens official PDF captures disagree by decoded page"
+            )
+        if not (
+            profile["pdf_drawing_page_numbers"] == tuple(range(2, 8))
+            and profile["pdf_table_page_numbers"] == (9, 10, 11)
+            and profile["pdf_claims_page_numbers"] == (11,)
+        ):
+            raise PatentParseError("Ability three-lens official PDF page roles changed")
+    except Exception as exc:  # noqa: BLE001 - retain both exact source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    for number, label, _paragraphs, _figures, tables, _claims in (
+        _ABILITY_THREE_LENS_ITEMS
+    ):
+        surface_table, asphere_table = tables
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=PatentTerminalParseError(
+                    status="metadata_unpublished",
+                    reason_code=_ABILITY_THREE_LENS_MISSING_METADATA_REASON,
+                    detail=(
+                        f"Family 50551137 preferred embodiment {number} TABLES "
+                        f"{surface_table}/{asphere_table} publish eleven ordered "
+                        "radius/thickness rows including the directly identified "
+                        "constant-aperture diaphragm, five Nd/Vd material rows, and "
+                        "K plus A/B/C/D/E/F/G/H/J for all six lens surfaces. It "
+                        f"directly publishes TL={profile['system_values']['TL'][number - 1]:g} "
+                        f"mm and full diagonal Dg={profile['system_values']['Dg'][number - 1]:g} "
+                        "mm, but no exact EFL, F-number, numeric angular field or "
+                        "direct absolute image semi-height. MathML and the tables "
+                        "print coefficient E while the following prose list omits E; "
+                        "the source typography is preserved. Dg is not halved or "
+                        "renamed, no system field is solved, inferred or measured, "
+                        "and no related publication is borrowed"
+                    ),
+                ),
             )
         )
     return attempts

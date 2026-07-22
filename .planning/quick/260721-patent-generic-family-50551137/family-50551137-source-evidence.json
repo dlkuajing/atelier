@@ -1,0 +1,194 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "50551137",
+  "root_id": "US-9217844",
+  "publication_id": "US-9217844-B2",
+  "application_number": "14/174457",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/e17fa2ef7bb1a323/US-9217844-B2.html",
+    "bytes": 34457,
+    "sha256": "e17fa2ef7bb1a323eccb87f1db2e4ba5329f40eea0ef4bac8c39698795f38443",
+    "characters": 34277,
+    "normalized_characters": 20744,
+    "normalized_sha256": "f4a89a6c475a5a1ad3aa735db1bea70b56eec72bca0fee55f06da66d70d0d41d",
+    "layout_signature": "be2aab62a91ba0385f8b7e0fddb87ae0c806a7883d2f94aa3fae1277b2e8cc9b"
+  },
+  "bibliography": {
+    "title": "Imaging lens module",
+    "inventors": ["Liao; Kuo-Yu"],
+    "applicant": "Ability Opto-Electronics Technology Co., LTD.",
+    "assignee": "Ability Opto-Electronics Technology Co., LTD."
+  },
+  "lineage": {
+    "same_application_prior_publication": "US-20150077868-A1",
+    "foreign_priority_application": "TW 102217635 U",
+    "foreign_priority_date": "2013-09-18"
+  },
+  "source_denominator": {
+    "background_summary_numbered_paragraphs": 12,
+    "brief_drawing_numbered_paragraphs": 7,
+    "detailed_description_numbered_paragraphs": 30,
+    "description_numbered_paragraphs": 37,
+    "total_numbered_specification_paragraphs": 49,
+    "claims": 2,
+    "independent_claims": [1],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 4,
+    "maths_objects": 1,
+    "mathml_objects": 1,
+    "inline_formula_leads": 10,
+    "custom_character_image_tags": 14,
+    "figure_reference_occurrences": 13,
+    "declared_figure_panels": 6,
+    "drawing_sheets": 6,
+    "official_pdf_pages": 11,
+    "source_items": 2,
+    "ordered_prescriptions": 2,
+    "surface_rows": 22,
+    "material_rows": 10,
+    "asphere_coefficient_cells": 120,
+    "unmapped_items": 0
+  },
+  "section_sha256": {
+    "background": "a6ccfc9334f4949005f16c84f1cef9644d475e820094a9b985cd7aec6ff05c38",
+    "description": "d5a9dd224af4eb29234a97e56a90c3eedc94225cd833db07a53155427f1f2d9e",
+    "claims": "9dff140e5973302694c7f5f2f37f214f9638dca38b4f9d26ba3aafd1ca7ec4e7"
+  },
+  "raw_section_body_sha256": {
+    "background": "eb1c6c3871fdfec6e685d4732035e475e0788bff29f0af5d7027b5961ef9dbac",
+    "description": "5ada50a5ff2c9fef5b00756a8c5e7b8d80a6465d6916d72920bc08977e64a7e0",
+    "claims": "5310b0204b77e1c67d0e035f8c902f606edce1b4b9bcfaf515d1f31dacb9f000"
+  },
+  "paragraph_span_sha256": {
+    "background-1-12": "3d849a91b993dd60a6275d5f90df99802ffecb564bc51b8860038cd144cd309a",
+    "description-1-7": "c2e9ce648c95e0998909387bb9dd175d3a561e61b861215f001d9ffacb46e28b",
+    "description-8-18": "e895696bf3d6bc901fc34f29875cbed434d7563eea8e699366eae68f07f70676",
+    "description-19-25": "c39a64225b68152882ae88a8fa771f6fdb1e44d4de8c2d2892238824cafda488",
+    "description-26-32": "7c44b7b82a9b56c8c687293d1876f6c09c411765dff2345b29c8c46d810d0ef6",
+    "description-33-37": "4a4f244b1aefa24e68ebbfbbb3cf9144e807972bf487023e1185608680f07833",
+    "description-1-37": "0098899b4c6c9160dbc9dcb2e1f9e3ca150571efa6130a68fe48a8a8b30b00f7"
+  },
+  "claim_sha256": [
+    "2ea98f5f9e28aaba91defb683915719996ed76dcd1b80964b8d658d88f278011",
+    "0a48d89e05735b5c6e52d0d70fa30a247702d8a580bf632645619524953773b3"
+  ],
+  "formal_table_sha256": [
+    "30f8c27649238b4a23f2a301761bc30065241f203090185fb0ab1ff480d057ce",
+    "5094e61049ca9782171b550379c33d5c7719cf06e0472095381d3e941266fbb0",
+    "af4dc99ba4afc358a7c9e03a58b4b65b81358a99f8537658d21141bcfd570fbb",
+    "864de82aa3e72ca9576da1859bc2710ec2d91839c502e54f36cf14fa2752e0b2"
+  ],
+  "maths_object_sha256": [
+    "4637e923e386679c611f68bbba761fba9bb20c62bc41bf5f9fa032db5006bebd"
+  ],
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Ability three-lens first preferred embodiment",
+      "description_range": [19, 25],
+      "shared_description_range": [8, 18],
+      "figures": ["1", "2", "3"],
+      "tables": [1, 2],
+      "claims": [1, 2],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_absolute_image_height_absent"
+    },
+    {
+      "number": 2,
+      "label": "Ability three-lens second preferred embodiment",
+      "description_range": [26, 32],
+      "shared_description_range": [8, 18],
+      "figures": ["4", "5", "6"],
+      "tables": [3, 4],
+      "claims": [1, 2],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_absolute_image_height_absent"
+    }
+  ],
+  "prescription_boundary": {
+    "surface_table_numbers": [1, 3],
+    "asphere_table_numbers": [2, 4],
+    "ordered_coordinate_rows": ["111", "112", "constant-aperture diaphragm 2", "121", "122", "131", "132", "31", "32", "41", "42"],
+    "material_surface_numbers": [111, 121, 131, 31, 41],
+    "asphere_surface_numbers": [111, 112, 121, 122, 131, 132],
+    "asphere_orders": ["K", "A", "B", "C", "D", "E", "F", "G", "H", "J"],
+    "direct_tl_mm": [3.23, 3.23],
+    "direct_image_diagonal_dg_mm": [3.50, 3.50],
+    "direct_r3_mm": [-0.55, -0.54],
+    "direct_r4_mm": [-0.68, -0.73],
+    "direct_ct1_mm": [0.548, 0.504],
+    "direct_ct2_mm": [0.260, 0.264],
+    "direct_ct3_mm": [0.778, 0.817],
+    "specific_stop_row_published": true,
+    "exact_focal_length_published": false,
+    "exact_f_number_published": false,
+    "numeric_angular_field_published": false,
+    "absolute_image_semi_height_published": false,
+    "mathml_and_tables_publish_e": true,
+    "following_definition_sentence_omits_e": true,
+    "source_typography_repaired": false
+  },
+  "official_pdf": {
+    "download_1": {"path": ".planning/quick/260721-patent-generic-family-50551137/source-review/US-9217844-B2-official-1.pdf", "bytes": 400389, "sha256": "3f3c05d3aabec6b2fba77f8262848cb4b8cee7db691f0d8c15eccc6624bcd466"},
+    "download_2": {"path": ".planning/quick/260721-patent-generic-family-50551137/source-review/US-9217844-B2-official-2.pdf", "bytes": 400389, "sha256": "13b20b33a49746fb83b1dd282688ad2145539a1c260149cf24e0c8812035fba4"},
+    "page_count": 11,
+    "text_layer_characters": 0,
+    "embedded_page_mode": "1-bit",
+    "raster_dimensions_width_height": [2560, 3300],
+    "raster_set_sha256": "ec489ad2e38dd9650e8f469df02520c64cf5645b03370897de25e1599039b592"
+  },
+  "replay": {
+    "attempt_2": {"path": "data/patent-ledger/replay/local-uncovered/results/US-9217844/attempt-0002/result.json", "bytes": 3236, "sha256": "b2a81f8091e6bf1510b007d545582b8864443ca1ba5685bb986c5f3839608f78"},
+    "attempt_3": {"path": "data/patent-ledger/replay/local-uncovered/results/US-9217844/attempt-0003/result.json", "bytes": 3236, "sha256": "b6592db60815ae56c65a61b01cab682367468f75043e6bb2ed1a00386fbb43ac"},
+    "semantic_equal": true,
+    "semantic_sha256": "a90b6884e5c82231e3f53281cfb6f6764e670f3c579ad56361bb87e512e41ebf",
+    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 53100, "sha256": "51d1ce3278124f32d483fa18e37e1fa4747ebb58c095e9b3b6650ff7a4c86233"},
+    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 55057, "sha256": "0dab338eea649e5e67173dd27e418aedfd2e28a2e09a6c5c7ab04e30813e55e9"},
+    "strict_audit": {"roots_with_results": 619, "expected_roots": 619, "missing_results": 0, "corrupt_results": 0}
+  },
+  "census": {
+    "before": {"path": ".planning/quick/260721-patent-generic-family-50551137/generic-residual-before-38.json", "bytes": 23469, "sha256": "6754d468c027a11e2fa711efb1cf40bbe3d7e76925f0c156a7085c4355fecdfc"},
+    "after_1": {"path": ".planning/quick/260721-patent-generic-family-50551137/generic-residual-after-1.json", "bytes": 22850, "sha256": "aeca932b8ad453dea49eff2405effdc5cc31f746299e7f277ca411558f0a7d8a"},
+    "after_2": {"path": ".planning/quick/260721-patent-generic-family-50551137/generic-residual-after-2.json", "bytes": 22850, "sha256": "aeca932b8ad453dea49eff2405effdc5cc31f746299e7f277ca411558f0a7d8a"},
+    "before_roots": 38,
+    "after_roots": 37,
+    "result_set_sha256": "0ecc43834413819ea52c9d5237ad297af728a00b7e29a8da2e5e8e33f2982f87"
+  },
+  "supporting_artifacts": {
+    "source_audit": {"path": ".planning/quick/260721-patent-generic-family-50551137/family-50551137-source-audit.md", "bytes": 4824, "sha256": "0755713ee556957d106279b2c288dc656d34a5147ea5adb84a6ce3b24740f64c"},
+    "raster_audit": {"path": ".planning/quick/260721-patent-generic-family-50551137/family-50551137-raster-audit.json", "bytes": 6239, "sha256": "fd9be0707513595e2943a4920597e1e0a0fe6a38a9d0a4a03fe5e1324afefe7e"},
+    "source_availability": {"path": ".planning/quick/260721-patent-generic-family-50551137/family-50551137-source-availability.json", "bytes": 4459, "sha256": "41156ec2388ffa2e9c4ad302ac9e6d5bf9131457bda0255ef818100827dcb1b1"},
+    "denominator": {"path": ".planning/quick/260721-patent-generic-family-50551137/family-50551137-denominator.json", "bytes": 4552, "sha256": "64a0936253e9570f3e8da73836d92bcac0686f3ececbfbf66cfbe52623e25541"},
+    "replay_determinism": {"path": ".planning/quick/260721-patent-generic-family-50551137/family-50551137-replay-determinism.json", "bytes": 1548, "sha256": "f22275455349acea013426993181d92c8ac8a928cdb4bc46cdcebcd668ea77c3"},
+    "queue_after": {"path": ".planning/quick/260721-patent-generic-family-50551137/queue-after.json", "bytes": 1320, "sha256": "8e3d78dd54b6dfbc7a014eb018f9725af7166022d7cec87360ff22dd16f490ac"},
+    "roots": {"path": ".planning/quick/260721-patent-generic-family-50551137/roots.txt", "bytes": 11, "sha256": "19bc41cd477a567b199da2f7c91ec409a13c2bb8100e7cc8226063a7f9b07732"}
+  },
+  "review_policy": {
+    "source_typography_repaired": false,
+    "numeric_derivation_used": false,
+    "image_diagonal_halved_or_renamed": false,
+    "focal_length_solved": false,
+    "f_number_derived": false,
+    "angular_field_measured_or_derived": false,
+    "raster_numeric_transcription_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  },
+  "next_exact_group": {
+    "family_id": "78617163",
+    "root_id": "US-12088899",
+    "publication_id": "US-12088899-B2",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b"
+  },
+  "saturation_complete": false
+}

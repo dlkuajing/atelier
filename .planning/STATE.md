@@ -783,15 +783,17 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | `260721-patent-generic-family-87279038` | complete-shovel-saturation-incomplete | Exact US-20250155675-A1 binds application 18/728486, PCT/JP2023/000159, Japanese priority JP2022-004493, Family ID 87279038, Yukihiro Shimoeda and Maxell. The source denominator is 161 consecutive specification paragraphs, claims 1-11 with claims 1/9/10/11 independent, 32 declared panels/drawing sheets, 179 figure-reference tags, fourteen flattened tables, one MathML object, seventeen inline-formula leads and exactly nine items. Six numerical examples each publish S1-S16, two distinct physical iris boundaries S7/S8, eight nd-vd rows, four K/A4-A16 aspheres, focal length, F-number, whole field and total track; no source token binds either iris boundary as the prescription stop coordinate and no absolute image height is published. The six examples therefore close as `metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent` without stop selection or height derivation; camera-module, in-vehicle-system and vehicle wrappers close as three precise `confirmed_no_prescription` terminals. Two distinct official 45-page image-only wrappers decode to the same original 1-bit raster set at `9aac966c...b00e`; no enhancement, OCR repair, measurement, numeric raster transcription, derivation or family borrowing occurs. Attempts 2/3 are semantic-equal at `cc9d4469...ac25f`; generic 39 to 38; result set `6364774e...568cd`; census `6754d468...ecdfc`; summary `29a24312...20c9d`; report `a318efe4...6459c`; evidence `85a3c934...4e09f`; strict audit twice 619/619 corrupt=0. Complete segmented offline coverage passes 3,750 tests/1 skipped/10 real-machine deselected; focused 8/8, final patent 1001/1001, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 96 changed-JSON checks pass. All 114 source-evidence manifests, 1,888 references and 1,715 complete triples rehash; 84 historical manifests contain exactly 351 allowed live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/patent-worker inventories are zero. Stable ordering selects Family 50551137 / US-9217844-B2 next; parent saturation remains incomplete. |
 
+| `260721-patent-generic-family-50551137` | complete-shovel-saturation-incomplete | Exact US-9217844-B2 binds application 14/174457, prior US-20150077868-A1, Taiwanese priority 102217635 U, Family ID 50551137, Kuo-Yu Liao and Ability Opto-Electronics. The source denominator is 12 Background/Summary plus 37 Description paragraphs, claims 1-2 with claim 1 independent, six figures/drawing sheets, four flattened tables, one MathML object, ten inline-formula leads, fourteen custom-character images and exactly two preferred-embodiment prescriptions. Each publishes eleven ordered radius/thickness rows including the direct constant-aperture diaphragm, five material rows, K+A/B/C/D/E/F/G/H/J on six lens surfaces, TL=3.23 mm and full diagonal Dg=3.50 mm. Neither publishes exact EFL, F-number, numeric angular field or direct absolute image semi-height; Dg is not halved or renamed, no system field is solved, and the MathML/table E term versus following prose omission is preserved unrepaired. Both items close as `metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_absolute_image_height_absent`. Two distinct official 11-page image-only wrappers decode to the same original 1-bit raster set at `ec489ad2...b592`; no enhancement, OCR repair, measurement, numeric raster transcription, derivation or family borrowing occurs. Attempts 2/3 are semantic-equal at `a90b6884...1ebf`; generic 38 to 37; result set `0ecc4383...82f87`; census `aeca932b...d8a`; summary `51d1ce32...6233`; report `0dab338e...55e9`; evidence `6bbd781a...2f35`; strict audit twice 619/619 corrupt=0. Complete segmented offline coverage passes 3,758 tests/1 skipped/10 real-machine deselected; focused 8/8, final patent 1009/1009, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 97 changed-JSON checks pass. All 115 source-evidence manifests, 1,905 references and 1,732 complete triples rehash; 85 prior manifests contain exactly 356 allowed live-pointer leaf changes while four frozen old-result-set JSON snapshots remain fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/patent-worker inventories are zero. Stable ordering selects Family 78617163 / US-12088899-B2 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, preserve completed GSD quick
-`.planning/quick/260721-patent-generic-family-87279038/260721-patent-generic-family-87279038-PLAN.md`
-as the latest completed shovel. Before detailed source work, open a new GSD quick for
-deterministic Family `50551137`, root/publication `US-9217844` / `US-9217844-B2`,
-while preserving completed Family 87279038, Family 45593888, Family 95825866,
+For patent saturation work, Family `50551137`, root/publication `US-9217844` /
+`US-9217844-B2`, is complete. The next exact family selected from the rebuilt ledger is
+Family `78617163`, root/publication `US-12088899` / `US-12088899-B2`; open its GSD quick
+only after the Family 50551137 atomic commit, while preserving completed Family 87279038, Family 45593888,
+Family 95825866,
 Family 87845869, Family 40641507, Family 69060231, Family 97226661,
 Family 95563451, Family 97520644, Family 89511297, Family 84563102,
 Family 60048601, Family 61278233, Family 53214261,
@@ -803,10 +805,10 @@ the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen inp
 replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
 from chat or historical free-text reports. Before any test sweep, confirm the
 non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-generic residual contains 38 roots/items at result set
-`6364774e01e1fa393369426b8372a88c8f5a7921bef1257f57729bf3678568cd`.
-The next family has layout
-`be2aab62a91ba0385f8b7e0fddb87ae0c806a7883d2f94aa3fae1277b2e8cc9b`.
+generic residual contains 37 roots/items at result set
+`0ecc43834413819ea52c9d5237ad297af728a00b7e29a8da2e5e8e33f2982f87`.
+The next exact family has layout
+`bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b`.
 Use the same strict before/after census, source-proven layout, append-only targeted replay,
 and full-pool audit contract. Remeasure after every shovel; parent saturation remains
 incomplete.

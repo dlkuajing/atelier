@@ -1,0 +1,127 @@
+{
+  "schema_version": "patent-family-raster-audit/v1",
+  "family_id": "50551137",
+  "raster_hash_algorithm": "sha256(decoded-page-raster-v1 + NUL + ASCII shape + NUL + ASCII dtype + NUL + decoded pixel bytes)",
+  "raster_set_hash_algorithm": "sha256(newline-joined ordered page raster hashes plus trailing newline)",
+  "publications": {
+    "US-9217844-B2": {
+      "role": "classification_primary",
+      "official_pdf_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9217844",
+      "wrappers": {
+        "official_download_1": {
+          "path": ".planning/quick/260721-patent-generic-family-50551137/source-review/US-9217844-B2-official-1.pdf",
+          "bytes": 400389,
+          "sha256": "3f3c05d3aabec6b2fba77f8262848cb4b8cee7db691f0d8c15eccc6624bcd466",
+          "page_count": 11
+        },
+        "official_download_2": {
+          "path": ".planning/quick/260721-patent-generic-family-50551137/source-review/US-9217844-B2-official-2.pdf",
+          "bytes": 400389,
+          "sha256": "13b20b33a49746fb83b1dd282688ad2145539a1c260149cf24e0c8812035fba4",
+          "page_count": 11
+        }
+      },
+      "page_count": 11,
+      "single_raster_page_count": 11,
+      "text_layer_characters": 0,
+      "raster_dimensions_width_height": [2560, 3300],
+      "embedded_raster_mode": "1-bit",
+      "page_raster_sha256": [
+        "c4d742ecf16cf4e2f6af917f43192b68b7dca29a1e59ea566ec8e3aea8abfde3",
+        "2727e83b8deff7e5b64e0f78824fe48dceb6d4164805fba67822772bfbf05bc6",
+        "58473e50a4a8172f128b2669c919b6ed6e0a594b9bb79d6b69e62c828d88c587",
+        "4d0935d894e3336bee877391644cf1e0fdd9d6fca2a9bb7583c89217bc29cbaf",
+        "0966a3c519de4196539f0cea3141f25f125f06122991e0389e3885bdce97b573",
+        "b66834947d3378abf26e31306c0e1bcd00d5b6b449020e672e6332e1ac5c3263",
+        "c62018560b41c7982d3752975a146667a7c4a02b824365028b2874f9eb47081a",
+        "4068a051a1ef0b9ac7573e268e1bebc9dcda8303d38cda9fdf07ba96575fe782",
+        "e5c8aab6b8d7126d498ef1fcc2317b62128bb129e699dad8970a3ef85933068c",
+        "6ca9183512d5854b9d194e6239e50640f48a24d9a3f61fb08f3f5dc710cdceec",
+        "000aefeade93edc8ae0bde3a425feecc1de0332db43fa81780f349b23a020cd8"
+      ],
+      "raster_set_sha256": "ec489ad2e38dd9650e8f469df02520c64cf5645b03370897de25e1599039b592",
+      "page_roles": {
+        "cover": [1],
+        "drawing_sheets": [2, 3, 4, 5, 6, 7],
+        "specification": [8, 9, 10, 11],
+        "printed_tables": [9, 10, 11],
+        "claims": [11]
+      },
+      "original_raster_directory": {
+        "path": ".planning/quick/260721-patent-generic-family-50551137/pdf-review",
+        "file_count": 11,
+        "pattern": "page-??-original.png",
+        "format": "lossless 1-bit PNG serialized from the sole embedded official page raster",
+        "embedded_mode": "1-bit",
+        "serialized_mode": "1-bit",
+        "pixel_comparison": "11/11 serialized page pixels exactly equal decoded embedded pixels"
+      }
+    }
+  },
+  "source_comparison": {
+    "official_download_container_hashes_distinct": true,
+    "container_byte_lengths_equal": true,
+    "compared_wrappers": 2,
+    "compared_pages_per_wrapper": 11,
+    "equal_decoded_pages_across_all_wrappers": 11,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "retained_visual_audits": [
+    {
+      "path": ".planning/quick/260721-patent-generic-family-50551137/pdf-review/contact-pages-01-11-navigation-only.png",
+      "bytes": 33292,
+      "sha256": "ff5fe1556204624175d46282039b8c93ccf6877aec0a3af4192e779414199461",
+      "role": "pages 1-11 nearest-neighbor navigation sheet; not numeric evidence"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-50551137/pdf-review/page-01-original.png",
+      "bytes": 64840,
+      "sha256": "2ef8a4511b0642a84001d01897d759b124ed5e09894b719e9cdfb70fac2e5dca",
+      "page": 1,
+      "embedded_page_raster_sha256": "c4d742ecf16cf4e2f6af917f43192b68b7dca29a1e59ea566ec8e3aea8abfde3",
+      "role": "cover identity, two-claim and six-drawing-sheet denominator"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-50551137/pdf-review/page-08-original.png",
+      "bytes": 144177,
+      "sha256": "8da89542154a2c6bface06c07384617ffbe2fff03b462a3b87ded6e158d9e335",
+      "page": 8,
+      "embedded_page_raster_sha256": "4068a051a1ef0b9ac7573e268e1bebc9dcda8303d38cda9fdf07ba96575fe782",
+      "role": "specification pages 1-2 and source-item preamble"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-50551137/pdf-review/page-09-original.png",
+      "bytes": 115680,
+      "sha256": "35622c1ea48e356c81ffd1b89d47b8a99f3dbf836445bd36c2c2cb88cb1a8d9f",
+      "page": 9,
+      "embedded_page_raster_sha256": "e5c8aab6b8d7126d498ef1fcc2317b62128bb129e699dad8970a3ef85933068c",
+      "role": "asphere formula including E h^12 and original TABLE 1 typography"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-50551137/pdf-review/page-10-original.png",
+      "bytes": 67312,
+      "sha256": "fb9a3b0952a5769e4f7ec761ad1b2b843645776618d1edee86de548ca78bd9a9",
+      "page": 10,
+      "embedded_page_raster_sha256": "6ca9183512d5854b9d194e6239e50640f48a24d9a3f61fb08f3f5dc710cdceec",
+      "role": "original TABLES 2-4 item boundary and typography"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-50551137/pdf-review/page-11-original.png",
+      "bytes": 102163,
+      "sha256": "6fcdd884ddb57528c1aefe068b013818ed25524f1f9e439ddffb6890bb009014",
+      "page": 11,
+      "embedded_page_raster_sha256": "000aefeade93edc8ae0bde3a425feecc1de0332db43fa81780f349b23a020cd8",
+      "role": "TABLE 4 continuation, closing text and both claims"
+    }
+  ],
+  "visual_review": {
+    "all_page_navigation_reviewed": true,
+    "original_pages_reviewed": [1, 8, 9, 10, 11],
+    "finding": "The original rasters preserve two ordered three-lens prescriptions, the E h^12 formula term plus the prose omission of E, and no direct EFL, F-number, numeric angular field or image semi-height.",
+    "enhancement_used": false,
+    "ocr_repair_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_raster_transcription_used": false,
+    "raster_numeric_inference_used": false
+  }
+}
