@@ -1,0 +1,128 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "83127668",
+  "root_id": "US-12656577",
+  "publication_id": "US-12656577-B2",
+  "sections": {
+    "background_summary_paragraphs": 14,
+    "description_paragraphs": 136,
+    "claims": 19,
+    "independent_claims": 3,
+    "machine_readable_tables": 0,
+    "raster_optical_data_tables": 8,
+    "raster_asphere_data_tables": 8,
+    "raster_common_comparison_system_table_panels": 4,
+    "inline_formula_pairs": 41,
+    "mathml_objects": 1,
+    "figref_tags": 174,
+    "declared_figure_panels": 65,
+    "drawing_sheets": 38
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Genius six-lens optical imaging lens 1st embodiment",
+      "paragraph_range": [69, 83],
+      "figures": ["6", "7A", "7B", "7C", "7D", "8", "9"],
+      "optical_table_figure": "8",
+      "asphere_table_figure": "9",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 2,
+      "label": "Genius six-lens optical imaging lens 2nd embodiment",
+      "paragraph_range": [84, 90],
+      "figures": ["10", "11A", "11B", "11C", "11D", "12", "13"],
+      "optical_table_figure": "12",
+      "asphere_table_figure": "13",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 3,
+      "label": "Genius six-lens optical imaging lens 3rd embodiment",
+      "paragraph_range": [91, 97],
+      "figures": ["14", "15A", "15B", "15C", "15D", "16", "17"],
+      "optical_table_figure": "16",
+      "asphere_table_figure": "17",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 4,
+      "label": "Genius six-lens optical imaging lens 4th embodiment",
+      "paragraph_range": [98, 104],
+      "figures": ["18", "19A", "19B", "19C", "19D", "20", "21"],
+      "optical_table_figure": "20",
+      "asphere_table_figure": "21",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 5,
+      "label": "Genius six-lens optical imaging lens 5th embodiment",
+      "paragraph_range": [105, 111],
+      "figures": ["22", "23A", "23B", "23C", "23D", "24", "25"],
+      "optical_table_figure": "24",
+      "asphere_table_figure": "25",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 6,
+      "label": "Genius six-lens optical imaging lens 6th embodiment",
+      "paragraph_range": [112, 118],
+      "figures": ["26", "27A", "27B", "27C", "27D", "28", "29"],
+      "optical_table_figure": "28",
+      "asphere_table_figure": "29",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 7,
+      "label": "Genius six-lens optical imaging lens 7th embodiment",
+      "paragraph_range": [119, 125],
+      "figures": ["30", "31A", "31B", "31C", "31D", "32", "33"],
+      "optical_table_figure": "32",
+      "asphere_table_figure": "33",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 8,
+      "label": "Genius six-lens optical imaging lens 8th embodiment",
+      "paragraph_range": [126, 132],
+      "figures": ["34", "35A", "35B", "35C", "35D", "36", "37"],
+      "optical_table_figure": "36",
+      "asphere_table_figure": "37",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    }
+  ],
+  "common_figures": {
+    "baseline_definition_figures": ["1", "2", "3", "4", "5"],
+    "comparison_system_table_figures": ["38A", "38B", "38C", "38D"]
+  },
+  "optical_interpretation": {
+    "published_numerical_prescriptions": 8,
+    "machine_readable_numerical_prescriptions": 0,
+    "html_item_specific_hfov_and_system_length": true,
+    "ordered_surface_and_asphere_rows_location": "official PDF raster figures only",
+    "remaining_required_efl_f_number_absolute_image_height_location": "official PDF raster figures only",
+    "pdf_text_layer_characters": 0,
+    "raster_numeric_transcription_authorized": false,
+    "worker_authorized": false
+  },
+  "terminal_outcome": {
+    "metadata_unpublished_items": 8,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}

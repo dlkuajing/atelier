@@ -807,26 +807,23 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | 260722-patent-generic-family-86539672 | complete-shovel-saturation-incomplete | Exact US-20240352227-A1 binds application 18/686481, PCT/JP2022/043700, Japanese priority 2021-193298, Family ID 86539672 and Mitsui Chemicals. The denominator is 54 Background/Summary plus 178 Description paragraphs in [0001]-[0232], claims 1-20 with claims 1/2/6 independent, zero declared figures/drawing sheets/figrefs/native HTML tables/MathML, seventeen chemical-structure tokens, two flattened tables, fourteen Examples and two Comparative Examples. The sixteen material experiments are variants within one resin-composition, molded-product and optical-component materials disclosure, not sixteen optical prescriptions. The sole `F value: 1.8` belongs to an external Canon-camera color-bleed evaluation; generic lens-shape/end-use text publishes no particular geometry. No ordered optical radius/spacing/material/index/dispersion/conic/asphere sequence or prescription-bound focal length/F-number/FOV/image-height/stop exists. The disclosure closes as one precise `confirmed_no_prescription.resin_composition_molded_product_and_optical_component_materials_only` terminal without derivation, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 1,525,074-byte official 18-page image-only wrappers decode to the same one-bit raster set at da44ea6d...e8bf; original pages 14-18 were reviewed without enhancement, OCR, repair, measurement, transcription or inference. Attempts 2/3 are semantic-equal at c17e4836...f850; generic 27 to 26; result set beb71000...be72; census f01741b1...79a; summary a5068031...b4e45; report c76fd691...2fd8; evidence f70b2228...13b13e3; strict replay is 619/619 missing=0/corrupt=0. Focused 10/10, complete segmented patent 1111/1111 and patent integration/no-real-CODEV guard 99/99 pass. Repository-wide non-patent wrappers exceeded bounded desktop timeouts without a failure verdict or lingering process; immediate committed baseline remains 2749 passed/1 skipped/10 real-machine deselected. Ruff/compile, 109 changed JSON and all 8,033 repository JSON pass. All 126 source-evidence manifests, 2,160 path records and 1,954 complete triples rehash; 96 prior manifests contain exactly 398 permitted live-pointer leaves: 380 summary/report, sixteen result-set and two legacy hash-only leaves. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest inventories are zero. Stable ordering selects Family 100084534 / US-20260169250-A1 next; parent saturation remains incomplete. |
 
+| 260723-patent-generic-family-83127668 | complete-shovel-saturation-incomplete | Exact US-12656577-B2 binds application 17/932095, prior US-20230418027-A1, Chinese priority CN202210709577.4, Family ID 83127668 and Genius Electronic Optical (Xiamen). Fourteen Background/Summary plus 136 Description paragraphs, claims 1-19 with claims 1/7/14 independent, 65 figure panels on 38 drawing sheets, 174 figure references, 41 inline-formula pairs, one MathML asphere equation, zero HTML/flattened tables or custom-character images and eight numerical six-lens items reconcile completely. Paragraphs 69-132/FIGS.6-37 bind eight cross-section/four-aberration/optical-table/asphere-table groups; FIGS.38A-D are common comparisons. Ordered prescription and remaining required EFL/F-number/absolute-image-height values exist only in one-bit raster tables, while HTML has no machine-readable rows and the official PDF has no text layer. Project policy forbids OCR, enhancement, raster numeric transcription, measurement or inference, so all eight close precisely as `metadata_unpublished.machine_readable_prescription_and_system_tables_absent` rather than falsely claiming printed prescriptions are absent. No value is borrowed from the prior publication, priority filing or seven same-layout families; no worker/request/receipt/fingerprint/ZMX/formal intake/CODE V use occurs. Two distinct official 53-page PDF wrappers decode to the same original one-bit raster set at 73b3db3d...39bd. Attempts 2/3 are semantic-equal at c344fe98...fdde; generic 24 to 23; result set def8bc76...0735; census 73b9addd...1c9f; summary 3d0e229a...9e56; report b66711f0...7a2f; evidence d79302ac...8f31; strict replay is 619/619 missing=0/corrupt=0. Focused 11/11, complete patent 1142/1142 and integration/no-real-CODEV guard 99/99 pass; Ruff/compile, 111 changed JSON and all 8,066 filesystem JSON pass. All 129 source-evidence manifests, 2,233 path records and 2,027 complete triples rehash; 99 prior manifests contain exactly 410 permitted live-pointer leaves: 392 summary/report, sixteen result-set and two legacy hash-only leaves. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 93669750 / US-20260093094-A1 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, Family `83457080`, root/publication `US-12650581` /
-`US-12650581-B2`, is complete in the current atomic shovel. Exact B2 reconciliation
-establishes eight source items and zero ordered optical prescriptions: five
-plate/filter/coating imaging-optical-system architectures, two prism-folded variants
-and one electronic-device multi-camera wrapper. All eight close as exact confirmed-
-no-prescription terminals without worker, conversion, ZMX, formal intake or CODE V.
-Attempts 2/3 are semantic-equal at
-`96b740e10b8945cf79213a1eb5397e1b83e1067a09ca1db4ed62ca1b3bdc81aa`;
-strict replay is 619/619 with result set
-`96545c2e81ee730d02dd426fcbb537ae767b2916b0b58f4edc65978979708535`.
-The generic residual contains 24 roots/items and both after censuses are byte-identical
-at `0456cbbf30cad6f0a509d610396e284ddbb689df479ce3ade3ec115932956496`.
-Stable ordering selects Family `83127668`, root/publication `US-12656577` /
-`US-12656577-B2`, application `17/932095`, title `Optical imaging lens`, Genius
-Electronic Optical (Xiamen). Open its GSD quick only after the Family 83457080 shovel
-is atomically committed. Its retained 122,928-byte HTML is pinned at
+`US-12650581-B2`, is complete and committed at `f5dbb564`. The next active GSD quick
+is `.planning/quick/260723-patent-generic-family-83127668/` for exact Family `83127668`,
+root/publication `US-12656577` / `US-12656577-B2`, application `17/932095`, title
+`Optical imaging lens`, Genius Electronic Optical (Xiamen). It was opened from
+committed Family 83457080 state before detailed investigation. Strict replay at entry
+is 619/619 with result set
+`96545c2e81ee730d02dd426fcbb537ae767b2916b0b58f4edc65978979708535`;
+the generic residual contains 24 roots/items and its byte-exact before census is
+`0456cbbf30cad6f0a509d610396e284ddbb689df479ce3ade3ec115932956496`.
+The retained 122,928-byte HTML is pinned at
 `22a1ecf1cfcd0cdcf385cfcbb0325631dc463439a97feb83b1908fad8bd12e00`;
 layout signature
 `d07bf3b7faa492b7db1122f46da6e88df10d7705759b47f438b8f48691ebedb6`
