@@ -805,26 +805,28 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | 260722-patent-generic-family-97520240 | complete-shovel-saturation-incomplete | Exact US-20260110880-A1 binds application 19/209987, Korean priority 10-2024-0145051, Family ID 97520240 and Samsung Electro-Mechanics. The denominator is 24 Background/Summary, ten brief-drawing and 95 detailed-description paragraphs in [0001]-[0129], claims 1-19 with claims 1/11 independent, FIGS.1-9/nine drawing sheets, 22 figure references, seventeen flattened tables, 25 MathML objects and exactly five items. Four imaging-lens-system embodiments publish 80 S1-S20 rows, 64 S1/S3-S17 asphere surfaces, 960 K/A-H/J/L-P cells, eight Telephoto/wide D1/D2 states and direct TABLE 13 focal length/F-number/ImgHT/TTL values, but no numeric angular field. Embodiments 1-3 close as `metadata_unpublished.system_angular_field_absent`; TABLE 10 additionally prints blank S18-S20 axial-distance cells, so embodiment 4 closes as `metadata_unpublished.system_angular_field_and_final_axial_distances_absent`. The electronic-device/camera-module wrapper closes as `confirmed_no_prescription.electronic_device_wrapper_only`. Two distinct 1,246,229-byte official 24-page image-only containers decode to the same one-bit raster set at 6fafdb8c...04ca; original pages 17/22/23/24 were reviewed without enhancement, OCR, repair, measurement, transcription or inference. Attempts 2/3 are semantic-equal at 5ed70937...73c9; generic 28 to 27; result set 843699ac...7c6e; census dcf3b26e...d3e9; summary 4ae45241...da1; report f100f9f0...cc52; evidence def205fd...6af1; strict replay is 619/619 missing=0/corrupt=0. Complete segmented offline coverage passes 3,850 tests/1 skipped/10 real-machine deselected: focused 10/10, final patent 1101/1101, non-patent 2749/1 skipped/10 deselected and guard 5/5. Ruff/compile, 108 changed JSON and all 7,874 repository JSON pass. All 125 source-evidence manifests, 2,121 path records and 1,915 complete triples rehash; 95 prior manifests contain exactly 394 permitted live-pointer leaves: 376 summary/report, sixteen result-set and two legacy hash-only leaves. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 86539672 / US-20240352227-A1 next; parent saturation remains incomplete. |
 
+| 260722-patent-generic-family-86539672 | complete-shovel-saturation-incomplete | Exact US-20240352227-A1 binds application 18/686481, PCT/JP2022/043700, Japanese priority 2021-193298, Family ID 86539672 and Mitsui Chemicals. The denominator is 54 Background/Summary plus 178 Description paragraphs in [0001]-[0232], claims 1-20 with claims 1/2/6 independent, zero declared figures/drawing sheets/figrefs/native HTML tables/MathML, seventeen chemical-structure tokens, two flattened tables, fourteen Examples and two Comparative Examples. The sixteen material experiments are variants within one resin-composition, molded-product and optical-component materials disclosure, not sixteen optical prescriptions. The sole `F value: 1.8` belongs to an external Canon-camera color-bleed evaluation; generic lens-shape/end-use text publishes no particular geometry. No ordered optical radius/spacing/material/index/dispersion/conic/asphere sequence or prescription-bound focal length/F-number/FOV/image-height/stop exists. The disclosure closes as one precise `confirmed_no_prescription.resin_composition_molded_product_and_optical_component_materials_only` terminal without derivation, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 1,525,074-byte official 18-page image-only wrappers decode to the same one-bit raster set at da44ea6d...e8bf; original pages 14-18 were reviewed without enhancement, OCR, repair, measurement, transcription or inference. Attempts 2/3 are semantic-equal at c17e4836...f850; generic 27 to 26; result set beb71000...be72; census f01741b1...79a; summary a5068031...b4e45; report c76fd691...2fd8; evidence f70b2228...13b13e3; strict replay is 619/619 missing=0/corrupt=0. Focused 10/10, complete segmented patent 1111/1111 and patent integration/no-real-CODEV guard 99/99 pass. Repository-wide non-patent wrappers exceeded bounded desktop timeouts without a failure verdict or lingering process; immediate committed baseline remains 2749 passed/1 skipped/10 real-machine deselected. Ruff/compile, 109 changed JSON and all 8,033 repository JSON pass. All 126 source-evidence manifests, 2,160 path records and 1,954 complete triples rehash; 96 prior manifests contain exactly 398 permitted live-pointer leaves: 380 summary/report, sixteen result-set and two legacy hash-only leaves. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest inventories are zero. Stable ordering selects Family 100084534 / US-20260169250-A1 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `97520240`, root/publication `US-20260110880` /
-`US-20260110880-A1`, is complete in the current atomic shovel. Strict replay is
+For patent saturation work, Family `86539672`, root/publication `US-20240352227` /
+`US-20240352227-A1`, is complete in the current atomic shovel. Strict replay is
 619/619 with result set
-`843699ac02589c748683ce5202fda6c78e0669b4cc2a568c3c39e33f1c337c6e`;
-the generic residual contains 27 roots/items and its byte-exact repeated census is
-`dcf3b26e23e841ba5275abdfbc6d6d40935ce10ecf3712eec7c7d499b5d2d3e9`.
-Stable ordering selects Family `86539672`, root/publication `US-20240352227` /
-`US-20240352227-A1`, application `18/686481`, title `RESIN COMPOSITION FOR FORMING
-OPTICAL COMPONENT, MOLDED PRODUCT, AND OPTICAL COMPONENT`, Mitsui Chemicals. Open
-its GSD quick only after the Family 97520240 shovel is atomically committed. Its
-retained 94,640-byte HTML is pinned at
-`38c41444a022cbd1ec7e325020142031db4e1372e5339a8bc05b2c9f20f3541a`;
+`beb710007b90ca82a04f7b18f86fcd3af5defc4a6ea6e1c3c24d30303468be72`;
+the generic residual contains 26 roots/items and its byte-exact repeated census is
+`f01741b14c394bc11e49cc214366707abf9e45f6e24dfe51a71030823e2ac79a`.
+Stable ordering selects Family `100084534`, root/publication `US-20260169250` /
+`US-20260169250-A1`, application `19/403395`, title `IMAGING LENS ASSEMBLY MODULE,
+CAMERA MODULE AND ELECTRONIC DEVICE`, Largan Precision. Open its GSD quick only after
+the Family 86539672 shovel is atomically committed. Its retained 90,253-byte HTML is
+pinned at
+`f1663281048a0d8f6695f2c23f0d77e03afb981d6e118e5b28145a919c6219e6`;
 layout signature
-`ce187bdc695585487f4461c26f6c58cbc8db711f79d98e688883d865e955a6a2`
-occurs once. Do not borrow any value, item boundary or outcome from Family 97520240,
-another materials patent or a shared layout.
+`ce851b9c24587e8ff40321a46d4c0ca841b1630263c2516aca2241c5b1b4cb5`
+occurs once. Do not borrow any value, item boundary or outcome from completed Largan
+families or a shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

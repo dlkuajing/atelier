@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260722-patent-generic-family-86539672/generic-residual-after-1.json",
+  "affected_roots": 26,
+  "affected_items": 26,
+  "result_set_sha256": "beb710007b90ca82a04f7b18f86fcd3af5defc4a6ea6e1c3c24d30303468be72",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "ce851b9c214c0e291c4bac288d98bf57f613a6da06c52cc8167c697848fb4cb5",
+    "layout_signature_count": 1,
+    "family_id": "100084534",
+    "root_ids": [
+      "US-20260169250"
+    ],
+    "publication_ids": [
+      "US-20260169250-A1"
+    ],
+    "application_numbers": [
+      "19/403395"
+    ],
+    "title": "IMAGING LENS ASSEMBLY MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant_and_assignee": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f1663281048a0d8f/US-20260169250-A1.html",
+      "bytes": 90253,
+      "sha256": "f1663281048a0d8f6695f2c23f0d77e03afb981d6e118e5b28145a919c6219e6",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 84,
+      "example_anchor": 1,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 2
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

@@ -1250,6 +1250,14 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = (
+        _classify_mitsui_optical_component_resin_materials_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_four_lens_unlabeled_asphere_attempts(
         raw_text,
         patent_id=patent_id,
@@ -4232,6 +4240,191 @@ _FUJIFILM_CURABLE_OPTICAL_FILTER_SOURCE_PROFILES: dict[
             "refractive index": 1,
             "lens": 11,
             "microlens": 5,
+        },
+    },
+}
+_MITSUI_OPTICAL_COMPONENT_RESIN_TITLE_PATTERN = re.compile(
+    r"<h2[^>]*>\s*RESIN\s+COMPOSITION\s+FOR\s+FORMING\s+OPTICAL\s+"
+    r"COMPONENT\s*,\s*MOLDED\s+PRODUCT\s*,\s*AND\s+OPTICAL\s+COMPONENT\s*"
+    r"</h2>",
+    flags=re.IGNORECASE,
+)
+_MITSUI_OPTICAL_COMPONENT_RESIN_ITEM = (
+    1,
+    "Mitsui optical-component resin composition materials disclosure",
+    "confirmed_no_prescription."
+    "resin_composition_molded_product_and_optical_component_materials_only",
+)
+_MITSUI_OPTICAL_COMPONENT_RESIN_FORMAL_HEADINGS = tuple(
+    f"Example {number} [{number + 167:04d}]" for number in range(1, 15)
+) + (
+    "Comparative Example 1 [0182]",
+    "Comparative Example 2 [0183]",
+)
+_MITSUI_OPTICAL_COMPONENT_RESIN_SOURCE_PROFILES: dict[
+    str, dict[str, Any]
+] = {
+    "US-20240352227-A1": {
+        "raw_document_sha256": (
+            "38c41444a022cbd1ec7e325020142031db4e1372e5339a8bc05b2c9f20f3541a"
+        ),
+        "normalized_text_sha256": (
+            "a00970e69b31e8d812817d1f3202d62093c5fe907fc1529de7dcd245e056c5d3"
+        ),
+        "family_id": "86539672",
+        "application_number": "18/686481",
+        "section_markers": {
+            "preamble": "US-20240352227-A1",
+            "abstract": "Abstract A resin composition",
+            "background": "Background/Summary TECHNICAL FIELD [0001]",
+            "description": "Description DESCRIPTION OF EMBODIMENTS [0055]",
+            "claims": "Claims 1 . A resin composition",
+        },
+        "section_sha256": {
+            "preamble": (
+                "1eb4ef6609955df1209897dc726edd0bc69d591fa036e6728821d7c438cf0e99"
+            ),
+            "abstract": (
+                "68c7d089cb9c6281e1bcc2f46238449234716b3fd0347da9c35728d780c84dff"
+            ),
+            "background": (
+                "4466fb0ed49aa206eb1bc159ab6dd5c6fc766da10648d38bc8416d7f81c4a7ff"
+            ),
+            "description": (
+                "4465817aa7352a050800358ef720629fcca3df7a5d2a28b21da7efa64a15b6b8"
+            ),
+            "claims": (
+                "18b5db10b29020e164551f53034a8cfa15a45adb9b0825c219b40ce04ed288b3"
+            ),
+        },
+        "identity_markers": {
+            "United States Patent Application Publication 20240352227": 1,
+            "Kind Code A1": 1,
+            "Publication Date October 24, 2024": 1,
+            "Filed (or PCT Filed): November 28, 2022": 1,
+            "Family ID: 86539672": 1,
+            "Appl. No.: 18/686481": 1,
+            "MITSUI CHEMICALS, INC.": 4,
+            "PCT/JP2022/043700": 1,
+            "2021-193298": 2,
+            "HASHIMOTO; Yuki": 2,
+            "TOTANI; Yoshiyuki": 1,
+            "SOEDA; Yasuyuki": 1,
+            "OKUNO; Takayuki": 1,
+        },
+        "paragraph_span_sha256": {
+            (55, 156): (
+                "a968c811270312b24fd6551b9bf1b02bb8d576dea8ebbe40469be77d6fa25a6f"
+            ),
+            (168, 183): (
+                "ed5dd645888024b0d322553ee80d78576ef2508b331d1c284b59e95f10dcd7f1"
+            ),
+            (184, 231): (
+                "26a81d15e6b527d7ecb1beff1ccac2f7c4f5d1d340627b78acc48a3b708be85b"
+            ),
+            (232, 232): (
+                "9486bacfc30b624b126c85b68017b00b13aeb978cbe8fce59b1a4498b88808c5"
+            ),
+            (55, 232): (
+                "0f1b24b17ded870b071185f0363b2a2be27c38a5750b82b18c2a271fb643f996"
+            ),
+        },
+        "table_owner_paragraphs": {1: 204, 2: 229},
+        "table_payload_sha256": {
+            1: "df03e6b38a9823651cc934d6941d5b8d104858cd3521ff400e852e3fa7185211",
+            2: "24cc028c487293498d03692a2db39ec9eae6b8575f4e0099048fc607d9dabad0",
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "claim_dependencies": (
+            (), (), (1,), (1,), (4,), (), (6,), (1,), (1,), (1,),
+            (10,), (11,), (1,), (2,), (2,), (2,), (16,), (2,), (2,), (2,),
+        ),
+        "independent_claim_numbers": (1, 2, 6),
+        "claim_sha256": (
+            "59b89ba691ae2d14dc2e9101842b7c4bcae339e3587feab42468443a8c846398",
+            "b8be1b97492ca9a138030abd67627adc1da4ba2c0892763cdaa42e9e1429f83f",
+            "1a27a97ed6bfff17f1abf50b92fbef9e75d15afdcce10c612f506010ff078961",
+            "3a194367d5a79396c95e9fe0ae1910f71d1f26f60ee463faab71e8716778b530",
+            "bf0fcc3fde28b7a4f838d4b105f7bf661a24a2e01f9463f59530e67a7a391b43",
+            "742b074de0efc529566369095955f003064940b3c9e2e4e1665889c6ad4e7fe6",
+            "fc3726c00e8cbb64c8c387d1c18d639cdd365c97451405b95dfefb62395c397b",
+            "589ff039874772b5d3ade2cf18749f4c5ec2ea31c7341ed67f69320df03edaef",
+            "7c68aabbe444b2199c0ebf50798f4285ed5cc23b40bf4a6d2873377c76a7e312",
+            "45180a6976c2e600592435beb952b04f34afa47d09be3318c3e702ac6f584ac2",
+            "580fea48c81900900afc4fe0e65deeff241a2b4c16174b3e9f9140a39667bae8",
+            "f73f58836f74bb09f47dc88ba720ed0f243570405351a288b4053f7c4db58d3a",
+            "10230109f98692ad8da76c9251f8791d7155c66e36ff0cae4a0b39451477318e",
+            "85739455b3c101e32efddc569b386f9a0ebc0211e44af57aa4f5702b754a5082",
+            "abe49abf4b26ec3f83525c160c597f388092fb909bf50b086863a85dd4f86b7a",
+            "6a81b8b45250e64c1bc8cff52070c2a464870c49081c3484a635a124e20390e7",
+            "11b53680b0ecd86269db64a3e532ff79105e0b81e300122da39e718e4bd5288d",
+            "e2e6691e03aff73c3cecef54025675510c812b1bf6956d4fc141800945d1c720",
+            "6683a18d3a3881811dbfc66c0791c760beb7b7c03ab17f633de40d1930ea6ced",
+            "97012b0a64e84045e6d12dd73fea881c2e889969bc0cd5c70e172889916a7105",
+        ),
+        "phrase_counts": {
+            "lens": 33,
+            "optical component": 98,
+            "molded product": 47,
+            "refractive index": 12,
+            "Abbe": 0,
+            "radius": 0,
+            "radius of curvature": 0,
+            "curvature": 0,
+            "asphere": 0,
+            "aspheric": 0,
+            "surface number": 0,
+            "surface 1": 0,
+            "focal length": 0,
+            "effective focal length": 0,
+            "F-number": 0,
+            "FNO": 0,
+            "F value": 1,
+            "field of view": 0,
+            "FOV": 0,
+            "HFOV": 0,
+            "image height": 0,
+            "aperture stop": 0,
+            "prescription": 0,
+            "glass": 4,
+        },
+        "pdf_audit": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/92a18a1fdaf1c537/"
+                "US-20240352227-A1.pdf"
+            ),
+            "bytes": 1525074,
+            "container_sha256": (
+                "92a18a1fdaf1c53726624af8337a6afc43d3fea76de320e6d6998bc9a268c243"
+            ),
+            "page_count": 18,
+            "raster_dimensions": (2560, 3300),
+            "page_raster_sha256": (
+                "a1d2a3066f5c0f3b21f0a3c61adb87ce1628e3b705e38b02f7d9b027e62ac599",
+                "8d881c202ee8bd94e6837c9612e5933caf23f5cd2c1144b866d9481b0e1c7817",
+                "aca020b6cdea56ad5e1ffa10cfdb454400a0365053c27a86c834802277cc4e8a",
+                "637e939d2eccca660a442e18e9a23b0cd5b2b1680560dd0d7d0d832bbc03e366",
+                "dadc410a4436c6747ccf43e559056da01d56f48f9b6dc45f14b80dfe5bc6d24f",
+                "55307bc1e49358a1729b0b57ebd1cfa01f65f7830097837225d62d60a7d6bb39",
+                "4d23a4bfe881a25de24e1414e4f5e7e37d1573be62c82f7566ba5e9721811592",
+                "3912b318ffb0fa3e10cbc4f2f041df42b8a6908046bcadf6d4dcd1c4ab3d0025",
+                "43ca81fe56259427bb540962cb845c3f22225284f26186b6aa2958a4c3f9aa74",
+                "63a4ca454ae0383b3dc7c71b639982fad92691bf7c7643d8c59cdcd2c479f257",
+                "92a4a20dec716a17fade0f9df58f337c5b6abb7e46595010ff51de83f9d38ff8",
+                "192b9f789da6172a16a39e1e0a6c9fdf51a3ef6017e75e3496634d4304849aff",
+                "c68dfcb3790fa971fe9e5c2effa00514ae46477100611dc04a17be5134d3334d",
+                "1b48dd619fccb64ce2d3c994407075af70208f7011e162a188d0f062098c4ab2",
+                "d94634e3caeaf01665ed09907e4172bf51a3f9ff2325ed822d31e0b64be887c2",
+                "55afbc44d17ec105305c23950fb4c9a09a0e188406b7a47108f6ec77699b6afb",
+                "19b05443a38d63c25581bba659e239b388be047b412e83cdda56d228186579ec",
+                "bf495e4752dc6deb229421790a64378b4188fa390eb056e0126a66c3408a70e2",
+            ),
+            "raster_set_sha256": (
+                "da44ea6d2b4bbb03c4c2b3805ed616ace67f10d59b8f4f530fb452f57efde8bf"
+            ),
+            "cover_page_numbers": (1,),
+            "specification_page_numbers": tuple(range(2, 17)),
+            "claims_page_numbers": (16, 17, 18),
         },
     },
 }
@@ -36575,6 +36768,345 @@ def _classify_fujifilm_curable_optical_filter_materials_only_attempts(
                     "Comparative Examples, one sensor-assembly Example 101, thirteen "
                     "materials/process tables and one infrared-sensor layer-stack "
                     "figure, but no ordered optical surface prescription"
+                ),
+            ),
+        )
+    ]
+
+
+def _classify_mitsui_optical_component_resin_materials_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 86539672 resin/material disclosure."""
+
+    profile = _MITSUI_OPTICAL_COMPONENT_RESIN_SOURCE_PROFILES.get(
+        patent_id.upper()
+    )
+    if profile is None:
+        return []
+    embodiment_number, embodiment, reason_code = (
+        _MITSUI_OPTICAL_COMPONENT_RESIN_ITEM
+    )
+
+    def attempt_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=embodiment_number,
+                embodiment=embodiment,
+                error=exc,
+            )
+        ]
+
+    try:
+        raw_digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+        if raw_digest != profile["raw_document_sha256"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin official raw text hash changed "
+                f"for {patent_id}"
+            )
+        if len(_MITSUI_OPTICAL_COMPONENT_RESIN_TITLE_PATTERN.findall(raw_text)) != 1:
+            raise PatentParseError(
+                "Mitsui optical-component resin title binding changed"
+            )
+
+        text = normalize_patent_text(raw_text)
+        normalized_digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+        if normalized_digest != profile["normalized_text_sha256"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin normalized text hash changed "
+                f"for {patent_id}"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Mitsui optical-component resin identity marker {marker!r} "
+                    f"occurs {observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker)
+                for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Mitsui optical-component resin section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Mitsui optical-component resin section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Mitsui optical-component resin {section_name} section changed"
+                )
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(
+            int(match.group(1)) for match in paragraph_matches
+        )
+        if paragraph_numbers != tuple(range(1, 233)):
+            raise PatentParseError(
+                "Mitsui optical-component resin paragraphs 1-232 changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        span_boundaries = {
+            (55, 156): ("[0055]", "[0157]"),
+            (168, 183): ("[0168]", "[0184]"),
+            (184, 231): ("[0184]", "[0232]"),
+            (232, 232): ("[0232]", section_markers["claims"]),
+            (55, 232): ("[0055]", section_markers["claims"]),
+        }
+        for bounds, expected_digest in profile[
+            "paragraph_span_sha256"
+        ].items():
+            start_marker, end_marker = span_boundaries[bounds]
+            start = text.index(start_marker, section_starts["description"])
+            end = text.index(end_marker, start + len(start_marker))
+            payload = text[start:end].strip()
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Mitsui optical-component resin paragraph span {bounds} changed"
+                )
+
+        experiment_block = text[
+            text.index("Example 1 [0168]", section_starts["description"]) :
+            text.index("[0184]", section_starts["description"])
+        ]
+        formal_headings = tuple(
+            f"{match.group(1)} [{match.group(2)}]"
+            for match in re.finditer(
+                r"\b((?:Comparative\s+)?Example\s+\d+)\s+\[(\d{4})\]",
+                experiment_block,
+                re.IGNORECASE,
+            )
+        )
+        if formal_headings != _MITSUI_OPTICAL_COMPONENT_RESIN_FORMAL_HEADINGS:
+            raise PatentParseError(
+                "Mitsui optical-component resin 16-experiment denominator changed"
+            )
+
+        table_payloads: dict[int, str] = {}
+        for table_number, owner_paragraph in profile[
+            "table_owner_paragraphs"
+        ].items():
+            marker = f"TABLE-US-{table_number:05d} TABLE {table_number}"
+            owner = paragraphs[owner_paragraph]
+            if owner.count(marker) != 1:
+                raise PatentParseError(
+                    f"Mitsui optical-component resin TABLE {table_number} binding changed"
+                )
+            table_payloads[table_number] = owner[owner.index(marker) :]
+        for table_number, expected_digest in profile[
+            "table_payload_sha256"
+        ].items():
+            observed_digest = hashlib.sha256(
+                table_payloads[table_number].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Mitsui optical-component resin TABLE {table_number} changed"
+                )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?<!\S)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin claims 1-20 changed"
+            )
+        claim_payloads = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        claim_dependencies = tuple(
+            tuple(
+                int(value)
+                for value in re.findall(r"\bclaim\s+(\d+)\b", payload, re.I)
+            )
+            for payload in claim_payloads
+        )
+        if claim_dependencies != profile["claim_dependencies"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin claim dependencies changed"
+            )
+        independent_claims = tuple(
+            number
+            for number, dependencies in zip(
+                claim_numbers, claim_dependencies, strict=True
+            )
+            if not dependencies
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin independent claims changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in claim_payloads
+        )
+        if claim_hashes != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin claim payloads changed"
+            )
+
+        structure_numbers = tuple(
+            int(value) for value in re.findall(r"##STR(\d{5})##", text)
+        )
+        if structure_numbers != tuple(range(1, 18)):
+            raise PatentParseError(
+                "Mitsui optical-component resin 17 chemical structures changed"
+            )
+        if (
+            re.search(r"<table\b|<maths\b|<figref\b", raw_text, re.IGNORECASE)
+            is not None
+            or re.search(r"\bFIG\.\s*\d+", text, re.IGNORECASE) is not None
+        ):
+            raise PatentParseError(
+                "Mitsui optical-component resin table/formula/figure boundary changed"
+            )
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Mitsui optical-component resin source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if (
+            len(re.findall(
+                r"various forms such as a lens shape",
+                paragraphs[155],
+                re.IGNORECASE,
+            )) != 1
+            or len(re.findall(
+                r"bonded so as to cover a lens of a digital camera Power Shot G16",
+                paragraphs[188],
+                re.IGNORECASE,
+            )) != 1
+            or paragraphs[189] != "[0189] F value: 1.8"
+        ):
+            raise PatentParseError(
+                "Mitsui optical-component resin generic-lens/test-camera scope changed"
+            )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin official PDF bytes changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    "Mitsui optical-component resin PDF page "
+                    f"{page_number} contains {len(images)} rasters; expected one"
+                )
+            if (
+                images[0].image.size != pdf_profile["raster_dimensions"]
+                or images[0].image.mode != "1"
+            ):
+                raise PatentParseError(
+                    f"Mitsui optical-component resin PDF page {page_number} raster changed"
+                )
+            page_raster_hashes.append(
+                hashlib.sha256(images[0].image.tobytes()).hexdigest()
+            )
+            text_layer_characters += len(page.extract_text() or "")
+        if tuple(page_raster_hashes) != pdf_profile["page_raster_sha256"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin PDF page raster hashes changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Mitsui optical-component resin PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Mitsui optical-component resin official PDF gained text"
+            )
+        if not (
+            pdf_profile["cover_page_numbers"] == (1,)
+            and pdf_profile["specification_page_numbers"] == tuple(range(2, 17))
+            and pdf_profile["claims_page_numbers"] == (16, 17, 18)
+        ):
+            raise PatentParseError(
+                "Mitsui optical-component resin PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain exact source-scoped item
+        return attempt_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=embodiment_number,
+            embodiment=embodiment,
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=reason_code,
+                detail=(
+                    "Mitsui Family 86539672 publishes fourteen Examples and two "
+                    "Comparative Examples as one document-scoped resin/material "
+                    "disclosure, plus two composition, transmittance, material-index "
+                    "and aging tables. Lens shape is only a generic molded-product "
+                    "form, and F value 1.8 belongs to an external digital-camera "
+                    "color-bleed test; the source publishes no ordered optical "
+                    "surface prescription"
                 ),
             ),
         )
