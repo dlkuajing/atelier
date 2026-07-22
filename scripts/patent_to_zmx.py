@@ -598,6 +598,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_largan_folded_camera_architecture_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
             raw_text,
@@ -77555,6 +77561,805 @@ def _classify_ability_three_lens_missing_metadata_attempts(
             )
         )
     return attempts
+
+
+_LARGAN_FOLDED_CAMERA_ARCHITECTURE_REASON = (
+    "confirmed_no_prescription.folded_camera_module_architecture_only"
+)
+_LARGAN_FOLDED_CAMERA_COMPONENT_REASON = (
+    "confirmed_no_prescription.optical_folding_component_variant_only"
+)
+_LARGAN_FOLDED_CAMERA_DEVICE_REASON = (
+    "confirmed_no_prescription.electronic_device_wrapper_only"
+)
+
+
+def _largan_folded_camera_sha256_lines(value: str) -> tuple[str, ...]:
+    digests = tuple(value.split())
+    if any(re.fullmatch(r"[0-9a-f]{64}", digest) is None for digest in digests):
+        raise ValueError("invalid Largan folded-camera SHA-256 profile")
+    return digests
+
+
+_LARGAN_FOLDED_CAMERA_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Largan folded camera-module 1st embodiment",
+        "paragraph_range": (48, 62),
+        "figures": ("1", "2", "3", "4", "5", "6", "7"),
+        "claims": tuple(range(1, 10)),
+        "reason_code": _LARGAN_FOLDED_CAMERA_ARCHITECTURE_REASON,
+    },
+    {
+        "number": 2,
+        "label": "Largan folded camera-module 2nd embodiment",
+        "paragraph_range": (63, 68),
+        "figures": ("8", "9", "10", "11"),
+        "claims": tuple(range(1, 10)),
+        "reason_code": _LARGAN_FOLDED_CAMERA_ARCHITECTURE_REASON,
+    },
+    {
+        "number": 3,
+        "label": "Largan folded camera-module 3rd embodiment",
+        "paragraph_range": (69, 77),
+        "figures": ("12", "13", "14", "15"),
+        "claims": tuple(range(10, 20)),
+        "reason_code": _LARGAN_FOLDED_CAMERA_ARCHITECTURE_REASON,
+    },
+    {
+        "number": 4,
+        "label": "Largan glass-prism optical-folding-component 4th embodiment",
+        "paragraph_range": (78, 79),
+        "figures": ("16",),
+        "claims": (13,),
+        "reason_code": _LARGAN_FOLDED_CAMERA_COMPONENT_REASON,
+    },
+    {
+        "number": 5,
+        "label": "Largan plastic-prism optical-folding-component 5th embodiment",
+        "paragraph_range": (80, 81),
+        "figures": ("17",),
+        "claims": (13,),
+        "reason_code": _LARGAN_FOLDED_CAMERA_COMPONENT_REASON,
+    },
+    {
+        "number": 6,
+        "label": "Largan dual-folding-component camera-module 6th embodiment",
+        "paragraph_range": (82, 89),
+        "figures": ("18",),
+        "claims": tuple(range(10, 20)),
+        "reason_code": _LARGAN_FOLDED_CAMERA_ARCHITECTURE_REASON,
+    },
+    {
+        "number": 7,
+        "label": "Largan multi-camera smartphone 7th embodiment",
+        "paragraph_range": (90, 96),
+        "figures": ("19", "20", "21", "22", "23"),
+        "claims": (20,),
+        "reason_code": _LARGAN_FOLDED_CAMERA_DEVICE_REASON,
+    },
+    {
+        "number": 8,
+        "label": "Largan nine-camera smartphone 8th embodiment",
+        "paragraph_range": (97, 100),
+        "figures": ("24",),
+        "claims": (20,),
+        "reason_code": _LARGAN_FOLDED_CAMERA_DEVICE_REASON,
+    },
+)
+_LARGAN_FOLDED_CAMERA_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12088899-B2": {
+        "family_id": "78617163",
+        "application_number": "17/461774",
+        "prior_publication": "US-20220394159-A1",
+        "priority_application": "TW 110120061",
+        "raw_document_sha256": (
+            "551658e8afacf78725bb6a82f97d5f3428f0c5027579db6da4323271e15f9b31"
+        ),
+        "normalized_text_sha256": (
+            "666fedb885bb90d5239bed632b7489d25003844cf98a05e582a21cce2f9b723b"
+        ),
+        "title_text": "Camera module and electronic device",
+        "identity_markers": {
+            "United States Patent 12088899 Kind Code B2": 1,
+            "Date of Patent September 10, 2024": 1,
+            (
+                "Inventors: Chang; Lin An (Taichung, TW), Chou; Ming-Ta "
+                "(Taichung, TW), Tseng; Te-Sheng (Taichung, TW)"
+            ): 1,
+            "LARGAN DIGITAL CO., LTD.": 2,
+            "Family ID: 78617163": 1,
+            "Appl. No.: 17/461774": 1,
+            "Filed: August 30, 2021": 1,
+            "US 20220394159 A1": 1,
+            "Dec. 08, 2022": 1,
+            "TW 110120061 Jun. 02, 2021": 1,
+            "Taiwan Application 110120061, filed on Jun. 2, 2021": 1,
+        },
+        "raw_section_body_sha256": {
+            "background": (
+                "5a3671cc315af28746d10f106f4b20d2eda0d6e141b37aa1935ad41f516c79f3"
+            ),
+            "description": (
+                "f8764b79909ea26d83782afa9b0ec2a1c853c503e60aa66fb5914215ac5b3b79"
+            ),
+            "claims": (
+                "09ebb1afaced95f20878b57ba1abd6543de50fa5af68ec5fc44bec6d08aab903"
+            ),
+        },
+        "section_sha256": {
+            "background": (
+                "92fce3a942f56120290fd9466c39c5d53e9930a9c96a21bedc8cb84117d2e80a"
+            ),
+            "description": (
+                "2cff3d2b1b793e39741e45b43220a00332f09c14d6877d179628c9047416fa2e"
+            ),
+            "claims": (
+                "6fcff86801a27d801d7aff32beab21d2e5d7ab57df21b9c0015ddec066aaa704"
+            ),
+        },
+        "paragraph_span_sha256": {
+            ("background", 1, 7): (
+                "875bd33c098d13049e3bc3a05f46ccd6849c2f06cc0d336016373ae5169b97ba"
+            ),
+            ("description", 1, 25): (
+                "94459c4d55fbd1b884ddb4647ba321fa5d1bae34558cf7100ce5ac6c1911c1c9"
+            ),
+            ("description", 26, 47): (
+                "ff199c5a68d28e9782b30ce794b806e1cd1aae628791c365e3004020f97fcfcb"
+            ),
+            ("description", 48, 62): (
+                "14e7f1481039bfa0c5ef9f030321aa3a48ba01a27ec1a9da7b28b9af8c0610de"
+            ),
+            ("description", 63, 68): (
+                "86cc0ebceecbaae8beff9ee4c9ca6285ab894cd06875517c4a4438e50b559a9f"
+            ),
+            ("description", 69, 77): (
+                "ef1a54f65ea39c785107eaef5646f0aaa3a2de20fbe9dd1f5a2e0dc5d0d394cb"
+            ),
+            ("description", 78, 79): (
+                "481a861098991ad51b0bd8b92d0190956785e8ad165253f35067f5233a1e8977"
+            ),
+            ("description", 80, 81): (
+                "2c75b9ef4347565d471873e791a7e77ae1b82544eaf2763cdc847ff5ef3db97b"
+            ),
+            ("description", 82, 89): (
+                "ddfe6317a4b6a0dc202b04a92ece0f366265bfcf80630a79c3161d69cc621508"
+            ),
+            ("description", 90, 96): (
+                "2d13bacd64f5b4a4e7343d24bd66e9607fb427e3ff8d006bc747b596ffe4ba08"
+            ),
+            ("description", 97, 100): (
+                "5e5e67dd1d4d0de919774a0db36f791c9d580ecf2cbefeeca43bd023fde07049"
+            ),
+            ("description", 101, 101): (
+                "6a3be82771d1ccf6421843063cbbd6bf67f6be46f95b9be2800ee84f44bea7f0"
+            ),
+            ("description", 1, 101): (
+                "1fdbcb80dbac677bcd93b006da5c755fdf55c1fb4beb6dcb0e18b96dd25b12cd"
+            ),
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 10),
+        "claim_sha256": _largan_folded_camera_sha256_lines("""
+            02dec3b0d5404f87c94f8efb3abe9db6b8414ef4eae8158e774df132a3dfa23c
+            f3e41ad1020d88e8b2ed06da47d4017da2ec8055170e9d1ed1d2914a61d229a4
+            6d4df68ae0586a122c1ad677769ca858ab1242a21e35b14da119c164c447e4dc
+            321ad31c3e65f66f21882d52db77429876347930b6274cd4735dba95e24f5f90
+            da2df4cb10651202e4614ca4559c7a73481210a02d2b5ec98ffe05f10f56b48d
+            fb2f292ea6aad8a94888abb86543fcb2346052718f751a9b62584a79b9b705cd
+            3856af4ad23caab2ee6e1ee06f71998dbcd709d7a07a8ddc6315a42a8d485393
+            f08acc47d41cd9c9923cfe6af9023a78af5e4b5c6f7f1bd07a5c4dbe84153fdf
+            ea5508d8b8baf90e77083717f0339ed9cfc8b5324bbcf92c0a1f0a41aba250d7
+            1428aa699b053caec36ec0aa5688d38487682fed4e819e486f331c6ecca5ca17
+            24eefda8c13969506fba68e0305c1b5d45f614a5387eef67d54be3c149748195
+            300970f9bc8120501fe409cf4f527f2b8122c0d4a1eef7073848b49e0257335b
+            017002d32e77b08e064d5359c13594bf33f22ebb84d3b6dbb2160ec87267b87a
+            3735dbbbc26df1fc3f050ac341c495399d2b27375f40099c19c0c05eb525f9ac
+            2ef0628f39a83ac33d4320d1528e5404ddf8f2e7ab2021f8aeca3078b2b5ada1
+            f0a47968df41dd9837d3e709a9fb369e971f814b34a1f6e2254f9c4141d83cae
+            091608e437890eda38c85869a68567ef1cdc869df7260df52de693755654f5e7
+            e7ea648821cb7ac4f2a67194d36af557d44ac3bce598cbad0571373cb4f961ab
+            725c9bbe903a3c6ccd3f352ca3274d95b0ff237372825977654e43d8f834e6b7
+            a20f0202afdcb677c09f5179af664ce1dc269eabec862a09760737a25f00aebe
+        """),
+        "figure_panels": tuple(str(number) for number in range(1, 25)),
+        "figref_count": 103,
+        "raw_counts": {
+            "table_us": 0,
+            "html_table": 0,
+            "maths": 0,
+            "mathml": 0,
+            "inline_formula_leads": 18,
+            "custom_character_images": 0,
+        },
+        "phrase_counts": {
+            "camera module": 170,
+            "optical folding component": 110,
+            "optical imaging lens assembly": 79,
+            "lens element": 78,
+            "focal length": 1,
+            "field of view": 8,
+            "FOV": 13,
+            "shape of each lens element in the drawings is not intended to "
+            "restrict the present disclosure": 4,
+        },
+        "item_value_markers": (
+            "N1=1; N2=3; Nt=5; N1<N2; and N1+N2<Nt",
+            "DH=1.219 [mm]; D=0.8 [mm]; and DH/D=1.52",
+            "FOV=18.6 [deg.]",
+            "L=2.403 [mm]",
+            "N1=2; N2=4; Nt=7; N1<N2; and N1+N2<Nt",
+            "DH=4.1 [mm]; D=0.5 [mm]; and DH/D=8.2",
+            "FOV=21.8 [deg.]",
+            "L=2.775 [mm]",
+            "N1=1; N2=2; N3=1; Nt=5; N1<N2; and N1+N2<Nt",
+            "DH=1.75 and 3.5 [mm]; D=1 [mm]; and DH/D=1.75 and 3.5",
+            "FOV=28.3 [deg.]",
+            "L=2.343 [mm]",
+            "N1=1; N2=3; Nt=6; N1<N2; and N1+N2<Nt",
+            "FOV=18.0 [deg.]",
+        ),
+        "official_pdf_captures": (
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-78617163/"
+                    "source-review/US-12088899-B2-official-1.pdf"
+                ),
+                "bytes": 1_802_066,
+                "container_sha256": (
+                    "56a47be4294ab518eaaacdf7e60949b99b7e846d2c5c98dfca8f05b83bfdc531"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-78617163/"
+                    "source-review/US-12088899-B2-official-2.pdf"
+                ),
+                "bytes": 1_802_066,
+                "container_sha256": (
+                    "fd32feaee953a034c5cdcfca07bb1fb4925d39221426562594b5be08f6abdffd"
+                ),
+            },
+        ),
+        "pdf_page_count": 32,
+        "pdf_raster_dimensions": (2560, 3300),
+        "pdf_page_raster_sha256": _largan_folded_camera_sha256_lines("""
+            213177ad558391984785877cb14c4eb698af45c70a33c8e03efc272a42fb8f95
+            28f38eb776a3b6e2d3363e7b0f57f920d5ea70f83d8fa8b5f936fd22ae649c90
+            447e7816fd9f16e9c27a767f947ab117943c4e2e97da5077523f43360a096692
+            8629879b235bcacec2ba8f8f20af94036511b1dd3e9a9ce67f46e7a4b7f13857
+            e8d90456a8efb23486bdf5d3af3c062dc43fc76f0754db146c34b2ec08ae04e7
+            ef6537fdea28ca5076ceefee3a2e7c6afb66444f9048952fe8c7d128bfebb2d4
+            5f3a9354530af8b5a89ce95d202142a3d09bfff4d2806372ff9f6e23801b8288
+            5fdbb175b3c08529781dfc04a9115de5a2f8d17455e2e8bc09f1fb323c0cb202
+            fa7152fb5f787bbfdb8ff08a6e011b47aa651bc574a585efbb0b00ad37b13699
+            b589ff6efb50c2d2bc22be516cf0c311036aa12699bcd7d3dbde150b09d53995
+            11a58fb0774a997772e133910d69ef17c1ac2257b78f5e05183714fc3d8460e8
+            78f73e9e4aba5b0d1bab5f3d2918edf7df9e1854d70d0a3fba1a0350dbb33d55
+            019fd7fd40f9ca6719fa27a1af91dff7741608c942fea72713d7383c90d2e52c
+            2d3a07e94f25338ab6e62a9d2972703025ce9024f7e01dc25cb566a9ca1b5453
+            20946727048f22f3528fbd51f80f1397205bb0137d6053919a00daeee06c1442
+            2d8f691774c9063af76d9abdac8c00f7b021ff879423d166f1632af71b812937
+            4b24f71cfe28981dcda5036cf66475d83ea484321b427e7940d195ca4b82bcb5
+            2f85b5aa86f85b4927c5687f2dbb6e46d8af0e12a88d1caee1f8e58c95da85d7
+            fd8b557df086db83606abdf4734b6b4f7299daa937065a11b48defa7dc7f9261
+            05455533c65a637fa9266b05b5e6946c39824c4e05b79457bd46af5889e64084
+            0734a0b5aae2f7615a0c39d1f98b455b4e432d6ee432b21ec10f789ab280aa98
+            370420d113829241f048c5487bf29e7d9cf968f5ac2a9ec4bbc48d6aa93d4e41
+            46e737faece765868a247c0ada75d971fde57ee6efab841eb6b28c0705befec1
+            9832d24b5b986c15a179f1dd350dc46845782880d47af3266de4ecf17a81eaaa
+            0350fc9d0c1792a1b8e31443e51632eb1f2e47367b4adeca4b3c69f8f5cac610
+            4f4156af2b79f0e74e4d6b6c2cc5614a84bf3c10d091f0e7b0b03b7ea64e2f58
+            23a7f95618dfb2602a3dd08d806f10fc3f2e540688556477bdfce99f5d7ecfd4
+            fe00a8ce9c2025bda2801826f3c165d8a356384710ce61fcf18bb1f75d4a1bdf
+            c412c09054f37cc35ce67a3550c42f2212bc9ce2cf7ea372c6d01b24e874a8aa
+            7de795a8b3d0e188b19250f409c768c94fbe95b1c607aa71569b2fd04ac0eb80
+            f5b114fc540e130b0bc45a091d1462d0082170317ae7653c364a61b22d2b0085
+            4c600cd614f7225da5ffcd3d71370bdee9715fbec8bdf0d004ef3c751fc8edb5
+        """),
+        "pdf_raster_set_sha256": (
+            "1898e41596f2fb95aa7f71f786b03ca30c6ad5b73d76e8d488916821c8a7ed8c"
+        ),
+        "pdf_cover_page_numbers": (1,),
+        "pdf_reference_page_numbers": (2,),
+        "pdf_drawing_page_numbers": tuple(range(3, 23)),
+        "pdf_specification_page_numbers": tuple(range(23, 33)),
+        "pdf_claims_page_numbers": (31, 32),
+    }
+}
+
+
+def _largan_folded_camera_section_body(raw_text: str, section: str) -> str:
+    """Return the single exact source body used by Family 78617163."""
+
+    patterns = {
+        "background": (
+            r"<h3>Background/Summary</h3>\s*<p></p>\s*<p>(.*?)</p>"
+        ),
+        "description": r"<h3>Description</h3>\s*<p>(.*?)</p>",
+        "claims": r"<h3>Claims</h3>\s*<p>(.*?)</p>",
+    }
+    matches = re.findall(
+        patterns[section],
+        raw_text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Largan folded-camera {section} raw section count changed"
+        )
+    return matches[0]
+
+
+def _largan_folded_camera_numbered_paragraphs(
+    body: str,
+    *,
+    section: str,
+    expected_last: int,
+) -> dict[int, str]:
+    """Split the exact parenthesized PPUBS paragraph sequence."""
+
+    markers = list(re.finditer(r"<br />\((\d+)\) ", body))
+    numbers = tuple(int(marker.group(1)) for marker in markers)
+    if numbers != tuple(range(1, expected_last + 1)):
+        raise PatentParseError(
+            f"Largan folded-camera {section} paragraph denominator changed"
+        )
+    return {
+        number: normalize_patent_text(
+            body[
+                marker.end() : (
+                    markers[index + 1].start()
+                    if index + 1 < len(markers)
+                    else len(body)
+                )
+            ]
+        )
+        for index, (number, marker) in enumerate(
+            zip(numbers, markers, strict=True)
+        )
+    }
+
+
+def _largan_folded_camera_paragraph_span(
+    paragraphs: dict[int, str],
+    first: int,
+    last: int,
+) -> str:
+    return " ".join(
+        f"({number}) {paragraphs[number]}" for number in range(first, last + 1)
+    )
+
+
+def _classify_largan_folded_camera_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 78617163 without treating architecture as prescription."""
+
+    profile = _LARGAN_FOLDED_CAMERA_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _LARGAN_FOLDED_CAMERA_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Largan folded-camera official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Largan folded-camera normalized text changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Largan folded-camera title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan folded-camera identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        raw_sections = {
+            name: _largan_folded_camera_section_body(raw_text, name)
+            for name in ("background", "description", "claims")
+        }
+        sections = {
+            name: normalize_patent_text(body)
+            for name, body in raw_sections.items()
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_body_sha256"
+        ].items():
+            observed_digest = hashlib.sha256(
+                raw_sections[section_name].encode()
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan folded-camera {section_name} raw section changed"
+                )
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode()
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan folded-camera {section_name} section changed"
+                )
+
+        paragraphs = {
+            "background": _largan_folded_camera_numbered_paragraphs(
+                raw_sections["background"],
+                section="background",
+                expected_last=7,
+            ),
+            "description": _largan_folded_camera_numbered_paragraphs(
+                raw_sections["description"],
+                section="description",
+                expected_last=101,
+            ),
+        }
+        for (
+            section_name,
+            first,
+            last,
+        ), expected_digest in profile["paragraph_span_sha256"].items():
+            observed_span = _largan_folded_camera_paragraph_span(
+                paragraphs[section_name],
+                first,
+                last,
+            )
+            if hashlib.sha256(observed_span.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Largan folded-camera {section_name} paragraphs "
+                    f"{first}-{last} changed"
+                )
+        covered_item_paragraphs = {
+            number
+            for item in _LARGAN_FOLDED_CAMERA_ITEMS
+            for number in range(
+                int(item["paragraph_range"][0]),
+                int(item["paragraph_range"][1]) + 1,
+            )
+        }
+        if covered_item_paragraphs != set(range(48, 101)):
+            raise PatentParseError(
+                "Largan folded-camera source-item paragraph coverage changed"
+            )
+        item_markers = tuple(
+            f"{number}th Embodiment"
+            for number in range(4, 9)
+        )
+        if not (
+            "1st Embodiment" in paragraphs["description"][47]
+            and "2nd Embodiment" in paragraphs["description"][62]
+            and "3rd Embodiment" in paragraphs["description"][68]
+            and all(
+                marker in paragraphs["description"][paragraph]
+                for marker, paragraph in zip(
+                    item_markers,
+                    (77, 79, 81, 89, 96),
+                    strict=True,
+                )
+            )
+        ):
+            raise PatentParseError(
+                "Largan folded-camera embodiment boundary markers changed"
+            )
+
+        brief = paragraphs["description"]
+        declared_figures = tuple(
+            match.group(1)
+            for number in range(1, 26)
+            if (
+                match := re.search(
+                    r"FIG\.\s*(\d+)\s+is\b",
+                    brief[number],
+                    re.IGNORECASE,
+                )
+            )
+        )
+        if declared_figures != profile["figure_panels"]:
+            raise PatentParseError(
+                "Largan folded-camera declared figure denominator changed"
+            )
+        mapped_figures = {
+            str(figure)
+            for item in _LARGAN_FOLDED_CAMERA_ITEMS
+            for figure in item["figures"]
+        }
+        if mapped_figures != set(profile["figure_panels"]):
+            raise PatentParseError(
+                "Largan folded-camera item-to-figure coverage changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError(
+                "Largan folded-camera figure-reference denominator changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan folded-camera claim denominator changed"
+            )
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent_claims = tuple(
+            number
+            for number, claim_text in zip(
+                claim_numbers,
+                claim_texts,
+                strict=True,
+            )
+            if re.search(
+                r"\b(?:according to|of) claim\s+\d+",
+                claim_text[:1000],
+                re.IGNORECASE,
+            )
+            is None
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Largan folded-camera independent claims changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(claim_text.encode()).hexdigest()
+            for claim_text in claim_texts
+        )
+        if claim_hashes != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Largan folded-camera individual claims changed"
+            )
+        if not (
+            "A camera module" in claim_texts[0]
+            and "A camera module" in claim_texts[9]
+            and "An electronic device" in claim_texts[19]
+            and "camera module of claim 10" in claim_texts[19]
+        ):
+            raise PatentParseError(
+                "Largan folded-camera independent/wrapper claim binding changed"
+            )
+
+        observed_raw_counts = {
+            "table_us": len(re.findall(r"TABLE-US-", raw_text, re.IGNORECASE)),
+            "html_table": len(re.findall(r"<table\b", raw_text, re.IGNORECASE)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)),
+            "mathml": len(
+                re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE)
+            ),
+            "inline_formula_leads": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="lead"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "custom_character_images": len(
+                re.findall(r"<img\b", raw_text, re.IGNORECASE)
+            ),
+        }
+        if observed_raw_counts != profile["raw_counts"]:
+            raise PatentParseError(
+                "Largan folded-camera table/formula/image denominator changed"
+            )
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan folded-camera phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for marker in profile["item_value_markers"]:
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"Largan folded-camera item value marker {marker!r} occurs "
+                    f"{observed}; expected one"
+                )
+
+        absent_prescription_markers = (
+            "radius",
+            "curvature",
+            "aspheric",
+            "asphere",
+            "Abbe",
+            "refractive index",
+            "aperture stop",
+            "image height",
+            "F-number",
+            "FNO",
+            "surface number",
+            "surface prescription",
+        )
+        for marker in absent_prescription_markers:
+            if re.search(re.escape(marker), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "Largan folded-camera source unexpectedly publishes "
+                    f"{marker!r}"
+                )
+        if re.search(
+            rf"\bfocal\s+length\b.{{0,80}}{NUMBER_PATTERN}\s*mm\b",
+            text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "Largan folded-camera source may publish numeric focal length"
+            )
+
+        observed_pdf_hashes: list[tuple[str, ...]] = []
+        for capture in profile["official_pdf_captures"]:
+            payload = (ROOT / capture["path"]).read_bytes()
+            if len(payload) != capture["bytes"]:
+                raise PatentParseError(
+                    "Largan folded-camera official PDF size changed"
+                )
+            if hashlib.sha256(payload).hexdigest() != capture[
+                "container_sha256"
+            ]:
+                raise PatentParseError(
+                    "Largan folded-camera official PDF hash changed"
+                )
+            reader = pypdf.PdfReader(io.BytesIO(payload))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError(
+                    "Largan folded-camera official PDF page count changed"
+                )
+            page_hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Largan folded-camera PDF page {page_number} "
+                        f"contains {len(images)} rasters; expected one"
+                    )
+                if (
+                    images[0].image.size != profile["pdf_raster_dimensions"]
+                    or images[0].image.mode != "1"
+                ):
+                    raise PatentParseError(
+                        f"Largan folded-camera PDF page {page_number} raster changed"
+                    )
+                page_hashes.append(_canonical_raster_sha256(images[0].data))
+                text_characters += len(page.extract_text() or "")
+            if tuple(page_hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError(
+                    "Largan folded-camera official PDF page rasters changed"
+                )
+            raster_set_digest = hashlib.sha256(
+                ("\n".join(page_hashes) + "\n").encode()
+            ).hexdigest()
+            if (
+                raster_set_digest != profile["pdf_raster_set_sha256"]
+                or text_characters != 0
+            ):
+                raise PatentParseError(
+                    "Largan folded-camera official PDF raster set changed"
+                )
+            observed_pdf_hashes.append(tuple(page_hashes))
+        if len(set(observed_pdf_hashes)) != 1:
+            raise PatentParseError(
+                "Largan folded-camera official PDF captures disagree by decoded page"
+            )
+        if not (
+            profile["pdf_cover_page_numbers"] == (1,)
+            and profile["pdf_reference_page_numbers"] == (2,)
+            and profile["pdf_drawing_page_numbers"] == tuple(range(3, 23))
+            and profile["pdf_specification_page_numbers"] == tuple(range(23, 33))
+            and profile["pdf_claims_page_numbers"] == (31, 32)
+        ):
+            raise PatentParseError(
+                "Largan folded-camera official PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact items
+        return attempts_for_error(exc)
+
+    details = (
+        (
+            "paragraphs 48-62 and FIGS. 1-7 publish camera module 1 with one "
+            "first-assembly lens, three second-assembly lenses, one powered "
+            "folding component, mechanical DH/D/L values and FOV=18.6 degrees"
+        ),
+        (
+            "paragraphs 63-68 and FIGS. 8-11 publish camera module 2 with two "
+            "first-assembly lenses, four second-assembly lenses, one powered "
+            "folding component, mechanical DH/D/L values and FOV=21.8 degrees"
+        ),
+        (
+            "paragraphs 69-77 and FIGS. 12-15 publish camera module 3 with "
+            "three imaging assemblies, a separate positive lens element, "
+            "mechanical DH/D/L values and FOV=28.3 degrees"
+        ),
+        (
+            "paragraphs 78-79 and FIG. 16 publish only a plastic lens element "
+            "adhered to a glass prism as an optical-folding-component variant "
+            "applicable to an already enumerated camera module"
+        ),
+        (
+            "paragraphs 80-81 and FIG. 17 publish only a plastic lens element "
+            "adhered to a plastic prism as an optical-folding-component variant "
+            "applicable to an already enumerated camera module"
+        ),
+        (
+            "paragraphs 82-89 and FIG. 18 publish camera module 6 with object- "
+            "and image-side powered folding components, four generic imaging-"
+            "assembly lenses and FOV=18.0 degrees"
+        ),
+        (
+            "paragraphs 90-96 and FIGS. 19-23 publish a smartphone and "
+            "ultra-wide/high-pixel/telephoto camera deployment wrapper around "
+            "the already enumerated camera module"
+        ),
+        (
+            "paragraphs 97-100 and FIG. 24 publish a nine-camera smartphone "
+            "deployment wrapper with qualitative telephoto/wide/ultra-wide/ToF "
+            "roles and different fields of view"
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Largan Family 78617163 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. The exact source publishes "
+                    "no ordered optical radius, spacing, material, refractive-index/"
+                    "dispersion, conic, asphere, aperture-stop or system focal/F-number/"
+                    "image-height prescription. The source expressly says the partial "
+                    "lens contours do not restrict lens shape. FOV and lens-count "
+                    "values therefore remain architecture metadata and do not create "
+                    "a prescription. Claims 1-20, including independent camera-module "
+                    "claims 1/10 and dependent electronic-device claim 20, add no "
+                    "separate ordered prescription. No value is derived, measured "
+                    "from drawings, transcribed from raster, or borrowed from prior "
+                    "publication US-20220394159-A1, Taiwan priority 110120061, another "
+                    "family or a shared layout"
+                ),
+            ),
+        )
+        for item in _LARGAN_FOLDED_CAMERA_ITEMS
+    ]
 
 
 def _fujifilm_surface_marker(token: str) -> tuple[int, bool, bool] | None:

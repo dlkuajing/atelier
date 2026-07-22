@@ -785,33 +785,31 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | `260721-patent-generic-family-50551137` | complete-shovel-saturation-incomplete | Exact US-9217844-B2 binds application 14/174457, prior US-20150077868-A1, Taiwanese priority 102217635 U, Family ID 50551137, Kuo-Yu Liao and Ability Opto-Electronics. The source denominator is 12 Background/Summary plus 37 Description paragraphs, claims 1-2 with claim 1 independent, six figures/drawing sheets, four flattened tables, one MathML object, ten inline-formula leads, fourteen custom-character images and exactly two preferred-embodiment prescriptions. Each publishes eleven ordered radius/thickness rows including the direct constant-aperture diaphragm, five material rows, K+A/B/C/D/E/F/G/H/J on six lens surfaces, TL=3.23 mm and full diagonal Dg=3.50 mm. Neither publishes exact EFL, F-number, numeric angular field or direct absolute image semi-height; Dg is not halved or renamed, no system field is solved, and the MathML/table E term versus following prose omission is preserved unrepaired. Both items close as `metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_absolute_image_height_absent`. Two distinct official 11-page image-only wrappers decode to the same original 1-bit raster set at `ec489ad2...b592`; no enhancement, OCR repair, measurement, numeric raster transcription, derivation or family borrowing occurs. Attempts 2/3 are semantic-equal at `a90b6884...1ebf`; generic 38 to 37; result set `0ecc4383...82f87`; census `aeca932b...d8a`; summary `51d1ce32...6233`; report `0dab338e...55e9`; evidence `6bbd781a...2f35`; strict audit twice 619/619 corrupt=0. Complete segmented offline coverage passes 3,758 tests/1 skipped/10 real-machine deselected; focused 8/8, final patent 1009/1009, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 97 changed-JSON checks pass. All 115 source-evidence manifests, 1,905 references and 1,732 complete triples rehash; 85 prior manifests contain exactly 356 allowed live-pointer leaf changes while four frozen old-result-set JSON snapshots remain fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/patent-worker inventories are zero. Stable ordering selects Family 78617163 / US-12088899-B2 next; parent saturation remains incomplete. |
 
+| 260722-patent-generic-family-78617163 | complete-shovel-saturation-incomplete | Exact US-12088899-B2 binds application 17/461774, prior US-20220394159-A1, Taiwan priority 110120061, Family ID 78617163, Chang/Chou/Tseng inventors and Largan Digital. The exact denominator is seven Background/Summary plus 101 Description paragraphs, claims 1-20 with claims 1/10 independent and claim 20 dependent on claim 10, 24 figures, 20 drawing sheets, 103 figure-reference tags, eighteen inline-formula leads, zero tables/MathML and exactly eight items. Items 1/2/3/6 publish camera-module architecture, lens counts, mechanical DH/D/L values and FOV; items 4/5 are glass/plastic prism folding-component variants and items 7/8 are smartphone wrappers. No item publishes ordered optical radii, spacings, materials, index/dispersion, conics, aspheres, aperture stop, numeric focal length, F-number or absolute image height. All eight close as precise confirmed-no-prescription terminals without derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 1,802,066-byte official 32-page image-only wrappers decode to the same original 1-bit raster set at 1898e415...ed8c; no enhancement, OCR repair, measurement or inference occurs. Attempts 2/3 are semantic-equal at 352aade6...7fc3; generic 37 to 36; result set 0f1ae81a...8ca7; census 486f1e6c...a7fc; summary 4dc78580...d286; report 6a644b79...5066; evidence f10b4bc4...f89ad; strict audit twice 619/619 corrupt=0. Complete segmented offline coverage passes 3,767 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1018/1018, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 98 changed-JSON checks pass. All 116 source-evidence manifests, 1,955 references and 1,749 complete triples rehash; 86 prior manifests contain exactly 362 allowed live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 81328003 / US-12474593-B2 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `50551137`, root/publication `US-9217844` /
-`US-9217844-B2`, is complete. The next exact family selected from the rebuilt ledger is
-Family `78617163`, root/publication `US-12088899` / `US-12088899-B2`; open its GSD quick
-only after the Family 50551137 atomic commit, while preserving completed Family 87279038, Family 45593888,
-Family 95825866,
-Family 87845869, Family 40641507, Family 69060231, Family 97226661,
-Family 95563451, Family 97520644, Family 89511297, Family 84563102,
-Family 60048601, Family 61278233, Family 53214261,
-Family 59685373, Family 89536570,
-Family 71123577, Family 66892676,
-Family 63252479, Family 93648264, Family 97232688, Family 94115759, Family 94801574,
-root-qualified Family 85177416 / US-20230048740 and all prior quicks plus
-the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen input while
-replay staging is active invalidates strict cohort audit. Never infer terminal outcomes
-from chat or historical free-text reports. Before any test sweep, confirm the
-non-`real_machine` CODE V subprocess guard is active and inventory is zero. The current
-generic residual contains 37 roots/items at result set
-`0ecc43834413819ea52c9d5237ad297af728a00b7e29a8da2e5e8e33f2982f87`.
-The next exact family has layout
-`bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b`.
-Use the same strict before/after census, source-proven layout, append-only targeted replay,
-and full-pool audit contract. Remeasure after every shovel; parent saturation remains
-incomplete.
+For patent saturation work, Family `78617163`, root/publication `US-12088899` /
+`US-12088899-B2`, is complete in
+`.planning/quick/260722-patent-generic-family-78617163/`, opened from committed
+Family 50551137 at `85e20621`. Its strict result set is
+`0f1ae81af09a38ad092197c2a901817272792580fc29c343ca12a4eb4d058ca7` and
+the current generic residual contains 36 roots/items. Stable ordering selects Family
+`81328003`, root/publication `US-12474593` / `US-12474593-B2`, with the same layout
+signature `bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b`
+but independent family/source binding. Open its own GSD quick only after the current
+Family 78617163 atomic commit; do not borrow any value or terminal fact from the prior
+family or shared layout.
+
+Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
+input while replay staging is active invalidates strict cohort audit. Never infer
+terminal outcomes from chat or historical free-text reports. Before any test sweep,
+confirm the non-`real_machine` CODE V subprocess guard is active and inventory is zero.
+Use the same strict before/after census, source-proven layout, append-only targeted
+replay and full-pool audit contract. Remeasure after every shovel; parent saturation
+remains incomplete.
 
 For north-star work, read `.planning/north-star/evidence-matrix.md`, then
 `.planning/north-star/gap-ledger.json`, the canonical `UNRATIFIED` schema, its three

@@ -1,0 +1,34 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260722-patent-generic-family-78617163/generic-residual-after-1.json",
+  "affected_roots": 36,
+  "affected_items": 36,
+  "result_set_sha256": "0f1ae81af09a38ad092197c2a901817272792580fc29c343ca12a4eb4d058ca7",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b",
+    "layout_signature_count": 6,
+    "family_id": "81328003",
+    "root_ids": ["US-12474593"],
+    "publication_ids": ["US-12474593-B2"],
+    "application_numbers": ["17/668278"],
+    "title": "Camera module, electronic device and vehicle device",
+    "applicant_and_assignee": "LARGAN DIGITAL CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/e6cee2285495a615/US-12474593-B2.html",
+      "bytes": 75324,
+      "sha256": "e6cee2285495a615c95d02370241b33954da3f0e65c28aa2acc8b730d22a5c46"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 18,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "table_count": 0
+  },
+  "same_layout_distinct_families_excluded": 5,
+  "saturation_complete": false
+}
