@@ -1,0 +1,552 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "83049877",
+  "root_id": "US-12601889",
+  "publication_id": "US-12601889-B2",
+  "application_number": "17/887328",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/2b0cad39710ecf9a/US-12601889-B2.html",
+    "bytes": 99563,
+    "sha256": "2b0cad39710ecf9ae595ffd4b0b38c8135d8aa73d1f7c746184bb2d23b176b71",
+    "characters": 99453,
+    "normalized_characters": 80476,
+    "normalized_sha256": "9e31cebb525a4aab9d1b1fa530bdcc2cce6e7ab3a06ba38cd208d657d35579f9",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b"
+  },
+  "bibliography": {
+    "title": "Imaging lens assembly, camera module and electronic device",
+    "inventors": [
+      "Chang; Lin An",
+      "Hsieh; Chin Li",
+      "Tsai; Chun-Hua"
+    ],
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": "LARGAN PRECISION CO., LTD."
+  },
+  "lineage": {
+    "same_application_prior_publication": "US-20230408787-A1",
+    "same_application_prior_publication_date": "2023-12-21",
+    "taiwan_priority_application": "111122121",
+    "taiwan_priority_filing_date": "2022-06-15"
+  },
+  "source_denominator": {
+    "related_application_numbered_paragraphs": 1,
+    "background_summary_numbered_paragraphs_excluding_related": 14,
+    "background_summary_section_numbered_paragraphs": 15,
+    "brief_drawing_numbered_paragraphs": 22,
+    "detailed_description_numbered_paragraphs": 106,
+    "description_numbered_paragraphs": 128,
+    "total_numbered_specification_paragraphs": 143,
+    "claims": 20,
+    "independent_claims": [
+      1,
+      10
+    ],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 0,
+    "maths_objects": 0,
+    "mathml_objects": 0,
+    "inline_formula_leads": 30,
+    "custom_character_image_tags": 0,
+    "figure_reference_occurrences": 82,
+    "declared_figure_panels": 21,
+    "drawing_sheets": 21,
+    "official_pdf_pages": 35,
+    "source_items": 7,
+    "ordered_prescriptions": 0,
+    "unmapped_items": 0
+  },
+  "section_sha256": {
+    "related": "2a0f9d5c4cb0c8230e7ed45cacd8fca6bd14e3f10c98a36dac2d7647a7285a4b",
+    "background": "0142f53a3be781c6dbcfc45807c9bcf869ff7bce7bdf9dfdf55236eec8931df2",
+    "description": "2b3488ee0694341846c8181ff6db65be0398ac5f97b259095ede0810fa97789a",
+    "claims": "6bf032e7e176a456a59afb6000b2ffa1aad8b18a4459109bf509e0dea2d6554d"
+  },
+  "raw_section_body_sha256": {
+    "related": "248776ee77ad3c35fddfbad4cc982916653f49dd83b2cab7af4129ba69139b3e",
+    "background": "d5b5b9f4a0f91b309cf365b48242518ae57a4e2b1766b2931338e3f66cb02bad",
+    "description": "c4214c2dedb023d2222521b235ac83e6d91fd59638422cb9190b79006b17c4e9",
+    "claims": "7f539838624a78f96e8dd18ccc0f4a8ac504440e057edb18519854154c46c72e"
+  },
+  "paragraph_span_sha256": {
+    "background-2-15": "34ea74a658017852b43b2a2ca241b42a31e05c38bfb9320ec0bd815e16901056",
+    "description-1-22": "d4215a8dfc4a04731fb07ab1a250a03eebee8fad1a912f09f0c49fab7b7ae9e4",
+    "description-23-45": "e9b03f2d7bb254a8fe3fcdf02e8786211cbc7f43f4874e088857d9154313a3df",
+    "description-46-62": "54d573c8d4fea6415d5808c459af4e78fe790e8e1f735766dcbaaf34a355c3bf",
+    "description-63-78": "ee4e3756f81929185b152336dd6fd00fc7648c67b841e1503301312b3d40de38",
+    "description-79-93": "607cd67ba8cea4dae299f62acfbdb46a2395351ea8ef8d8aef40f7d34a6516dc",
+    "description-94-111": "db0f4ffb95ef097989ab818c246243a9da531c9e301585045fbc7397a92a6139",
+    "description-112-118": "ce748746b1636f0449c47e454b2abbbf6118cb85dd15148acada8844a0c34d46",
+    "description-119-121": "4571bff5db46670fc8e06021e857ef0ff9c48808dd99c4fd64b2e52519ec2b8f",
+    "description-122-127": "92221918d23eacfdf07593bb3e006dc0e114cade1863593f4f9e266c7b45c1d6",
+    "description-128-128": "e476ba82a9c8c4dac58e27776434d896970f014123ac06cd5d6d3efd34b9d9d6",
+    "description-1-128": "0a1296fb63f168888858765b5119c60dbfa56becd35bce74fcd1022b131fd4f9"
+  },
+  "claim_sha256": [
+    "4c9662feb5e8af62c855c6dd801d9ca989e7059b461a625514d347c21fed625a",
+    "c3d635244642ee55519e43645f50bd324bed9618bbae4b92ee05a728fefec7ac",
+    "94245b24f91393f111527178b26c435810730f689d5f57ab747b4a3886d5ccd2",
+    "7249ea436540eb1ed4047feae76be15d043093ea84dcc6e53bfc890ef2768354",
+    "88970404e8102591eeba87b62a7fe25505d75d5401e86e5d1b38556005ba434e",
+    "3f140d8ee6db2b9a3da82937282883e8c46d78c3869b66729f28b29700a3e1b0",
+    "11d7f28e6b6d6c5b02932736fee0e4f93c97646babd71a44005d1a16723a8c72",
+    "d37d1a35d78df650073db561900d7a8961b14a535807dbd564dc868138bc6f82",
+    "a27c4357980d4ac86af21ee580491db00fc60b882f79ed34c1a3587e2f8d5824",
+    "e701076c0319d7d5f72583db823294725542674fb648a50b9da44ec095caa2e7",
+    "d1e8cb61be9bc1242af3436bd5216ac3e742739e3f24b188151d9eb95365710a",
+    "8a7218d31165766b7497bfc41d29a6830433bbaba53146918fd70111a7c3705a",
+    "cc1317d0eef1b14e19dc14ed8a99d7057bb771f6748f5e64e496390f66957711",
+    "b6c4664bb177dde69d2b2b6cc0c6559f3ed3a4a5b3a222a77b4deeaaf22a8108",
+    "5d0ebc68a7b9ad85048615cc0f1443e811ca7187879a3a4a81696022409d88d6",
+    "4ad00e1a1aa3c1ae65958266c91ed236a92c8b6e47dde20f98289c2d83b02f17",
+    "2d96355f46d1394d5c8c93139bf704d798973fe76f6c321a58ea6fb8c32198ca",
+    "dfcf79208535d2895dbeebc0ac779b3d266eb3438e54c0e4e1eff5c0aa3df4b8",
+    "b194d7af00c951e7e962fb308f843fc931e43eff26184849445d62af15ed39fe",
+    "dc2cf27c9b612d1abcb236ecaaab8bb4ed1d7b9207194e012df07270e183dc76"
+  ],
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan roughened-lens imaging assembly 1st embodiment",
+      "description_range": [
+        46,
+        62
+      ],
+      "shared_description_range": [
+        23,
+        45
+      ],
+      "figures": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "shared_claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan roughened-lens imaging assembly 2nd embodiment",
+      "description_range": [
+        63,
+        78
+      ],
+      "shared_description_range": [
+        23,
+        45
+      ],
+      "figures": [
+        "7",
+        "8"
+      ],
+      "shared_claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan roughened-lens imaging assembly 3rd embodiment",
+      "description_range": [
+        79,
+        93
+      ],
+      "shared_description_range": [
+        23,
+        45
+      ],
+      "figures": [
+        "9",
+        "10"
+      ],
+      "shared_claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan roughened-lens imaging assembly 4th embodiment",
+      "description_range": [
+        94,
+        111
+      ],
+      "shared_description_range": [
+        23,
+        45
+      ],
+      "figures": [
+        "11",
+        "12"
+      ],
+      "shared_claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan multi-camera smartphone 5th embodiment",
+      "description_range": [
+        112,
+        118
+      ],
+      "shared_description_range": [
+        23,
+        45
+      ],
+      "figures": [
+        "13",
+        "14",
+        "15",
+        "16",
+        "17"
+      ],
+      "shared_claims": [
+        19,
+        20
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan nine-camera smartphone 6th embodiment",
+      "description_range": [
+        119,
+        121
+      ],
+      "shared_description_range": [
+        23,
+        45
+      ],
+      "figures": [
+        "18"
+      ],
+      "shared_claims": [
+        19,
+        20
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan automotive camera deployment 7th embodiment",
+      "description_range": [
+        122,
+        127
+      ],
+      "shared_description_range": [
+        23,
+        45
+      ],
+      "figures": [
+        "19",
+        "20",
+        "21"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_device_wrapper_only"
+    }
+  ],
+  "prescription_boundary": {
+    "ordered_radius_rows": 0,
+    "ordered_spacing_rows": 0,
+    "material_or_index_dispersion_rows": 0,
+    "surface_specific_conic_or_asphere_rows": 0,
+    "identified_aperture_stop_rows": 0,
+    "numeric_focal_length_published": false,
+    "exact_f_number_published": false,
+    "absolute_image_height_published": false,
+    "manufacturing_thickness_promoted_to_prescription": false,
+    "roughened_surface_or_release_force_promoted_to_prescription": false,
+    "generic_aspheric_statement_promoted_to_prescription": false,
+    "generic_aperture_or_stop_promoted_to_prescription": false,
+    "device_deployment_range_promoted_to_prescription": false
+  },
+  "direct_manufacturing_metadata": {
+    "item_1": {
+      "lens_element_count_N": 7,
+      "CT1_mm": 0.25,
+      "CT2_mm": 0.28,
+      "ET1m_ET1": "0.289/0.316=0.915",
+      "ET2m_ET2": "0.411/0.467=0.880",
+      "glass_PTG_CTG": "0.400/1.078=0.371",
+      "release_force_ratios": [
+        6.5,
+        9.3,
+        6.6,
+        16.0
+      ]
+    },
+    "item_2": {
+      "lens_element_count_N": 8,
+      "CT1_mm": 0.285,
+      "CT2_mm": 0.295,
+      "ET1m_ET1": "0.309/0.448=0.690",
+      "ET2m_ET2": "0.321/0.415=0.773",
+      "release_force_ratios": [
+        3.1,
+        5.2,
+        6.6,
+        7.7
+      ]
+    },
+    "item_3": {
+      "lens_element_count_N": 7,
+      "CT1_mm": 0.278,
+      "CT2_mm": 0.24,
+      "ET1m_ET1": "0.286/0.390=0.733",
+      "ET2m_ET2": "0.243/0.272=0.893",
+      "release_force_ratios": [
+        4.7,
+        19.4,
+        7.2,
+        9.3
+      ]
+    },
+    "item_4": {
+      "lens_element_count_N": 7,
+      "CT1_mm": 0.25,
+      "CT2_mm": 0.28,
+      "ET1m_ET1": "0.289/0.316=0.915",
+      "ET2m_ET2": "0.411/0.467=0.880",
+      "glass_PTG_CTG": [
+        "0.400/1.078=0.371",
+        "0.450/0.887=0.507"
+      ],
+      "release_force_ratios": [
+        7.7,
+        16.0,
+        2.8,
+        9.3
+      ],
+      "printed_paragraph_109_subject_omission_preserved": true
+    },
+    "item_7": {
+      "printed_maximum_field_of_view_range_degrees": [
+        40,
+        90
+      ],
+      "deployment_context": "side-mirror vehicle cameras"
+    }
+  },
+  "official_pdf": {
+    "download_1": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/source-review/US-12601889-B2-official-1.pdf",
+      "bytes": 1783939,
+      "sha256": "5a877e1b472bd0a1a5cd6475ddbac2ffd28510535a92621514fa46390d6e994f"
+    },
+    "download_2": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/source-review/US-12601889-B2-official-2.pdf",
+      "bytes": 1783939,
+      "sha256": "aa84c15f2375b8020179e74ac90531996614d673af3b66b0417a1b8fef38b1f7"
+    },
+    "page_count": 35,
+    "text_layer_characters": 0,
+    "embedded_page_mode": "1-bit",
+    "raster_dimensions_width_height": [
+      2560,
+      3300
+    ],
+    "raster_set_sha256": "d4dda4bb61587b92f63fb0b0d459f94c8a867557835fd626a2d1abb423e65cba"
+  },
+  "replay": {
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12601889/attempt-0002/result.json",
+      "bytes": 12640,
+      "sha256": "61b38c9cdabbe335f49a711cb5157dc3967684255c17f217058ee1e03984a4b2"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12601889/attempt-0003/result.json",
+      "bytes": 12640,
+      "sha256": "efb631207d1d9312215dacc4d0d03a3e7c635a2a67524a99d781630fe9424cb6"
+    },
+    "semantic_equal": true,
+    "semantic_sha256": "108e369aa0ef2aa22fc1f6dd71f99eb1bd4dd0e589a535da7e1e46b03ffee150",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 53510,
+      "sha256": "f80d5bdedac08ede8186b142aea547bfe461c48cde4f022cca42bb4022ba3101"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 55482,
+      "sha256": "08dd19b4704a6b1dfa86d3e600c270576774c719ae4e2c92e5307b5395a01188"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/generic-residual-before-35.json",
+      "bytes": 21739,
+      "sha256": "dd65990ec896269498b7f398fa54776bd1e78cf2697685653ea8cad3ae78e672"
+    },
+    "after_1": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/generic-residual-after-1.json",
+      "bytes": 21184,
+      "sha256": "dbdc0bbae855895eff8e491851bd0d4110e07ec69e25f4cb7381253db2d7b382"
+    },
+    "after_2": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/generic-residual-after-2.json",
+      "bytes": 21184,
+      "sha256": "dbdc0bbae855895eff8e491851bd0d4110e07ec69e25f4cb7381253db2d7b382"
+    },
+    "before_roots": 35,
+    "after_roots": 34,
+    "result_set_sha256": "8ac5bf73290a0313c71adcfb8cf721ba736885954b7ab95ac4d000e9475aaf09"
+  },
+  "supporting_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/family-83049877-source-audit.md",
+      "bytes": 5231,
+      "sha256": "095bd294e938c0e1adbe44151f87e0ea2a005c6884e06e26a3f8cd09fe54c813"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/family-83049877-raster-audit.json",
+      "bytes": 10285,
+      "sha256": "da4f6b104984c329a01c4c22496ee7b9a5e5fb557f940a08c2691ffaa1aa6e12"
+    },
+    "source_availability": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/family-83049877-source-availability.json",
+      "bytes": 7066,
+      "sha256": "76f2345c40a34b6b059037786c4c747ac1db9b8a4e4f1da50786967428dafdf2"
+    },
+    "denominator": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/family-83049877-denominator.json",
+      "bytes": 10730,
+      "sha256": "0ce79374f7a45a1d38e11b730e8e6a1f6e6ba3c2d4132c9ac255d1de4fa36ce4"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/family-83049877-replay-determinism.json",
+      "bytes": 1729,
+      "sha256": "da9e45efb369593fd69997fc94ada579a8d3530d58742cb2e2f0e9f4e3ee0c8c"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/queue-after.json",
+      "bytes": 1398,
+      "sha256": "fe0fbffb1e11177ceafc298cb50be26f03cb6c2200241868c4f469ab5cce9373"
+    },
+    "roots": {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/roots.txt",
+      "bytes": 12,
+      "sha256": "fa7564f1d011322924a39d9d50838ac5bc0bf29ed0843e6a63cb950e95405b1c"
+    }
+  },
+  "review_policy": {
+    "manufacturing_thickness_promoted_to_prescription": false,
+    "roughened_surface_or_release_force_promoted_to_prescription": false,
+    "generic_aspheric_statement_promoted_to_prescription": false,
+    "generic_aperture_or_stop_promoted_to_prescription": false,
+    "deployment_range_promoted_to_prescription": false,
+    "printed_subject_omission_repaired": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  },
+  "next_exact_group": {
+    "family_id": "90627383",
+    "root_id": "US-12607828",
+    "publication_id": "US-12607828-B2",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b"
+  },
+  "saturation_complete": false
+}

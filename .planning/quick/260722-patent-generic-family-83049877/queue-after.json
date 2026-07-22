@@ -1,0 +1,40 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260722-patent-generic-family-83049877/generic-residual-after-1.json",
+  "affected_roots": 34,
+  "affected_items": 34,
+  "result_set_sha256": "8ac5bf73290a0313c71adcfb8cf721ba736885954b7ab95ac4d000e9475aaf09",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b",
+    "layout_signature_count": 4,
+    "family_id": "90627383",
+    "root_ids": [
+      "US-12607828"
+    ],
+    "publication_ids": [
+      "US-12607828-B2"
+    ],
+    "application_numbers": [
+      "18/076399"
+    ],
+    "title": "Optical lens",
+    "applicant_and_assignee": "GENIUS ELECTRONIC OPTICAL (XIAMEN) CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/1ed6d3c033f93507/US-12607828-B2.html",
+      "bytes": 38359,
+      "sha256": "1ed6d3c033f93507ba62852f2d02c460e86d7ee23399c3a377bd6333cea4cce1"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 6,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "table_count": 0
+  },
+  "same_layout_distinct_families_excluded": 3,
+  "saturation_complete": false
+}

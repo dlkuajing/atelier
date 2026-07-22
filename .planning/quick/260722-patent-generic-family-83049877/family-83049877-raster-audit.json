@@ -1,0 +1,236 @@
+{
+  "schema_version": "patent-family-raster-audit/v1",
+  "family_id": "83049877",
+  "raster_hash_algorithm": "sha256(decoded-page-raster-v1 + NUL + ASCII shape + NUL + ASCII dtype + NUL + decoded pixel bytes)",
+  "raster_set_hash_algorithm": "sha256(newline-joined ordered page raster hashes plus trailing newline)",
+  "publications": {
+    "US-12601889-B2": {
+      "role": "classification_primary",
+      "official_pdf_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12601889",
+      "wrappers": {
+        "official_download_1": {
+          "path": ".planning/quick/260722-patent-generic-family-83049877/source-review/US-12601889-B2-official-1.pdf",
+          "bytes": 1783939,
+          "sha256": "5a877e1b472bd0a1a5cd6475ddbac2ffd28510535a92621514fa46390d6e994f",
+          "page_count": 35
+        },
+        "official_download_2": {
+          "path": ".planning/quick/260722-patent-generic-family-83049877/source-review/US-12601889-B2-official-2.pdf",
+          "bytes": 1783939,
+          "sha256": "aa84c15f2375b8020179e74ac90531996614d673af3b66b0417a1b8fef38b1f7",
+          "page_count": 35
+        }
+      },
+      "page_count": 35,
+      "single_raster_page_count": 35,
+      "text_layer_characters": 0,
+      "raster_dimensions_width_height": [
+        2560,
+        3300
+      ],
+      "embedded_raster_mode": "1-bit",
+      "page_raster_sha256": [
+        "a42807b4b2e5c47f1070ebea62ae5e9546e01a3cbb4bc1adb3a6bdc7f75cf124",
+        "dbeae0425ee18407167e4be3f3b4b75e11751c996e47fcd7660b0e7b0b37e3b7",
+        "58adb3d8efa749ce0d37f07bc057972af4c0e4f00588a073ec3186ea170ec49c",
+        "071346ab0246416e865689bd2cd3bd8020a28ab8ffe62c5eb694d18d2985aa17",
+        "9a4883ca5b5788caa189f6835eeacc8d3121e0725050f244813c4aff737e5a78",
+        "4a287e6a89ac24c7b07322fe1693c0167bd4f870a05cd2b8a97aae4172a81c0b",
+        "2827cafdb080d4987a442853e2cadca48c28caad940abed7be3a722ca541978d",
+        "b76150deb4af3087d9f567b9a16dbb0cf1fa971924d153264062f6e18653f83e",
+        "2d5add1bdf2ee3e07a881a7cb1268404f83c0735dc949225283f92fb58dff60f",
+        "023ff412f3659530fe175de4d8663dd44c90e72196909cd86f038eb7c2bc7408",
+        "dcc2a8ecddaa866745ee650885c18e6c335027e357c3324fba34eafd45c92f11",
+        "2931e0274a412f9dbad23e71fcd4cd11714bf4696e5557f1eb336e97f4d27055",
+        "1407b1507c08065b7a814a35f400ca53f8191c394cedb3f31b3f371facc95a1b",
+        "f0a5891f0bf6eeef4a0f3af75dcfea0fbaead974b5818b198b812fdc3e587da5",
+        "4ae3d63ce5207b2e982bdf584d2cfd7efe8b969601205ef9c230570fbc1d9180",
+        "4338e8d6f8b905dbd3115d34a47023c99c0922f991f3940baf066714e9a5e4eb",
+        "6c6a0c3beb878b26294d426b17ed6ec3f3444563cf1f10f743e2d99e9a30de20",
+        "0564c7cd040796cc2615f9d18d5811ced6a66e4e0b47dee4e8336d49e6c3f2c1",
+        "f861e571c6c70f8efb5bcc1e74a8b38bf9747948c323ba794b805d866a4cf7fb",
+        "bf576d0dd1d70b2b713836633c573447fdf6dfce39dcb29a8abc4282f9e2805d",
+        "0a56f6ec1b7d7f62946b6393e239e78e66f3c74b1659a1f0ddf99aad1f54bf23",
+        "a908eb86655f83c96adae8072a4debf0a3c733e769ecc6295667dbdaf61d5902",
+        "ae0fd95148557d21a99a22a1647c37dddf36a4a16a56e0a7206b28d7322cd1ba",
+        "02e8209f2dc69d4204f8c859076948d90044c6c37b938f86536a15283cfc653c",
+        "0bb4a2ae8d21a931b933f4983c074cf685e01af3b7b99decc70c4378041b9ae3",
+        "5b5caa8cd12fcf292b7f5fb8dcddfe6bfcf7639daccfd9cfd7592c725063d571",
+        "cb4f110932f767334be0b37056dc31665c8c0169f1aeae73fbdeda2bcf3520b9",
+        "615c920769faa6d8a275c2326637d40e47d0bb503675f8454e44cffd1d8036b0",
+        "e51ae4f167a2894a742714654f2891106642360191c4b5fc1dcb41841ff5ffa4",
+        "aa147f02e20ee35a522666b7856604dcc52435ec412b141e77c9b94ddb494fa3",
+        "dc9be558bf6fa6512c541207c1502a966bbccb420eaf00ff9ca7f4c190edab6d",
+        "eef19a74bc61e6bf8659b798faa2a9626e2617f0b77b41d14466f10a4ff0744e",
+        "97304651bf48f28c4391a9fd8040f52df532e2d3a923aecec7f5171829d39113",
+        "24dac96f7f737677ca7f77ff2d1f2582a61a6447c98cadd49fc9bff3565eb596",
+        "97be7d58c2c17d154bfc68dd6bd67d8aa8666f73237d21635eda6f3e1e1014f9"
+      ],
+      "raster_set_sha256": "d4dda4bb61587b92f63fb0b0d459f94c8a867557835fd626a2d1abb423e65cba",
+      "page_roles": {
+        "cover": [
+          1
+        ],
+        "references_continuation": [
+          2
+        ],
+        "drawing_sheets": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23
+        ],
+        "specification": [
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35
+        ],
+        "claims": [
+          33,
+          34,
+          35
+        ]
+      },
+      "original_raster_directory": {
+        "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review",
+        "file_count": 35,
+        "pattern": "page-??-original.png",
+        "format": "lossless 1-bit PNG serialized from the sole embedded official page raster",
+        "embedded_mode": "1-bit",
+        "serialized_mode": "1-bit",
+        "pixel_comparison": "35/35 serialized page pixels exactly equal decoded embedded pixels"
+      }
+    }
+  },
+  "source_comparison": {
+    "official_download_container_hashes_distinct": true,
+    "container_byte_lengths_equal": true,
+    "compared_wrappers": 2,
+    "compared_pages_per_wrapper": 35,
+    "equal_decoded_pages_across_all_wrappers": 35,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "retained_visual_audits": [
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/contact-pages-01-35-navigation-only.png",
+      "bytes": 76383,
+      "sha256": "766a20d4b302dd51ff170625aa243d92c8bde6753775fdb2b9f96301710a142e",
+      "role": "pages 1-35 nearest-neighbor navigation sheet; not numeric evidence"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/contact-pages-22-35-navigation-only.png",
+      "bytes": 42929,
+      "sha256": "915e8400f8c286306dfa04e06e8a56c3a7c7917a3d9d981de6183c5c13dee534",
+      "role": "pages 22-35 nearest-neighbor navigation sheet; not numeric evidence"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-01-original.png",
+      "bytes": 81789,
+      "sha256": "51ee4cbddc6fe8828f0e16761ff987614ca125631b4d02c23cfc8492684daf2f",
+      "page": 1,
+      "embedded_page_raster_sha256": "a42807b4b2e5c47f1070ebea62ae5e9546e01a3cbb4bc1adb3a6bdc7f75cf124",
+      "role": "cover identity, twenty-claim and twenty-one-drawing-sheet denominator"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-23-original.png",
+      "bytes": 36768,
+      "sha256": "eda6825c33c66e7ebca3d45117eccbca5135f33b57953255c9a83ae005a8b22c",
+      "page": 23,
+      "embedded_page_raster_sha256": "ae0fd95148557d21a99a22a1647c37dddf36a4a16a56e0a7206b28d7322cd1ba",
+      "role": "drawing sheet 21 of 21 and FIG. 21"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-24-original.png",
+      "bytes": 138864,
+      "sha256": "e1f3c04ea5b0d2a5c9eed7360b638d0721fc9b60542de5a6bb7998ce3f832126",
+      "page": 24,
+      "embedded_page_raster_sha256": "02e8209f2dc69d4204f8c859076948d90044c6c37b938f86536a15283cfc653c",
+      "role": "first specification page and source identity"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-31-original.png",
+      "bytes": 158800,
+      "sha256": "851297031c20d6437a925486844f7f9c2093407b94e8489b3cf0593d5ed0f16f",
+      "page": 31,
+      "embedded_page_raster_sha256": "dc9be558bf6fa6512c541207c1502a966bbccb420eaf00ff9ca7f4c190edab6d",
+      "role": "fourth imaging-assembly embodiment manufacturing values"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-32-original.png",
+      "bytes": 151707,
+      "sha256": "0b8fb2bd3922fa0889934cdd103aa11a0560885bb94f5fd189bbf1ce8c738dc9",
+      "page": 32,
+      "embedded_page_raster_sha256": "eef19a74bc61e6bf8659b798faa2a9626e2617f0b77b41d14466f10a4ff0744e",
+      "role": "paragraph-109 printed subject omission and following Fr1_i/Fs1 formula boundary"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-33-original.png",
+      "bytes": 141827,
+      "sha256": "96b7485daacf27ecec46e39fd0460f1fa76bcc7d5bc8b449eae6de2e64cec0eb",
+      "page": 33,
+      "embedded_page_raster_sha256": "97304651bf48f28c4391a9fd8040f52df532e2d3a923aecec7f5171829d39113",
+      "role": "closing description and claims beginning"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-34-original.png",
+      "bytes": 128323,
+      "sha256": "06ef8a79b07d167112bd6727ab74870cc2bd631aab10c33ec4eab17f39a014a5",
+      "page": 34,
+      "embedded_page_raster_sha256": "24dac96f7f737677ca7f77ff2d1f2582a61a6447c98cadd49fc9bff3565eb596",
+      "role": "claims continuation"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/pdf-review/page-35-original.png",
+      "bytes": 18434,
+      "sha256": "dffbd149ab1dab4690ef2a2badf828c05e2b8d3ac28d73fee9b58529e67450b4",
+      "page": 35,
+      "embedded_page_raster_sha256": "97be7d58c2c17d154bfc68dd6bd67d8aa8666f73237d21635eda6f3e1e1014f9",
+      "role": "claims continuation through claim 20"
+    }
+  ],
+  "visual_review": {
+    "all_page_navigation_reviewed": true,
+    "original_pages_reviewed": [
+      1,
+      23,
+      24,
+      31,
+      32,
+      33,
+      34,
+      35
+    ],
+    "finding": "The original rasters preserve the twenty-one drawing sheets, complete specification, twenty claims and paragraph-109 subject omission; they add no ordered optical radius, spacing, material, surface-specific asphere, identified stop or complete system prescription.",
+    "enhancement_used": false,
+    "ocr_repair_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_raster_transcription_used": false,
+    "raster_numeric_inference_used": false
+  }
+}

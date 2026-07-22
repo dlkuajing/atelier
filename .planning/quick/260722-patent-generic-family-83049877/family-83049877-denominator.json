@@ -1,0 +1,424 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "83049877",
+  "root_id": "US-12601889",
+  "publication_id": "US-12601889-B2",
+  "application_number": "17/887328",
+  "title": "Imaging lens assembly, camera module and electronic device",
+  "lineage": {
+    "same_application_prior_publication": "US-20230408787-A1",
+    "taiwan_priority_application": "111122121",
+    "taiwan_priority_filing_date": "2022-06-15"
+  },
+  "denominator": {
+    "related_application_numbered_paragraphs": 1,
+    "background_summary_numbered_paragraphs_excluding_related": 14,
+    "background_summary_section_numbered_paragraphs": 15,
+    "brief_drawing_numbered_paragraphs": 22,
+    "detailed_description_numbered_paragraphs": 106,
+    "description_numbered_paragraphs": 128,
+    "total_numbered_specification_paragraphs": 143,
+    "claims": 20,
+    "independent_claims": [
+      1,
+      10
+    ],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 0,
+    "maths_objects": 0,
+    "mathml_objects": 0,
+    "inline_formula_leads": 30,
+    "custom_character_image_tags": 0,
+    "figure_reference_occurrences": 82,
+    "declared_figure_panels": 21,
+    "drawing_sheets": 21,
+    "official_pdf_pages": 35,
+    "source_items": 7,
+    "imaging_lens_assembly_items": 4,
+    "electronic_device_wrapper_items": 2,
+    "vehicle_device_wrapper_items": 1,
+    "ordered_optical_prescriptions": 0,
+    "source_items_unmapped": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan roughened-lens imaging assembly 1st embodiment",
+      "source_bindings": {
+        "description_range": [
+          46,
+          62
+        ],
+        "shared_description_range": [
+          23,
+          45
+        ],
+        "figures": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "shared_imaging_assembly_claims": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan roughened-lens imaging assembly 2nd embodiment",
+      "source_bindings": {
+        "description_range": [
+          63,
+          78
+        ],
+        "shared_description_range": [
+          23,
+          45
+        ],
+        "figures": [
+          "7",
+          "8"
+        ],
+        "shared_imaging_assembly_claims": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan roughened-lens imaging assembly 3rd embodiment",
+      "source_bindings": {
+        "description_range": [
+          79,
+          93
+        ],
+        "shared_description_range": [
+          23,
+          45
+        ],
+        "figures": [
+          "9",
+          "10"
+        ],
+        "shared_imaging_assembly_claims": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan roughened-lens imaging assembly 4th embodiment",
+      "source_bindings": {
+        "description_range": [
+          94,
+          111
+        ],
+        "shared_description_range": [
+          23,
+          45
+        ],
+        "figures": [
+          "11",
+          "12"
+        ],
+        "shared_imaging_assembly_claims": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.roughened_lens_element_manufacturing_and_assembly_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan multi-camera smartphone 5th embodiment",
+      "source_bindings": {
+        "description_range": [
+          112,
+          118
+        ],
+        "shared_description_range": [
+          23,
+          45
+        ],
+        "figures": [
+          "13",
+          "14",
+          "15",
+          "16",
+          "17"
+        ],
+        "shared_wrapper_claims": [
+          19,
+          20
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan nine-camera smartphone 6th embodiment",
+      "source_bindings": {
+        "description_range": [
+          119,
+          121
+        ],
+        "shared_description_range": [
+          23,
+          45
+        ],
+        "figures": [
+          "18"
+        ],
+        "shared_wrapper_claims": [
+          19,
+          20
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan automotive camera deployment 7th embodiment",
+      "source_bindings": {
+        "description_range": [
+          122,
+          127
+        ],
+        "shared_description_range": [
+          23,
+          45
+        ],
+        "figures": [
+          "19",
+          "20",
+          "21"
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_device_wrapper_only"
+    }
+  ],
+  "shared_architecture_boundary": {
+    "related_application_range": [
+      1,
+      1
+    ],
+    "background_summary_range_excluding_related": [
+      2,
+      15
+    ],
+    "brief_drawing_description_range": [
+      1,
+      22
+    ],
+    "general_description_range": [
+      23,
+      45
+    ],
+    "closing_description_range": [
+      128,
+      128
+    ],
+    "claim_1_imaging_lens_assembly_independent": true,
+    "claim_10_imaging_lens_assembly_independent": true,
+    "claim_19_camera_module_depends_on_claim_10": true,
+    "claim_20_electronic_device_depends_on_claim_19": true,
+    "ordered_radius_rows_published": 0,
+    "ordered_spacing_rows_published": 0,
+    "material_or_index_dispersion_rows_published": 0,
+    "conic_or_asphere_rows_published": 0,
+    "identified_aperture_stop_rows_published": 0,
+    "exact_focal_length_published": false,
+    "exact_f_number_published": false,
+    "absolute_image_height_published": false
+  },
+  "direct_manufacturing_and_architecture_metadata": {
+    "item_1": {
+      "lens_element_count_N": 7,
+      "CT1_mm": 0.25,
+      "CT2_mm": 0.28,
+      "ET1m_ET1_ratio": "0.289/0.316 = 0.915 (directly printed)",
+      "ET2m_ET2_ratio": "0.411/0.467 = 0.880 (directly printed)",
+      "glass_PTG_CTG_ratio": "0.400/1.078 = 0.371 (directly printed)",
+      "release_force_ratios": {
+        "Fr1_o/Fs1": 6.5,
+        "Fr1_i/Fs1": 9.3,
+        "Fr2_o/Fs2": 6.6,
+        "Fr2_i/Fs2": 16.0
+      }
+    },
+    "item_2": {
+      "lens_element_count_N": 8,
+      "CT1_mm": 0.285,
+      "CT2_mm": 0.295,
+      "ET1m_ET1_ratio": "0.309/0.448 = 0.690 (directly printed)",
+      "ET2m_ET2_ratio": "0.321/0.415 = 0.773 (directly printed)",
+      "release_force_ratios": {
+        "Fr1_o/Fs1": 3.1,
+        "Fr1_i/Fs1": 5.2,
+        "Fr2_o/Fs2": 6.6,
+        "Fr2_i/Fs2": 7.7
+      }
+    },
+    "item_3": {
+      "lens_element_count_N": 7,
+      "CT1_mm": 0.278,
+      "CT2_mm": 0.24,
+      "ET1m_ET1_ratio": "0.286/0.390 = 0.733 (directly printed)",
+      "ET2m_ET2_ratio": "0.243/0.272 = 0.893 (directly printed)",
+      "release_force_ratios": {
+        "Fr1_o/Fs1": 4.7,
+        "Fr1_i/Fs1": 19.4,
+        "Fr2_o/Fs2": 7.2,
+        "Fr2_i/Fs2": 9.3
+      }
+    },
+    "item_4": {
+      "lens_element_count_N": 7,
+      "CT1_mm": 0.25,
+      "CT2_mm": 0.28,
+      "ET1m_ET1_ratio": "0.289/0.316 = 0.915 (directly printed)",
+      "ET2m_ET2_ratio": "0.411/0.467 = 0.880 (directly printed)",
+      "glass_elements_PTG_CTG_ratio": [
+        "0.400/1.078 = 0.371 (directly printed)",
+        "0.450/0.887 = 0.507 (directly printed)"
+      ],
+      "release_force_ratios": {
+        "Fr1_o/Fs1": 7.7,
+        "Fr1_i/Fs1": 16.0,
+        "Fr2_o/Fs2": 2.8,
+        "Fr2_i/Fs2": 9.3
+      },
+      "printed_paragraph_109_subject_omission_preserved": true
+    },
+    "item_5": {
+      "deployment_roles": [
+        "ultra-wide-angle",
+        "high pixel",
+        "telephoto"
+      ],
+      "maximum_field_of_view_numeric_value_published": false
+    },
+    "item_6": {
+      "camera_count": 9,
+      "deployment_roles": [
+        "telephoto",
+        "wide-angle",
+        "ultra-wide-angle",
+        "time of flight"
+      ]
+    },
+    "item_7": {
+      "printed_maximum_field_of_view_range_degrees": [
+        40,
+        90
+      ],
+      "deployment_context": "side-mirror vehicle cameras"
+    }
+  },
+  "binding_policy": {
+    "manufacturing_thickness_promoted_to_prescription": false,
+    "roughened_surface_or_release_force_promoted_to_prescription": false,
+    "generic_aspheric_surface_statement_promoted_to_prescription": false,
+    "generic_aperture_or_stop_list_promoted_to_prescription": false,
+    "device_deployment_range_promoted_to_prescription": false,
+    "printed_subject_omission_repaired": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 7,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  }
+}
