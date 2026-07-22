@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-100084534/generic-residual-after-1.json",
+  "affected_roots": 25,
+  "affected_items": 25,
+  "result_set_sha256": "82b4b253f6e038fed009638ab79bd89727b38db699ac4459416c9caad1dc7beb",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "cffa6c4deab02a82b8a89eb05e977f2794569b6bdeffe280478b9325d847de14",
+    "layout_signature_count": 1,
+    "family_id": "83457080",
+    "root_ids": [
+      "US-12650581"
+    ],
+    "publication_ids": [
+      "US-12650581-B2"
+    ],
+    "application_numbers": [
+      "17/933885"
+    ],
+    "title": "Imaging optical system, camera module and electronic device",
+    "applicant_and_assignee": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/cd60348c7405e2ac/US-12650581-B2.html",
+      "bytes": 146347,
+      "sha256": "cd60348c7405e2ac9cad70418ab5205566d69870bdecac65d2253a2b8f6490b4",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "marker_counts": {
+      "effective_focal_length": 7,
+      "embodiment_anchor": 126,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 7
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

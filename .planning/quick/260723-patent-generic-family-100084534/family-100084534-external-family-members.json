@@ -1,0 +1,21 @@
+{
+  "schema_version": "patent-family-external-members/v1",
+  "family_id": "100084534",
+  "retained_publication": {
+    "publication_id": "US-20260169250-A1",
+    "application_number": "19/403395",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f1663281048a0d8f/US-20260169250-A1.html",
+    "sha256": "f1663281048a0d8f6695f2c23f0d77e03afb981d6e118e5b28145a919c6219e6"
+  },
+  "source_disclosed_lineage": [
+    {
+      "record_type": "us_provisional_application",
+      "identifier": "63/734,228",
+      "filed": "2024-12-16",
+      "evidence": "official A1 structured related-application record and paragraph [0001]"
+    }
+  ],
+  "classification_source": "US-20260169250-A1 only",
+  "numeric_borrowing_from_family_members": false,
+  "note": "The provisional application is a lineage record, not a publication source; no external publication is inferred."
+}

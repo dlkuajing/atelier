@@ -811,22 +811,28 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `86539672`, root/publication `US-20240352227` /
-`US-20240352227-A1`, is complete in the current atomic shovel. Strict replay is
-619/619 with result set
-`beb710007b90ca82a04f7b18f86fcd3af5defc4a6ea6e1c3c24d30303468be72`;
-the generic residual contains 26 roots/items and its byte-exact repeated census is
-`f01741b14c394bc11e49cc214366707abf9e45f6e24dfe51a71030823e2ac79a`.
-Stable ordering selects Family `100084534`, root/publication `US-20260169250` /
-`US-20260169250-A1`, application `19/403395`, title `IMAGING LENS ASSEMBLY MODULE,
-CAMERA MODULE AND ELECTRONIC DEVICE`, Largan Precision. Open its GSD quick only after
-the Family 86539672 shovel is atomically committed. Its retained 90,253-byte HTML is
+For patent saturation work, Family `100084534`, root/publication `US-20260169250` /
+`US-20260169250-A1`, is complete in the current atomic shovel. Exact A1 reconciliation
+establishes eight source items and zero ordered optical prescriptions: four imaging-
+lens-assembly-module/coating architectures, two smartphone wrappers, one vehicle
+wrapper and one unmanned-aerial-vehicle wrapper. All eight close as exact confirmed-
+no-prescription terminals without worker, conversion, ZMX, formal intake or CODE V.
+Attempts 2/3 are semantic-equal at
+`0ce46d81a45de9f88dae208e6d690cae0e1ac727ed553fd4e9b4c08b8968c5a0`;
+strict replay is 619/619 with result set
+`82b4b253f6e038fed009638ab79bd89727b38db699ac4459416c9caad1dc7beb`.
+The generic residual contains 25 roots/items and both after censuses are byte-identical
+at `3234716292ddbec1cf9226d904b559e31761737799edf99cf509b4b037f68793`.
+Stable ordering selects Family `83457080`, root/publication `US-12650581` /
+`US-12650581-B2`, application `17/933885`, title `Imaging optical system, camera
+module and electronic device`, Largan Precision. Open its GSD quick only after the
+Family 100084534 shovel is atomically committed. Its retained 146,347-byte HTML is
 pinned at
-`f1663281048a0d8f6695f2c23f0d77e03afb981d6e118e5b28145a919c6219e6`;
+`cd60348c7405e2ac9cad70418ab5205566d69870bdecac65d2253a2b8f6490b4`;
 layout signature
-`ce851b9c24587e8ff40321a46d4c0ca841b1630263c2516aca2241c5b1b4cb5`
+`cffa6c4deab02a82b8a89eb05e977f2794569b6bdeffe280478b9325d847de14`
 occurs once. Do not borrow any value, item boundary or outcome from completed Largan
-families or a shared layout.
+families, prior US-20230115906-A1 or a shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

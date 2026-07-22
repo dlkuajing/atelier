@@ -1,0 +1,120 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "100084534",
+  "root_id": "US-20260169250",
+  "publication_id": "US-20260169250-A1",
+  "sections": {
+    "background_summary_paragraphs": 8,
+    "description_paragraphs": 84,
+    "numbered_paragraphs_total": 92,
+    "claims": 35,
+    "independent_claims": 3,
+    "flattened_tables": 2,
+    "mathml_objects": 26,
+    "figref_tags": 115,
+    "declared_figure_panels": 24,
+    "drawing_sheets": 24
+  },
+  "experiments": {
+    "low_reflective_cluster_layer_examples": 2,
+    "table_1_summary_rows": 3,
+    "table_2_wavelength_rows": 671,
+    "table_2_wavelength_first_nm": 380,
+    "table_2_wavelength_last_nm": 1050,
+    "table_2_vertical_bar_rows": [488, 949, 1007]
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan low-reflective-cluster-layer imaging-lens-assembly-module 1st embodiment",
+      "paragraph_range": [52, 58],
+      "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G"],
+      "tables": [1, 2],
+      "material_examples": 2,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_low_reflective_cluster_layer_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan low-reflective-cluster-layer imaging-lens-assembly-module 2nd embodiment",
+      "paragraph_range": [59, 62],
+      "figures": ["2A", "2B"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_low_reflective_cluster_layer_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan low-reflective-cluster-layer imaging-lens-assembly-module 3rd embodiment",
+      "paragraph_range": [63, 67],
+      "figures": ["3A", "3B"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_low_reflective_cluster_layer_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan low-reflective-cluster-layer imaging-lens-assembly-module 4th embodiment",
+      "paragraph_range": [68, 71],
+      "figures": ["4A", "4B", "4C"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_low_reflective_cluster_layer_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan smartphone multi-camera electronic-device 5th embodiment",
+      "paragraph_range": [72, 80],
+      "figures": ["5A", "5B", "5C", "5D", "5E"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.smartphone_multi_camera_module_wrapper_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan smartphone multi-camera electronic-device 6th embodiment",
+      "paragraph_range": [81, 84],
+      "figures": ["6"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.smartphone_multi_camera_module_wrapper_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan vehicle multi-camera electronic-device 7th embodiment",
+      "paragraph_range": [85, 88],
+      "figures": ["7A", "7B", "7C"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_multi_camera_module_wrapper_only"
+    },
+    {
+      "number": 8,
+      "label": "Largan unmanned-aerial-vehicle camera electronic-device 8th embodiment",
+      "paragraph_range": [89, 91],
+      "figures": ["8"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.unmanned_aerial_vehicle_camera_module_wrapper_only"
+    }
+  ],
+  "optical_interpretation": {
+    "ordered_surface_prescriptions": 0,
+    "focal_length_occurrences": 1,
+    "focal_length_role": "qualitative smartphone multi-camera statement in paragraph [0080], not a numeric datum",
+    "refractive_index_occurrences": 8,
+    "refractive_index_role": "qualitative low-reflective-cluster-layer gradient only",
+    "worker_authorized": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 8,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}
