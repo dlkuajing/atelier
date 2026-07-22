@@ -1,0 +1,137 @@
+{
+  "schema_version": "patent-family-raster-audit/v1",
+  "family_id": "90627383",
+  "raster_hash_algorithm": "sha256(decoded-page-raster-v1 + NUL + ASCII shape + NUL + ASCII dtype + NUL + decoded pixel bytes)",
+  "raster_set_hash_algorithm": "sha256(newline-joined ordered page raster hashes plus trailing newline)",
+  "publications": {
+    "US-12607828-B2": {
+      "role": "classification_primary",
+      "official_pdf_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12607828",
+      "wrappers": {
+        "official_download_1": {
+          "path": ".planning/quick/260722-patent-generic-family-90627383/source-review/US-12607828-B2-official-1.pdf",
+          "bytes": 547836,
+          "sha256": "e62dfd07b4537d19860635d1584599af7f2b41ed0cc07d33052f7cf0e8b8c2d1",
+          "page_count": 8
+        },
+        "official_download_2": {
+          "path": ".planning/quick/260722-patent-generic-family-90627383/source-review/US-12607828-B2-official-2.pdf",
+          "bytes": 547836,
+          "sha256": "e185e0a2b8755f2cca703f3c7a1cad3b0a85b89483b66a7054caef2da47ea603",
+          "page_count": 8
+        }
+      },
+      "page_count": 8,
+      "single_raster_page_count": 8,
+      "text_layer_characters": 0,
+      "raster_dimensions_width_height": [2560, 3300],
+      "embedded_raster_mode": "1-bit",
+      "page_raster_sha256": [
+        "0f47e8962507cd79d878df2396a087189c961529c8e553ed4dce08b497fd8131",
+        "ad9fe88717c029dfb19fe91008e06091ad075549bdc716956184c4a1eb796dec",
+        "b8bfb2e4bf277f9fbd77ce882d61dfece8afc74dc8bcdb6d9894e1494dbc58a6",
+        "280cf7360657051231b67f295308ae96e6ba55857e660cd3c9fede3d3555c3cf",
+        "68dd5c7dafd8023dc9ef882e4f580c34fc27802400f301baacbff2e91046a9c3",
+        "c9e80520c426205a76ce2f6d189ad8b368d6cacb1cbc7b773970018fe45b2200",
+        "7c35872ea56297b9678a05a196dbeff4de933f3e8ddeaa360f4b7906044d1160",
+        "847ab504c2ac4c2d05c6946498a55c97cc98da0066b95bdcc408b986f9a05bcd"
+      ],
+      "raster_set_sha256": "f42b6ab396a13624a872f8474fd3cd48f219a4b8f622e0b496c13904f2b51b96",
+      "page_roles": {
+        "cover": [1],
+        "drawings": [2, 3, 4],
+        "specification": [5, 6, 7, 8],
+        "claims": [7, 8]
+      }
+    }
+  },
+  "source_comparison": {
+    "official_downloads_distinct_container_sha256": true,
+    "official_downloads_same_bytes": true,
+    "official_downloads_same_page_count": true,
+    "official_downloads_same_ordered_decoded_rasters": true,
+    "classification_bound_only_to_exact_B2": true
+  },
+  "retained_visual_audits": [
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/contact-pages-01-08-navigation-only.png",
+      "bytes": 33373,
+      "sha256": "17133231c2eff111c8140170e4866ec334830e07d28d0f0016225902dc336814",
+      "role": "navigation only; no evidentiary numeric reading"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-01-original.png",
+      "bytes": 83665,
+      "sha256": "434e253c3aeab7e90db4bf4a2dfcbb7ae360727ff18f0077484ef3465fa2b321",
+      "page": 1,
+      "embedded_page_raster_sha256": "0f47e8962507cd79d878df2396a087189c961529c8e553ed4dce08b497fd8131",
+      "role": "cover identity and representative drawing"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-02-original.png",
+      "bytes": 38449,
+      "sha256": "08c764a6866058c460f245ad360ca58aecb696a6bd3f47aa4c3cfa0ce64126c8",
+      "page": 2,
+      "embedded_page_raster_sha256": "ad9fe88717c029dfb19fe91008e06091ad075549bdc716956184c4a1eb796dec",
+      "role": "drawing sheet 1 of 3 and FIG. 1"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-03-original.png",
+      "bytes": 49888,
+      "sha256": "d33b0bb390afedd88b3d41dac1d7181aa9dd689a507d234ff4af4deccedc157b",
+      "page": 3,
+      "embedded_page_raster_sha256": "b8bfb2e4bf277f9fbd77ce882d61dfece8afc74dc8bcdb6d9894e1494dbc58a6",
+      "role": "drawing sheet 2 of 3 and FIG. 2"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-04-original.png",
+      "bytes": 53156,
+      "sha256": "07024410cdc8b19bf97e1a120cd95fca4d5f017a339989f6796bb12eb02b9501",
+      "page": 4,
+      "embedded_page_raster_sha256": "280cf7360657051231b67f295308ae96e6ba55857e660cd3c9fede3d3555c3cf",
+      "role": "drawing sheet 3 of 3 and FIG. 3"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-05-original.png",
+      "bytes": 142418,
+      "sha256": "122fd2b6de0f2f8957c0d5c90d5458fcf97f104395f32567f84944ae655890c9",
+      "page": 5,
+      "embedded_page_raster_sha256": "68dd5c7dafd8023dc9ef882e4f580c34fc27802400f301baacbff2e91046a9c3",
+      "role": "specification internal pages 1-2 and first embodiment start"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-06-original.png",
+      "bytes": 158659,
+      "sha256": "309dc1b462345954dd0d73174ddcb69e602b8ea55317e735ecf4975a76a89429",
+      "page": 6,
+      "embedded_page_raster_sha256": "c9e80520c426205a76ce2f6d189ad8b368d6cacb1cbc7b773970018fe45b2200",
+      "role": "specification internal pages 3-4 and first embodiment continuation"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-07-original.png",
+      "bytes": 144866,
+      "sha256": "2d61a1f9c15ee8bf79e0532ca2ac4621afc5ad714ae0b2a90a8f055b6c17d8a2",
+      "page": 7,
+      "embedded_page_raster_sha256": "7c35872ea56297b9678a05a196dbeff4de933f3e8ddeaa360f4b7906044d1160",
+      "role": "second/third embodiments, closing description and claims 1-5"
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/pdf-review/page-08-original.png",
+      "bytes": 105715,
+      "sha256": "821f18d0a305e67b40a6e15bf5b126a68778374c307b2e2f32e89b5818da6452",
+      "page": 8,
+      "embedded_page_raster_sha256": "847ab504c2ac4c2d05c6946498a55c97cc98da0066b95bdcc408b986f9a05bcd",
+      "role": "claims 6-20"
+    }
+  ],
+  "visual_review": {
+    "all_page_navigation_reviewed": true,
+    "original_pages_reviewed": [1, 2, 3, 4, 5, 6, 7, 8],
+    "finding": "The original rasters preserve three mechanical assembly drawings, the complete specification and twenty claims; they add no ordered optical radius, spacing, material, surface-specific asphere, identified stop or complete system prescription.",
+    "enhancement_used": false,
+    "ocr_repair_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_raster_transcription_used": false,
+    "raster_numeric_inference_used": false
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "90627383",
+  "root_id": "US-12607828",
+  "publication_id": "US-12607828-B2",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/1ed6d3c033f93507/US-12607828-B2.html",
+    "bytes": 38359,
+    "sha256": "1ed6d3c033f93507ba62852f2d02c460e86d7ee23399c3a377bd6333cea4cce1",
+    "characters": 38311,
+    "normalized_characters": 28717,
+    "normalized_sha256": "def6d2f45c2c9667aaf090cb1aa371f3649b11b8f9be8b387e9dd03cd40c1cd5"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "18/076399",
+    "filed": "2022-12-07",
+    "same_application_prior_publication": "US-20240126048-A1",
+    "same_application_prior_publication_date": "2024-04-18",
+    "china_priority_application": "202211249753.7",
+    "china_priority_filing_date": "2022-10-12",
+    "priority_confirmation_cross_reference_paragraph": 1
+  },
+  "source_items": [
+    {
+      "source_item": 1,
+      "label": "1st Embodiment baseline optical-lens assembly",
+      "description_range": [4, 9],
+      "figures": ["1"],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 2,
+      "label": "2nd Embodiment water-absorption/fitting-surface variant",
+      "description_range": [10, 10],
+      "figures": ["2"],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 3,
+      "label": "3rd Embodiment three-lens-element-group variant",
+      "description_range": [11, 11],
+      "figures": ["3"],
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "directly_published_assembly_metadata": [
+    "lens barrel, first lens element, lens element group and fixing/bearing optical element relationships",
+    "D1-D9 radial, axial, thickness, gap and contact-length labels and constraints",
+    "ODLA, ODLB, ODR, TLB, ALAR and DR/DA assembly ratios and inequalities",
+    "water-absorption-rate and inclined fitting-surface relationship",
+    "second/third-lens-element-group variant and maximum total lens count"
+  ],
+  "prescription_markers_absent_from_exact_source": [
+    "ordered optical surface radius or curvature",
+    "ordered axial intersurface spacing",
+    "optical material, refractive index or Abbe dispersion",
+    "surface-specific conic constants or asphere coefficients",
+    "an identified aperture-stop coordinate",
+    "a numeric focal length",
+    "a prescription-specific F-number",
+    "a numeric prescription-specific angular field",
+    "an absolute image height",
+    "surface numbers or an ordered surface prescription"
+  ],
+  "not_source_available": [
+    "permission to treat barrel, diameter, thickness, gap or adhesive-contact metadata as an ordered optical prescription",
+    "permission to measure the cross-sectional drawings or infer radii, spacings or a stop from them",
+    "permission to derive focal length, F-number, angular field or image height",
+    "permission to transcribe or infer optical numbers from the image-only official PDF",
+    "numeric borrowing from US-20240126048-A1, China application 202211249753.7, another family or another document with the same layout signature"
+  ],
+  "source_boundary": {
+    "optical_lens_phrase_occurrences": 60,
+    "lens_barrel_phrase_occurrences": 67,
+    "lens_element_phrase_occurrences": 198,
+    "field_of_view_phrase_occurrences": 1,
+    "effective_focal_length_occurrences": 0,
+    "focal_length_occurrences": 0,
+    "F_number_occurrences": 0,
+    "radius_occurrences": 0,
+    "curvature_occurrences": 0,
+    "aspheric_occurrences": 0,
+    "asphere_occurrences": 0,
+    "Abbe_occurrences": 0,
+    "refractive_index_occurrences": 0,
+    "aperture_stop_occurrences": 0,
+    "image_height_occurrences": 0,
+    "surface_number_occurrences": 0,
+    "surface_prescription_occurrences": 0,
+    "ordered_prescriptions": 0
+  },
+  "repair_policy": {
+    "assembly_geometry_promoted_to_prescription": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 3,
+    "ordered_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 3,
+    "reason_codes": {
+      "confirmed_no_prescription.lens_barrel_lens_element_fitting_and_bearing_architecture_only": 3
+    }
+  }
+}

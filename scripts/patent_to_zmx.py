@@ -616,6 +616,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_genius_optical_lens_assembly_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
             raw_text,
@@ -79967,6 +79973,680 @@ def _classify_largan_roughened_lens_architecture_attempts(
             ),
         )
         for item in _LARGAN_ROUGHENED_LENS_ITEMS
+    ]
+
+
+_GENIUS_OPTICAL_LENS_ASSEMBLY_REASON = (
+    "confirmed_no_prescription."
+    "lens_barrel_lens_element_fitting_and_bearing_architecture_only"
+)
+_GENIUS_OPTICAL_LENS_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Genius optical-lens assembly 1st embodiment",
+        "paragraph_range": (4, 9),
+        "figures": ("1",),
+        "claims": (1, 3, 4, 5, 6, 7, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20),
+        "reason_code": _GENIUS_OPTICAL_LENS_ASSEMBLY_REASON,
+    },
+    {
+        "number": 2,
+        "label": "Genius optical-lens assembly 2nd embodiment",
+        "paragraph_range": (10, 10),
+        "figures": ("2",),
+        "claims": (8, 9),
+        "reason_code": _GENIUS_OPTICAL_LENS_ASSEMBLY_REASON,
+    },
+    {
+        "number": 3,
+        "label": "Genius optical-lens assembly 3rd embodiment",
+        "paragraph_range": (11, 11),
+        "figures": ("3",),
+        "claims": (2, 12),
+        "reason_code": _GENIUS_OPTICAL_LENS_ASSEMBLY_REASON,
+    },
+)
+_GENIUS_OPTICAL_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12607828-B2": {
+        "family_id": "90627383",
+        "application_number": "18/076399",
+        "prior_publication": "US-20240126048-A1",
+        "china_priority_application": "202211249753.7",
+        "raw_document_sha256": (
+            "1ed6d3c033f93507ba62852f2d02c460e86d7ee23399c3a377bd6333cea4cce1"
+        ),
+        "normalized_text_sha256": (
+            "def6d2f45c2c9667aaf090cb1aa371f3649b11b8f9be8b387e9dd03cd40c1cd5"
+        ),
+        "title_text": "Optical lens",
+        "identity_markers": {
+            "United States Patent 12607828 Kind Code B2": 1,
+            "Date of Patent April 21, 2026": 1,
+            (
+                "Inventors: Liu; Changwei (Xiamen, CN), Zhan; Haibin "
+                "(Xiamen, CN), Fu; Weiwei (Xiamen, CN)"
+            ): 1,
+            "GENIUS ELECTRONIC OPTICAL (XIAMEN) CO., LTD.": 2,
+            "Family ID: 90627383": 1,
+            "Appl. No.: 18/076399": 1,
+            "Filed: December 07, 2022": 1,
+            "US 20240126048 A1": 1,
+            "Apr. 18, 2024": 1,
+            "CN 202211249753.7 Oct. 12, 2022": 1,
+            (
+                "This application claims the priority benefit of China "
+                "application serial no. 202211249753.7, filed on Oct. 12, 2022."
+            ): 1,
+        },
+        "raw_section_body_sha256": {
+            "related": (
+                "f03500272058041f61413acb9baef151bab5e360035274e7f8386db9e74e48c5"
+            ),
+            "background": (
+                "1f15e89de355b5fc5c0148ea0669e67209ee598a95620e0f013007941cfaf36a"
+            ),
+            "description": (
+                "e7c849b7c4dd93d372e66caff101cbbdf6f73001ab49e8854fbc8d6a2d6741ae"
+            ),
+            "claims": (
+                "3a790d52922b679cea67b6a1f1fbcc417d10b9c67da214c8fd9f003d1b23e498"
+            ),
+        },
+        "section_sha256": {
+            "related": (
+                "8ba3e4c95b67f506cfc251c58d4e08315de2b40a8d47d30705225fdb7da12c0e"
+            ),
+            "background": (
+                "b9f1a00a33812dab7f1be37d15a76a659c5ad8f0fca12e23c5ccbe11f1148894"
+            ),
+            "description": (
+                "983ad3deafcd273ea38dc5569ccbb54ca4801f0098c6b45f4cdd783cd4d8ce7b"
+            ),
+            "claims": (
+                "c3d8361a6be8cfefaf6fe498c5e74f392ec584858826eb80e4f5348a1520d819"
+            ),
+        },
+        "paragraph_span_sha256": {
+            ("background", 2, 9): (
+                "243cc84e277e4f373a0d019c846887def91c959c9c42e284f7a5442101906039"
+            ),
+            ("description", 1, 3): (
+                "95788986a6b6dfe069a6329e4d0a24c87edb3758e233b9aef4ccaa2199ed6d68"
+            ),
+            ("description", 4, 9): (
+                "acfa52fc4173c3b6ceed21bf03f3e242d69f70bf8038e7b75818e41db5e79bdc"
+            ),
+            ("description", 10, 10): (
+                "a0d7c8b5155381d0afb27128f4a2a576443ee08f36928296f51dff02089fac4f"
+            ),
+            ("description", 11, 11): (
+                "e8317934394955592f841aadbee5d74a241c3d08bc036b9b0cf870c68a5d9ce1"
+            ),
+            ("description", 12, 13): (
+                "e6d70c3c28279dd0e185a57d05401318224a500438415947310c8c7050333028"
+            ),
+            ("description", 1, 13): (
+                "e7d0fb00590f9a90aecb3155a61116066246497442b3716abeedc959e345a8a0"
+            ),
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 11),
+        "claim_sha256": _largan_folded_camera_sha256_lines("""
+            eb275b19b2b0aa89ad16254fc9d93ec7ff6ea97d4b06d4671f2cf7fa70035f76
+            31cffeadf48426091b80664c74f3c67dc3f2366c04181692df83c82dfe7a63c7
+            5c796082cadb58103a8ccf7b1de2dca9112b2946044cd93a801e7d595f63ac4e
+            904657763392dcb286950bcd9a9089233cbd702e6eba7a7c2df0be700e1ec417
+            f3743beaabb406e401007c8f3a8fdd11ee03b8c5b6886115553f7eecaf6e58f0
+            7f2ff111975667007cd5c9d2163e1e736780dd7b76a1ad5497905c374df65ad5
+            fb88034d9c4823d0201cdc657c7e6eb384b403329741e0f2c6170fa04301ac99
+            061ab4bdfad7d28021279c1ac2ba87f24e63818d892fc0ab9cc8247890950d19
+            5561409df557bea57f9462d059b936b392b1b6a97e7770dbec3366dfed3c3121
+            02dc4e18f91ea0ccf9a031c0ae5d4e9b02886134579e541a92802f620f007ce8
+            d52cf71078cc2a105cfb869c7a6b7bfffc95c46e2dbf60fd20da528e14c310b6
+            bf5dbe5d2c0dfed5d73f2e5614eaa997f338508ddb98841ac65ed9e23e8dd49d
+            1b680481ad751c398b4de75cf41e3206e0cc69d836727fb512636f98ae0a3baa
+            9d264d9f7bd6cbba2ea4bd2f7e9bc99261166923bb7281f2b18b4952d90315b6
+            a0bdff6809b239f3a192963ed5e842cc563b733683acb45b1c71243ab147b86a
+            ace62fc1b8e0cb7a68467228cce8d580e5a3e947257675b5dee84ff45d64fc52
+            66169a97172c7ef204aaeaea8f301a9e1424035c375aaabd436bafb6eafa57a1
+            dcceee945145d8c0502a1510f5fd7770fce52e22a0b423331de8d4472af77211
+            d036db8f4452eb9e9ced3ee15b29f85f88f861aefe115b377985f0b59bb9d015
+            8e504ba2ed303c4e66d59bc88e1ae3816b5cba600225c86ddf0475ac94168aab
+        """),
+        "figure_panels": ("1", "2", "3"),
+        "figref_count": 11,
+        "raw_counts": {
+            "table_us": 0,
+            "html_table": 0,
+            "maths": 0,
+            "mathml": 0,
+            "inline_formula_leads": 0,
+            "custom_character_images": 0,
+        },
+        "phrase_counts": {
+            "optical lens": 60,
+            "lens barrel": 67,
+            "lens element": 198,
+            "effective focal length": 0,
+            "focal length": 0,
+            "F-number": 0,
+            "field of view": 1,
+            "radius": 0,
+            "curvature": 0,
+            "aspheric": 0,
+            "asphere": 0,
+            "Abbe": 0,
+            "refractive index": 0,
+            "aperture stop": 0,
+            "image height": 0,
+            "surface number": 0,
+            "surface prescription": 0,
+            "optical axis": 42,
+            "first embodiment": 2,
+            "second embodiment": 2,
+            "third embodiment": 2,
+        },
+        "item_paragraph_markers": {
+            4: (
+                "optical lens 100 may be applied to a camera lens, a mobile phone "
+                "lens, a telescopic lens, a head-mounted display",
+                "The optical lens 100 includes a lens barrel 110",
+                "a lens element group 130 and an optical element 140",
+            ),
+            5: ("ODLB/TLB≤7.500",),
+            8: (
+                "3,000≤ODLA/(ODR-ODLB)≤10,000",
+                "ALAR-ODLB≥0.300 mm",
+            ),
+            9: ("DR/DA≥1.500",),
+            10: (
+                "water absorption rate of any lens in the lens element group 130",
+                "fitting surface S inclined to the optical axis I",
+            ),
+            11: (
+                "includes the second lens element 132 and a third lens element 134",
+                "total number of lens elements in the optical lens 100 does not "
+                "exceed six",
+            ),
+        },
+        "official_pdf_captures": (
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-90627383/"
+                    "source-review/US-12607828-B2-official-1.pdf"
+                ),
+                "bytes": 547_836,
+                "container_sha256": (
+                    "e62dfd07b4537d19860635d1584599af7f2b41ed0cc07d33052f7cf0e8b8c2d1"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-90627383/"
+                    "source-review/US-12607828-B2-official-2.pdf"
+                ),
+                "bytes": 547_836,
+                "container_sha256": (
+                    "e185e0a2b8755f2cca703f3c7a1cad3b0a85b89483b66a7054caef2da47ea603"
+                ),
+            },
+        ),
+        "pdf_page_count": 8,
+        "pdf_raster_dimensions": (2560, 3300),
+        "pdf_page_raster_sha256": _largan_folded_camera_sha256_lines("""
+            0f47e8962507cd79d878df2396a087189c961529c8e553ed4dce08b497fd8131
+            ad9fe88717c029dfb19fe91008e06091ad075549bdc716956184c4a1eb796dec
+            b8bfb2e4bf277f9fbd77ce882d61dfece8afc74dc8bcdb6d9894e1494dbc58a6
+            280cf7360657051231b67f295308ae96e6ba55857e660cd3c9fede3d3555c3cf
+            68dd5c7dafd8023dc9ef882e4f580c34fc27802400f301baacbff2e91046a9c3
+            c9e80520c426205a76ce2f6d189ad8b368d6cacb1cbc7b773970018fe45b2200
+            7c35872ea56297b9678a05a196dbeff4de933f3e8ddeaa360f4b7906044d1160
+            847ab504c2ac4c2d05c6946498a55c97cc98da0066b95bdcc408b986f9a05bcd
+        """),
+        "pdf_raster_set_sha256": (
+            "f42b6ab396a13624a872f8474fd3cd48f219a4b8f622e0b496c13904f2b51b96"
+        ),
+        "pdf_cover_page_numbers": (1,),
+        "pdf_drawing_page_numbers": (2, 3, 4),
+        "pdf_specification_page_numbers": (5, 6, 7, 8),
+        "pdf_claims_page_numbers": (7, 8),
+    }
+}
+
+
+def _genius_optical_lens_section_body(raw_text: str, section: str) -> str:
+    """Return one exact source body used by Family 90627383."""
+
+    patterns = {
+        "related": (
+            r"<h3>Background/Summary</h3>\s*<p></p>\s*"
+            r"<p>(CROSS-REFERENCE TO RELATED APPLICATION.*?)<br />BACKGROUND"
+        ),
+        "background": (
+            r"<h3>Background/Summary</h3>\s*<p></p>\s*"
+            r"<p>CROSS-REFERENCE TO RELATED APPLICATION.*?<br />"
+            r"(BACKGROUND<br />.*?)</p>"
+        ),
+        "description": r"<h3>Description</h3>\s*<p>(.*?)</p>",
+        "claims": r"<h3>Claims</h3>\s*<p>(.*?)</p>",
+    }
+    matches = re.findall(
+        patterns[section],
+        raw_text,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Genius optical-lens {section} raw section count changed"
+        )
+    return matches[0]
+
+
+def _genius_optical_lens_numbered_paragraphs(
+    body: str,
+    *,
+    section: str,
+    expected_first: int,
+    expected_last: int,
+) -> dict[int, str]:
+    """Split the exact parenthesized PPUBS paragraph sequence."""
+
+    markers = list(re.finditer(r"(?:^|<br />)\((\d+)\) ", body))
+    numbers = tuple(int(marker.group(1)) for marker in markers)
+    if numbers != tuple(range(expected_first, expected_last + 1)):
+        raise PatentParseError(
+            f"Genius optical-lens {section} paragraph denominator changed"
+        )
+    return {
+        number: normalize_patent_text(
+            body[
+                marker.end() : (
+                    markers[index + 1].start()
+                    if index + 1 < len(markers)
+                    else len(body)
+                )
+            ]
+        )
+        for index, (number, marker) in enumerate(
+            zip(numbers, markers, strict=True)
+        )
+    }
+
+
+def _genius_optical_lens_paragraph_span(
+    paragraphs: dict[int, str],
+    first: int,
+    last: int,
+) -> str:
+    return " ".join(
+        f"({number}) {paragraphs[number]}" for number in range(first, last + 1)
+    )
+
+
+def _classify_genius_optical_lens_assembly_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 90627383 without measuring assembly drawings."""
+
+    profile = _GENIUS_OPTICAL_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _GENIUS_OPTICAL_LENS_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Genius optical-lens official raw text changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Genius optical-lens normalized text changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Genius optical-lens title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Genius optical-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        raw_sections = {
+            name: _genius_optical_lens_section_body(raw_text, name)
+            for name in ("related", "background", "description", "claims")
+        }
+        sections = {
+            name: normalize_patent_text(body)
+            for name, body in raw_sections.items()
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_body_sha256"
+        ].items():
+            if (
+                hashlib.sha256(raw_sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Genius optical-lens {section_name} raw section changed"
+                )
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Genius optical-lens {section_name} section changed"
+                )
+        if not re.fullmatch(
+            r"CROSS-REFERENCE TO RELATED APPLICATION \(1\) This application "
+            r"claims the priority benefit of China application serial no\. "
+            r"202211249753\.7, filed on Oct\. 12, 2022\. The entirety of the "
+            r"above-mentioned patent application is hereby incorporated by "
+            r"reference herein and made a part of this specification\.",
+            sections["related"],
+        ):
+            raise PatentParseError(
+                "Genius optical-lens related-application denominator changed"
+            )
+
+        paragraphs = {
+            "background": _genius_optical_lens_numbered_paragraphs(
+                raw_sections["background"],
+                section="background",
+                expected_first=2,
+                expected_last=9,
+            ),
+            "description": _genius_optical_lens_numbered_paragraphs(
+                raw_sections["description"],
+                section="description",
+                expected_first=1,
+                expected_last=13,
+            ),
+        }
+        for (
+            section_name,
+            first,
+            last,
+        ), expected_digest in profile["paragraph_span_sha256"].items():
+            observed_span = _genius_optical_lens_paragraph_span(
+                paragraphs[section_name], first, last
+            )
+            if hashlib.sha256(observed_span.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Genius optical-lens {section_name} paragraphs "
+                    f"{first}-{last} changed"
+                )
+        covered_item_paragraphs = {
+            number
+            for item in _GENIUS_OPTICAL_LENS_ITEMS
+            for number in range(
+                int(item["paragraph_range"][0]),
+                int(item["paragraph_range"][1]) + 1,
+            )
+        }
+        if covered_item_paragraphs != set(range(4, 12)):
+            raise PatentParseError(
+                "Genius optical-lens source-item paragraph coverage changed"
+            )
+        for paragraph, markers in profile["item_paragraph_markers"].items():
+            for marker in markers:
+                if marker not in paragraphs["description"][paragraph]:
+                    raise PatentParseError(
+                        "Genius optical-lens item marker changed in paragraph "
+                        f"{paragraph}: {marker!r}"
+                    )
+
+        declared_figures = tuple(
+            match.group(1)
+            for number in range(1, 4)
+            if (
+                match := re.match(
+                    r"FIG\.\s*(\d+)\s+is\b",
+                    paragraphs["description"][number],
+                    re.IGNORECASE,
+                )
+            )
+        )
+        if declared_figures != profile["figure_panels"]:
+            raise PatentParseError(
+                "Genius optical-lens declared figure denominator changed"
+            )
+        mapped_figures = {
+            str(figure)
+            for item in _GENIUS_OPTICAL_LENS_ITEMS
+            for figure in item["figures"]
+        }
+        if mapped_figures != set(profile["figure_panels"]):
+            raise PatentParseError(
+                "Genius optical-lens item-to-figure coverage changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError(
+                "Genius optical-lens figure-reference denominator changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Genius optical-lens claim denominator changed")
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent_claims = tuple(
+            number
+            for number, claim_text in zip(
+                claim_numbers, claim_texts, strict=True
+            )
+            if re.search(
+                r"\b(?:according to|of) claim\s+\d+",
+                claim_text[:1000],
+                re.IGNORECASE,
+            )
+            is None
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Genius optical-lens independent claims changed"
+            )
+        if tuple(
+            hashlib.sha256(claim_text.encode()).hexdigest()
+            for claim_text in claim_texts
+        ) != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Genius optical-lens individual claims changed"
+            )
+        if not (
+            "An optical lens with an optical axis" in claim_texts[0]
+            and "An optical lens, comprising" in claim_texts[10]
+            and "water absorption rate" in claim_texts[7]
+            and "fitting surface inclined to the optical axis" in claim_texts[8]
+            and "a second lens element and a third lens element" in claim_texts[1]
+            and "a second lens element and a third lens element" in claim_texts[11]
+        ):
+            raise PatentParseError(
+                "Genius optical-lens embodiment/claim binding changed"
+            )
+        mapped_claims = {
+            int(claim)
+            for item in _GENIUS_OPTICAL_LENS_ITEMS
+            for claim in item["claims"]
+        }
+        if mapped_claims != set(profile["claim_numbers"]):
+            raise PatentParseError(
+                "Genius optical-lens item-to-claim coverage changed"
+            )
+
+        observed_raw_counts = {
+            "table_us": len(re.findall(r"TABLE-US-", raw_text, re.IGNORECASE)),
+            "html_table": len(re.findall(r"<table\b", raw_text, re.IGNORECASE)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)),
+            "mathml": len(re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE)),
+            "inline_formula_leads": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="lead"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "custom_character_images": len(
+                re.findall(r"<img\b", raw_text, re.IGNORECASE)
+            ),
+        }
+        if observed_raw_counts != profile["raw_counts"]:
+            raise PatentParseError(
+                "Genius optical-lens table/formula/image denominator changed"
+            )
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Genius optical-lens phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        observed_pdf_hashes: list[tuple[str, ...]] = []
+        for capture in profile["official_pdf_captures"]:
+            payload = (ROOT / capture["path"]).read_bytes()
+            if len(payload) != capture["bytes"]:
+                raise PatentParseError(
+                    "Genius optical-lens official PDF size changed"
+                )
+            if hashlib.sha256(payload).hexdigest() != capture[
+                "container_sha256"
+            ]:
+                raise PatentParseError(
+                    "Genius optical-lens official PDF hash changed"
+                )
+            reader = pypdf.PdfReader(io.BytesIO(payload))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError(
+                    "Genius optical-lens official PDF page count changed"
+                )
+            page_hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Genius optical-lens PDF page {page_number} contains "
+                        f"{len(images)} rasters; expected one"
+                    )
+                if (
+                    images[0].image.size != profile["pdf_raster_dimensions"]
+                    or images[0].image.mode != "1"
+                ):
+                    raise PatentParseError(
+                        f"Genius optical-lens PDF page {page_number} raster changed"
+                    )
+                page_hashes.append(_canonical_raster_sha256(images[0].data))
+                text_characters += len(page.extract_text() or "")
+            if tuple(page_hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError(
+                    "Genius optical-lens official PDF page rasters changed"
+                )
+            raster_set_digest = hashlib.sha256(
+                ("\n".join(page_hashes) + "\n").encode()
+            ).hexdigest()
+            if (
+                raster_set_digest != profile["pdf_raster_set_sha256"]
+                or text_characters != 0
+            ):
+                raise PatentParseError(
+                    "Genius optical-lens official PDF raster set changed"
+                )
+            observed_pdf_hashes.append(tuple(page_hashes))
+        if len(set(observed_pdf_hashes)) != 1:
+            raise PatentParseError(
+                "Genius optical-lens official PDF captures disagree by decoded page"
+            )
+        if not (
+            profile["pdf_cover_page_numbers"] == (1,)
+            and profile["pdf_drawing_page_numbers"] == (2, 3, 4)
+            and profile["pdf_specification_page_numbers"] == (5, 6, 7, 8)
+            and profile["pdf_claims_page_numbers"] == (7, 8)
+        ):
+            raise PatentParseError(
+                "Genius optical-lens official PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all three exact items
+        return attempts_for_error(exc)
+
+    details = (
+        (
+            "description paragraphs 4-9 and FIG. 1 publish the baseline lens-"
+            "barrel, first-lens, second-lens, optical-element, fitting/bearing, "
+            "diameter, thickness, gap and adhesive-contact architecture"
+        ),
+        (
+            "description paragraph 10 and FIG. 2 publish the water-absorption-"
+            "rate and inclined fitting-surface variant"
+        ),
+        (
+            "description paragraph 11 and FIG. 3 publish the second/third-lens-"
+            "element group variant and only a maximum total lens count"
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Genius Family 90627383 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. The exact source publishes "
+                    "no ordered optical radius, intersurface spacing, optical "
+                    "material/index/dispersion, conic/asphere coefficient, identified "
+                    "aperture-stop coordinate, focal length, F-number, numeric "
+                    "angular field or absolute image height. Mechanical D1-D9, ODLA, "
+                    "ODLB, ODR, TLB, ALAR and DR/DA values and inequalities remain "
+                    "assembly geometry rather than an optical prescription. Claims "
+                    "1-20, including independent claims 1/11, add no separate ordered "
+                    "prescription. No value is derived, measured from drawings, "
+                    "transcribed from raster, or borrowed from prior publication "
+                    "US-20240126048-A1, China priority 202211249753.7, another family "
+                    "or a shared layout"
+                ),
+            ),
+        )
+        for item in _GENIUS_OPTICAL_LENS_ITEMS
     ]
 
 
