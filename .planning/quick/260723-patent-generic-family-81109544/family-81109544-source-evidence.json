@@ -1,0 +1,863 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "81109544",
+  "root_id": "US-20260110881",
+  "publication_id": "US-20260110881-A1",
+  "bibliography": {
+    "title": "OPTICAL IMAGING LENS",
+    "application_number": "19/317878",
+    "filed": "2025-09-03",
+    "publication_date": "2026-04-23",
+    "applicant": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+    "assignee": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+    "inventors": [
+      "Dong Chuanbo",
+      "Lin Hai",
+      "Zhang Jiayuan"
+    ],
+    "parent_application_number": "17/811792",
+    "parent_filed": "2022-07-11",
+    "parent_grant_document": "US-12429672",
+    "china_priority_application": "202210032712.6",
+    "china_priority_date": "2022-01-12"
+  },
+  "retained_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/474fb77e050321fc/US-20260110881-A1.html",
+    "bytes": 164544,
+    "sha256": "474fb77e050321fcd8adf4cd16b6c59c08757b7bb51fec4162bfa993888c83ba",
+    "evidence_type": "uspto_ppubs_parser_input_html"
+  },
+  "source_denominator": {
+    "background_summary_paragraphs": 12,
+    "description_paragraphs": 173,
+    "claims": 20,
+    "independent_claims": 3,
+    "machine_readable_tables": 0,
+    "raster_optical_data_tables": 10,
+    "raster_asphere_data_tables": 10,
+    "raster_common_comparison_system_table_panels": 2,
+    "inline_formula_pairs": 0,
+    "mathml_objects": 45,
+    "figref_tags": 210,
+    "declared_figure_panels": 77,
+    "drawing_sheets": 44,
+    "native_html_tables": 0,
+    "custom_character_images": 0,
+    "source_items": 10,
+    "published_numerical_prescriptions": 10,
+    "machine_readable_numerical_prescriptions": 0,
+    "metadata_unpublished_items": 10
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Genius nine-lens optical imaging lens 1st embodiment",
+      "paragraph_range": [
+        99,
+        115
+      ],
+      "figures": [
+        "6",
+        "7A",
+        "7B",
+        "7C",
+        "7D",
+        "8",
+        "9"
+      ],
+      "optical_table_figure": "8",
+      "asphere_table_figure": "9",
+      "direct_f_number_image_height_paragraph": 114,
+      "comparison_table_reference_paragraph": 115,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 2,
+      "label": "Genius nine-lens optical imaging lens 2nd embodiment",
+      "paragraph_range": [
+        116,
+        122
+      ],
+      "figures": [
+        "10",
+        "11A",
+        "11B",
+        "11C",
+        "11D",
+        "12",
+        "13"
+      ],
+      "optical_table_figure": "12",
+      "asphere_table_figure": "13",
+      "direct_f_number_image_height_paragraph": 121,
+      "comparison_table_reference_paragraph": 122,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 3,
+      "label": "Genius nine-lens optical imaging lens 3rd embodiment",
+      "paragraph_range": [
+        123,
+        129
+      ],
+      "figures": [
+        "14",
+        "15A",
+        "15B",
+        "15C",
+        "15D",
+        "16",
+        "17"
+      ],
+      "optical_table_figure": "16",
+      "asphere_table_figure": "17",
+      "direct_f_number_image_height_paragraph": 128,
+      "comparison_table_reference_paragraph": 129,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 4,
+      "label": "Genius nine-lens optical imaging lens 4th embodiment",
+      "paragraph_range": [
+        130,
+        136
+      ],
+      "figures": [
+        "18",
+        "19A",
+        "19B",
+        "19C",
+        "19D",
+        "20",
+        "21"
+      ],
+      "optical_table_figure": "20",
+      "asphere_table_figure": "21",
+      "direct_f_number_image_height_paragraph": 135,
+      "comparison_table_reference_paragraph": 136,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 5,
+      "label": "Genius nine-lens optical imaging lens 5th embodiment",
+      "paragraph_range": [
+        137,
+        143
+      ],
+      "figures": [
+        "22",
+        "23A",
+        "23B",
+        "23C",
+        "23D",
+        "24",
+        "25"
+      ],
+      "optical_table_figure": "24",
+      "asphere_table_figure": "25",
+      "direct_f_number_image_height_paragraph": 142,
+      "comparison_table_reference_paragraph": 143,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 6,
+      "label": "Genius nine-lens optical imaging lens 6th embodiment",
+      "paragraph_range": [
+        144,
+        150
+      ],
+      "figures": [
+        "26",
+        "27A",
+        "27B",
+        "27C",
+        "27D",
+        "28",
+        "29"
+      ],
+      "optical_table_figure": "28",
+      "asphere_table_figure": "29",
+      "direct_f_number_image_height_paragraph": 149,
+      "comparison_table_reference_paragraph": 150,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 7,
+      "label": "Genius nine-lens optical imaging lens 7th embodiment",
+      "paragraph_range": [
+        151,
+        157
+      ],
+      "figures": [
+        "30",
+        "31A",
+        "31B",
+        "31C",
+        "31D",
+        "32",
+        "33"
+      ],
+      "optical_table_figure": "32",
+      "asphere_table_figure": "33",
+      "direct_f_number_image_height_paragraph": 156,
+      "comparison_table_reference_paragraph": 157,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 8,
+      "label": "Genius nine-lens optical imaging lens 8th embodiment",
+      "paragraph_range": [
+        158,
+        164
+      ],
+      "figures": [
+        "34",
+        "35A",
+        "35B",
+        "35C",
+        "35D",
+        "36",
+        "37"
+      ],
+      "optical_table_figure": "36",
+      "asphere_table_figure": "37",
+      "direct_f_number_image_height_paragraph": 163,
+      "comparison_table_reference_paragraph": 164,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 9,
+      "label": "Genius nine-lens optical imaging lens 9th embodiment",
+      "paragraph_range": [
+        165,
+        171
+      ],
+      "figures": [
+        "38",
+        "39A",
+        "39B",
+        "39C",
+        "39D",
+        "40",
+        "41"
+      ],
+      "optical_table_figure": "40",
+      "asphere_table_figure": "41",
+      "direct_f_number_image_height_paragraph": 170,
+      "comparison_table_reference_paragraph": 171,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 10,
+      "label": "Genius nine-lens optical imaging lens 10th embodiment",
+      "paragraph_range": [
+        172,
+        178
+      ],
+      "figures": [
+        "42",
+        "43A",
+        "43B",
+        "43C",
+        "43D",
+        "44",
+        "45"
+      ],
+      "optical_table_figure": "44",
+      "asphere_table_figure": "45",
+      "direct_f_number_image_height_paragraph": 177,
+      "comparison_table_reference_paragraph": 178,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    }
+  ],
+  "claims": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "independent_numbers": [
+      1,
+      8,
+      15
+    ],
+    "dependencies": [
+      [],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [],
+      [
+        8
+      ],
+      [
+        8
+      ],
+      [
+        8
+      ],
+      [
+        8
+      ],
+      [
+        8
+      ],
+      [
+        8
+      ],
+      [],
+      [
+        15
+      ],
+      [
+        15
+      ],
+      [
+        15
+      ],
+      [
+        15
+      ],
+      [
+        15
+      ]
+    ],
+    "ordered_hash_set_sha256": "26dfa41720ad55e62b334ba4c5154d07b6e8229ecd3a50ef429560faec072c48"
+  },
+  "mathml": {
+    "count": 45,
+    "ids": [
+      "MATH-US-00001",
+      "MATH-US-00001-2",
+      "MATH-US-00001-3",
+      "MATH-US-00002",
+      "MATH-US-00002-2",
+      "MATH-US-00002-3",
+      "MATH-US-00002-4",
+      "MATH-US-00002-5",
+      "MATH-US-00002-6",
+      "MATH-US-00002-7",
+      "MATH-US-00002-8",
+      "MATH-US-00002-9",
+      "MATH-US-00002-10",
+      "MATH-US-00002-11",
+      "MATH-US-00002-12",
+      "MATH-US-00002-13",
+      "MATH-US-00002-14",
+      "MATH-US-00002-15",
+      "MATH-US-00003",
+      "MATH-US-00004",
+      "MATH-US-00004-2",
+      "MATH-US-00004-3",
+      "MATH-US-00005",
+      "MATH-US-00006",
+      "MATH-US-00007",
+      "MATH-US-00008",
+      "MATH-US-00009",
+      "MATH-US-00010",
+      "MATH-US-00011",
+      "MATH-US-00011-2",
+      "MATH-US-00011-3",
+      "MATH-US-00012",
+      "MATH-US-00013",
+      "MATH-US-00014",
+      "MATH-US-00015",
+      "MATH-US-00016",
+      "MATH-US-00017",
+      "MATH-US-00018",
+      "MATH-US-00018-2",
+      "MATH-US-00018-3",
+      "MATH-US-00019",
+      "MATH-US-00020",
+      "MATH-US-00021",
+      "MATH-US-00022",
+      "MATH-US-00023"
+    ],
+    "ordered_raw_hash_set_sha256": "2929dfea3f0d8fb931cf436cb58d81333e781fd76a17c913dbd248d6233cf47c"
+  },
+  "official_pdf": {
+    "downloads": [
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/US-20260110881-A1-official-1.pdf",
+        "bytes": 5469625,
+        "sha256": "9751af7ed03cb3311a2daa559b0f13a52bd859d548b132a0eddad0482e004b19",
+        "evidence_type": "uspto_official_pdf_download"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/US-20260110881-A1-official-2.pdf",
+        "bytes": 5469625,
+        "sha256": "47d1b027bbb00e8e888322efd54a1951babd9cbee754bfd06a5fce4e36f32997",
+        "evidence_type": "uspto_official_pdf_download"
+      }
+    ],
+    "pinned_pdf": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/9751af7ed03cb331/US-20260110881-A1.pdf",
+      "bytes": 5469625,
+      "sha256": "9751af7ed03cb3311a2daa559b0f13a52bd859d548b132a0eddad0482e004b19",
+      "evidence_type": "uspto_official_pdf_pinned"
+    },
+    "page_count": 63,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "12e453b3a2e37ee260e06f1d1434d19e29ddc4b6a253c6e69156110370a4dbc4",
+    "decoded_downloads_match": true,
+    "page_roles": {
+      "cover_pages": [
+        1
+      ],
+      "drawing_pages": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45
+      ],
+      "specification_pages": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60
+      ],
+      "claim_pages": [
+        60,
+        61,
+        62,
+        63
+      ],
+      "cross_section_pages": [
+        4,
+        8,
+        12,
+        16,
+        20,
+        24,
+        28,
+        32,
+        36,
+        40
+      ],
+      "aberration_pages": [
+        5,
+        9,
+        13,
+        17,
+        21,
+        25,
+        29,
+        33,
+        37,
+        41
+      ],
+      "optical_table_pages": [
+        6,
+        10,
+        14,
+        18,
+        22,
+        26,
+        30,
+        34,
+        38,
+        42
+      ],
+      "asphere_table_pages": [
+        7,
+        11,
+        15,
+        19,
+        23,
+        27,
+        31,
+        35,
+        39,
+        43
+      ],
+      "common_table_pages": [
+        44,
+        45
+      ]
+    },
+    "reviewed_original_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      44,
+      45,
+      46,
+      60,
+      61,
+      62,
+      63
+    ],
+    "reviewed_original_rasters": [
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-002-original.png",
+        "bytes": 35748,
+        "sha256": "65ed7d183e334989b540eab9321c7dcfb70fc02170effc660732726b64208d02",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-003-original.png",
+        "bytes": 55314,
+        "sha256": "e80d0a2dec2f8b966159023214856985400601540f0d0291f550e7ef279cc5da",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-004-original.png",
+        "bytes": 91793,
+        "sha256": "31cf4c2476f3426eaba96e01bf64c20bfb8119e222659c6d5c7a684bad9ba849",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-005-original.png",
+        "bytes": 51313,
+        "sha256": "001cec05a37aa52150d484a454e9a61482fbe98a78979698a77b7ce7483ed584",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-006-original.png",
+        "bytes": 77425,
+        "sha256": "e30c4f977f3ce92629ee3707c3bc9b93f6993a75ef729596fa131967ac34765d",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-007-original.png",
+        "bytes": 169536,
+        "sha256": "5d30f89dc6d328abad10fa50b228b5f40a220ed4f8688b241c3615b264ec3996",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-044-original.png",
+        "bytes": 100212,
+        "sha256": "0a5ecd8cb270dc63453942a2319668f2d1d9d780b1cf7d184d3e765d932edcf7",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-045-original.png",
+        "bytes": 100824,
+        "sha256": "3d45e972478420b3c98e9097db9126dee06610313d215e70f14e241c1ae4922a",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-046-original.png",
+        "bytes": 151256,
+        "sha256": "b87ab3a25d7cb66a0abfe1dfc6e8e33603b88f0c45e9593e926b2835f836abe6",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-060-original.png",
+        "bytes": 138988,
+        "sha256": "2c08c63940eacdbbcc258622c628f14a86a3cbacb0c0a2f436b379c955a6e4b2",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-061-original.png",
+        "bytes": 121279,
+        "sha256": "cafecc134485064f2bcb23d69213ea54527408d8055eec3c38cb58478aeac3ad",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-062-original.png",
+        "bytes": 117686,
+        "sha256": "dfd826190c27189cf5cd97e63c469947a684169521567481c6a7ff2997d0a09b",
+        "evidence_type": "uspto_official_original_page_raster"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/page-063-original.png",
+        "bytes": 20324,
+        "sha256": "1c69097f94cf38849c2fa31f2a9ae7798815499db1ec823a5ef5d7ed200acf4e",
+        "evidence_type": "uspto_official_original_page_raster"
+      }
+    ],
+    "contact_sheet": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/source-review/pdf-review/contact-sheet.png",
+      "bytes": 1921349,
+      "sha256": "4a3d376666266e0d48349c821ae5a43e49792a4aed607014c7a37609c9dfb91a",
+      "evidence_type": "navigation_only_contact_sheet"
+    },
+    "review_policy": {
+      "official_originals_only": true,
+      "contact_sheet_navigation_only": true,
+      "image_enhancement_used": false,
+      "ocr_used": false,
+      "ocr_repair_used": false,
+      "drawing_or_plot_measurement_used": false,
+      "raster_numeric_transcription_used": false,
+      "raster_numeric_inference_used": false
+    }
+  },
+  "audit_artifacts": {
+    "computed_facts": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-computed-facts.json",
+      "bytes": 15205,
+      "sha256": "b882494c9b01674bdb11156b928d71a1cbcbf24f052662b957abd7569598ba53",
+      "evidence_type": "exact_source_computed_facts"
+    },
+    "denominator": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-denominator.json",
+      "bytes": 8017,
+      "sha256": "c3c699793c70bc60232c352901d627bc64d75885df2f0358d397a843cb601509",
+      "evidence_type": "source_denominator"
+    },
+    "external_family_members": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-external-family-members.json",
+      "bytes": 3055,
+      "sha256": "e7621b6265c2f871bfb598c8af645ddd6df195beb1faa75ce3ab2a0bda5562c2",
+      "evidence_type": "lineage_and_layout_exclusion_audit"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-raster-audit.json",
+      "bytes": 56900,
+      "sha256": "e2541072ac09d5d9d51f8719ccc2b4db6613d0a25cefb1da902dc0e411e4024a",
+      "evidence_type": "official_pdf_raster_audit"
+    },
+    "source_audit": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-source-audit.md",
+      "bytes": 3550,
+      "sha256": "bc4583765f98f5a68a94aeea7f6dc0250ee51b5def4e6314332edd9829cf64a7",
+      "evidence_type": "exact_source_audit"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-replay-determinism.json",
+      "bytes": 1986,
+      "sha256": "6c83291bd298f4ae96a51f79734fb8b5665bf4b6f2cc03d2c1cf09d066ca8c1c",
+      "evidence_type": "replay_determinism_audit"
+    },
+    "live_pointer_refresh": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-live-pointer-refresh-audit.json",
+      "bytes": 48652,
+      "sha256": "cf1b5d2c58d82b2cfc1fbce05e2a39058bcda5b0dbad2e1be4728c0fc0fe5bec",
+      "evidence_type": "live_pointer_refresh_audit"
+    }
+  },
+  "replay": {
+    "preserved_attempt_1": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110881/attempt-0001/result.json",
+      "bytes": 1299,
+      "sha256": "0839407d7b86ee5ee27e03d20f3ea0fa0c4a17ead29caa387ad474d8362498eb",
+      "evidence_type": "append_only_replay_result"
+    },
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110881/attempt-0002/result.json",
+      "bytes": 17829,
+      "sha256": "da59cbe776a583daf793afcd593a74f4cd4188984e81f2ede22f75e50f6b75e2",
+      "evidence_type": "append_only_replay_result"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110881/attempt-0003/result.json",
+      "bytes": 17829,
+      "sha256": "af722db9d46a541f704ce342c9cfdacfcaf6a1c5f9ed1504957b462a63c89b35",
+      "evidence_type": "append_only_replay_result"
+    },
+    "semantic_equal": true,
+    "semantic_sha256": "255a95cfaa975b531aa00125f56d47772265dfec0b285a9a9c993ea266430b62",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 55975,
+      "sha256": "de670173e44b53a369e2dca50a15b9da671d97afd3cca1ef2b9f8550374c95d8",
+      "evidence_type": "live_replay_summary"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 58031,
+      "sha256": "bf910207b90fecda45fe7253cc4424a83cf56439b44660c13a6d1d169c0a7033",
+      "evidence_type": "live_replay_report"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/generic-residual-before-22.json",
+      "bytes": 13939,
+      "sha256": "e381b4c2d3da7212c8f554866a2cdc0b4522f21a637ae46681ef0095ef79adbe",
+      "evidence_type": "frozen_generic_residual_census",
+      "affected_roots": 22,
+      "affected_items": 22,
+      "result_set_sha256": "77d2583a6bb7d92bbf1b7ddae69f0134125f4f474f9d50212b1f4082cb6b75d4"
+    },
+    "after_1": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/generic-residual-after-1.json",
+      "bytes": 13366,
+      "sha256": "8916f2ed7fcd80d2a2ae7a474e982bd344583f02a9e01d483db511c978e30b61",
+      "evidence_type": "frozen_generic_residual_census",
+      "affected_roots": 21,
+      "affected_items": 21,
+      "result_set_sha256": "a3eb48c5c9dae1c0c68f6641a67e9949562f04d34546b6d134196fdcce685647"
+    },
+    "after_2": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/generic-residual-after-2.json",
+      "bytes": 13366,
+      "sha256": "8916f2ed7fcd80d2a2ae7a474e982bd344583f02a9e01d483db511c978e30b61",
+      "evidence_type": "frozen_generic_residual_census",
+      "affected_roots": 21,
+      "affected_items": 21,
+      "result_set_sha256": "a3eb48c5c9dae1c0c68f6641a67e9949562f04d34546b6d134196fdcce685647"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/queue-after.json",
+      "bytes": 1481,
+      "sha256": "b07d215f244186ba190b324d8b4f20423aea770444aedc823a6ab92dbb7bf911",
+      "evidence_type": "next_residual_queue"
+    }
+  },
+  "terminal_outcome": {
+    "status": "metadata_unpublished",
+    "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "items": 10,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "live_shared_outputs": {
+    "result_set_sha256": "a3eb48c5c9dae1c0c68f6641a67e9949562f04d34546b6d134196fdcce685647",
+    "replay_summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 55975,
+      "sha256": "de670173e44b53a369e2dca50a15b9da671d97afd3cca1ef2b9f8550374c95d8",
+      "evidence_type": "live_replay_summary"
+    },
+    "replay_report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 58031,
+      "sha256": "bf910207b90fecda45fe7253cc4424a83cf56439b44660c13a6d1d169c0a7033",
+      "evidence_type": "live_replay_report"
+    }
+  },
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "d07bf3b7faa492b7db1122f46da6e88df10d7705759b47f438b8f48691ebedb6",
+    "layout_signature_count": 5,
+    "family_id": "59207246",
+    "root_ids": [
+      "US-20260147189"
+    ],
+    "publication_ids": [
+      "US-20260147189-A1"
+    ],
+    "application_numbers": [
+      "19/452411"
+    ],
+    "title": "OPTICAL IMAGING LENS",
+    "applicant_and_assignee": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0b18a2304890cf1a/US-20260147189-A1.html",
+      "bytes": 153342,
+      "sha256": "0b18a2304890cf1a1bab3f94aae0135f9e79529c3f0f2ea9c601140af3750b52",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "marker_counts": {
+      "effective_focal_length": 21,
+      "embodiment_anchor": 326,
+      "example_anchor": 0,
+      "f_number": 20,
+      "full_field": 16,
+      "half_field": 13
+    },
+    "table_count": 0
+  },
+  "saturation_complete": false
+}
