@@ -648,6 +648,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_largan_filter_coating_system_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_largan_low_reflective_cluster_layer_attempts(
             raw_text,
@@ -84792,6 +84798,905 @@ def _classify_largan_light_blocking_module_attempts(
             ),
         )
         for item in _LARGAN_LIGHT_BLOCKING_ITEMS
+    ]
+
+
+_LARGAN_FILTER_COATING_SYSTEM_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Largan plate/filter/coating imaging-optical-system 1st embodiment",
+        "paragraph_range": (77, 96),
+        "figures": tuple(f"1{letter}" for letter in "ABCDEFGH"),
+        "tables": (1,),
+        "reason_code": (
+            "confirmed_no_prescription."
+            "imaging_optical_system_plate_filter_coating_architecture_only"
+        ),
+    },
+    {
+        "number": 2,
+        "label": "Largan plate/filter/coating imaging-optical-system 2nd embodiment",
+        "paragraph_range": (97, 106),
+        "figures": tuple(f"2{letter}" for letter in "ABCD"),
+        "tables": (2,),
+        "reason_code": (
+            "confirmed_no_prescription."
+            "imaging_optical_system_plate_filter_coating_architecture_only"
+        ),
+    },
+    {
+        "number": 3,
+        "label": "Largan plate/filter/coating imaging-optical-system 3rd embodiment",
+        "paragraph_range": (107, 116),
+        "figures": tuple(f"3{letter}" for letter in "ABCDE"),
+        "tables": (3,),
+        "reason_code": (
+            "confirmed_no_prescription."
+            "imaging_optical_system_plate_filter_coating_architecture_only"
+        ),
+    },
+    {
+        "number": 4,
+        "label": "Largan plate/filter/coating imaging-optical-system 4th embodiment",
+        "paragraph_range": (117, 126),
+        "figures": tuple(f"4{letter}" for letter in "ABCDE"),
+        "tables": (4,),
+        "reason_code": (
+            "confirmed_no_prescription."
+            "imaging_optical_system_plate_filter_coating_architecture_only"
+        ),
+    },
+    {
+        "number": 5,
+        "label": "Largan plate/filter/coating imaging-optical-system 5th embodiment",
+        "paragraph_range": (127, 135),
+        "figures": tuple(f"5{letter}" for letter in "ABCDE"),
+        "tables": (5,),
+        "reason_code": (
+            "confirmed_no_prescription."
+            "imaging_optical_system_plate_filter_coating_architecture_only"
+        ),
+    },
+    {
+        "number": 6,
+        "label": (
+            "Largan folded prism/filter/coating imaging-optical-system "
+            "6th embodiment"
+        ),
+        "paragraph_range": (136, 146),
+        "figures": tuple(f"6{letter}" for letter in "ABCDEF"),
+        "tables": (6,),
+        "reason_code": (
+            "confirmed_no_prescription."
+            "folded_imaging_optical_system_prism_filter_coating_architecture_only"
+        ),
+    },
+    {
+        "number": 7,
+        "label": (
+            "Largan folded prism/filter/coating imaging-optical-system "
+            "7th embodiment"
+        ),
+        "paragraph_range": (147, 155),
+        "figures": tuple(f"7{letter}" for letter in "ABC"),
+        "tables": (7,),
+        "reason_code": (
+            "confirmed_no_prescription."
+            "folded_imaging_optical_system_prism_filter_coating_architecture_only"
+        ),
+    },
+    {
+        "number": 8,
+        "label": "Largan electronic-device multi-camera 8th-embodiment wrapper",
+        "paragraph_range": (156, 168),
+        "figures": tuple(f"8{letter}" for letter in "ABCDEFG"),
+        "tables": (),
+        "reason_code": (
+            "confirmed_no_prescription.electronic_device_multi_camera_wrapper_only"
+        ),
+    },
+)
+_LARGAN_FILTER_COATING_SYSTEM_FIGURES = (
+    tuple(f"1{letter}" for letter in "ABCDEFGH")
+    + tuple(f"2{letter}" for letter in "ABCD")
+    + tuple(f"3{letter}" for letter in "ABCDE")
+    + tuple(f"4{letter}" for letter in "ABCDE")
+    + tuple(f"5{letter}" for letter in "ABCDE")
+    + tuple(f"6{letter}" for letter in "ABCDEF")
+    + tuple(f"7{letter}" for letter in "ABC")
+    + tuple(f"8{letter}" for letter in "ABCDEFG")
+)
+_LARGAN_FILTER_COATING_SYSTEM_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12650581-B2": {
+        "family_id": "83457080",
+        "application_number": "17/933885",
+        "prior_publication": "US-20230115906-A1",
+        "taiwan_priority_application": "111120653",
+        "provisional_application": "63/253150",
+        "raw_document_sha256": (
+            "cd60348c7405e2ac9cad70418ab5205566d69870bdecac65d2253a2b8f6490b4"
+        ),
+        "normalized_text_sha256": (
+            "907fe7538fe281cbac76e15663865cd1710338dea1e107f7c43f7ed5baecb9a4"
+        ),
+        "title_text": "Imaging optical system, camera module and electronic device",
+        "identity_markers": {
+            "United States Patent 12650581": 1,
+            "Kind Code B2": 1,
+            "Date of Patent June 09, 2026": 1,
+            "Imaging optical system, camera module and electronic device": 1,
+            "Chang; Pei-Chi": 2,
+            "Chang; Chien-Pang": 1,
+            "Lai; Yu-Chen": 1,
+            "Chou; Ming-Ta": 1,
+            "Tsai; Wen-Yu": 1,
+            "Chu; Kuo-Chiang": 1,
+            "Applicant: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Assignee: LARGAN PRECISION CO., LTD. (Taichung City, TW)": 1,
+            "Family ID: 83457080": 1,
+            "Appl. No.: 17/933885": 1,
+            "Filed: September 21, 2022": 1,
+            "US 20230115906 A1 Apr. 13, 2023": 1,
+            "TW 111120653 Jun. 02, 2022": 1,
+            "US 63253150 20211007": 1,
+            "63/253,150": 1,
+            "Oct. 7, 2021": 1,
+            "Jun. 2, 2022": 1,
+        },
+        "raw_section_body_sha256": {
+            "structured_related": (
+                "edcfc35694ed3c685ccc9b1f6c2473d9bf1aafa63008e35c80ab235bf7d55ada"
+            ),
+            "background_summary": (
+                "e158c0adf4f25c4c5ce8b67fe9943649c2926a85da8d95ed92089b0279adf3b6"
+            ),
+            "description": (
+                "e2b312bf5615f8d27b0cf41eea36489ca87e1c59b3754f6492200eb14176f660"
+            ),
+            "claims": (
+                "6f2f6a7e2da15b98f060214efb327b8c7ea91f8a965f3fc28268fbd9f0d544c7"
+            ),
+        },
+        "section_sha256": {
+            "structured_related": (
+                "115d532ef1635820c80aa32940f4aae5fea64c946dc24838738fd2f7378c2707"
+            ),
+            "background_summary": (
+                "935c9866a2d628a74642afb565f2a0c56e593b4280c6245967f8f90f795046ef"
+            ),
+            "description": (
+                "7ed12a9761463ac69afa5134fae1b4540f7ea346b08598217cde7902c24aed3c"
+            ),
+            "claims": (
+                "bdbd5f0fee7e4c6d33570e0cc501e02dd20911199e624853619e47ea0a88b0a7"
+            ),
+        },
+        "related_applications_copy_sha256": (
+            "cca6d0d79d55e79853d216a0026953f372a03e54f6c6f182ba4e169eb227a11a"
+        ),
+        "paragraph_span_sha256": {
+            ("background_summary", 1, 4): (
+                "22956081ea62c3b489014ed165922e7306ba82434dd79dab495e4cb9c44be989"
+            ),
+            ("background_summary", 5, 16): (
+                "a98d0b29a28d57f1f0b1502266666c3b241bb5eb266c3651bf9e2876adc5189b"
+            ),
+            ("description", 1, 43): (
+                "b219993a18e0ccae343990b7f24f5bbf6a8705cefba0f2dfb72e9339bdadba69"
+            ),
+            ("description", 44, 76): (
+                "988e42e7817cb2002d7813fe9c3231c8275375c02ebcdeff29280b0253c2bc3d"
+            ),
+            ("description", 77, 96): (
+                "df02db402a6a2a21e5747a7f8a51a134704d18bbe4f57d0eb756a14600e59347"
+            ),
+            ("description", 97, 106): (
+                "6b55b9942eadcd0b6c8163782d2fe8b729eaef4503d11a6bc4ec513069ae7349"
+            ),
+            ("description", 107, 116): (
+                "9a7e66664a0f3dcf524d153b0d0659f9588dce67be90106d76879ddad03d6964"
+            ),
+            ("description", 117, 126): (
+                "2b38f4893cc5396028ca369b0a54d7a67962601c1d3a4e9360670d05cc0fca8c"
+            ),
+            ("description", 127, 135): (
+                "8e480f76472ad7d1d81e381e670759dd19b84822a2feb5b56f00af27571f9297"
+            ),
+            ("description", 136, 146): (
+                "5110c7b5287fccc7c35488c1a9cc128066678ee268f03291e11a32788b80853d"
+            ),
+            ("description", 147, 155): (
+                "874d05b17691406ecb7c489478b3e3d07bebf42f714d64ea8b69f5374531d63c"
+            ),
+            ("description", 156, 168): (
+                "5afe3640c6d4c39a2c01d6da74a5138cc50b267307b7c83cf200955b9fd1e59f"
+            ),
+            ("description", 169, 169): (
+                "0e841818c24c0a2dd6727115cf435eb50ec1ffd224d12e5cecd45f0acdc06c67"
+            ),
+        },
+        "heading_predecessors": {
+            1: (76, "1st Embodiment"),
+            2: (96, "2nd Embodiment"),
+            3: (106, "3rd Embodiment"),
+            4: (116, "4th Embodiment"),
+            5: (126, "5th Embodiment"),
+            6: (135, "6th Embodiment"),
+            7: (146, "7th Embodiment"),
+            8: (155, "8th Embodiment"),
+        },
+        "figref_count": 203,
+        "figref_ordered_text_sha256": (
+            "8631d5851263879fa711aaf21b9ed28e736bb53d338f4895c7e1a6405b430a92"
+        ),
+        "figure_panels": _LARGAN_FILTER_COATING_SYSTEM_FIGURES,
+        "claim_numbers": tuple(range(1, 19)),
+        "independent_claim_numbers": (1, 18),
+        "claim_sha256": _largan_folded_camera_sha256_lines("""
+            6e7364611e3bd2b41826a15ab8eb4f8c7e1a19e2ca04d453e3cf597054ff85d7
+            434ba54a75489ab97c260db5e1f915e4a21202a46f840bf707ed86a5ebee75e9
+            4a33aee9b4f26e3a4ee4dae98c9ac6286a51a5129d671e2e930c0584605df8ee
+            02790afd200f4b1c248ef63b8510d33ba4d08dff465ee212d918280d6d7e382a
+            04b0a6f380191541a9645e55d90635becb38881be574caed68afb336ba0e4bcc
+            cd402edaa670f3ab3910c3a214e00ffd04cc99f3327474d6584bbfcb6aa84286
+            80307726f3a5aeccf0be1163f110dbdd8e29015a04045cf7f425600cc10cd958
+            5ba7092932a47c134cd563dfda6dbcc33b56023ff7dc0340295f942bb533dcbf
+            5300f94cceb4c22c3b2659edb06a16a566367c0c6b2aad178a75783aed5fe201
+            158e3bad5e70beae6d96d1a78acf4d5f70b1ad974450967eba09e46c54a2a1e5
+            d6f4039754871135d59c1215e8ca44d5d605c5bd3d4d40131cbfb2de69bdfc34
+            2726579df6ee10380eeecb5243e7d1ce779baa60490db6604073fa5df99bab73
+            ab56632c753635ce133cb2b453528e20b227193eba338401783faa8bc630eef1
+            90c7653ebb7e2a5cbbba6e6e5b465ff364b101111962b37c62a6ca612d3c6c24
+            a31e42bb91face317c1c6f2195a7d441ed5f2d3b2d179132ed406703c4841097
+            ed4173c6174aef06e2489ddbbe7767b58314664d20afbf2d8470a992744b6e11
+            63cd4b9a5b4ecde0560a124a00f6704f15246fe3b613d0ba2348c820b2bf4a16
+            d84f2bf1dd554cc7e4b0d89c1e201a5def89c76a7c563eaf24f9fe8d764f7784
+        """),
+        "claim_dependencies": (
+            (),
+            (1,),
+            (1,),
+            (3,),
+            (3,),
+            (1,),
+            (6,),
+            (1,),
+            (1,),
+            (9,),
+            (10,),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (16,),
+            (),
+        ),
+        "raw_counts": {
+            "figref": 203,
+            "table_us": 7,
+            "maths": 0,
+            "mathml": 0,
+            "native_html_table": 0,
+            "inline_formula_leads": 7,
+            "inline_formula_tails": 7,
+            "custom_character_image": 0,
+        },
+        "formula_raw_sha256": _largan_folded_camera_sha256_lines("""
+            4da7d3f6f3bce4312583bdeded752cfe47ee5a85ed4b8569a7aac6c6d47044c7
+            3e982f82631e052d23d80eebd49271e8a365ee85fca9bc43427d9968fc70e597
+            1d4e60eb6101fed1eef17b4340c0fdf75ac5964a3d6d68665b2157db7664ad41
+            0186fceeb85dfbc2536fa4f3533fe84487599635aed28c588592083421c063bc
+            cb4f094446ab545865f9039a657ddb3c8f253a6aafac9fbc279c3f850f5181b0
+            ee1e57e04e6d75d6e5b05635f6de431ffcb6e325397756333cc9d985f84ae989
+            cb4f094446ab545865f9039a657ddb3c8f253a6aafac9fbc279c3f850f5181b0
+        """),
+        "formula_texts": (
+            "0.0≤ L 1/ f≤ 0.21; and",
+            "0.21≤ L 2′′/ f.",
+            "60 nm≤ GH≤ 400 nm.",
+            "120 nm≤ GH≤ 300 nm.",
+            "0.005≤ THI/f≤ 0.35.",
+            "0.21≤ L 2′′/ f ; and",
+            "0.005≤ THI/f≤ 0.35.",
+        ),
+        "formula_set_sha256": (
+            "917f9f70366bc4a7b58a95d925e97e7a649c794930ecbf904e55d57907706390"
+        ),
+        "table_sha256": _largan_folded_camera_sha256_lines("""
+            20a6e152f47f9d3db0188a3ee800d3616d30e8694b35d08bc649e2d911e099a5
+            f8737707deeeb703709732cd0d2e48b93209ac88dd87a466aaa12dbcb0124f7e
+            b2cf57d17a52223cd9dee5d2db8b2421bfe99f39a896ca274be4977210e0c5e5
+            572b1b5ca80762be72fb4e25633321542701393013e22446801f5bc51a901a8e
+            354f9c9627feeb30a460656665d8ac623492f6945129f4e2bae63deead0e053d
+            bea39f29a4a64854077ac3b659eca7c55be4d84a0b2261b47cda305f51b1b856
+            66a01006259f389d0f5a57bee20c945210cd619b9f625151a4133419d388a68f
+        """),
+        "table_lengths": (160, 157, 134, 124, 138, 110, 143),
+        "phrase_counts": {
+            "focal length": 29,
+            "effective focal length": 0,
+            "equivalent focal length": 6,
+            "actual focal length": 1,
+            "different focal lengths": 1,
+            "F-number": 0,
+            "F number": 0,
+            "FNO": 0,
+            "F/#": 0,
+            "field of view": 0,
+            "angle of view": 0,
+            "visual angle": 7,
+            "FOV": 0,
+            "HFOV": 0,
+            "image height": 0,
+            "aperture stop": 0,
+            "radius": 0,
+            "curvature": 0,
+            "asphere": 0,
+            "aspheric": 0,
+            "surface number": 0,
+            "thickness": 18,
+            "Abbe": 0,
+            "conic": 0,
+            "ordered surface": 0,
+            "surface prescription": 0,
+            "optical prescription": 0,
+            "lens prescription": 0,
+            "refractive index": 34,
+            "lens element": 142,
+            "optical element": 8,
+            "infrared light absorbing element": 113,
+            "infrared light reducing film": 141,
+            "plate element": 86,
+            "prism element": 13,
+            "camera module": 133,
+            "electronic device": 46,
+            "surface shape": 7,
+        },
+        "official_pdf": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/12677d844ca1d273/"
+                "US-12650581-B2.pdf"
+            ),
+            "bytes": 2_957_295,
+            "sha256": (
+                "12677d844ca1d273e505ab43b76988910a943d44ceabc6e2d039c5103c1c1bdb"
+            ),
+            "page_count": 60,
+            "raster_dimensions": (2560, 3300),
+            "decoded_raster_set_sha256": (
+                "ab35a4dd323deec05cd95bb2b28aa333ed6296164559a00a9f17edd74ebf5429"
+            ),
+            "cover_page_numbers": (1,),
+            "reference_page_numbers": (2,),
+            "drawing_page_numbers": tuple(range(3, 46)),
+            "specification_page_numbers": tuple(range(46, 61)),
+            "claim_page_numbers": (59, 60),
+            "table_page_numbers": tuple(range(52, 58)),
+        },
+    }
+}
+
+
+def _largan_filter_coating_section_bodies(raw_text: str) -> dict[str, str]:
+    patterns = {
+        "structured_related": (
+            r"<h3>Related U\.S\. Application Data</h3>\s*"
+            r"<div>\s*<p>(.*?)</p>\s*</div>"
+        ),
+        "background_summary": (
+            r"<h3>Background/Summary</h3>\s*<p>(.*?)</p>\s*</section>"
+        ),
+        "description": r"<h3>Description</h3>\s*<p>(.*?)</p>\s*</section>",
+        "claims": r"<h3>Claims</h3>\s*<p>(.*?)</p>\s*</section>",
+    }
+    sections = {
+        name: re.findall(pattern, raw_text, re.DOTALL | re.IGNORECASE)
+        for name, pattern in patterns.items()
+    }
+    if any(len(matches) != 1 for matches in sections.values()):
+        raise PatentParseError("Largan filter/coating raw section count changed")
+    return {name: matches[0] for name, matches in sections.items()}
+
+
+def _largan_filter_coating_numbered_paragraphs(
+    text: str,
+    *,
+    section: str,
+    expected_first: int,
+    expected_last: int,
+) -> dict[int, str]:
+    markers = list(re.finditer(r"(?:^|\s)\((\d+)\)\s+", text))
+    numbers = tuple(int(marker.group(1)) for marker in markers)
+    if numbers != tuple(range(expected_first, expected_last + 1)):
+        raise PatentParseError(
+            f"Largan filter/coating {section} paragraph denominator changed"
+        )
+    return {
+        number: text[
+            marker.end() : (
+                markers[index + 1].start()
+                if index + 1 < len(markers)
+                else len(text)
+            )
+        ].strip()
+        for index, (number, marker) in enumerate(zip(numbers, markers, strict=True))
+    }
+
+
+def _largan_filter_coating_paragraph_span(
+    paragraphs: dict[int, str],
+    first: int,
+    last: int,
+) -> str:
+    return " ".join(
+        f"({number}) {paragraphs[number]}" for number in range(first, last + 1)
+    )
+
+
+def _largan_filter_coating_table_payloads(
+    paragraphs: dict[int, str],
+) -> tuple[str, ...]:
+    paragraph_numbers = (96, 106, 116, 126, 135, 146, 154)
+    next_headings: tuple[str | None, ...] = (
+        "2nd Embodiment",
+        "3rd Embodiment",
+        "4th Embodiment",
+        "5th Embodiment",
+        "6th Embodiment",
+        "7th Embodiment",
+        None,
+    )
+    payloads: list[str] = []
+    try:
+        for number, paragraph_number, next_heading in zip(
+            range(1, 8), paragraph_numbers, next_headings, strict=True
+        ):
+            token = f"TABLE-US-{number:05d}"
+            paragraph = paragraphs[paragraph_number]
+            payload = paragraph[paragraph.index(token) :]
+            if next_heading is not None:
+                payload = payload[: payload.index(next_heading)]
+            payloads.append(payload.strip())
+    except ValueError as exc:
+        raise PatentParseError(
+            "Largan filter/coating flattened-table boundary changed"
+        ) from exc
+    return tuple(payloads)
+
+
+def _classify_largan_filter_coating_system_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 83457080 without promoting filter metadata."""
+
+    profile = _LARGAN_FILTER_COATING_SYSTEM_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _LARGAN_FILTER_COATING_SYSTEM_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Largan filter/coating official raw text changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode()).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Largan filter/coating normalized text changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Largan filter/coating title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    "Largan filter/coating identity marker "
+                    f"{marker!r} occurs {observed}; expected {expected}"
+                )
+
+        raw_sections = _largan_filter_coating_section_bodies(raw_text)
+        sections = {
+            name: normalize_patent_text(body) for name, body in raw_sections.items()
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_body_sha256"
+        ].items():
+            if (
+                hashlib.sha256(raw_sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Largan filter/coating {section_name} raw section changed"
+                )
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Largan filter/coating {section_name} section changed"
+                )
+        if sections["structured_related"] != (
+            "us-provisional-application US 63253150 20211007"
+        ):
+            raise PatentParseError("Largan filter/coating structured lineage changed")
+        related_copy, separator, background_body = sections[
+            "background_summary"
+        ].partition(" BACKGROUND ")
+        if separator != " BACKGROUND ":
+            raise PatentParseError(
+                "Largan filter/coating related/background boundary changed"
+            )
+        if (
+            hashlib.sha256(related_copy.encode()).hexdigest()
+            != profile["related_applications_copy_sha256"]
+        ):
+            raise PatentParseError(
+                "Largan filter/coating related-applications copy changed"
+            )
+
+        paragraphs = {
+            "background_summary": _largan_filter_coating_numbered_paragraphs(
+                background_body,
+                section="background/summary",
+                expected_first=1,
+                expected_last=16,
+            ),
+            "description": _largan_filter_coating_numbered_paragraphs(
+                sections["description"],
+                section="description",
+                expected_first=1,
+                expected_last=169,
+            ),
+        }
+        for (
+            section_name,
+            first,
+            last,
+        ), expected_digest in profile["paragraph_span_sha256"].items():
+            observed_span = _largan_filter_coating_paragraph_span(
+                paragraphs[section_name], first, last
+            )
+            if hashlib.sha256(observed_span.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    "Largan filter/coating "
+                    f"{section_name} paragraphs {first}-{last} changed"
+                )
+        covered_item_paragraphs = {
+            paragraph
+            for item in _LARGAN_FILTER_COATING_SYSTEM_ITEMS
+            for paragraph in range(
+                int(item["paragraph_range"][0]),
+                int(item["paragraph_range"][1]) + 1,
+            )
+        }
+        if covered_item_paragraphs != set(range(77, 169)):
+            raise PatentParseError("Largan filter/coating source-item coverage changed")
+        for item_number, (paragraph, heading) in profile[
+            "heading_predecessors"
+        ].items():
+            if heading not in paragraphs["description"][paragraph]:
+                raise PatentParseError(
+                    f"Largan filter/coating item heading changed for item {item_number}"
+                )
+        if "foregoing description" not in paragraphs["description"][169].lower():
+            raise PatentParseError("Largan filter/coating closing paragraph changed")
+
+        figrefs = re.findall(
+            r"<figref\b[^>]*>(.*?)</figref>",
+            raw_text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        figref_tokens = tuple(normalize_patent_text(figref) for figref in figrefs)
+        if len(figref_tokens) != profile["figref_count"]:
+            raise PatentParseError(
+                "Largan filter/coating figure-reference denominator changed"
+            )
+        figref_digest = hashlib.sha256(
+            ("\n".join(figref_tokens) + "\n").encode()
+        ).hexdigest()
+        if figref_digest != profile["figref_ordered_text_sha256"]:
+            raise PatentParseError(
+                "Largan filter/coating ordered figure-reference text changed"
+            )
+        declared_figures: list[str] = []
+        for paragraph_number in range(1, 44):
+            match = re.match(
+                r"FIG\.\s*(\d+)\s*([A-H])\s+is\b",
+                paragraphs["description"][paragraph_number],
+                re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Largan filter/coating figure declaration changed in paragraph "
+                    f"{paragraph_number}"
+                )
+            declared_figures.append(f"{match.group(1)}{match.group(2).upper()}")
+        if tuple(declared_figures) != profile["figure_panels"]:
+            raise PatentParseError(
+                "Largan filter/coating declared figure-panel denominator changed"
+            )
+        mapped_figures = tuple(
+            figure
+            for item in _LARGAN_FILTER_COATING_SYSTEM_ITEMS
+            for figure in item["figures"]
+        )
+        if mapped_figures != profile["figure_panels"]:
+            raise PatentParseError(
+                "Largan filter/coating item-to-figure coverage changed"
+            )
+        if len(re.findall(r"\bFIG\.\s*10\b", text, re.IGNORECASE)) != 1:
+            raise PatentParseError(
+                "Largan filter/coating unrepaired FIG. 10 text trace changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Largan filter/coating claim denominator changed")
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent_claims = tuple(
+            number
+            for number, claim_text in zip(claim_numbers, claim_texts, strict=True)
+            if re.search(r"\bclaim\s+\d+", claim_text, re.IGNORECASE) is None
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Largan filter/coating independent claims changed"
+            )
+        if tuple(
+            hashlib.sha256(claim_text.encode()).hexdigest()
+            for claim_text in claim_texts
+        ) != profile["claim_sha256"]:
+            raise PatentParseError("Largan filter/coating individual claims changed")
+        claim_dependencies = tuple(
+            tuple(
+                int(value)
+                for value in re.findall(
+                    r"\bclaim\s+(\d+)", claim_text, re.IGNORECASE
+                )
+            )
+            for claim_text in claim_texts
+        )
+        if claim_dependencies != profile["claim_dependencies"]:
+            raise PatentParseError(
+                "Largan filter/coating claim dependency graph changed"
+            )
+        if not (
+            "An imaging optical system" in claim_texts[0]
+            and "A camera module" in claim_texts[15]
+            and "An electronic device" in claim_texts[16]
+            and "A camera module" in claim_texts[17]
+        ):
+            raise PatentParseError(
+                "Largan filter/coating claim architecture binding changed"
+            )
+
+        observed_raw_counts = {
+            "figref": len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)),
+            "table_us": len(re.findall(r"TABLE-US-", raw_text, re.IGNORECASE)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)),
+            "mathml": len(re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE)),
+            "native_html_table": len(
+                re.findall(r"<table\b", raw_text, re.IGNORECASE)
+            ),
+            "inline_formula_leads": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="lead"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "inline_formula_tails": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="tail"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "custom_character_image": len(
+                re.findall(r"<img\b", raw_text, re.IGNORECASE)
+            ),
+        }
+        if observed_raw_counts != profile["raw_counts"]:
+            raise PatentParseError(
+                "Largan filter/coating figure/table/formula/image denominator changed"
+            )
+
+        leads = list(
+            re.finditer(
+                r'<\?in-line-formulae[^>]*end="lead"[^?]*\?>',
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        tails = list(
+            re.finditer(
+                r'<\?in-line-formulae[^>]*end="tail"[^?]*\?>',
+                raw_text,
+                re.IGNORECASE,
+            )
+        )
+        formula_blocks = tuple(
+            raw_text[lead.start() : tail.end()]
+            for lead, tail in zip(leads, tails, strict=True)
+        )
+        if tuple(
+            hashlib.sha256(block.encode()).hexdigest() for block in formula_blocks
+        ) != profile["formula_raw_sha256"]:
+            raise PatentParseError(
+                "Largan filter/coating inline-formula boundaries changed"
+            )
+        formula_texts = tuple(
+            normalize_patent_text(block) for block in formula_blocks
+        )
+        if formula_texts != profile["formula_texts"]:
+            raise PatentParseError("Largan filter/coating formula tokens changed")
+        if (
+            hashlib.sha256(("\n".join(formula_texts) + "\n").encode()).hexdigest()
+            != profile["formula_set_sha256"]
+        ):
+            raise PatentParseError(
+                "Largan filter/coating ordered formula set changed"
+            )
+
+        tables = _largan_filter_coating_table_payloads(paragraphs["description"])
+        if tuple(len(payload) for payload in tables) != profile["table_lengths"]:
+            raise PatentParseError("Largan filter/coating table lengths changed")
+        if tuple(
+            hashlib.sha256(payload.encode()).hexdigest() for payload in tables
+        ) != profile["table_sha256"]:
+            raise PatentParseError("Largan filter/coating table payloads changed")
+        mapped_tables = tuple(
+            table
+            for item in _LARGAN_FILTER_COATING_SYSTEM_ITEMS
+            for table in item["tables"]
+        )
+        if mapped_tables != tuple(range(1, 8)):
+            raise PatentParseError(
+                "Largan filter/coating item-to-table coverage changed"
+            )
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan filter/coating phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if not (
+            all("f (mm)" in table for table in tables)
+            and "estimated value by conversion" in paragraphs["description"][168]
+            and "different from the actual focal length"
+            in paragraphs["description"][168]
+            and "visual angle" in paragraphs["description"][164]
+        ):
+            raise PatentParseError(
+                "Largan filter/coating non-prescription phrase roles changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_payload = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_payload) != pdf_profile["bytes"]:
+            raise PatentParseError("Largan filter/coating official PDF size changed")
+        if hashlib.sha256(pdf_payload).hexdigest() != pdf_profile["sha256"]:
+            raise PatentParseError("Largan filter/coating official PDF hash changed")
+        reader = pypdf.PdfReader(io.BytesIO(pdf_payload))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Largan filter/coating official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    "Largan filter/coating PDF page "
+                    f"{page_number} contains {len(images)} rasters; expected one"
+                )
+            image = images[0].image
+            if image.size != pdf_profile["raster_dimensions"] or image.mode != "1":
+                raise PatentParseError(
+                    f"Largan filter/coating PDF page {page_number} raster changed"
+                )
+            page_raster_hashes.append(hashlib.sha256(image.tobytes()).hexdigest())
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode()
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["decoded_raster_set_sha256"]:
+            raise PatentParseError(
+                "Largan filter/coating official PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError("Largan filter/coating official PDF gained text")
+        if not (
+            pdf_profile["cover_page_numbers"] == (1,)
+            and pdf_profile["reference_page_numbers"] == (2,)
+            and pdf_profile["drawing_page_numbers"] == tuple(range(3, 46))
+            and pdf_profile["specification_page_numbers"] == tuple(range(46, 61))
+            and pdf_profile["claim_page_numbers"] == (59, 60)
+            and pdf_profile["table_page_numbers"] == tuple(range(52, 58))
+        ):
+            raise PatentParseError("Largan filter/coating PDF page roles changed")
+    except Exception as exc:  # noqa: BLE001 - retain all eight exact source items
+        return attempts_for_error(exc)
+
+    details = (
+        "paragraphs 77-96, FIGS. 1A-1H and TABLE 1A publish a plate/filter/coating imaging-optical-system architecture",
+        "paragraphs 97-106, FIGS. 2A-2D and TABLE 2A publish a plate/filter/coating imaging-optical-system architecture",
+        "paragraphs 107-116, FIGS. 3A-3E and TABLE 3A publish a plate/filter/coating imaging-optical-system architecture",
+        "paragraphs 117-126, FIGS. 4A-4E and TABLE 4A publish a plate/filter/coating imaging-optical-system architecture",
+        "paragraphs 127-135, FIGS. 5A-5E and TABLE 5A publish a plate/filter/coating imaging-optical-system architecture",
+        "paragraphs 136-146, FIGS. 6A-6F and TABLE 6A publish a folded prism/filter/coating imaging-optical-system architecture",
+        "paragraphs 147-155, FIGS. 7A-7C and TABLE 7A publish another folded prism/filter/coating imaging-optical-system architecture",
+        "paragraphs 156-168 and FIGS. 8A-8G publish an electronic-device multi-camera and qualitative zoom wrapper",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Largan Family 83457080 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. The exact B2 publishes "
+                    "no ordered optical lens-surface radius sequence, ordered "
+                    "axial intersurface spacing, numerical lens material/index/"
+                    "dispersion row, surface-specific conic/asphere coefficient, "
+                    "identified aperture-stop coordinate, F-number, prescription-"
+                    "bound angular field or absolute image height. TABLES 1A-7A "
+                    "publish focal length only with filter, plate, prism, coating "
+                    "or translucent-portion distances/thicknesses; generic lens "
+                    "counts and surface-shape text remain architecture metadata. "
+                    "Item 8 visual-angle/equivalent-focal ranges are deployment "
+                    "categories expressly estimated by conversion, not a source "
+                    "prescription. Claims 1-18 add no separate ordered optical "
+                    "prescription. No value is derived, repaired, measured from "
+                    "drawings, transcribed from raster, or borrowed from prior "
+                    "US-20230115906-A1, priority applications, another family or "
+                    "a shared layout"
+                ),
+            ),
+        )
+        for item in _LARGAN_FILTER_COATING_SYSTEM_ITEMS
     ]
 
 

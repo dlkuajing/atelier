@@ -811,28 +811,28 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `100084534`, root/publication `US-20260169250` /
-`US-20260169250-A1`, is complete in the current atomic shovel. Exact A1 reconciliation
-establishes eight source items and zero ordered optical prescriptions: four imaging-
-lens-assembly-module/coating architectures, two smartphone wrappers, one vehicle
-wrapper and one unmanned-aerial-vehicle wrapper. All eight close as exact confirmed-
+For patent saturation work, Family `83457080`, root/publication `US-12650581` /
+`US-12650581-B2`, is complete in the current atomic shovel. Exact B2 reconciliation
+establishes eight source items and zero ordered optical prescriptions: five
+plate/filter/coating imaging-optical-system architectures, two prism-folded variants
+and one electronic-device multi-camera wrapper. All eight close as exact confirmed-
 no-prescription terminals without worker, conversion, ZMX, formal intake or CODE V.
 Attempts 2/3 are semantic-equal at
-`0ce46d81a45de9f88dae208e6d690cae0e1ac727ed553fd4e9b4c08b8968c5a0`;
+`96b740e10b8945cf79213a1eb5397e1b83e1067a09ca1db4ed62ca1b3bdc81aa`;
 strict replay is 619/619 with result set
-`82b4b253f6e038fed009638ab79bd89727b38db699ac4459416c9caad1dc7beb`.
-The generic residual contains 25 roots/items and both after censuses are byte-identical
-at `3234716292ddbec1cf9226d904b559e31761737799edf99cf509b4b037f68793`.
-Stable ordering selects Family `83457080`, root/publication `US-12650581` /
-`US-12650581-B2`, application `17/933885`, title `Imaging optical system, camera
-module and electronic device`, Largan Precision. Open its GSD quick only after the
-Family 100084534 shovel is atomically committed. Its retained 146,347-byte HTML is
-pinned at
-`cd60348c7405e2ac9cad70418ab5205566d69870bdecac65d2253a2b8f6490b4`;
+`96545c2e81ee730d02dd426fcbb537ae767b2916b0b58f4edc65978979708535`.
+The generic residual contains 24 roots/items and both after censuses are byte-identical
+at `0456cbbf30cad6f0a509d610396e284ddbb689df479ce3ade3ec115932956496`.
+Stable ordering selects Family `83127668`, root/publication `US-12656577` /
+`US-12656577-B2`, application `17/932095`, title `Optical imaging lens`, Genius
+Electronic Optical (Xiamen). Open its GSD quick only after the Family 83457080 shovel
+is atomically committed. Its retained 122,928-byte HTML is pinned at
+`22a1ecf1cfcd0cdcf385cfcbb0325631dc463439a97feb83b1908fad8bd12e00`;
 layout signature
-`cffa6c4deab02a82b8a89eb05e977f2794569b6bdeffe280478b9325d847de14`
-occurs once. Do not borrow any value, item boundary or outcome from completed Largan
-families, prior US-20230115906-A1 or a shared layout.
+`d07bf3b7faa492b7db1122f46da6e88df10d7705759b47f438b8f48691ebedb6`
+occurs for eight residual roots, but the next quick must select only exact Family
+83127668/root US-12656577 and exclude the seven distinct families. Do not borrow any
+value, item boundary or outcome across those families or a shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

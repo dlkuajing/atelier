@@ -1,0 +1,112 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "83457080",
+  "root_id": "US-12650581",
+  "publication_id": "US-12650581-B2",
+  "sections": {
+    "related_applications_paragraphs": 1,
+    "background_summary_paragraphs": 16,
+    "description_paragraphs": 169,
+    "claims": 18,
+    "independent_claims": 2,
+    "flattened_tables": 7,
+    "inline_formula_pairs": 7,
+    "mathml_objects": 0,
+    "figref_tags": 203,
+    "declared_figure_panels": 43,
+    "drawing_sheets": 43
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan plate/filter/coating imaging-optical-system 1st embodiment",
+      "paragraph_range": [77, 96],
+      "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H"],
+      "tables": [1],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_optical_system_plate_filter_coating_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan plate/filter/coating imaging-optical-system 2nd embodiment",
+      "paragraph_range": [97, 106],
+      "figures": ["2A", "2B", "2C", "2D"],
+      "tables": [2],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_optical_system_plate_filter_coating_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan plate/filter/coating imaging-optical-system 3rd embodiment",
+      "paragraph_range": [107, 116],
+      "figures": ["3A", "3B", "3C", "3D", "3E"],
+      "tables": [3],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_optical_system_plate_filter_coating_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan plate/filter/coating imaging-optical-system 4th embodiment",
+      "paragraph_range": [117, 126],
+      "figures": ["4A", "4B", "4C", "4D", "4E"],
+      "tables": [4],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_optical_system_plate_filter_coating_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan plate/filter/coating imaging-optical-system 5th embodiment",
+      "paragraph_range": [127, 135],
+      "figures": ["5A", "5B", "5C", "5D", "5E"],
+      "tables": [5],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_optical_system_plate_filter_coating_architecture_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan folded prism/filter/coating imaging-optical-system 6th embodiment",
+      "paragraph_range": [136, 146],
+      "figures": ["6A", "6B", "6C", "6D", "6E", "6F"],
+      "tables": [6],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_imaging_optical_system_prism_filter_coating_architecture_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan folded prism/filter/coating imaging-optical-system 7th embodiment",
+      "paragraph_range": [147, 155],
+      "figures": ["7A", "7B", "7C"],
+      "tables": [7],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.folded_imaging_optical_system_prism_filter_coating_architecture_only"
+    },
+    {
+      "number": 8,
+      "label": "Largan electronic-device multi-camera 8th-embodiment wrapper",
+      "paragraph_range": [156, 168],
+      "figures": ["8A", "8B", "8C", "8D", "8E", "8F", "8G"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_wrapper_only"
+    }
+  ],
+  "optical_interpretation": {
+    "ordered_surface_prescriptions": 0,
+    "focal_length_occurrences": 29,
+    "focal_length_role": "Tables 1A-7A publish system focal length only to parameterize filter, plate or prism distances; item 8 publishes estimated equivalent-focal deployment categories, not an ordered lens prescription.",
+    "equivalent_focal_length_occurrences": 6,
+    "visual_angle_occurrences": 7,
+    "worker_authorized": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 8,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}
