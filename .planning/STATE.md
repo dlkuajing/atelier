@@ -793,20 +793,23 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | 260722-patent-generic-family-90627383 | complete-shovel-saturation-incomplete | Exact US-12607828-B2 binds application 18/076399, prior US-20240126048-A1, China priority 202211249753.7, Family ID 90627383, Liu/Zhan/Fu inventors and Genius Electronic Optical (Xiamen). The exact denominator is one cross-reference plus eight remaining Background/Summary paragraphs, thirteen Description paragraphs, claims 1-20 with claims 1/11 independent, FIGS.1-3/three drawing sheets, eleven figure-reference tags, zero tables/MathML/inline formulae/custom-character images and exactly three items. Paragraphs 4-9/FIG.1 publish baseline barrel/lens/fixing-bearing assembly geometry, paragraph 10/FIG.2 adds water-absorption and inclined-fitting relationships, and paragraph 11/FIG.3 adds a third lens element and maximum total lens count. D1-D9 and ODLA/ODLB/ODR/TLB/ALAR/DR-DA constraints are mechanical assembly metadata. No item publishes ordered optical radii, spacings, materials/index/dispersion, surface-specific conics/aspheres, an identified stop, focal length, F-number, numeric angular field or absolute image height. All three close as precise confirmed-no-prescription terminals without derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 547,836-byte official eight-page image-only wrappers decode to the same original one-bit raster set at f42b6ab3...1b96; no enhancement, OCR repair, measurement or inference occurs. Attempts 2/3 are semantic-equal at 294dabea...23b; generic 34 to 33; result set 019238ea...d9dfc; census 2fd4b5f3...ea3; summary 05c4d695...d29; report a20f9d0e...038; evidence f61afcc5...01a; strict audit twice plus final is 619/619 corrupt=0. Complete offline coverage passes 3,794 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1045/1045, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 101 changed-JSON checks pass. All 119 source-evidence manifests, 2,006 references and 1,800 complete triples rehash; 89 prior manifests contain exactly 375 permitted live-pointer leaf changes while frozen history remains fixed and old live hashes are absent. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 85505687 / US-12625342-B2 next; parent saturation remains incomplete. |
 
+| 260722-patent-generic-family-85505687 | complete-shovel-saturation-incomplete | Exact US-12625342-B2 binds application 18/177179, prior US-20230305261-A1, provisional 63/323104, Family ID 85505687, Su/Chou/Tsai/Cheng inventors and Largan Precision. The exact denominator is one related-application plus seven Background/Summary paragraphs, 106 Description paragraphs, claims 1-34 with claims 1/14/25 independent, 29 figure panels/drawing sheets, 218 figure-reference tags, zero tables/MathML/inline formulae/custom-character images and exactly three items. Paragraphs 60-89/FIGS.1A-1T and 90-100/FIGS.2A-2G publish coating, nanostructure, connecting-layer and alignment architecture; paragraphs 101-105/FIGS.3A-3B publish a smartphone wrapper. Coating roundness/roughness, nanostructure/layer heights and device deployment fields are architecture metadata. No item publishes ordered optical radii, spacings, numerical materials/index/dispersion, surface-specific conics/aspheres, an identified stop, focal length, F-number or absolute image height. All three close as precise confirmed-no-prescription terminals without repairing paragraph 99, derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two byte-identical 4,642,588-byte official 44-page image-only PDFs decode to the same original one-bit raster set at caa18997...c3a5; no enhancement, OCR, measurement or inference occurs. Attempts 2/3 are semantic-equal at b4c28285...709a; generic 33 to 32; result set f47b201c...c03c; census ccf57c94...6606; summary fd8d458b...ccc6; report 1dd30e70...435; evidence 7ef6e71e...74a5; final strict audit is 619/619 corrupt=0. Complete segmented offline coverage passes 3,803 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1054/1054, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 102 changed-JSON checks pass. All 120 source-evidence manifests, 2,023 references and 1,817 complete triples rehash; 90 prior manifests contain exactly 379 permitted live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 74143231 / US-20220030168-A1 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `90627383`, root/publication `US-12607828` /
-`US-12607828-B2`, is complete but the parent saturation goal remains active. Its
-committed result will be the clean entry point for the next GSD quick. Strict replay is
-619/619 with result set
-`019238ea1632a28bf3e39a9a6bb72c5b4b76493166c1177d93bf87f7f98d9dfc`, and
-generic residual contains 33 roots/items. Stable ordering selects exact Family
-`85505687`, root/publication `US-12625342` / `US-12625342-B2`, application
-`18/177179`, next. Its layout signature is shared by two other residual families, but
-the next quick must bind only Family 85505687/root US-12625342 and must not borrow any
-value or terminal fact from Family 90627383 or the shared layout.
+For patent saturation work, Family `85505687`, root/publication `US-12625342` /
+`US-12625342-B2`, is complete in
+`.planning/quick/260722-patent-generic-family-85505687/` from committed Family
+90627383 at `6b862727`; commit this atomic shovel before opening the next quick. The
+current result set is
+`f47b201c3fe961575b65b0a3730079776ee1ad3699f05ab4e66246030640c03c` and
+generic residual contains 32 roots/items. Stable ordering selects Family `74143231`,
+root/publication `US-20220030168` / `US-20220030168-A1`, application `17/060047`,
+next. Its title and Largan Digital identity are queue bibliography only; independently
+reconcile the exact source and do not borrow any value or terminal fact from Family
+85505687 or the shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

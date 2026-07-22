@@ -1,0 +1,302 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "85505687",
+  "root_id": "US-12625342",
+  "publication_id": "US-12625342-B2",
+  "application_number": "18/177179",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/fa91138291b648ed/US-12625342-B2.html",
+    "bytes": 120092,
+    "sha256": "fa91138291b648ed685aaabff826a28fd8ab10074f8272abe5c40243aa9fb5e3",
+    "characters": 120082,
+    "normalized_characters": 92446,
+    "normalized_sha256": "293d08be39b28b31914d256414fc3f96d141516ce237c69c1fb69e6e16c3d555",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b"
+  },
+  "bibliography": {
+    "title": "Imaging lens assembly, camera module and electronic device",
+    "inventors": [
+      "Heng-Yi Su",
+      "Ming-Ta Chou",
+      "Wen-Yu Tsai",
+      "Jyun-Jia Cheng"
+    ],
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": "LARGAN PRECISION CO., LTD."
+  },
+  "lineage": {
+    "filing_date": "2023-03-02",
+    "same_application_prior_publication": "US-20230305261-A1",
+    "same_application_prior_publication_date": "2023-09-28",
+    "provisional_application": "63/323,104",
+    "provisional_filing_date": "2022-03-24"
+  },
+  "source_denominator": {
+    "related_application_numbered_paragraphs": 1,
+    "background_summary_numbered_paragraphs_excluding_related": 7,
+    "background_summary_section_numbered_paragraphs": 8,
+    "brief_drawing_numbered_paragraphs": 30,
+    "shared_detailed_architecture_numbered_paragraphs": 29,
+    "source_item_numbered_paragraphs": 46,
+    "closing_numbered_paragraphs": 1,
+    "description_numbered_paragraphs": 106,
+    "total_numbered_specification_paragraphs": 114,
+    "claims": 34,
+    "independent_claims": [1, 14, 25],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 0,
+    "maths_objects": 0,
+    "mathml_objects": 0,
+    "inline_formula_leads": 0,
+    "custom_character_image_tags": 0,
+    "figure_reference_occurrences": 218,
+    "declared_figure_panels": 29,
+    "drawing_sheets": 29,
+    "official_pdf_pages": 44,
+    "source_items": 3,
+    "ordered_prescriptions": 0,
+    "unmapped_items": 0
+  },
+  "section_sha256": {
+    "related": "4821ae2ffb7607c9f240771ee5e2eeda8d323239b297da56ca07f764d11ea0ae",
+    "background": "aa1534ca2aa1bf05282edbfb366776973c7f8f709cb06b8d2a92dd3395d03a5f",
+    "description": "1312fac07bd82a772d0a6593959fbc299f36f2f314a94d5c83cbfc98dd3237ee",
+    "claims": "134e1efa1455569b86b34ad6f1e0eb10d1f1a9eb4b793fa19a8dba2c410f6cd8"
+  },
+  "raw_section_body_sha256": {
+    "related": "e87ec032d3ef2821e58ca9b46ef68e37033d9be90f12a33f54ba7b6d7c439cf9",
+    "background": "547ec7e6e65d9700d8e39e92ab341fa7fd67c6a8be4c1e0e3118fa510e4aecdd",
+    "description": "439e28c8594e8fe342a8046a616a4127c60b9d38e9a2a934989493ab88f75dc7",
+    "claims": "5b133e908c564e6402ed4f101e5f8326b572cc7792582abd160dfd20d5dc32ff"
+  },
+  "paragraph_span_sha256": {
+    "background-1-7": "5c33f7874b081826f974b8d6ffc7c5efdc5ce66902d5080c4201de6300be6867",
+    "description-1-30": "729cbfaafaa9b9df33e0753d2df51384defaaa2caec9f28e51dbc67de1078c6a",
+    "description-31-59": "772f4728466a520ad9ba2fe1ef9628c96d7684d9d78832a4f0b9db9d573c70f6",
+    "description-60-89": "023973f05574741f3c79787c2f5150cc3b0193cda62d33560870d78be248db24",
+    "description-90-100": "48a74af4c605a58b3c3f54911a14b582cc4d7cf73115c6fb2f3c792ae6fcb8a8",
+    "description-101-105": "ea66f4b81c57330f6b6e259d0331c547570de53c9924217516474499d2205f99",
+    "description-106-106": "dc20cfb7b09efc6939e7e8a0ff30ac527deb105a5c1947bfffa017b89a14ff1d",
+    "description-1-106": "d32a41d52566f5ca6d0cbb424910fed310af27d6b9ad54e28a99d7a952ef9a4b"
+  },
+  "claim_sha256": [
+    "9307fe7c8a7341030a7a57b5f6f0896cad8d67ad85d72d8756cd7ca2aa80610a",
+    "4672ee9f606ed6b166c740e51a08749024daa72fb9cc62f86ee3e4f9bb6646ed",
+    "7337e9cc2eb5aa1a30dd02ef27c9d7197d609ada074a63bfa00da5e60a46049f",
+    "160bff4726e1442647765c219ae63621abb8e138f21cbf259a514d89f15f6b3e",
+    "b2d3168181c61369f73fac773c39d5d35a695a1abf7c4f589ad8f51129404da6",
+    "caee9f233c1b5b9866ea5a14de28554c4a6641c1ed56843cc1f544366fee0840",
+    "e1155fe4243720516f0fefb5a0d263fb44af2838acc4c0d102e5e022477f4222",
+    "9a2ce5fd2bdf72eba47c36fa78ee76284f6b318582082beaa19dc36e9325a280",
+    "cf44c1faf977e47884d0839d866fdd172e1c302e11635a83dbdb06beabbc500c",
+    "81f4ccb67b80653837b58215422e37295763fb955cbb6c4d71edde916a366a13",
+    "0271768a7b98bcf5f7fb779b8b02e9c51941e87b1e52e246cbecc8e0904442e2",
+    "7136ed2558fbad2a7bc4fe3b140026db9ec553d767dbf185e11bfc4d60315a95",
+    "b3ea6e98b3d4d57d4cdc9a6acd44554bda07699cb01b7f63a634e24a71bcbc75",
+    "cf8a95d7352c9d6b9ca1dd38f816349112f3ea927d4a2971c4a4af12bd1137d7",
+    "d3df13d96f77b89827f376213839e025093ce65906b0da495a59e5a6dbceb8b6",
+    "167abc5b75dcae9fe628796245b2ee58157036bd29398edc7f91d6f41c677596",
+    "81456fb9262f25c4ae7069ed46e9a2f31ba098e5b3cfb4ce6a21e606e53b4972",
+    "e51df34aa8fa4256b6770cfe10556b83e3a7a280ee31dc1ffb60c01dd55a51e4",
+    "3ada633c11de81e74f3c6f6b6fe1bbb7ad02c286872a5fe2940cad55830ed373",
+    "cb11cdf9486c6e27b8a99d6a88d417fcfe2e4881a7753ad6a1abee39ee662c0d",
+    "99b9729c3592c120d8ec08daa6e3f04019bfa9ed081a583a8cbe79d0f5ec09d8",
+    "135466b40fb1cedb524d7897b98c93754e0df8be62563f341f4d04215dfc30e2",
+    "23c1a4cdfd533a111918437669f33e1076ac200b42909c0e20bc6c3738304052",
+    "0e9179b9cb4a3ce85dad60c6598d9830f2e5b3b009c1052dad9e3d1a4d926449",
+    "23d70d3f8294d0aa52c2c3ec89bd2ef881f093accedf26fa98b6bc99e9d8892d",
+    "de2594c73192a14f3d969d9b82c8550cf47bce6ba9cfdcaeca4c5d6f0b082403",
+    "6ec92ee27617b0fdb05eaa83ea3d5f7bc22febfc0516301f7e9d5bc106257114",
+    "79a30c604bc78ca0e051053b0eb258335cdbe2c2f6e79d47f403d2d23316b89e",
+    "6335d3692bf390b2b6ec275364cdcd857b297acc670741ee034c856c76e80bde",
+    "c445842a5c7b77da60ae3937ea64c362f07ad6f0bbc808594da79d3a5d418bab",
+    "64bf8147e55fa3d0826731823f563fbfc85eb21c6a388b57c506c45462f2dbbc",
+    "404f7e37a54858f3aeb6a22b9dd7f01c9e27de720a1a205330fa1d0a9d342319",
+    "dc76ea2c8f54caee1d478555757e109c782f28583e30def3b935ee75c22f2b3e",
+    "25c1d6afb6ba15506cc71961a5922247c675882648104784136129aa23f9074d"
+  ],
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan coating/nanostructure camera-module 1st embodiment",
+      "description_range": [60, 89],
+      "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "1J", "1K", "1L", "1M", "1N", "1O", "1P", "1Q", "1R", "1S", "1T"],
+      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan coating/nanostructure camera-module 2nd embodiment",
+      "description_range": [90, 100],
+      "figures": ["2A", "2B", "2C", "2D", "2E", "2F", "2G"],
+      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan smartphone electronic-device 3rd embodiment",
+      "description_range": [101, 105],
+      "figures": ["3A", "3B"],
+      "claims": [13],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "prescription_boundary": {
+    "ordered_radius_rows": 0,
+    "ordered_spacing_rows": 0,
+    "numerical_material_or_index_dispersion_rows": 0,
+    "surface_specific_conic_or_asphere_rows": 0,
+    "identified_aperture_stop_rows": 0,
+    "numeric_focal_length_published": false,
+    "exact_f_number_published": false,
+    "prescription_bound_numeric_angular_field_published": false,
+    "absolute_image_height_published": false,
+    "architecture_metadata_promoted_to_prescription": false,
+    "device_field_promoted_to_prescription": false
+  },
+  "direct_architecture_metadata": {
+    "roundness_tolerance_upper_bounds_mm": [0.02, 0.01, 0.005],
+    "smooth_surface_roughness_upper_bound_um": 0.1,
+    "nanostructure_average_height_ranges_nm": [[90, 350], [125, 300], [195, 255]],
+    "paragraph_89_connecting_layer_heights_nm": [73.68, 76.62, 75.15],
+    "paragraph_89_nanostructure_maximum_heights_nm": [200.3, 232.7, 247.4],
+    "paragraph_102_device_field_ranges_degrees": [[93, 175], [65, 90], [20, 50], [5, 20]],
+    "paragraph_99_printed_text_preserved": "An 40 ) Specification-clean copy average height"
+  },
+  "official_pdf": {
+    "download_1": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/source-review/US-12625342-B2-official-1.pdf",
+      "bytes": 4642588,
+      "sha256": "6166c2c0e432e04972c2bc25b2de708a6e28072ea568bd756dd94f9bcb4f0b9e"
+    },
+    "download_2": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/source-review/US-12625342-B2-official-2.pdf",
+      "bytes": 4642588,
+      "sha256": "6166c2c0e432e04972c2bc25b2de708a6e28072ea568bd756dd94f9bcb4f0b9e"
+    },
+    "page_count": 44,
+    "text_layer_characters": 0,
+    "embedded_page_mode": "1-bit",
+    "raster_dimensions_width_height": [2560, 3300],
+    "raster_set_sha256": "caa1899708f16566ec3e1b63729c7761e474242f9e90a671a5543155f821c3a5"
+  },
+  "replay": {
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12625342/attempt-0002/result.json",
+      "bytes": 5889,
+      "sha256": "c0a82e0e287a2ecef3b8fad86c7cc2a8d3037ec173e82a028ea5ea0e0f13d793"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12625342/attempt-0003/result.json",
+      "bytes": 5889,
+      "sha256": "60e9169625cde25fad6186d711d678c0e5eabcbbb5e7634d07b20ae81f02f295"
+    },
+    "semantic_equal": true,
+    "semantic_sha256": "b4c28285efbe408ef37ec2f1bdff35ed39ddf1b477ab1d6792e7cf13e47b709a",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 53715,
+      "sha256": "fd8d458bd7cd975a07483337c73bf1d7f267c6ee087d4f2b5f3536e5f01cccc6"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 55693,
+      "sha256": "1dd30e700548197e131aa829191c14f210c69149e416c56f851a552507664435"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/generic-residual-before-33.json",
+      "bytes": 20630,
+      "sha256": "2fd4b5f37ac905cf07276d1605e75b06d10a20779516d44208d9e76e25cd4ea3"
+    },
+    "after_1": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/generic-residual-after-1.json",
+      "bytes": 20075,
+      "sha256": "ccf57c944fbf38bb907d8e1f74bb114259920efcd1fb20e72c9af3f88cae6606"
+    },
+    "after_2": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/generic-residual-after-2.json",
+      "bytes": 20075,
+      "sha256": "ccf57c944fbf38bb907d8e1f74bb114259920efcd1fb20e72c9af3f88cae6606"
+    },
+    "before_roots": 33,
+    "after_roots": 32,
+    "result_set_sha256": "f47b201c3fe961575b65b0a3730079776ee1ad3699f05ab4e66246030640c03c"
+  },
+  "supporting_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/family-85505687-source-audit.md",
+      "bytes": 5836,
+      "sha256": "b696f9336083a3c5e445b847ddbcae15ef28a87e4fbc8642e4b7aeef19d7ac03"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/family-85505687-raster-audit.json",
+      "bytes": 7719,
+      "sha256": "a1d6aadda5bd3a08ea8754fd3229e3308df98eddbf08db164c7163476e194ffd"
+    },
+    "source_availability": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/family-85505687-source-availability.json",
+      "bytes": 5288,
+      "sha256": "29be266a3a56e25340c87c47cf158f598d9c7a791b5881332ee9f49b59ab8cb8"
+    },
+    "denominator": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/family-85505687-denominator.json",
+      "bytes": 5244,
+      "sha256": "9f406576d66ba67b2166fb9f988793c3d95690fa8921ea60032c2f556b73c620"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/family-85505687-replay-determinism.json",
+      "bytes": 1913,
+      "sha256": "ce5081c08c269aac2386080634a6c2f6a23dbaa9b3948cb00460037350236c65"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/queue-after.json",
+      "bytes": 1464,
+      "sha256": "daaaa3ca82d4a412b8953d8a68731e76ca0349832a9a699b5fca279a5ac17ab1"
+    },
+    "roots": {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/roots.txt",
+      "bytes": 12,
+      "sha256": "adab40ce99343f4f82f87c069b8f9951c8c069427e1ad6f92621862286a4ce00"
+    }
+  },
+  "review_policy": {
+    "architecture_metadata_promoted_to_prescription": false,
+    "device_field_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "printed_token_repair_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  },
+  "next_exact_group": {
+    "family_id": "74143231",
+    "root_id": "US-20220030168",
+    "publication_id": "US-20220030168-A1",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b"
+  },
+  "saturation_complete": false
+}

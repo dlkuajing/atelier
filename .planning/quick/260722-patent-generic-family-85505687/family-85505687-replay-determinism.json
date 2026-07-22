@@ -1,0 +1,48 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "85505687",
+  "root_id": "US-12625342",
+  "publication_id": "US-12625342-B2",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12625342/attempt-0002/result.json",
+      "bytes": 5889,
+      "file_sha256": "c0a82e0e287a2ecef3b8fad86c7cc2a8d3037ec173e82a028ea5ea0e0f13d793",
+      "semantic_sha256": "b4c28285efbe408ef37ec2f1bdff35ed39ddf1b477ab1d6792e7cf13e47b709a"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12625342/attempt-0003/result.json",
+      "bytes": 5889,
+      "file_sha256": "60e9169625cde25fad6186d711d678c0e5eabcbbb5e7634d07b20ae81f02f295",
+      "semantic_sha256": "b4c28285efbe408ef37ec2f1bdff35ed39ddf1b477ab1d6792e7cf13e47b709a"
+    }
+  ],
+  "semantic_normalization": "remove only result_attempt; JSON sort_keys with compact separators",
+  "semantic_equal": true,
+  "semantic_sha256": "b4c28285efbe408ef37ec2f1bdff35ed39ddf1b477ab1d6792e7cf13e47b709a",
+  "terminal_statuses": [
+    "confirmed_no_prescription",
+    "confirmed_no_prescription",
+    "confirmed_no_prescription"
+  ],
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only",
+    "terminal.confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+  ],
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "conversion_receipts_absent": true,
+  "prescription_fingerprints_absent": true,
+  "candidate_and_staging_zmx_absent": true,
+  "formal_intake_absent": true,
+  "codev_used": false
+}

@@ -1,0 +1,123 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "85505687",
+  "root_id": "US-12625342",
+  "publication_id": "US-12625342-B2",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/fa91138291b648ed/US-12625342-B2.html",
+    "bytes": 120092,
+    "sha256": "fa91138291b648ed685aaabff826a28fd8ab10074f8272abe5c40243aa9fb5e3",
+    "characters": 120082,
+    "normalized_characters": 92446,
+    "normalized_sha256": "293d08be39b28b31914d256414fc3f96d141516ce237c69c1fb69e6e16c3d555"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "18/177179",
+    "filed": "2023-03-02",
+    "same_application_prior_publication": "US-20230305261-A1",
+    "same_application_prior_publication_date": "2023-09-28",
+    "provisional_application": "63/323,104",
+    "provisional_filing_date": "2022-03-24",
+    "priority_confirmation_cross_reference_paragraph": 1
+  },
+  "source_items": [
+    {
+      "source_item": 1,
+      "label": "1st Embodiment coating/nanostructure camera module",
+      "description_range": [60, 89],
+      "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "1J", "1K", "1L", "1M", "1N", "1O", "1P", "1Q", "1R", "1S", "1T"],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 2,
+      "label": "2nd Embodiment coating/nanostructure/alignment camera module",
+      "description_range": [90, 100],
+      "figures": ["2A", "2B", "2C", "2D", "2E", "2F", "2G"],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 3,
+      "label": "3rd Embodiment smartphone electronic-device wrapper",
+      "description_range": [101, 105],
+      "figures": ["3A", "3B"],
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "directly_published_architecture_metadata": [
+    "light-blocking coating layers and tapered light-passing openings",
+    "nanostructure and connecting-structure layers with material and height metadata",
+    "roundness tolerances and smooth-surface roughness limits",
+    "lens-barrel axial alignment and connection structures",
+    "smartphone multi-camera deployment field ranges"
+  ],
+  "prescription_markers_absent_from_exact_source": [
+    "ordered optical surface radius or curvature",
+    "ordered axial intersurface spacing",
+    "numerical optical material, refractive index or Abbe dispersion rows",
+    "surface-specific conic constants or asphere coefficients",
+    "an identified aperture-stop coordinate",
+    "a numeric focal length",
+    "a prescription-specific F-number",
+    "a numeric prescription-bound angular field",
+    "an absolute image height",
+    "surface numbers or an ordered surface prescription"
+  ],
+  "not_source_available": [
+    "permission to treat coating, nanostructure or assembly dimensions as an ordered optical prescription",
+    "permission to bind smartphone deployment field ranges to a constituent lens prescription",
+    "permission to measure drawings or electron-microscope images",
+    "permission to derive focal length, F-number, angular field or image height",
+    "permission to repair paragraph 99's printed text",
+    "permission to transcribe or infer optical numbers from the image-only official PDF",
+    "numeric borrowing from US-20230305261-A1, provisional application 63/323,104, another family or another document with the same layout signature"
+  ],
+  "source_boundary": {
+    "imaging_lens_assembly_phrase_occurrences": 122,
+    "camera_module_phrase_occurrences": 96,
+    "electronic_device_phrase_occurrences": 28,
+    "optical_lens_phrase_occurrences": 0,
+    "lens_barrel_phrase_occurrences": 25,
+    "lens_element_phrase_occurrences": 119,
+    "field_of_view_phrase_occurrences": 5,
+    "maximum_field_of_view_phrase_occurrences": 5,
+    "effective_focal_length_occurrences": 0,
+    "focal_length_occurrences": 0,
+    "F_number_occurrences": 0,
+    "radius_occurrences": 0,
+    "curvature_occurrences": 0,
+    "aspheric_occurrences": 0,
+    "asphere_occurrences": 0,
+    "Abbe_occurrences": 0,
+    "refractive_index_occurrences": 1,
+    "aperture_stop_occurrences": 0,
+    "image_height_occurrences": 0,
+    "surface_number_occurrences": 0,
+    "surface_prescription_occurrences": 0,
+    "light_blocking_coating_layer_occurrences": 136,
+    "nanostructure_layer_occurrences": 168,
+    "connecting_structure_layer_occurrences": 59,
+    "ordered_prescriptions": 0
+  },
+  "repair_policy": {
+    "architecture_metadata_promoted_to_prescription": false,
+    "device_field_promoted_to_prescription": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "printed_token_repair_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 3,
+    "ordered_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 3,
+    "reason_codes": {
+      "confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only": 2,
+      "confirmed_no_prescription.electronic_device_wrapper_only": 1
+    }
+  }
+}

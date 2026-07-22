@@ -1,0 +1,40 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260722-patent-generic-family-85505687/generic-residual-after-1.json",
+  "affected_roots": 32,
+  "affected_items": 32,
+  "result_set_sha256": "f47b201c3fe961575b65b0a3730079776ee1ad3699f05ab4e66246030640c03c",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b",
+    "layout_signature_count": 2,
+    "family_id": "74143231",
+    "root_ids": [
+      "US-20220030168"
+    ],
+    "publication_ids": [
+      "US-20220030168-A1"
+    ],
+    "application_numbers": [
+      "17/060047"
+    ],
+    "title": "REFLECTION MODULE CAPABLE OF IMAGE STABILIZATION, CAMERA  MODULE AND ELECTRONIC DEVICE",
+    "applicant_and_assignee": "LARGAN DIGITAL CO.,LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/59d37b3e16a18161/US-20220030168-A1.html",
+      "bytes": 95922,
+      "sha256": "59d37b3e16a18161405fa22bf82e2b3b279448b9d00dd49df636a60257741a0f"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 31,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 3,
+      "half_field": 0
+    },
+    "table_count": 0
+  },
+  "same_layout_distinct_families_excluded": 1,
+  "saturation_complete": false
+}
