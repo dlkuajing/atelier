@@ -787,21 +787,23 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | 260722-patent-generic-family-78617163 | complete-shovel-saturation-incomplete | Exact US-12088899-B2 binds application 17/461774, prior US-20220394159-A1, Taiwan priority 110120061, Family ID 78617163, Chang/Chou/Tseng inventors and Largan Digital. The exact denominator is seven Background/Summary plus 101 Description paragraphs, claims 1-20 with claims 1/10 independent and claim 20 dependent on claim 10, 24 figures, 20 drawing sheets, 103 figure-reference tags, eighteen inline-formula leads, zero tables/MathML and exactly eight items. Items 1/2/3/6 publish camera-module architecture, lens counts, mechanical DH/D/L values and FOV; items 4/5 are glass/plastic prism folding-component variants and items 7/8 are smartphone wrappers. No item publishes ordered optical radii, spacings, materials, index/dispersion, conics, aspheres, aperture stop, numeric focal length, F-number or absolute image height. All eight close as precise confirmed-no-prescription terminals without derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 1,802,066-byte official 32-page image-only wrappers decode to the same original 1-bit raster set at 1898e415...ed8c; no enhancement, OCR repair, measurement or inference occurs. Attempts 2/3 are semantic-equal at 352aade6...7fc3; generic 37 to 36; result set 0f1ae81a...8ca7; census 486f1e6c...a7fc; summary 4dc78580...d286; report 6a644b79...5066; evidence f10b4bc4...f89ad; strict audit twice 619/619 corrupt=0. Complete segmented offline coverage passes 3,767 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1018/1018, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 98 changed-JSON checks pass. All 116 source-evidence manifests, 1,955 references and 1,749 complete triples rehash; 86 prior manifests contain exactly 362 allowed live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 81328003 / US-12474593-B2 next; parent saturation remains incomplete. |
 
+| 260722-patent-generic-family-81328003 | complete-shovel-saturation-incomplete | Exact US-12474593-B2 binds application 17/668278, prior US-20230100691-A1, provisional 63/248966, Family ID 81328003, Chen/Chang/Chou/Tseng inventors and Largan Digital. The exact denominator is one related-application, seven Background/Summary and 92 Description paragraphs, claims 1-17 with claims 1/10 independent, 25 figures/drawing sheets, 102 figure-reference tags, zero tables/MathML/inline formulae and exactly six items. Three camera-module embodiments publish actuator, carrier, ball-group and V/U-groove mechanics only; two items are smartphone wrappers and one is a vehicle deployment wrapper. No item publishes ordered optical radii, spacings, materials, index/dispersion, conics, aspheres, aperture stop, numeric focal length, F-number or absolute image height. All six close as precise confirmed-no-prescription terminals without derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 1,704,638-byte official 35-page image-only wrappers decode to the same original 1-bit raster set at e1db3168...28b2; no enhancement, OCR repair, measurement or inference occurs. Attempts 2/3 are semantic-equal at f0c460c4...1d91; generic 36 to 35; result set 43a58259...321f9; census dd65990e...672; summary ac0bd088...aff; report fac76dbc...71b; evidence 220f5687...64c; strict audit twice 619/619 corrupt=0. Complete offline coverage passes 3,776 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1027/1027, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 99 changed-JSON checks pass. All 117 source-evidence manifests, 1,972 references and 1,766 complete triples rehash; 87 prior manifests contain exactly 366 allowed live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 83049877 / US-12601889-B2 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `78617163`, root/publication `US-12088899` /
-`US-12088899-B2`, is complete in
-`.planning/quick/260722-patent-generic-family-78617163/`, opened from committed
-Family 50551137 at `85e20621`. Its strict result set is
-`0f1ae81af09a38ad092197c2a901817272792580fc29c343ca12a4eb4d058ca7` and
-the current generic residual contains 36 roots/items. Stable ordering selects Family
-`81328003`, root/publication `US-12474593` / `US-12474593-B2`, with the same layout
-signature `bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b`
-but independent family/source binding. Open its own GSD quick only after the current
-Family 78617163 atomic commit; do not borrow any value or terminal fact from the prior
-family or shared layout.
+For patent saturation work, Family `81328003`, root/publication `US-12474593` /
+`US-12474593-B2`, is complete in
+`.planning/quick/260722-patent-generic-family-81328003/`. The current result set is
+`43a582594bc2f8811a9b1812e113a36b2e2db4e4985c6c2c17f6d374e42321f9` and
+the generic residual contains 35 roots/items. Stable ordering selects Family
+`83049877`, root/publication `US-12601889` / `US-12601889-B2`, next, but its quick
+must be opened only from the committed Family 81328003 state. Its exact retained B2
+shares layout signature
+`bf4be7f07bad99b2b4c85a45f578f306a3088f97dc5e569e665427384d359f1b`
+with four other residual families; bind only Family 83049877/root US-12601889 and do
+not borrow any value or terminal fact from Family 81328003 or the shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

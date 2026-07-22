@@ -12,7 +12,12 @@
   },
   "bibliography": {
     "title": "SOLID IMAGING OBJECTIVE AND ASSEMBLY TECHNIQUE FOR SMALL SCALE SENSOR APPLICATIONS",
-    "inventors": ["Jane L. Bareau", "James D. Milks", "Nidia A. Alvez", "Teresa M. Lupien"],
+    "inventors": [
+      "Jane L. Bareau",
+      "James D. Milks",
+      "Nidia A. Alvez",
+      "Teresa M. Lupien"
+    ],
     "assignee": "Gyrus ACMI, Inc.",
     "filed": "2010-08-23",
     "patent_date": "2012-07-10"
@@ -31,12 +36,23 @@
     "brief_drawing_lines": 8,
     "detailed_description_lines": 36,
     "claims": 12,
-    "independent_claims": [1, 4, 12],
+    "independent_claims": [
+      1,
+      4,
+      12
+    ],
     "html_table_tags": 0,
     "flattened_inline_tables": 1,
     "mathml_objects": 0,
     "figure_references": 17,
-    "declared_figures": [1, 2, 3, 4, 5, 6],
+    "declared_figures": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "drawing_sheets": 6,
     "source_items": 4,
     "ordered_prescriptions": 1,
@@ -55,7 +71,26 @@
   "inline_prescription": {
     "table_identifier": "TABLE-US-00001",
     "table_sha256": "1a2ea9588bf924b24c9ff9a016a6db9fdf53a350c0b6633efb06a457812b6ae5",
-    "row_labels": ["OBJ", "1", "2", "3", "4", "5", "6", "STO", "8", "9", "10", "11", "12", "13", "14", "15", "16", "IMA"],
+    "row_labels": [
+      "OBJ",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "STO",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "IMA"
+    ],
     "row_sha256": [
       "3ebc5a453296c35d99c0b68568f8f978a86660d313fb733c1828f668ee2e875d",
       "a715104794c4232ff7cc37a2721a56133beb5f145f949aee8573dcaee232369d",
@@ -76,50 +111,153 @@
       "6611e1aef03272cecbfca04bc68a658c7d0f3d7a84c5fbe44fe4302c3e79c9ae",
       "6e5d15b18bbcdeb8a31804389cf98a5c6ef1dca2ef94ce9d189328728ccd3dea"
     ],
-    "directly_published_columns": ["Surface", "Radius", "Thickness", "Glass", "Diameter"],
-    "required_metadata_absent": ["effective focal length", "F-number", "numeric angular field", "numeric image height"],
+    "directly_published_columns": [
+      "Surface",
+      "Radius",
+      "Thickness",
+      "Glass",
+      "Diameter"
+    ],
+    "required_metadata_absent": [
+      "effective focal length",
+      "F-number",
+      "numeric angular field",
+      "numeric image height"
+    ],
     "ima_diameter_treated_as_image_height": false
   },
   "source_items": [
-    {"number": 1, "label": "Gyrus small-scale imaging-optic architecture", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.generic_small_scale_imaging_optic_architecture_only"},
-    {"number": 2, "label": "Gyrus optical alignment and assembly method", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.optical_alignment_and_assembly_method_only"},
-    {"number": 3, "label": "Gyrus endoscope wrapper", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.endoscope_wrapper_only"},
-    {"number": 4, "label": "Gyrus Example 1 finite-object prescription", "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent"}
+    {
+      "number": 1,
+      "label": "Gyrus small-scale imaging-optic architecture",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.generic_small_scale_imaging_optic_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Gyrus optical alignment and assembly method",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_alignment_and_assembly_method_only"
+    },
+    {
+      "number": 3,
+      "label": "Gyrus endoscope wrapper",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.endoscope_wrapper_only"
+    },
+    {
+      "number": 4,
+      "label": "Gyrus Example 1 finite-object prescription",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent"
+    }
   ],
   "official_pdf": {
-    "pinned_download_1": {"path": "data/patent-lake/uspto-ppubs-pdf/9c627c32c68c36c1/US-8218254-B2.pdf", "bytes": 775186, "sha256": "9c627c32c68c36c1ac02e41df5088939c52965201f47e0a1adf038c77b3c30bb"},
-    "download_2": {"path": ".planning/quick/260721-patent-generic-family-45593888/source-review/US-8218254-B2-official-2.pdf", "bytes": 775186, "sha256": "68a328c14241baa895847d60ccef6986312249181930a9c03dbb59d472affa8d"},
+    "pinned_download_1": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/9c627c32c68c36c1/US-8218254-B2.pdf",
+      "bytes": 775186,
+      "sha256": "9c627c32c68c36c1ac02e41df5088939c52965201f47e0a1adf038c77b3c30bb"
+    },
+    "download_2": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/source-review/US-8218254-B2-official-2.pdf",
+      "bytes": 775186,
+      "sha256": "68a328c14241baa895847d60ccef6986312249181930a9c03dbb59d472affa8d"
+    },
     "page_count": 12,
     "text_layer_characters": 0,
     "embedded_page_mode": "1-bit",
-    "raster_dimensions": [2560, 3300],
+    "raster_dimensions": [
+      2560,
+      3300
+    ],
     "raster_set_sha256": "2de83d8f97132a3699cea6678e1993500b56b52ed1e94134b9dd448ce9195330"
   },
   "replay": {
-    "attempt_2": {"path": "data/patent-ledger/replay/local-uncovered/results/US-8218254/attempt-0002/result.json", "bytes": 5234, "sha256": "27e54b88aa7def102aebed9bdb4ef0b25f6b0ca0eb6f7b509da2022fa7fb08f9"},
-    "attempt_3": {"path": "data/patent-ledger/replay/local-uncovered/results/US-8218254/attempt-0003/result.json", "bytes": 5234, "sha256": "ec9703bb6d431389979648468f05c3a4ccc77e6ca09edb92d20d1e729ce39411"},
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-8218254/attempt-0002/result.json",
+      "bytes": 5234,
+      "sha256": "27e54b88aa7def102aebed9bdb4ef0b25f6b0ca0eb6f7b509da2022fa7fb08f9"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-8218254/attempt-0003/result.json",
+      "bytes": 5234,
+      "sha256": "ec9703bb6d431389979648468f05c3a4ccc77e6ca09edb92d20d1e729ce39411"
+    },
     "semantic_equal": true,
     "semantic_sha256": "c7cdd8ae14113f175a0c491d9e51c84db9cd318b6bfe5878c8c6a7b038195eab",
-    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 53256, "sha256": "4dc78580a96e5cb2e0af633e6c2e00739d6dcbf42d94668fc3bdeef0f959d286"},
-    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 55219, "sha256": "6a644b7929f7e2fd2660e43f9818534593b5791d0f82e271519b63fffd535066"},
-    "strict_audit": {"roots_with_results": 619, "expected_roots": 619, "missing_results": 0, "corrupt_results": 0}
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 53403,
+      "sha256": "ac0bd0888d23931c003cd952cfe439e40ab0ecf49c724ce32852e1c8ed5d9aff"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 55372,
+      "sha256": "fac76dbc4befab5c15ac09666da5c70c386a58de42908d3aed21886b4188771b"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
   },
   "census": {
-    "before": {"path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-before-40.json", "bytes": 24730, "sha256": "e04294185d1c20d8834aeb46b3bdfcc19303a5da579ebe6e7ec57e7d2e063614"},
-    "after_1": {"path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-after-1.json", "bytes": 24111, "sha256": "dc9bd2907f473468777fc7953a9937049e796e595bbddeb1be60b1518653fdd5"},
-    "after_2": {"path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-after-2.json", "bytes": 24111, "sha256": "dc9bd2907f473468777fc7953a9937049e796e595bbddeb1be60b1518653fdd5"},
+    "before": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-before-40.json",
+      "bytes": 24730,
+      "sha256": "e04294185d1c20d8834aeb46b3bdfcc19303a5da579ebe6e7ec57e7d2e063614"
+    },
+    "after_1": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-after-1.json",
+      "bytes": 24111,
+      "sha256": "dc9bd2907f473468777fc7953a9937049e796e595bbddeb1be60b1518653fdd5"
+    },
+    "after_2": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-after-2.json",
+      "bytes": 24111,
+      "sha256": "dc9bd2907f473468777fc7953a9937049e796e595bbddeb1be60b1518653fdd5"
+    },
     "before_roots": 40,
     "after_roots": 39,
     "result_set_sha256": "dd52fecc4dc1b51a85b8680fbe96b50abc8f7195c9401c8d3551dd71cd4bc7c0"
   },
   "supporting_artifacts": {
-    "source_audit": {"path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-source-audit.md", "bytes": 3173, "sha256": "a33ded6f1869f5021edaf43351f9528a603f8bd9765843b06d1450629a0ecbc9"},
-    "raster_audit": {"path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-raster-audit.json", "bytes": 5516, "sha256": "3dbf57d32d4313ca0481c834172c0c6218170c05c4cf7fa31ac17bac01857515"},
-    "source_availability": {"path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-source-availability.json", "bytes": 2757, "sha256": "dc39209223a2c5694318edadd469bf0f0ad43fc33949c0a257528fbe88afd6ae"},
-    "denominator": {"path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-denominator.json", "bytes": 4478, "sha256": "57cc39920475c3b125ce8b5ac3ae1a2ff8319402baa8d63bfb481ad8c47e7462"},
-    "replay_determinism": {"path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-replay-determinism.json", "bytes": 1599, "sha256": "0036c782ea3797ecb06cce28d3893843b7e460b75e2634ce1856f8c5dda0255d"},
-    "queue_after": {"path": ".planning/quick/260721-patent-generic-family-45593888/queue-after.json", "bytes": 1326, "sha256": "262c3a6b54fae9f1aa3c8510b16c9e43436022064bc46104d780f1e6b258fe01"},
-    "roots": {"path": ".planning/quick/260721-patent-generic-family-45593888/roots.txt", "bytes": 11, "sha256": "53546a9e2c2536800436c2fd7ef056d8238268b8d3278bf4889fcaf50be53659"}
+    "source_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-source-audit.md",
+      "bytes": 3173,
+      "sha256": "a33ded6f1869f5021edaf43351f9528a603f8bd9765843b06d1450629a0ecbc9"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-raster-audit.json",
+      "bytes": 5516,
+      "sha256": "3dbf57d32d4313ca0481c834172c0c6218170c05c4cf7fa31ac17bac01857515"
+    },
+    "source_availability": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-source-availability.json",
+      "bytes": 2757,
+      "sha256": "dc39209223a2c5694318edadd469bf0f0ad43fc33949c0a257528fbe88afd6ae"
+    },
+    "denominator": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-denominator.json",
+      "bytes": 4478,
+      "sha256": "57cc39920475c3b125ce8b5ac3ae1a2ff8319402baa8d63bfb481ad8c47e7462"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-replay-determinism.json",
+      "bytes": 1599,
+      "sha256": "0036c782ea3797ecb06cce28d3893843b7e460b75e2634ce1856f8c5dda0255d"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/queue-after.json",
+      "bytes": 1326,
+      "sha256": "262c3a6b54fae9f1aa3c8510b16c9e43436022064bc46104d780f1e6b258fe01"
+    },
+    "roots": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/roots.txt",
+      "bytes": 11,
+      "sha256": "53546a9e2c2536800436c2fd7ef056d8238268b8d3278bf4889fcaf50be53659"
+    }
   },
   "review_policy": {
     "source_typography_repaired": false,

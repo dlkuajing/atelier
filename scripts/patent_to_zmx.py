@@ -604,6 +604,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_largan_camera_actuator_architecture_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
             raw_text,
@@ -78359,6 +78365,777 @@ def _classify_largan_folded_camera_architecture_attempts(
             ),
         )
         for item in _LARGAN_FOLDED_CAMERA_ITEMS
+    ]
+
+
+_LARGAN_CAMERA_ACTUATOR_ARCHITECTURE_REASON = (
+    "confirmed_no_prescription.camera_module_actuator_architecture_only"
+)
+_LARGAN_CAMERA_ACTUATOR_DEVICE_REASON = (
+    "confirmed_no_prescription.electronic_device_wrapper_only"
+)
+_LARGAN_CAMERA_ACTUATOR_VEHICLE_REASON = (
+    "confirmed_no_prescription.vehicle_device_wrapper_only"
+)
+_LARGAN_CAMERA_ACTUATOR_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Largan actuator camera-module 1st embodiment",
+        "paragraph_range": (44, 53),
+        "figures": ("1", "2", "3", "4", "5", "6"),
+        "claims": (1, 2, 3, 4),
+        "reason_code": _LARGAN_CAMERA_ACTUATOR_ARCHITECTURE_REASON,
+    },
+    {
+        "number": 2,
+        "label": "Largan actuator camera-module 2nd embodiment",
+        "paragraph_range": (54, 63),
+        "figures": ("7", "8", "9", "10", "11", "12"),
+        "claims": (10, 11, 12, 13, 17),
+        "reason_code": _LARGAN_CAMERA_ACTUATOR_ARCHITECTURE_REASON,
+    },
+    {
+        "number": 3,
+        "label": "Largan actuator camera-module 3rd embodiment",
+        "paragraph_range": (64, 75),
+        "figures": ("13", "14", "15"),
+        "claims": (),
+        "reason_code": _LARGAN_CAMERA_ACTUATOR_ARCHITECTURE_REASON,
+    },
+    {
+        "number": 4,
+        "label": "Largan multi-camera smartphone 4th embodiment",
+        "paragraph_range": (76, 82),
+        "figures": ("16", "17", "18", "19", "20"),
+        "claims": (8,),
+        "reason_code": _LARGAN_CAMERA_ACTUATOR_DEVICE_REASON,
+    },
+    {
+        "number": 5,
+        "label": "Largan nine-camera smartphone 5th embodiment",
+        "paragraph_range": (83, 85),
+        "figures": ("21",),
+        "claims": (8,),
+        "reason_code": _LARGAN_CAMERA_ACTUATOR_DEVICE_REASON,
+    },
+    {
+        "number": 6,
+        "label": "Largan automotive camera deployment 6th embodiment",
+        "paragraph_range": (86, 90),
+        "figures": ("22", "23", "24", "25"),
+        "claims": (9,),
+        "reason_code": _LARGAN_CAMERA_ACTUATOR_VEHICLE_REASON,
+    },
+)
+_LARGAN_CAMERA_ACTUATOR_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-12474593-B2": {
+        "family_id": "81328003",
+        "application_number": "17/668278",
+        "prior_publication": "US-20230100691-A1",
+        "provisional_application": "63/248966",
+        "raw_document_sha256": (
+            "e6cee2285495a615c95d02370241b33954da3f0e65c28aa2acc8b730d22a5c46"
+        ),
+        "normalized_text_sha256": (
+            "82cfa77d9fe83d1599e20a35a063a98f45d5c0bff30ee3caed27b2a8c6e3cf33"
+        ),
+        "title_text": "Camera module, electronic device and vehicle device",
+        "identity_markers": {
+            "United States Patent 12474593 Kind Code B2": 1,
+            "Date of Patent November 18, 2025": 1,
+            (
+                "Inventors: Chen; Hao Jan (Taichung, TW), Chang; Lin An "
+                "(Taichung, TW), Chou; Ming-Ta (Taichung, TW), Tseng; "
+                "Te-Sheng (Taichung, TW)"
+            ): 1,
+            "LARGAN DIGITAL CO., LTD.": 2,
+            "Family ID: 81328003": 1,
+            "Appl. No.: 17/668278": 1,
+            "Filed: February 09, 2022": 1,
+            "US 20230100691 A1": 1,
+            "Mar. 30, 2023": 1,
+            "us-provisional-application US 63248966 20210927": 1,
+            (
+                "U.S. Provisional Application 63/248,966, filed on Sep. 27, 2021"
+            ): 1,
+        },
+        "raw_section_body_sha256": {
+            "related": (
+                "ecfd2b8950c41f5868a7517fa4eb217f7815de182ad7d8bfc671093840766e64"
+            ),
+            "background": (
+                "025da822c4a49ae359976115d8e75cc2b4cc7c2c2c3e03a5ed7151a07a08839b"
+            ),
+            "description": (
+                "f4fb16f829d6e668c2eda76cb31de3f8aee93a1a6b16d94838832c94b88329e2"
+            ),
+            "claims": (
+                "cf5429548b457e6ed28790a8cd88a434574f48477e46de96960db7adc0abe96d"
+            ),
+        },
+        "section_sha256": {
+            "related": (
+                "c38bf3a8008b5f4955873b3f74de5d285a580b69ad34faec3cf42990ff867ae3"
+            ),
+            "background": (
+                "41f631079684bdc1354f1b254f5d4dab983b2d75b27b53072d68464e2c8e5b1e"
+            ),
+            "description": (
+                "f10f56dd2b6995680e072b9926f2476ec289c92b45e9662d05f43527fcbb8df9"
+            ),
+            "claims": (
+                "7110896515577dc0a037268b5dfa58edb5aa1f2021b845145264553e3df5ad21"
+            ),
+        },
+        "paragraph_span_sha256": {
+            ("background", 1, 7): (
+                "08745342e6e0295d89e2b7e316850faf3591198c627371c64fceeeee89fb7a4c"
+            ),
+            ("description", 1, 26): (
+                "57b54e51a71a425f25f423c5691a228d3161e15332eb064431f34b5c2e1a5e91"
+            ),
+            ("description", 27, 43): (
+                "655a461d43c85a223e9ebaa4d4cfe99ffef22724f04d7f86ea9228ade34d96a3"
+            ),
+            ("description", 44, 53): (
+                "f96ce9b1f844378d636067128769257d1bf44b1ca15cb8d36b876b8367c2b12e"
+            ),
+            ("description", 54, 63): (
+                "d2bbe8bb0178360c3bf3f32c521ff5bfd1c28a97d7e20dd45720f87e8f1c58df"
+            ),
+            ("description", 64, 75): (
+                "c10cf627bb286a6df062c0109cc8bf63dae1a872027ac8d49c95e51763fe017b"
+            ),
+            ("description", 76, 82): (
+                "0a792db12747405cdf103cf0ffffb888302345353c68d5d8ec2d6cece55008bf"
+            ),
+            ("description", 83, 85): (
+                "f4f33615ccb330d1c848a3766a713a11da718fba09dc8398eb697c328fbb1f9c"
+            ),
+            ("description", 86, 90): (
+                "7fb82727c96ef84cdbb2b0055276c7be948af049cb17628f2da9372a00a0f3d8"
+            ),
+            ("description", 91, 92): (
+                "7fc5a94da83fd33721afa8913c596e79669f4572ce28dc65b6f65b2b432cfa6a"
+            ),
+            ("description", 1, 92): (
+                "ecb88563e6d33583d7c1aa451734bf1843dbde83e36714fdd04057f2d249d532"
+            ),
+        },
+        "claim_numbers": tuple(range(1, 18)),
+        "independent_claim_numbers": (1, 10),
+        "claim_sha256": _largan_folded_camera_sha256_lines("""
+            0fe6a260c83e579071e5ef8b14fd2d41a92234f95880cf200f51d24e72555c70
+            b7ef2f49d6a1782296c900eba48938cbf78f25d895bdabbd0403142e7bac4bac
+            336db1cedf0dabece3ef53eeb49854c1badda70bb87f682a3ec6f78716102989
+            a10955fa026063aa3a2f5b1a90a714f6f841349583506eb320cafa219580f95e
+            15d6d95a74c2ad6c31ff71ea92ab88efacea67c1b1e33225c7a26e6946e126a6
+            b25b5164f9b6a39f0bc2310615a5d29263782b63254a434b0afcef322fe78cdd
+            0e1764c1a32ea62aa0d9ab81dcfb0451d78c8ea714a688b194d0df662776edd1
+            abfc4c70933c94cf4403db469619d14448e686e3b44cffa8272fcc69a53c0105
+            9cc7da746b44b137803dbc0dc560266f00e324c61ceed4569b726b5e604a8021
+            19bebcfe923c53d3f3a92e68cfe7d9a66b8cddf88de2b1c66c82dc6254ab9221
+            3bdfcdfd185de1b7b4a839e7df1f97b06091ab2688e09bfc0904b1d7eb9624ab
+            c146a8ae800886e4ef1b0744eddf9e831bb0d665c3dfaeee09bba27274d416c0
+            d421648e4e2a0680da83a1517d3cb571e047d5d0036b23118e19448d4fdf6fe2
+            1dd15d2451baf2c1f5529586bbfe1bc5e899ffa6d139e4555eaa9d929a3c9d72
+            47242ba20ed38fd7e730626ccad9e4833100d2c0e40477fe3a823ef5bb322e77
+            f696c96c541c20ed16c7989874a96f4a0b3488b7da7211e703b3acf4c7591a3f
+            f93f1cf7a9bda6bdb568990693a71a011fcb8a17cda33386805e09f85fe0d6a6
+        """),
+        "figure_panels": tuple(str(number) for number in range(1, 26)),
+        "figref_count": 102,
+        "raw_counts": {
+            "table_us": 0,
+            "html_table": 0,
+            "maths": 0,
+            "mathml": 0,
+            "inline_formula_leads": 0,
+            "custom_character_images": 0,
+        },
+        "phrase_counts": {
+            "camera module": 145,
+            "imaging lens assembly": 63,
+            "field of view": 1,
+            "maximum field of view": 1,
+            "focal length": 0,
+            "F-number": 0,
+            "lens element": 0,
+        },
+        "item_value_markers": (
+            "The first ball group 134 includes four balls 134 n",
+            "The second ball group 135 includes four balls 135 n",
+            "The first ball group 234 includes four balls 234 n",
+            "The second ball group 235 includes six balls 235 n",
+            "The first ball group 334 includes six balls 334 n",
+            "The second ball group 335 includes four balls 335 n",
+            "the electronic device 4 is a smartphone",
+            "the electronic device 5 is a smartphone",
+            "the vehicle device 6 is an automobile",
+            (
+                "A maximum field of view of the camera modules 60 can be "
+                "40 degrees to 90 degrees"
+            ),
+        ),
+        "official_pdf_captures": (
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-81328003/"
+                    "source-review/US-12474593-B2-official-1.pdf"
+                ),
+                "bytes": 1_704_638,
+                "container_sha256": (
+                    "cfbddb114e89bf275d7ceff721717bbbd22d3d3024dd1904a7ed054be3f7c9ef"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-81328003/"
+                    "source-review/US-12474593-B2-official-2.pdf"
+                ),
+                "bytes": 1_704_638,
+                "container_sha256": (
+                    "4f5568e43789516b61f42dfbcdd424539b557be83eefc6653160b4528750b746"
+                ),
+            },
+        ),
+        "pdf_page_count": 35,
+        "pdf_raster_dimensions": (2560, 3300),
+        "pdf_page_raster_sha256": _largan_folded_camera_sha256_lines("""
+            cb4fc404d4a73c278c7b2a2f2430b292cb9ac7f42092afaae4ad413ed4bfaa3a
+            ef4117f6994387f3532707114c11af8152f36e589e15a558fda53cedd29c222a
+            79cb5014fd188067b1b932c0f2cbdff3a7d5c028f40fc6db74f1b2fe15e2ecfe
+            6e6eafe43d831b50581b6dcd86d62c25878581ccf7962ccfc8e8f76342317a95
+            4d9f173421c08c84e96baea4220dff53754b4b997365c7288b47d62ad4d9dd61
+            3d79104930adc5bc7affb1f4809807ad516bbc9dfea0ce75d47c5cabb7682e20
+            a34b5f4e12b1ce139513a75954010ef0cceafd47e8c81763e4416ad03ed0a0b9
+            6e7e2177c5eeafdc0cf17bef6cc51490732e22031a323a05a6d17769e719bc0d
+            01f082c72ba0a1b924b996f9e93b68c8e7b72306df34aa799d079d325186663e
+            83b3a60b5ed22de8e958c8c1b84d19079a068cae99653b065d682c99931b402d
+            125d42ee7fd259242e61d7ab68cb467bc8c91220f52a528a6e449723a42d20b5
+            80d436596d537df41702d2c79a460b7d040eb0a0724bbef0696e4bf45ee082c2
+            9d04740d4cbb0e8648f0f3d917fe1f8831b2dfb024479293aac143b04ea516fe
+            2aa43d51ef2606bf30697411f3039aa92e7d03ab2f58992af39da3bde49b4c64
+            3e05cdc44aecdf502b404a94e38d207d01775904618052c336925fae3214f61d
+            38fda40ed23ae3e87fe0459f3aafbe0a61ebc9667db365541f189e9259b0cab6
+            30c14b8c8c6039ed08fe171b1f17741cbcf3bf5ebd12960c58c0c7ca3896c221
+            a14e93edd612540c63c269e43697e2b6cb914fa5c70b8438b8ae990976798c8f
+            4d99b311f6d96b6417e51e2353a25f8ecb785edbfc22139b0a5b229560205a95
+            775c96145480cde635ba5122d66ed0f00c01b2be34d101602b3ab6bd0f08a9a6
+            c9041f695b59171e04951362cc19791ff3d7e892194676175e5669b4e8bc5e4f
+            dcdea6cfc49591b0476eeab705bb7d83680275ffb764b60a41ca3f0bf7530e15
+            be5e1a0509e044fb701857613bf6a00144b373fe835479ff33200b13ca38d645
+            7d39f6ad165f9ca56f7e3ce41dc3e40b6cc69bcfd02c9a1613233c10bdbf3afe
+            ccdd0cbdceb18e786f024eb81deb5bce297e8fb87f043542da76fe1536ee1af3
+            ac2a8eaac73c09212d16cea1259c5ceed92f680ab4870bd194c2d878a1131247
+            9324ace81ab68939ca83c5133a8664f0759f851468f8bc3e9478370c2327ba30
+            c8c92332fb51457f0947e4a2f260aa0c5f2bfc2b9d7effb981697262200bd42d
+            95034273389426341c5c8af5e07559030602db6df473a818e905eb19a3a1264f
+            edb7b3a25c505c055de2a9654a0c9618e781068869c90a08c8f787ab9ad29946
+            c19a72d51b76af4b1db77ddbd7b8dd36fe4757e53ef5fce434ff98c86c2cdc87
+            0b180d4f962359a8a689fcb1fa61a7152741797b34874bbbae90c763f98e810b
+            fde154b0b76b219a8f3bdb8dc984179e1691dfedf069754c3e03dabd34255a68
+            e136ecf2cf8759e3424a8db9d1395e86e93410a54e607febc1c6c125b5ff3b57
+            df08f36f75cbf47c20e8dae8beb5d0cbed17d43ee7a79da5a80e13c8a6348cba
+        """),
+        "pdf_raster_set_sha256": (
+            "e1db3168f05d4e75c78d0e39ae3bca560ef65233639ffa746bece59b810028b2"
+        ),
+        "pdf_cover_page_numbers": (1,),
+        "pdf_reference_page_numbers": (2,),
+        "pdf_drawing_page_numbers": tuple(range(3, 28)),
+        "pdf_specification_page_numbers": tuple(range(28, 36)),
+        "pdf_claims_page_numbers": (34, 35),
+    }
+}
+
+
+def _largan_camera_actuator_section_body(raw_text: str, section: str) -> str:
+    """Return one exact source body used by Family 81328003."""
+
+    patterns = {
+        "related": (
+            r"<h3>Background/Summary</h3>\s*"
+            r"<p>(RELATED APPLICATIONS.*?)</p>\s*<p>BACKGROUND"
+        ),
+        "background": (
+            r"<h3>Background/Summary</h3>\s*"
+            r"<p>RELATED APPLICATIONS.*?</p>\s*<p>(BACKGROUND.*?)</p>"
+        ),
+        "description": r"<h3>Description</h3>\s*<p>(.*?)</p>",
+        "claims": r"<h3>Claims</h3>\s*<p>(.*?)</p>",
+    }
+    matches = re.findall(
+        patterns[section],
+        raw_text,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Largan camera-actuator {section} raw section count changed"
+        )
+    return matches[0]
+
+
+def _largan_camera_actuator_numbered_paragraphs(
+    body: str,
+    *,
+    section: str,
+    expected_last: int,
+) -> dict[int, str]:
+    """Split the exact parenthesized PPUBS paragraph sequence."""
+
+    markers = list(re.finditer(r"<br />\((\d+)\) ", body))
+    numbers = tuple(int(marker.group(1)) for marker in markers)
+    if numbers != tuple(range(1, expected_last + 1)):
+        raise PatentParseError(
+            f"Largan camera-actuator {section} paragraph denominator changed"
+        )
+    return {
+        number: normalize_patent_text(
+            body[
+                marker.end() : (
+                    markers[index + 1].start()
+                    if index + 1 < len(markers)
+                    else len(body)
+                )
+            ]
+        )
+        for index, (number, marker) in enumerate(
+            zip(numbers, markers, strict=True)
+        )
+    }
+
+
+def _largan_camera_actuator_paragraph_span(
+    paragraphs: dict[int, str],
+    first: int,
+    last: int,
+) -> str:
+    return " ".join(
+        f"({number}) {paragraphs[number]}" for number in range(first, last + 1)
+    )
+
+
+def _classify_largan_camera_actuator_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 81328003 without treating actuator data as prescription."""
+
+    profile = _LARGAN_CAMERA_ACTUATOR_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _LARGAN_CAMERA_ACTUATOR_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Largan camera-actuator official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode("utf-8")).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Largan camera-actuator normalized text changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Largan camera-actuator title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan camera-actuator identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        raw_sections = {
+            name: _largan_camera_actuator_section_body(raw_text, name)
+            for name in ("related", "background", "description", "claims")
+        }
+        sections = {
+            name: normalize_patent_text(body)
+            for name, body in raw_sections.items()
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_body_sha256"
+        ].items():
+            observed_digest = hashlib.sha256(
+                raw_sections[section_name].encode()
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan camera-actuator {section_name} raw section changed"
+                )
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode()
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Largan camera-actuator {section_name} section changed"
+                )
+        if not re.fullmatch(
+            r"RELATED APPLICATIONS \(1\) This application claims priority to "
+            r"U\.S\. Provisional Application 63/248,966, filed on Sep\. 27, "
+            r"2021, which is incorporated by reference herein in its entirety\.",
+            sections["related"],
+        ):
+            raise PatentParseError(
+                "Largan camera-actuator related-application denominator changed"
+            )
+
+        paragraphs = {
+            "background": _largan_camera_actuator_numbered_paragraphs(
+                raw_sections["background"],
+                section="background",
+                expected_last=7,
+            ),
+            "description": _largan_camera_actuator_numbered_paragraphs(
+                raw_sections["description"],
+                section="description",
+                expected_last=92,
+            ),
+        }
+        for (
+            section_name,
+            first,
+            last,
+        ), expected_digest in profile["paragraph_span_sha256"].items():
+            observed_span = _largan_camera_actuator_paragraph_span(
+                paragraphs[section_name],
+                first,
+                last,
+            )
+            if hashlib.sha256(observed_span.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Largan camera-actuator {section_name} paragraphs "
+                    f"{first}-{last} changed"
+                )
+        covered_item_paragraphs = {
+            number
+            for item in _LARGAN_CAMERA_ACTUATOR_ITEMS
+            for number in range(
+                int(item["paragraph_range"][0]),
+                int(item["paragraph_range"][1]) + 1,
+            )
+        }
+        if covered_item_paragraphs != set(range(44, 91)):
+            raise PatentParseError(
+                "Largan camera-actuator source-item paragraph coverage changed"
+            )
+        if not all(
+            marker in paragraphs["description"][paragraph]
+            for marker, paragraph in zip(
+                (
+                    "1st Embodiment",
+                    "2nd Embodiment",
+                    "3rd Embodiment",
+                    "4th Embodiment",
+                    "5th Embodiment",
+                    "6th Embodiment",
+                ),
+                (43, 53, 63, 75, 82, 85),
+                strict=True,
+            )
+        ):
+            raise PatentParseError(
+                "Largan camera-actuator embodiment boundary markers changed"
+            )
+
+        brief = paragraphs["description"]
+        declared_figures = tuple(
+            match.group(1)
+            for number in range(1, 27)
+            if (
+                match := re.search(
+                    r"FIG\.\s*(\d+)\s+is\b",
+                    brief[number],
+                    re.IGNORECASE,
+                )
+            )
+        )
+        if declared_figures != profile["figure_panels"]:
+            raise PatentParseError(
+                "Largan camera-actuator declared figure denominator changed"
+            )
+        mapped_figures = {
+            str(figure)
+            for item in _LARGAN_CAMERA_ACTUATOR_ITEMS
+            for figure in item["figures"]
+        }
+        if mapped_figures != set(profile["figure_panels"]):
+            raise PatentParseError(
+                "Largan camera-actuator item-to-figure coverage changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError(
+                "Largan camera-actuator figure-reference denominator changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Largan camera-actuator claim denominator changed"
+            )
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent_claims = tuple(
+            number
+            for number, claim_text in zip(
+                claim_numbers,
+                claim_texts,
+                strict=True,
+            )
+            if re.search(
+                r"\b(?:according to|of) claim\s+\d+",
+                claim_text[:1000],
+                re.IGNORECASE,
+            )
+            is None
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Largan camera-actuator independent claims changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(claim_text.encode()).hexdigest()
+            for claim_text in claim_texts
+        )
+        if claim_hashes != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Largan camera-actuator individual claims changed"
+            )
+        if not (
+            "A camera module" in claim_texts[0]
+            and "An electronic device" in claim_texts[7]
+            and "camera module of claim 1" in claim_texts[7]
+            and "A vehicle device" in claim_texts[8]
+            and "camera module of claim 1" in claim_texts[8]
+            and "A camera module" in claim_texts[9]
+        ):
+            raise PatentParseError(
+                "Largan camera-actuator module/wrapper claim binding changed"
+            )
+
+        observed_raw_counts = {
+            "table_us": len(re.findall(r"TABLE-US-", raw_text, re.IGNORECASE)),
+            "html_table": len(re.findall(r"<table\b", raw_text, re.IGNORECASE)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)),
+            "mathml": len(
+                re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE)
+            ),
+            "inline_formula_leads": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="lead"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "custom_character_images": len(
+                re.findall(r"<img\b", raw_text, re.IGNORECASE)
+            ),
+        }
+        if observed_raw_counts != profile["raw_counts"]:
+            raise PatentParseError(
+                "Largan camera-actuator table/formula/image denominator changed"
+            )
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Largan camera-actuator phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        for marker in profile["item_value_markers"]:
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != 1:
+                raise PatentParseError(
+                    f"Largan camera-actuator item marker {marker!r} occurs "
+                    f"{observed}; expected one"
+                )
+
+        absent_prescription_markers = (
+            "radius",
+            "curvature",
+            "aspheric",
+            "asphere",
+            "Abbe",
+            "refractive index",
+            "aperture stop",
+            "image height",
+            "F-number",
+            "FNO",
+            "surface number",
+            "surface prescription",
+        )
+        for marker in absent_prescription_markers:
+            if re.search(re.escape(marker), text, re.IGNORECASE) is not None:
+                raise PatentParseError(
+                    "Largan camera-actuator source unexpectedly publishes "
+                    f"{marker!r}"
+                )
+        if re.search(
+            rf"\bfocal\s+length\b.{{0,80}}{NUMBER_PATTERN}\s*mm\b",
+            text,
+            re.IGNORECASE,
+        ) is not None:
+            raise PatentParseError(
+                "Largan camera-actuator source may publish numeric focal length"
+            )
+
+        observed_pdf_hashes: list[tuple[str, ...]] = []
+        for capture in profile["official_pdf_captures"]:
+            payload = (ROOT / capture["path"]).read_bytes()
+            if len(payload) != capture["bytes"]:
+                raise PatentParseError(
+                    "Largan camera-actuator official PDF size changed"
+                )
+            if hashlib.sha256(payload).hexdigest() != capture[
+                "container_sha256"
+            ]:
+                raise PatentParseError(
+                    "Largan camera-actuator official PDF hash changed"
+                )
+            reader = pypdf.PdfReader(io.BytesIO(payload))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError(
+                    "Largan camera-actuator official PDF page count changed"
+                )
+            page_hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Largan camera-actuator PDF page {page_number} "
+                        f"contains {len(images)} rasters; expected one"
+                    )
+                if (
+                    images[0].image.size != profile["pdf_raster_dimensions"]
+                    or images[0].image.mode != "1"
+                ):
+                    raise PatentParseError(
+                        f"Largan camera-actuator PDF page {page_number} raster changed"
+                    )
+                page_hashes.append(_canonical_raster_sha256(images[0].data))
+                text_characters += len(page.extract_text() or "")
+            if tuple(page_hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError(
+                    "Largan camera-actuator official PDF page rasters changed"
+                )
+            raster_set_digest = hashlib.sha256(
+                ("\n".join(page_hashes) + "\n").encode()
+            ).hexdigest()
+            if (
+                raster_set_digest != profile["pdf_raster_set_sha256"]
+                or text_characters != 0
+            ):
+                raise PatentParseError(
+                    "Largan camera-actuator official PDF raster set changed"
+                )
+            observed_pdf_hashes.append(tuple(page_hashes))
+        if len(set(observed_pdf_hashes)) != 1:
+            raise PatentParseError(
+                "Largan camera-actuator official PDF captures disagree by decoded page"
+            )
+        if not (
+            profile["pdf_cover_page_numbers"] == (1,)
+            and profile["pdf_reference_page_numbers"] == (2,)
+            and profile["pdf_drawing_page_numbers"] == tuple(range(3, 28))
+            and profile["pdf_specification_page_numbers"] == tuple(range(28, 36))
+            and profile["pdf_claims_page_numbers"] == (34, 35)
+        ):
+            raise PatentParseError(
+                "Largan camera-actuator official PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all six exact items
+        return attempts_for_error(exc)
+
+    details = (
+        (
+            "paragraphs 44-53 and FIGS. 1-6 publish camera module 1 with "
+            "carrier, actuator, four-ball-group and V/U-groove mechanics"
+        ),
+        (
+            "paragraphs 54-63 and FIGS. 7-12 publish camera module 2 with "
+            "carrier, actuator, four/six-ball-group and V/U-groove mechanics"
+        ),
+        (
+            "paragraphs 64-75 and FIGS. 13-15 publish camera module 3 with "
+            "carrier, actuator, magnetic, sensing and V-groove mechanics"
+        ),
+        (
+            "paragraphs 76-82 and FIGS. 16-20 publish a smartphone wrapper "
+            "with qualitative ultra-wide, high-pixel and telephoto roles"
+        ),
+        (
+            "paragraphs 83-85 and FIG. 21 publish a nine-camera smartphone "
+            "wrapper with qualitative telephoto/wide/ultra-wide/ToF roles"
+        ),
+        (
+            "paragraphs 86-90 and FIGS. 22-25 publish an automotive wrapper "
+            "and a 40-degree to 90-degree side-mirror deployment field range"
+        ),
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Largan Family 81328003 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. The exact source publishes "
+                    "no ordered optical radius, spacing, material, refractive-index/"
+                    "dispersion, conic, asphere, aperture-stop or system focal/F-number/"
+                    "image-height prescription. Actuator geometry, qualitative camera "
+                    "roles and the vehicle deployment field range remain architecture "
+                    "metadata and do not create a prescription. Claims 1-17, including "
+                    "independent camera-module claims 1/10 and dependent electronic/"
+                    "vehicle claims 8/9, add no separate ordered prescription. No value "
+                    "is derived, measured from drawings, transcribed from raster, or "
+                    "borrowed from prior publication US-20230100691-A1, provisional "
+                    "application 63/248966, another family or a shared layout"
+                ),
+            ),
+        )
+        for item in _LARGAN_CAMERA_ACTUATOR_ITEMS
     ]
 
 

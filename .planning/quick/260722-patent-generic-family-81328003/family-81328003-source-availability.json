@@ -1,0 +1,196 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "81328003",
+  "root_id": "US-12474593",
+  "publication_id": "US-12474593-B2",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/e6cee2285495a615/US-12474593-B2.html",
+    "bytes": 75324,
+    "sha256": "e6cee2285495a615c95d02370241b33954da3f0e65c28aa2acc8b730d22a5c46",
+    "characters": 75324,
+    "normalized_characters": 56536,
+    "normalized_sha256": "82cfa77d9fe83d1599e20a35a063a98f45d5c0bff30ee3caed27b2a8c6e3cf33"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "17/668278",
+    "filed": "2022-02-09",
+    "same_application_prior_publication": "US-20230100691-A1",
+    "provisional_application": "63/248966",
+    "provisional_filing_date": "2021-09-27",
+    "priority_confirmation_related_application_paragraph": 1
+  },
+  "source_items": [
+    {
+      "source_item": 1,
+      "label": "1st Embodiment actuator camera module",
+      "description_range": [
+        44,
+        53
+      ],
+      "figures": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 2,
+      "label": "2nd Embodiment actuator camera module",
+      "description_range": [
+        54,
+        63
+      ],
+      "figures": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "claims": [
+        10,
+        11,
+        12,
+        13,
+        17
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 3,
+      "label": "3rd Embodiment actuator camera module",
+      "description_range": [
+        64,
+        75
+      ],
+      "figures": [
+        "13",
+        "14",
+        "15"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 4,
+      "label": "4th Embodiment multi-camera smartphone wrapper",
+      "description_range": [
+        76,
+        82
+      ],
+      "figures": [
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ],
+      "claims": [
+        8
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 5,
+      "label": "5th Embodiment nine-camera smartphone wrapper",
+      "description_range": [
+        83,
+        85
+      ],
+      "figures": [
+        "21"
+      ],
+      "claims": [
+        8
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 6,
+      "label": "6th Embodiment automotive-camera deployment wrapper",
+      "description_range": [
+        86,
+        90
+      ],
+      "figures": [
+        "22",
+        "23",
+        "24",
+        "25"
+      ],
+      "claims": [
+        9
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "directly_published_architecture_metadata": [
+    "first and second ball-group counts and V/U groove arrangements for camera modules 1, 2 and 3",
+    "auto-focus and image-stabilization actuator placement and motion relationships",
+    "qualitative ultra-wide, high-pixel, telephoto, wide-angle and time-of-flight smartphone camera roles",
+    "a 40-degree to 90-degree maximum field-of-view deployment range for side-mirror vehicle cameras"
+  ],
+  "prescription_markers_absent_from_exact_source": [
+    "ordered optical surface radius or curvature",
+    "ordered axial lens spacing or thickness",
+    "optical material, refractive index or Abbe dispersion",
+    "conic constants or asphere coefficients",
+    "an aperture-stop surface",
+    "a numeric focal length",
+    "a prescription-specific F-number",
+    "an absolute image height",
+    "surface numbers or an ordered surface prescription"
+  ],
+  "not_source_available": [
+    "permission to treat actuator or ball-groove geometry as an ordered optical prescription",
+    "permission to bind the vehicle deployment field range to a prescription-specific optical system",
+    "permission to derive focal length, F-number or image height from field of view or drawings",
+    "an independent ordered prescription for either electronic-device wrapper",
+    "an independent ordered prescription for the vehicle-device wrapper",
+    "permission to transcribe or infer optical numbers from the image-only official PDF",
+    "numeric borrowing from US-20230100691-A1, provisional application 63/248966, another family or another document with the same layout signature"
+  ],
+  "source_boundary": {
+    "camera_module_phrase_occurrences": 145,
+    "imaging_lens_assembly_phrase_occurrences": 63,
+    "field_of_view_phrase_occurrences": 1,
+    "maximum_field_of_view_phrase_occurrences": 1,
+    "numeric_focal_length_occurrences": 0,
+    "F_number_occurrences": 0,
+    "lens_element_phrase_occurrences": 0,
+    "ordered_prescriptions": 0
+  },
+  "repair_policy": {
+    "architecture_promoted_to_prescription": false,
+    "deployment_range_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 6,
+    "ordered_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 6,
+    "reason_codes": {
+      "confirmed_no_prescription.camera_module_actuator_architecture_only": 3,
+      "confirmed_no_prescription.electronic_device_wrapper_only": 2,
+      "confirmed_no_prescription.vehicle_device_wrapper_only": 1
+    }
+  }
+}

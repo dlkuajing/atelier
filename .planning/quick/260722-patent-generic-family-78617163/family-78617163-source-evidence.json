@@ -15,7 +15,11 @@
   },
   "bibliography": {
     "title": "Camera module and electronic device",
-    "inventors": ["Chang; Lin An", "Chou; Ming-Ta", "Tseng; Te-Sheng"],
+    "inventors": [
+      "Chang; Lin An",
+      "Chou; Ming-Ta",
+      "Tseng; Te-Sheng"
+    ],
     "applicant": "LARGAN DIGITAL CO., LTD.",
     "assignee": "LARGAN DIGITAL CO., LTD."
   },
@@ -31,7 +35,10 @@
     "description_numbered_paragraphs": 101,
     "total_numbered_specification_paragraphs": 108,
     "claims": 20,
-    "independent_claims": [1, 10],
+    "independent_claims": [
+      1,
+      10
+    ],
     "html_table_tags": 0,
     "flattened_table_blocks": 0,
     "maths_objects": 0,
@@ -97,80 +104,210 @@
     {
       "number": 1,
       "label": "Largan folded camera-module 1st embodiment",
-      "description_range": [48, 62],
-      "shared_description_range": [26, 47],
-      "figures": ["1", "2", "3", "4", "5", "6", "7"],
-      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "description_range": [
+        48,
+        62
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.folded_camera_module_architecture_only"
     },
     {
       "number": 2,
       "label": "Largan folded camera-module 2nd embodiment",
-      "description_range": [63, 68],
-      "shared_description_range": [26, 47],
-      "figures": ["8", "9", "10", "11"],
-      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "description_range": [
+        63,
+        68
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "8",
+        "9",
+        "10",
+        "11"
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.folded_camera_module_architecture_only"
     },
     {
       "number": 3,
       "label": "Largan folded camera-module 3rd embodiment",
-      "description_range": [69, 77],
-      "shared_description_range": [26, 47],
-      "figures": ["12", "13", "14", "15"],
-      "claims": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+      "description_range": [
+        69,
+        77
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "12",
+        "13",
+        "14",
+        "15"
+      ],
+      "claims": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.folded_camera_module_architecture_only"
     },
     {
       "number": 4,
       "label": "Largan glass-prism optical-folding-component 4th embodiment",
-      "description_range": [78, 79],
-      "shared_description_range": [26, 47],
-      "figures": ["16"],
-      "claims": [13],
+      "description_range": [
+        78,
+        79
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "16"
+      ],
+      "claims": [
+        13
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.optical_folding_component_variant_only"
     },
     {
       "number": 5,
       "label": "Largan plastic-prism optical-folding-component 5th embodiment",
-      "description_range": [80, 81],
-      "shared_description_range": [26, 47],
-      "figures": ["17"],
-      "claims": [13],
+      "description_range": [
+        80,
+        81
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "17"
+      ],
+      "claims": [
+        13
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.optical_folding_component_variant_only"
     },
     {
       "number": 6,
       "label": "Largan dual-folding-component camera-module 6th embodiment",
-      "description_range": [82, 89],
-      "shared_description_range": [26, 47],
-      "figures": ["18"],
-      "claims": [10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+      "description_range": [
+        82,
+        89
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "18"
+      ],
+      "claims": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.folded_camera_module_architecture_only"
     },
     {
       "number": 7,
       "label": "Largan multi-camera smartphone 7th embodiment",
-      "description_range": [90, 96],
-      "shared_description_range": [26, 47],
-      "figures": ["19", "20", "21", "22", "23"],
-      "claims": [20],
+      "description_range": [
+        90,
+        96
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "19",
+        "20",
+        "21",
+        "22",
+        "23"
+      ],
+      "claims": [
+        20
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
     },
     {
       "number": 8,
       "label": "Largan nine-camera smartphone 8th embodiment",
-      "description_range": [97, 100],
-      "shared_description_range": [26, 47],
-      "figures": ["24"],
-      "claims": [20],
+      "description_range": [
+        97,
+        100
+      ],
+      "shared_description_range": [
+        26,
+        47
+      ],
+      "figures": [
+        "24"
+      ],
+      "claims": [
+        20
+      ],
       "terminal_status": "confirmed_no_prescription",
       "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
     }
@@ -189,10 +326,43 @@
     "field_of_view_promoted_to_prescription": false
   },
   "direct_architecture_metadata": {
-    "item_1": {"N1": 1, "N2": 3, "Nt": 5, "DH_mm": 1.219, "D_mm": 0.8, "DH_over_D": 1.52, "FOV_deg": 18.6, "L_mm": 2.403},
-    "item_2": {"N1": 2, "N2": 4, "Nt": 7, "DH_mm": 4.1, "D_mm": 0.5, "DH_over_D": 8.2, "FOV_deg": 21.8, "L_mm": 2.775},
-    "item_3": {"N1": 1, "N2": 2, "N3": 1, "Nt": 5, "printed_DH_mm": "1.75 and 3.5", "D_mm": 1, "printed_DH_over_D": "1.75 and 3.5", "FOV_deg": 28.3, "L_mm": 2.343},
-    "item_6": {"N1": 1, "N2": 3, "Nt": 6, "FOV_deg": 18.0}
+    "item_1": {
+      "N1": 1,
+      "N2": 3,
+      "Nt": 5,
+      "DH_mm": 1.219,
+      "D_mm": 0.8,
+      "DH_over_D": 1.52,
+      "FOV_deg": 18.6,
+      "L_mm": 2.403
+    },
+    "item_2": {
+      "N1": 2,
+      "N2": 4,
+      "Nt": 7,
+      "DH_mm": 4.1,
+      "D_mm": 0.5,
+      "DH_over_D": 8.2,
+      "FOV_deg": 21.8,
+      "L_mm": 2.775
+    },
+    "item_3": {
+      "N1": 1,
+      "N2": 2,
+      "N3": 1,
+      "Nt": 5,
+      "printed_DH_mm": "1.75 and 3.5",
+      "D_mm": 1,
+      "printed_DH_over_D": "1.75 and 3.5",
+      "FOV_deg": 28.3,
+      "L_mm": 2.343
+    },
+    "item_6": {
+      "N1": 1,
+      "N2": 3,
+      "Nt": 6,
+      "FOV_deg": 18.0
+    }
   },
   "official_pdf": {
     "download_1": {
@@ -208,7 +378,10 @@
     "page_count": 32,
     "text_layer_characters": 0,
     "embedded_page_mode": "1-bit",
-    "raster_dimensions_width_height": [2560, 3300],
+    "raster_dimensions_width_height": [
+      2560,
+      3300
+    ],
     "raster_set_sha256": "1898e41596f2fb95aa7f71f786b03ca30c6ad5b73d76e8d488916821c8a7ed8c"
   },
   "replay": {
@@ -226,13 +399,13 @@
     "semantic_sha256": "352aade628f5b1d16a7f21c6c9480cef19ae0b9e8ec140336af8290390177fc3",
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 53256,
-      "sha256": "4dc78580a96e5cb2e0af633e6c2e00739d6dcbf42d94668fc3bdeef0f959d286"
+      "bytes": 53403,
+      "sha256": "ac0bd0888d23931c003cd952cfe439e40ab0ecf49c724ce32852e1c8ed5d9aff"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 55219,
-      "sha256": "6a644b7929f7e2fd2660e43f9818534593b5791d0f82e271519b63fffd535066"
+      "bytes": 55372,
+      "sha256": "fac76dbc4befab5c15ac09666da5c70c386a58de42908d3aed21886b4188771b"
     },
     "strict_audit": {
       "roots_with_results": 619,
@@ -259,7 +432,7 @@
     },
     "before_roots": 37,
     "after_roots": 36,
-    "result_set_sha256": "0f1ae81af09a38ad092197c2a901817272792580fc29c343ca12a4eb4d058ca7"
+    "result_set_sha256": "43a582594bc2f8811a9b1812e113a36b2e2db4e4985c6c2c17f6d374e42321f9"
   },
   "supporting_artifacts": {
     "source_audit": {
