@@ -1,0 +1,48 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "74143231",
+  "root_id": "US-20220030168",
+  "publication_id": "US-20220030168-A1",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20220030168/attempt-0002/result.json",
+      "bytes": 13322,
+      "file_sha256": "4f5ebb4ae295b250d43347b6ab45329f444f2e2f28f34365e4026184a9405d7d",
+      "semantic_sha256": "92b32cb67317620c0e10b7b953bf7c92191410c0dfd3ce3c496ed883afabb665"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20220030168/attempt-0003/result.json",
+      "bytes": 13322,
+      "file_sha256": "935e3bc10e76c767c02557b49b9a6b451abfc525c3688c5c6ba01250fe3f69b0",
+      "semantic_sha256": "92b32cb67317620c0e10b7b953bf7c92191410c0dfd3ce3c496ed883afabb665"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": ["result_attempt"],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "92b32cb67317620c0e10b7b953bf7c92191410c0dfd3ce3c496ed883afabb665",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.reflection_image_stabilization_architecture_only",
+    "terminal.confirmed_no_prescription.reflection_image_stabilization_architecture_only",
+    "terminal.confirmed_no_prescription.reflection_image_stabilization_architecture_only",
+    "terminal.confirmed_no_prescription.reflection_image_stabilization_architecture_only",
+    "terminal.confirmed_no_prescription.reflection_image_stabilization_architecture_only",
+    "terminal.confirmed_no_prescription.reflection_image_stabilization_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_used": false
+}

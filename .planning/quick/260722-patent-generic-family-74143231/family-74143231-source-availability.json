@@ -1,0 +1,102 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "74143231",
+  "root_id": "US-20220030168",
+  "publication_id": "US-20220030168-A1",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/59d37b3e16a18161/US-20220030168-A1.html",
+    "bytes": 95922,
+    "sha256": "59d37b3e16a18161405fa22bf82e2b3b279448b9d00dd49df636a60257741a0f",
+    "characters": 95906,
+    "normalized_characters": 79957,
+    "normalized_sha256": "0f28feff139d9b0d508ddc38db97705ac8d77759643d80714b60ec57fa28c903"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "17/060047",
+    "filed": "2020-09-30",
+    "publication_date": "2022-01-27",
+    "same_application_prior_publication": null,
+    "taiwan_priority_application": "109124665",
+    "taiwan_priority_date": "2020-07-22",
+    "priority_confirmation_cross_reference_paragraph": 1
+  },
+  "source_items": [
+    {"source_item": 1, "label": "1st Embodiment ball/auxiliary-ball/pyramidal-recess reflection module", "description_range": [66, 83], "figures": [1, 2, 3, 4, 5, 6, 7], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 2, "label": "2nd Embodiment ball/two-recess reflection module", "description_range": [84, 98], "figures": [8, 9, 10, 11, 12, 13, 14], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 3, "label": "3rd Embodiment ball/protrusion/prism reflection module", "description_range": [99, 117], "figures": [15, 16, 17, 18, 19, 20, 21], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 4, "label": "4th Embodiment two-ball convex-contact reflection module", "description_range": [118, 123], "figures": [22, 23, 24], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 5, "label": "5th Embodiment integral spherical-protrusion reflection module", "description_range": [124, 129], "figures": [25], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 6, "label": "6th Embodiment mirror/ball/four-auxiliary-ball reflection module", "description_range": [130, 136], "figures": [26, 27, 28], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 7, "label": "7th Embodiment smartphone multi-camera wrapper", "description_range": [137, 143], "figures": [29, 30, 31, 32, 33], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 8, "label": "8th Embodiment smartphone multi-camera wrapper", "description_range": [144, 147], "figures": [34], "terminal_status": "confirmed_no_prescription"}
+  ],
+  "directly_published_architecture_metadata": [
+    "reflection element, rotatable holder, fixed base and image-stabilizing actuator relationships",
+    "ball, spherical protrusion, auxiliary ball and pyramidal recess contact architectures",
+    "six spherical-support R, D and R/D mechanical observations",
+    "plastic-prism entrance/exit surfaces that can be optical-aspheric without coefficients",
+    "smartphone multi-camera qualitative field and optical-zoom roles"
+  ],
+  "prescription_markers_absent_from_exact_source": [
+    "an ordered optical surface radius or curvature sequence",
+    "ordered axial intersurface spacing",
+    "numerical optical material, refractive index or Abbe dispersion rows",
+    "surface-specific conic constants or asphere coefficients",
+    "an identified aperture-stop coordinate",
+    "a numeric prescription-specific focal length",
+    "a prescription-specific F-number",
+    "a numeric prescription-bound angular field",
+    "an absolute image height",
+    "surface numbers or an ordered surface prescription"
+  ],
+  "not_source_available": [
+    "permission to treat spherical-support R/D mechanics as ordered optical surface data",
+    "permission to turn a coefficient-free aspheric option into an aspheric prescription",
+    "permission to bind qualitative smartphone fields to a constituent lens prescription",
+    "permission to measure drawings or captured-image examples",
+    "permission to derive focal length, F-number, angular field or image height",
+    "permission to transcribe or infer optical numbers from the image-only official PDF",
+    "numeric borrowing from Taiwan Application 109124665, another family or the other residual document with the same layout signature"
+  ],
+  "source_boundary": {
+    "focal_length_occurrences": 1,
+    "F_number_occurrences": 0,
+    "field_of_view_occurrences": 2,
+    "aspheric_occurrences": 3,
+    "curvature_radius_occurrences": 13,
+    "refractive_index_occurrences": 0,
+    "Abbe_occurrences": 0,
+    "dispersion_occurrences": 0,
+    "lens_element_occurrences": 0,
+    "aperture_stop_occurrences": 0,
+    "image_height_occurrences": 0,
+    "optical_axis_occurrences": 14,
+    "reflecting_surface_occurrences": 60,
+    "imaging_lens_assembly_occurrences": 6,
+    "camera_module_occurrences": 142,
+    "electronic_device_occurrences": 22,
+    "ordered_prescriptions": 0
+  },
+  "repair_policy": {
+    "architecture_metadata_promoted_to_prescription": false,
+    "device_field_promoted_to_prescription": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "printed_token_repair_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "priority_application_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 8,
+    "ordered_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 8,
+    "reason_codes": {
+      "confirmed_no_prescription.reflection_image_stabilization_architecture_only": 6,
+      "confirmed_no_prescription.electronic_device_wrapper_only": 2
+    }
+  }
+}

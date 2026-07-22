@@ -795,21 +795,23 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | 260722-patent-generic-family-85505687 | complete-shovel-saturation-incomplete | Exact US-12625342-B2 binds application 18/177179, prior US-20230305261-A1, provisional 63/323104, Family ID 85505687, Su/Chou/Tsai/Cheng inventors and Largan Precision. The exact denominator is one related-application plus seven Background/Summary paragraphs, 106 Description paragraphs, claims 1-34 with claims 1/14/25 independent, 29 figure panels/drawing sheets, 218 figure-reference tags, zero tables/MathML/inline formulae/custom-character images and exactly three items. Paragraphs 60-89/FIGS.1A-1T and 90-100/FIGS.2A-2G publish coating, nanostructure, connecting-layer and alignment architecture; paragraphs 101-105/FIGS.3A-3B publish a smartphone wrapper. Coating roundness/roughness, nanostructure/layer heights and device deployment fields are architecture metadata. No item publishes ordered optical radii, spacings, numerical materials/index/dispersion, surface-specific conics/aspheres, an identified stop, focal length, F-number or absolute image height. All three close as precise confirmed-no-prescription terminals without repairing paragraph 99, derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two byte-identical 4,642,588-byte official 44-page image-only PDFs decode to the same original one-bit raster set at caa18997...c3a5; no enhancement, OCR, measurement or inference occurs. Attempts 2/3 are semantic-equal at b4c28285...709a; generic 33 to 32; result set f47b201c...c03c; census ccf57c94...6606; summary fd8d458b...ccc6; report 1dd30e70...435; evidence 7ef6e71e...74a5; final strict audit is 619/619 corrupt=0. Complete segmented offline coverage passes 3,803 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1054/1054, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 102 changed-JSON checks pass. All 120 source-evidence manifests, 2,023 references and 1,817 complete triples rehash; 90 prior manifests contain exactly 379 permitted live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 74143231 / US-20220030168-A1 next; parent saturation remains incomplete. |
 
+| 260722-patent-generic-family-74143231 | complete-shovel-saturation-incomplete | Exact US-20220030168-A1 binds application 17/060047, Family ID 74143231 and Largan Digital. The exact denominator is one related-application, four Background and five Summary paragraphs, 138 Description paragraphs, claims 1-32 with claims 1/19/28 independent, FIGS.1-34 on 29 drawing sheets, 135 figure-reference tags, six inline R/D formula pairs, zero tables/MathML/custom-character images and exactly eight items. Six items publish reflection/camera-module image-stabilization support architecture and two publish smartphone wrappers. R/D values are mechanical support geometry and the coefficient-free plastic-prism aspheric option is not an ordered optical prescription. All eight close as precise confirmed-no-prescription terminals without derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 2,031,087-byte official 42-page image-only wrappers decode to the same original one-bit raster set at 0dbd668d...0b63; no enhancement, OCR, measurement or inference occurs. Attempts 2/3 are semantic-equal at 92b32cb6...b665; generic 32 to 31; result set 0a4fc9f3...9ce; census 945d36ce...d92; summary 5e825240...a3eb; report e995c3de...b7ef; evidence 547e9a49...2dcb; final strict audit is 619/619 missing=0/corrupt=0. Complete segmented offline coverage passes 3,812 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1063/1063, non-patent 2749/1 skipped/10 deselected, guard 5/5, Ruff/compile and 103 changed-JSON checks pass. All 121 source-evidence manifests, 2,040 references and 1,834 complete triples rehash; 91 prior manifests contain exactly 379 permitted live-pointer leaf changes while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 93632445 / US-20260079386-A1 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `85505687`, root/publication `US-12625342` /
-`US-12625342-B2`, is complete in
-`.planning/quick/260722-patent-generic-family-85505687/` from committed Family
-90627383 at `6b862727`; commit this atomic shovel before opening the next quick. The
+For patent saturation work, Family `74143231`, root/publication `US-20220030168` /
+`US-20220030168-A1`, is complete in
+`.planning/quick/260722-patent-generic-family-74143231/` from committed Family
+85505687 at `0ddfa8d3`; commit this atomic shovel before opening the next quick. The
 current result set is
-`f47b201c3fe961575b65b0a3730079776ee1ad3699f05ab4e66246030640c03c` and
-generic residual contains 32 roots/items. Stable ordering selects Family `74143231`,
-root/publication `US-20220030168` / `US-20220030168-A1`, application `17/060047`,
-next. Its title and Largan Digital identity are queue bibliography only; independently
-reconcile the exact source and do not borrow any value or terminal fact from Family
-85505687 or the shared layout.
+`0a4fc9f3fa94196d4abb3cce8e463f5ffefbd9db08335d420beb9df32d9079ce` and
+generic residual contains 31 roots/items. Stable ordering selects Family `93632445`,
+root/publication `US-20260079386` / `US-20260079386-A1`, application `19/401667`,
+next. Its title and Huawei Technologies identity are queue bibliography only;
+independently reconcile the exact source and do not borrow any value or terminal fact
+from Family 74143231 or the shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
