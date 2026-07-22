@@ -634,6 +634,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_huawei_projection_architecture_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
             raw_text,
@@ -82340,6 +82346,962 @@ def _classify_largan_reflection_module_architecture_attempts(
             ),
         )
         for item in _LARGAN_REFLECTION_MODULE_ITEMS
+    ]
+
+
+_HUAWEI_PROJECTION_LIGHT_SOURCE_REASON = (
+    "confirmed_no_prescription.projection_light_source_architecture_only"
+)
+_HUAWEI_PROJECTION_SYSTEM_REASON = (
+    "confirmed_no_prescription.projection_system_architecture_only"
+)
+_HUAWEI_TRANSMISSION_METHOD_REASON = (
+    "confirmed_no_prescription.projection_light_beam_transmission_method_only"
+)
+_HUAWEI_PROJECTION_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Huawei light-source 1st embodiment",
+        "paragraph_range": (87, 102),
+        "figures": ("1", "2", "3"),
+        "claims": tuple(range(1, 10)),
+        "reason_code": _HUAWEI_PROJECTION_LIGHT_SOURCE_REASON,
+    },
+    {
+        "number": 2,
+        "label": "Huawei light-source 2nd embodiment",
+        "paragraph_range": (103, 109),
+        "figures": ("4", "5", "6"),
+        "claims": tuple(range(1, 10)),
+        "reason_code": _HUAWEI_PROJECTION_LIGHT_SOURCE_REASON,
+    },
+    {
+        "number": 3,
+        "label": "Huawei light-source 3rd embodiment",
+        "paragraph_range": (110, 116),
+        "figures": ("7", "8"),
+        "claims": tuple(range(1, 10)),
+        "reason_code": _HUAWEI_PROJECTION_LIGHT_SOURCE_REASON,
+    },
+    {
+        "number": 4,
+        "label": "Huawei projection-system 1st embodiment",
+        "paragraph_range": (117, 120),
+        "figures": ("9",),
+        "claims": (11, 12, 14, 15, 16, 17),
+        "reason_code": _HUAWEI_PROJECTION_SYSTEM_REASON,
+    },
+    {
+        "number": 5,
+        "label": "Huawei light-source 4th embodiment",
+        "paragraph_range": (121, 123),
+        "figures": ("10",),
+        "claims": (10,),
+        "reason_code": _HUAWEI_PROJECTION_LIGHT_SOURCE_REASON,
+    },
+    {
+        "number": 6,
+        "label": "Huawei projection-system 2nd embodiment (FIG. 11)",
+        "paragraph_range": (124, 125),
+        "figures": ("11",),
+        "claims": (11,),
+        "reason_code": _HUAWEI_PROJECTION_SYSTEM_REASON,
+    },
+    {
+        "number": 7,
+        "label": (
+            "Huawei projection-system 2nd embodiment "
+            "(FIG. 12; source ordinal retained)"
+        ),
+        "paragraph_range": (126, 127),
+        "figures": ("12",),
+        "claims": (11, 13),
+        "reason_code": _HUAWEI_PROJECTION_SYSTEM_REASON,
+    },
+    {
+        "number": 8,
+        "label": "Huawei HUD-system embodiment",
+        "paragraph_range": (128, 129),
+        "figures": ("13",),
+        "claims": (),
+        "reason_code": (
+            "confirmed_no_prescription.head_up_display_system_wrapper_only"
+        ),
+    },
+    {
+        "number": 9,
+        "label": "Huawei vehicle/HUD embodiment",
+        "paragraph_range": (130, 130),
+        "figures": (),
+        "claims": (),
+        "reason_code": (
+            "confirmed_no_prescription.vehicle_head_up_display_wrapper_only"
+        ),
+    },
+    {
+        "number": 10,
+        "label": "Huawei projection-headlight embodiment",
+        "paragraph_range": (131, 132),
+        "figures": ("14",),
+        "claims": (),
+        "reason_code": (
+            "confirmed_no_prescription.projection_headlight_wrapper_only"
+        ),
+    },
+    {
+        "number": 11,
+        "label": "Huawei AR-glasses embodiment",
+        "paragraph_range": (133, 133),
+        "figures": (),
+        "claims": (),
+        "reason_code": "confirmed_no_prescription.ar_glasses_wrapper_only",
+    },
+    {
+        "number": 12,
+        "label": "Huawei projection-light-beam transmission 1st embodiment",
+        "paragraph_range": (134, 144),
+        "figures": ("15",),
+        "claims": (),
+        "reason_code": _HUAWEI_TRANSMISSION_METHOD_REASON,
+    },
+    {
+        "number": 13,
+        "label": "Huawei projection-light-beam transmission 2nd embodiment",
+        "paragraph_range": (145, 156),
+        "figures": ("16A", "16B"),
+        "claims": (),
+        "reason_code": _HUAWEI_TRANSMISSION_METHOD_REASON,
+    },
+    {
+        "number": 14,
+        "label": "Huawei projection-light-beam transmission 3rd embodiment",
+        "paragraph_range": (157, 168),
+        "figures": ("17",),
+        "claims": (),
+        "reason_code": _HUAWEI_TRANSMISSION_METHOD_REASON,
+    },
+    {
+        "number": 15,
+        "label": "Huawei projection-light-beam transmission 4th embodiment",
+        "paragraph_range": (169, 178),
+        "figures": ("18",),
+        "claims": (),
+        "reason_code": _HUAWEI_TRANSMISSION_METHOD_REASON,
+    },
+    {
+        "number": 16,
+        "label": "Huawei projection-method 1st embodiment",
+        "paragraph_range": (179, 190),
+        "figures": ("19A", "19B"),
+        "claims": (18, 19, 20),
+        "reason_code": "confirmed_no_prescription.projection_method_only",
+    },
+    {
+        "number": 17,
+        "label": "Huawei vehicle/ADAS projection embodiment",
+        "paragraph_range": (191, 196),
+        "figures": ("20",),
+        "claims": (),
+        "reason_code": (
+            "confirmed_no_prescription.autonomous_vehicle_projection_wrapper_only"
+        ),
+    },
+)
+_HUAWEI_PROJECTION_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260079386-A1": {
+        "family_id": "93632445",
+        "application_number": "19/401667",
+        "parent_pct_application": "PCT/CN2024/081141",
+        "china_priority_application": "202310647208.1",
+        "raw_document_sha256": (
+            "0381a731cd241d1012ad710303e7e4ae301a4500ca67278e31c41769b146c861"
+        ),
+        "normalized_text_sha256": (
+            "5367e0466a2cf78666ccce8be750d5ce239d90db1d844621ef8b8e5bea90b0da"
+        ),
+        "title_text": (
+            "Light Source, Projection System, Projection Method, and Related "
+            "Apparatus"
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication": 1,
+            "20260079386": 2,
+            "March 19, 2026": 1,
+            "QIN; Siyi": 2,
+            "SHI; Guangyuan": 1,
+            "HUAWEI TECHNOLOGIES CO., LTD.": 2,
+            "93632445": 1,
+            "19/401667": 1,
+            "November 26, 2025": 1,
+            "PCT/CN2024/081141": 2,
+            "202310647208.1": 2,
+            "May 31, 2023": 1,
+        },
+        "raw_section_body_sha256": {
+            "background": (
+                "b3711c74157505034ec6ae0f33f7c6652a58432811dda4540b15271b63358f96"
+            ),
+            "description": (
+                "f670225c3b63e4bb1feab3cc445c8430a3ac54a5b5300e0562ecf7632ff9597a"
+            ),
+            "claims": (
+                "eefdd3089a399e883fd4901df63a663f5b0140930a4a4024046144348ec25b83"
+            ),
+        },
+        "section_sha256": {
+            "background": (
+                "8ca1e51e30d9c383f478528b5675a4be10c2f67962fb20d5d06d30d95aa7963f"
+            ),
+            "description": (
+                "3406fe36eb9c54908acf9410023c49754516f9e15de9fe4ccb483a94efd1f183"
+            ),
+            "claims": (
+                "9a4da52dbae139def4617c00a9d6117b5bb6fc35c8ff50f671076a13851f3cd7"
+            ),
+        },
+        "paragraph_span_sha256": {
+            ("background", 1, 1): (
+                "c42270761a5c84fbc32a2e259e10710b49404a63ccfe69c7064a331fcf32a84c"
+            ),
+            ("background", 2, 5): (
+                "56be6fc108cac89e24726d8f84713c3dc385592e67d146200e9cfd3748f1b9ed"
+            ),
+            ("background", 6, 64): (
+                "37b63f0255ff795118cf59616fcc58cf79080095045a3b18742bd6c664916627"
+            ),
+            ("background", 1, 64): (
+                "56b50f788e7feadaf7150232c19e78a358d8d90756f2a7374f75f340b695269d"
+            ),
+            ("description", 65, 84): (
+                "298ccdfab9e96b392a1a9d98f6c6272fa946b5dd02796f1a2f0d0a7acf3271fa"
+            ),
+            ("description", 85, 86): (
+                "26c2f73e84f9e9a5d70c0ddf08b08c712ab90b0b6936b0bf2b64f67059c1368a"
+            ),
+            ("description", 87, 102): (
+                "2dd76046769ad69226c6d934521f20e4dfe32ca0b1dce57982991ae0a48d1200"
+            ),
+            ("description", 103, 109): (
+                "8ab66217ea4b9e90fa128a3bc173855240e03251c60ede32d5aad060db71f0cb"
+            ),
+            ("description", 110, 116): (
+                "6dfbb4659f55b1c6a19d57ada8a2ad88374dcce991f705830a7b8dc83e5da95d"
+            ),
+            ("description", 117, 120): (
+                "c2d6ec6889eb3675b14ae5bc0a3e36b559a7f164b5cc4db62838a5dc889c9871"
+            ),
+            ("description", 121, 123): (
+                "e389e3bf198e9a5c236ecb5856e958c9a3dbe2607f45f8ee593faaa615492d89"
+            ),
+            ("description", 124, 125): (
+                "d4999d9944ee518df153be9e1c625ae320798b6b0e47a9a64814a8d42cbe8daf"
+            ),
+            ("description", 126, 127): (
+                "be594a7d1c1fba6fe08f9a05c207c4eea91defbc476ade2beeaced366ad67e17"
+            ),
+            ("description", 128, 129): (
+                "aaead2fb2a309afc7605a34696d6392d31f83917752ffc62bcc59c2c89fd3262"
+            ),
+            ("description", 130, 130): (
+                "9a69691da772f6704785a014fed4ceca2ea55e059208556d37334996c91f575d"
+            ),
+            ("description", 131, 132): (
+                "a3179343042c4998f48182fcad4465a457a4bb4964622bbdb7b2561a9e5e7030"
+            ),
+            ("description", 133, 133): (
+                "34a35921f837659d708ff0776d1cdb0e032169a9cc960d0b430cbb8920c98580"
+            ),
+            ("description", 134, 144): (
+                "f63a5b857b97aa2eba50c0a10d5fcf109fc78de404c0d4c4d007aefec10187cd"
+            ),
+            ("description", 145, 156): (
+                "f2055c7817e8f5ce3c618390030aec82dfb85e01192231de5edce59e300fcdc3"
+            ),
+            ("description", 157, 168): (
+                "9cbe5735d24ec0d0503c4c66f243e68bac554e0b895ec57d8bb9f6628e8c5184"
+            ),
+            ("description", 169, 178): (
+                "5a90675c83cdd1aef94a958dab0bf51e4d349aaa2d56a47a43d9b794a83bb045"
+            ),
+            ("description", 179, 190): (
+                "c4a982eae2b4e0ed924ac2e1cfd0f09b91483f64ca821ac044501651ea0aa78a"
+            ),
+            ("description", 191, 196): (
+                "e0ef07bd43cdcde08b9a6cfc05a26bd11dec69dc48abcd643607b87f3637b183"
+            ),
+            ("description", 197, 197): (
+                "a871992af82600e4930ccc7122cfc1434f990a56e0b7731e4201f7c61734d886"
+            ),
+            ("description", 65, 197): (
+                "35d6d25cda319cf7815dbcdd6891bce81003720719605d1467037f899262fce9"
+            ),
+        },
+        "claim_numbers": tuple(range(1, 21)),
+        "independent_claim_numbers": (1, 11, 18),
+        "claim_sha256": _largan_folded_camera_sha256_lines("""
+            e49aadfe61182d5a82539023f945c71bcf1babce0e28b7d483f2b12b99b00b23
+            4fe05c64495134be1b8ddea09b58ee7dcbafb551126ef394627e03f0102497d9
+            c7572cf0dbc3977b4d4cdcebf0053c102b5775028ab4a679cdf424063b6cfef5
+            7bef2bb6e9ec52453992d75bf966c88935f398ddf42e5871bbea63eec731dd2e
+            f219abdcf10b1fd9f92e8445fd326dc73e050a31cdbc1dcec880d38c34db13e2
+            b888f127d75397aca2a079a8ff8db485b64721972b8a8123990ee8c61635d386
+            cb4526c39d5c745982c6a8dff218c68b497e60c39680c21ef7ea3b868e5038e7
+            221a18ed32d11dbee42f6d938a37cdbf6005a9de86c27e06163cf97c47fb7ba7
+            dae34b7b27f1a65165f654db19ac0532b05ac44578b46da1c641bca07024e566
+            3ee8609edecd7fbe282978e8d3f6fce0b183a95b3f99e8d20dd505a2508bd893
+            6cf852d85d381b1e010745355c54fcf905375d321ce2597ad64ce177a55913f2
+            9d75835796675ae0c658f697fd44421df840d6c852bd18e77bdec8d6001ef0a1
+            cdbbd7a82765e38e664434311a9e6157c661a7e425e7b61bc3de28d220c539d3
+            488fdc74fcc61b267dedba3bd575e2e9cb4f2488ec8504cb6fdab0e6eeb90337
+            0bcbb708d2527c93f6d71568f1ca7040625a5d1b30435d71f370019993153f8c
+            d0b6d0996617c696cda9ce7dd2efe9fc026a2ee628b33e0ae78f843ecc495baa
+            323e4579c70ca76b228184944c55adc3e817b5b385ba824c82c4e30891f1a775
+            4d767740bcb0f04caf58cc72af71a15dc415129f3a4cfa17db996bfee093593e
+            caee7d92f27dd1a35c5f5db80222ca2643e4f178a2218ceb87b5b4dfc8b54d30
+            538f0136bf5c543bb203f3b24a5c4af8146bcbb6dc22ced7a01b858b52aedf30
+        """),
+        "figure_groups": tuple(range(1, 21)),
+        "figure_panels": (
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+            "11", "12", "13", "14", "15", "16A", "16B", "17", "18",
+            "19A", "19B", "20",
+        ),
+        "figref_count": 132,
+        "raw_counts": {
+            "table_us": 0,
+            "html_table": 0,
+            "maths": 1,
+            "mathml": 1,
+            "inline_formula_leads": 0,
+            "inline_formula_tails": 0,
+            "custom_character_images": 0,
+        },
+        "phrase_counts": {
+            "radius of curvature": 0,
+            "focal length": 0,
+            "F-number": 0,
+            "field of view": 2,
+            "angle of view": 0,
+            "image height": 0,
+            "aspheric": 0,
+            "refractive index": 0,
+            "Abbe": 0,
+            "dispersion": 0,
+            "lens assembly": 26,
+            "projection lens": 0,
+            "imaging lens": 0,
+            "aperture stop": 0,
+            "optical power": 92,
+            "wavelength": 51,
+            "chromaticity coordinates": 51,
+            "lens group": 17,
+            "convex lens": 1,
+            "concave lens": 1,
+            "one or more lenses": 2,
+        },
+        "item_paragraph_markers": {
+            87: ("FIG. 1", "first embodiment of a light source"),
+            103: ("FIG. 4", "second embodiment of a light source"),
+            110: ("FIG. 7", "third embodiment of a light source"),
+            117: ("FIG. 9", "first embodiment of a projection system"),
+            121: ("FIG. 10", "fourth embodiment of a light source"),
+            124: ("FIG. 11", "second embodiment of a projection system"),
+            126: ("FIG. 12", "second embodiment of a projection system"),
+            128: ("FIG. 13", "head-up display system"),
+            130: ("An embodiment further provides a vehicle", "HUD system"),
+            131: ("FIG. 14", "projection headlight"),
+            133: ("augmented reality (AR) glasses", "lenses reflect"),
+            134: ("FIG. 15", "first embodiment"),
+            145: ("FIG. 16 A and FIG. 16 B", "second embodiment"),
+            157: ("FIG. 17", "third embodiment"),
+            169: ("FIG. 18", "fourth embodiment"),
+            179: ("FIG. 19 A and FIG. 19 B", "first embodiment"),
+            191: ("FIG. 20", "vehicle 2000"),
+        },
+        "maths_raw_sha256": (
+            "3ae2a5c728c1a4b5ad6dd10ccc49c4d3de4327e5ad776bf0beaf2d5f46edc308"
+        ),
+        "maths_tokens": "[00001] C = Std ⁡ ( I ) Mean ( I )",
+        "official_pdf_captures": (
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-93632445/"
+                    "source-review/US-20260079386-A1-official-1.pdf"
+                ),
+                "bytes": 2_594_868,
+                "container_sha256": (
+                    "4a80b87a5f822a2fa117a322d0d5c3e3a9eea09292b0fd4d3eb0adb2dbbca1a6"
+                ),
+            },
+            {
+                "path": (
+                    ".planning/quick/260722-patent-generic-family-93632445/"
+                    "source-review/US-20260079386-A1-official-2.pdf"
+                ),
+                "bytes": 2_594_868,
+                "container_sha256": (
+                    "39b76d0c6fa77e8165bbd26cfa4d7047c73c442dff0b746fa183cc93edcfd99b"
+                ),
+            },
+        ),
+        "pdf_page_count": 36,
+        "pdf_raster_dimensions": (
+            ((2560, 3300),) * 24
+            + ((2550, 3300),)
+            + ((2560, 3300),) * 11
+        ),
+        "pdf_page_raster_sha256": _largan_folded_camera_sha256_lines("""
+            42fddefafecf751ac3eadd6a8c5622a51adbd3d49063612a553dbeb17b369f95
+            d9b2c444ee466d89020cacc4e81f46ded4de7815d5ea14ec9b076c10de2fd0d0
+            6e859cb666d6486749a924cacfdb7f35ecdaddd354f9d0577b81fe774d59da69
+            f271d486610ce4bac3d62c6f147c1f8974219198865471e9e3d41511c2a5c77c
+            fcefd567251f52b004b8d46f8bb0768dd0556341ff707a319351ce01fbc4fca7
+            010f9ba3671414d1f1228812ecf55306af83940e9dc8d544e8f408d39de91172
+            3ec0d267b5d7d8ff57eae1c8b8c8d7c663151c469b62eb23b8bddbda67032fb8
+            fa10ad93fcba8f9fa41c8efe6d3a0ae318098a6d5616562fb2b96b06927f833d
+            de62879636a101f8174233a4e3e7b0b903f8e39e710869ba25ef39c2197337ff
+            ea05a921e56192846aa2bf7deecd81cb40377528944e5d408bc02389cd02a6d3
+            c6897c8eede84ed2f10c3bb2b05c80c0d343f4ed253ee32c67e9ce7fb07471d1
+            83116ad7ac53b49a993ceb150bd1b07d640ab41b3d59b2220e85a008bc0652e4
+            51228721df5c07fb1612a5766285ca27c4bb2904b8b6befa099d7c4902647675
+            87ea9e8a6ded7e37faa4279aa51ea3da401188e787228cac4fa901e23061d452
+            b4520fa2a1119e353439eb20c4e67ba4c4b183235c807b11d547a0aac9198f74
+            600ab66d111c4f1ba2e91f2f9aae8a8ea7e4f00ea47e4a0220d095613d90e631
+            eb98be351864e6558c8f099ac6583ba595b6374847a5f1b33f7f188d58953023
+            bd7b24e2af8b795a6c77516e4eedd8f89c7cb7f8e226eb54369beb5f42304603
+            38ee68b1e3484a9090627933767c2181cbb0bdb1c3e539c8eaba79fa130ca3f3
+            f6186048819883ebb910f90781de03bffe6970c2981ff4334a9f49e1e2e4d5ad
+            9737ed1e796561d1ca15325324e5febeaebf0a018b7fc8090ea4977643279090
+            905fe1cdfaf1ea6da1abac5f39a003b6273539b03ee77569df6ba2688ba0bdf3
+            3c90e8e731a4855ccc57b90faee575d0176be0fd64b503e31287c690e8dd8132
+            f2c6e3548aeba069260eeb8c2df8bfde2bb54f7691aa4eb5e05d65acfcf4cf21
+            3913290f1f86cc7cd18a3fb4d4f30bf3a9bfb365c51bd6511f0ebbcaf8213f58
+            4c60c77bbbee247b2d8eefc812dbd01c2c27fddd3057bd1482eae867ce977a22
+            b58beddeda872d333cf27a5fc29b61bf2364d17fb54303128d81fc838770c8f3
+            3ea5b43fc0a162a8b8d8b4e60b5d216340c65ebc8b7cbd6348e7f7fe4db2a834
+            fd1a134233cc7f5c64a6a85542f042bec549fd403ca34d9bab8c0c771230a18f
+            3a4593b8cba835e4225ede3cffb3a3bd326cbc560e7b31484e8910a074f66dd8
+            327681028a93708dbb56a0075be4487d423fdc3fc1a300d874fee994489f94d2
+            ab13741b3a6d8cac6fcef4e30f09247b079aa3864d5499d6e80c6a29fb0d446a
+            56b6003e1194ceb2531803104cfc837e49472377e4722cf3980753bd3b497bd8
+            41a899b86e2baec3948399da79f743d1880f8b044862a317cecac2d4ad1719b4
+            5ab217eee115c5ac96c78d0ced32419b914a7961185a21a14fb23fc2c42919f8
+            2454aca73e2556e980d12ee5625937feeb7d4778b7706a0c5b7e92cf3d842cab
+        """),
+        "pdf_raster_set_sha256": (
+            "c6e601d4b4c1d66fd222e022b0d89379fdcedabb9f4f970818bb4ecd85956629"
+        ),
+        "pdf_cover_page_numbers": (1,),
+        "pdf_reference_page_numbers": (),
+        "pdf_drawing_page_numbers": tuple(range(2, 18)),
+        "pdf_specification_page_numbers": tuple(range(18, 37)),
+        "pdf_claims_page_numbers": (34, 35, 36),
+    }
+}
+
+
+def _huawei_projection_section_body(raw_text: str, section: str) -> str:
+    """Return one exact PPUBS section used by Family 93632445."""
+
+    if section == "background":
+        matches = re.findall(
+            r"<h3>Background/Summary</h3>\s*<p>(.*?)</p>\s*<p>(.*?)</p>",
+            raw_text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        if len(matches) != 1:
+            raise PatentParseError(
+                "Huawei projection background raw section count changed"
+            )
+        return "\n".join(matches[0])
+    patterns = {
+        "description": r"<h3>Description</h3>\s*<p>(.*?)</p>",
+        "claims": r"<h3>Claims</h3>\s*<p>(.*?)</p>",
+    }
+    matches = re.findall(
+        patterns[section],
+        raw_text,
+        flags=re.DOTALL | re.IGNORECASE,
+    )
+    if len(matches) != 1:
+        raise PatentParseError(
+            f"Huawei projection {section} raw section count changed"
+        )
+    return matches[0]
+
+
+def _huawei_projection_numbered_paragraphs(
+    body: str,
+    *,
+    section: str,
+    expected_first: int,
+    expected_last: int,
+) -> dict[int, str]:
+    """Split the exact bracketed A1 PPUBS paragraph sequence."""
+
+    markers = list(re.finditer(r"(?:^|\n|<br />)\[(\d{4})\] ", body))
+    numbers = tuple(int(marker.group(1)) for marker in markers)
+    if numbers != tuple(range(expected_first, expected_last + 1)):
+        raise PatentParseError(
+            f"Huawei projection {section} paragraph denominator changed"
+        )
+    return {
+        number: normalize_patent_text(
+            body[
+                marker.end() : (
+                    markers[index + 1].start()
+                    if index + 1 < len(markers)
+                    else len(body)
+                )
+            ]
+        )
+        for index, (number, marker) in enumerate(
+            zip(numbers, markers, strict=True)
+        )
+    }
+
+
+def _huawei_projection_paragraph_span(
+    paragraphs: dict[int, str],
+    first: int,
+    last: int,
+) -> str:
+    return " ".join(
+        f"[{number:04d}] {paragraphs[number]}"
+        for number in range(first, last + 1)
+    )
+
+
+def _classify_huawei_projection_architecture_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 93632445 without promoting projection architecture."""
+
+    profile = _HUAWEI_PROJECTION_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _HUAWEI_PROJECTION_ITEMS
+        ]
+
+    try:
+        if hashlib.sha256(raw_text.encode("utf-8")).hexdigest() != profile[
+            "raw_document_sha256"
+        ]:
+            raise PatentParseError(
+                f"Huawei projection official raw text changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if hashlib.sha256(text.encode()).hexdigest() != profile[
+            "normalized_text_sha256"
+        ]:
+            raise PatentParseError(
+                f"Huawei projection normalized text changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Huawei projection title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Huawei projection identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        raw_sections = {
+            name: _huawei_projection_section_body(raw_text, name)
+            for name in ("background", "description", "claims")
+        }
+        sections = {
+            name: normalize_patent_text(body)
+            for name, body in raw_sections.items()
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_body_sha256"
+        ].items():
+            if (
+                hashlib.sha256(raw_sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Huawei projection {section_name} raw section changed"
+                )
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Huawei projection {section_name} section changed"
+                )
+
+        paragraphs = {
+            "background": _huawei_projection_numbered_paragraphs(
+                raw_sections["background"],
+                section="background",
+                expected_first=1,
+                expected_last=64,
+            ),
+            "description": _huawei_projection_numbered_paragraphs(
+                raw_sections["description"],
+                section="description",
+                expected_first=65,
+                expected_last=197,
+            ),
+        }
+        for (
+            section_name,
+            first,
+            last,
+        ), expected_digest in profile["paragraph_span_sha256"].items():
+            observed_span = _huawei_projection_paragraph_span(
+                paragraphs[section_name],
+                first,
+                last,
+            )
+            if hashlib.sha256(observed_span.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Huawei projection {section_name} paragraphs "
+                    f"{first}-{last} changed"
+                )
+        if not (
+            profile["parent_pct_application"] in paragraphs["background"][1]
+            and profile["china_priority_application"]
+            in paragraphs["background"][1]
+            and "filed on May 31, 2023" in paragraphs["background"][1]
+        ):
+            raise PatentParseError("Huawei projection priority paragraph changed")
+        covered_item_paragraphs = {
+            number
+            for item in _HUAWEI_PROJECTION_ITEMS
+            for number in range(
+                int(item["paragraph_range"][0]),
+                int(item["paragraph_range"][1]) + 1,
+            )
+        }
+        if covered_item_paragraphs != set(range(87, 197)):
+            raise PatentParseError(
+                "Huawei projection source-item paragraph coverage changed"
+            )
+        for paragraph, markers in profile["item_paragraph_markers"].items():
+            for marker in markers:
+                if marker not in paragraphs["description"][paragraph]:
+                    raise PatentParseError(
+                        "Huawei projection item marker changed in paragraph "
+                        f"{paragraph}: {marker!r}"
+                    )
+        if len(
+            re.findall(
+                r"second embodiment of a projection system",
+                " ".join(
+                    paragraphs["description"][number]
+                    for number in range(65, 85)
+                ),
+                re.IGNORECASE,
+            )
+        ) != 2:
+            raise PatentParseError(
+                "Huawei projection duplicated source ordinal boundary changed"
+            )
+
+        declared_groups: list[int] = []
+        declared_panels: list[str] = []
+        for number in range(65, 85):
+            matches = re.findall(
+                r"FIG\.\s*(\d+)\s*([AB])?",
+                paragraphs["description"][number],
+                re.IGNORECASE,
+            )
+            if not matches:
+                raise PatentParseError(
+                    f"Huawei projection drawing declaration {number} changed"
+                )
+            declared_groups.append(int(matches[0][0]))
+            for figure, panel in matches:
+                token = f"{figure}{panel.upper()}"
+                if token not in declared_panels:
+                    declared_panels.append(token)
+        if tuple(declared_groups) != profile["figure_groups"]:
+            raise PatentParseError(
+                "Huawei projection declared figure-group denominator changed"
+            )
+        if tuple(declared_panels) != profile["figure_panels"]:
+            raise PatentParseError(
+                "Huawei projection declared figure-panel denominator changed"
+            )
+        mapped_figures = {
+            str(figure)
+            for item in _HUAWEI_PROJECTION_ITEMS
+            for figure in item["figures"]
+        }
+        if mapped_figures != set(profile["figure_panels"]):
+            raise PatentParseError(
+                "Huawei projection item-to-figure coverage changed"
+            )
+        if len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)) != profile[
+            "figref_count"
+        ]:
+            raise PatentParseError(
+                "Huawei projection figure-reference denominator changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Huawei projection claim denominator changed")
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent_claims = tuple(
+            number
+            for number, claim_text in zip(
+                claim_numbers,
+                claim_texts,
+                strict=True,
+            )
+            if re.search(
+                r"\b(?:according to|of) claim\s+\d+",
+                claim_text[:1200],
+                re.IGNORECASE,
+            )
+            is None
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Huawei projection independent claims changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(claim_text.encode()).hexdigest()
+            for claim_text in claim_texts
+        )
+        if claim_hashes != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Huawei projection individual claims changed"
+            )
+        if not (
+            "A light source comprising" in claim_texts[0]
+            and "A projection system comprising" in claim_texts[10]
+            and "a lens assembly configured to" in claim_texts[10]
+            and "A projection method comprising" in claim_texts[17]
+        ):
+            raise PatentParseError(
+                "Huawei projection architecture/method claim binding changed"
+            )
+        mapped_claims = {
+            int(claim)
+            for item in _HUAWEI_PROJECTION_ITEMS
+            for claim in item["claims"]
+        }
+        if mapped_claims != set(profile["claim_numbers"]):
+            raise PatentParseError(
+                "Huawei projection item-to-claim coverage changed"
+            )
+
+        observed_raw_counts = {
+            "table_us": len(re.findall(r"TABLE-US-", raw_text, re.IGNORECASE)),
+            "html_table": len(re.findall(r"<table\b", raw_text, re.IGNORECASE)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)),
+            "mathml": len(re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE)),
+            "inline_formula_leads": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="lead"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "inline_formula_tails": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="tail"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "custom_character_images": len(
+                re.findall(r"<img\b", raw_text, re.IGNORECASE)
+            ),
+        }
+        if observed_raw_counts != profile["raw_counts"]:
+            raise PatentParseError(
+                "Huawei projection table/formula/image denominator changed"
+            )
+        maths = re.findall(
+            r"(<maths\b.*?</maths>)",
+            raw_text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        if (
+            len(maths) != 1
+            or hashlib.sha256(maths[0].encode()).hexdigest()
+            != profile["maths_raw_sha256"]
+            or normalize_patent_text(re.sub(r"<[^>]+>", " ", maths[0]))
+            != profile["maths_tokens"]
+            or "MATH-US-00001" not in raw_sections["description"]
+            or "speckle contrast" not in paragraphs["description"][96]
+        ):
+            raise PatentParseError(
+                "Huawei projection speckle-contrast MathML boundary changed"
+            )
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Huawei projection phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if not (
+            "one or more lenses" in paragraphs["description"][120]
+            and "convex lens or a concave lens"
+            in paragraphs["description"][120]
+            and "collimated by the lens group 1104"
+            in paragraphs["description"][125]
+            and "collimated by a lens group 1204"
+            in paragraphs["description"][127]
+        ):
+            raise PatentParseError(
+                "Huawei projection generic lens-component boundary changed"
+            )
+
+        observed_pdf_hashes: list[tuple[str, ...]] = []
+        for capture in profile["official_pdf_captures"]:
+            payload = (ROOT / capture["path"]).read_bytes()
+            if len(payload) != capture["bytes"]:
+                raise PatentParseError(
+                    "Huawei projection official PDF size changed"
+                )
+            if hashlib.sha256(payload).hexdigest() != capture[
+                "container_sha256"
+            ]:
+                raise PatentParseError(
+                    "Huawei projection official PDF hash changed"
+                )
+            reader = pypdf.PdfReader(io.BytesIO(payload))
+            if len(reader.pages) != profile["pdf_page_count"]:
+                raise PatentParseError(
+                    "Huawei projection official PDF page count changed"
+                )
+            page_hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Huawei projection PDF page {page_number} contains "
+                        f"{len(images)} rasters; expected one"
+                    )
+                if (
+                    images[0].image.size
+                    != profile["pdf_raster_dimensions"][page_number - 1]
+                    or images[0].image.mode != "1"
+                ):
+                    raise PatentParseError(
+                        f"Huawei projection PDF page {page_number} raster changed"
+                    )
+                page_hashes.append(_canonical_raster_sha256(images[0].data))
+                text_characters += len(page.extract_text() or "")
+            if tuple(page_hashes) != profile["pdf_page_raster_sha256"]:
+                raise PatentParseError(
+                    "Huawei projection official PDF page rasters changed"
+                )
+            raster_set_digest = hashlib.sha256(
+                ("\n".join(page_hashes) + "\n").encode()
+            ).hexdigest()
+            if (
+                raster_set_digest != profile["pdf_raster_set_sha256"]
+                or text_characters != 0
+            ):
+                raise PatentParseError(
+                    "Huawei projection official PDF raster set changed"
+                )
+            observed_pdf_hashes.append(tuple(page_hashes))
+        if len(set(observed_pdf_hashes)) != 1:
+            raise PatentParseError(
+                "Huawei projection official PDF captures disagree by decoded page"
+            )
+        if not (
+            profile["pdf_cover_page_numbers"] == (1,)
+            and profile["pdf_reference_page_numbers"] == ()
+            and profile["pdf_drawing_page_numbers"] == tuple(range(2, 18))
+            and profile["pdf_specification_page_numbers"] == tuple(range(18, 37))
+            and profile["pdf_claims_page_numbers"] == (34, 35, 36)
+        ):
+            raise PatentParseError(
+                "Huawei projection official PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all 17 exact source items
+        return attempts_for_error(exc)
+
+    details = (
+        "paragraphs 87-102 and FIGS. 1-3 publish a dual-blue-source, splitter, phosphor and chromaticity-control architecture",
+        "paragraphs 103-109 and FIGS. 4-6 publish a red-laser variant of the light-source architecture",
+        "paragraphs 110-116 and FIGS. 7-8 publish a tri-color-laser variant of the light-source architecture",
+        "paragraphs 117-120 and FIG. 9 publish a three-chip modulation, convergence and generic lens-assembly architecture",
+        "paragraphs 121-123 and FIG. 10 publish a color-filter-wheel light-source architecture",
+        "paragraphs 124-125 and FIG. 11 publish a single-chip sequential-color projection-system architecture",
+        "paragraphs 126-127 and FIG. 12 publish another source-printed second projection-system embodiment with a color-filter wheel",
+        "paragraphs 128-129 and FIG. 13 publish a head-up-display system wrapper and qualitative driver front field",
+        "paragraph 130 publishes a vehicle wrapper around the FIG. 13 HUD system",
+        "paragraphs 131-132 and FIG. 14 publish a projection-headlight wrapper",
+        "paragraph 133 publishes an AR-glasses integration wrapper",
+        "paragraphs 134-144 and FIG. 15 publish the first projection-light-beam transmission method",
+        "paragraphs 145-156 and FIGS. 16A-16B publish the second transmission method",
+        "paragraphs 157-168 and FIG. 17 publish the third transmission method",
+        "paragraphs 169-178 and FIG. 18 publish the fourth transmission method",
+        "paragraphs 179-190 and FIGS. 19A-19B publish a projection method",
+        "paragraphs 191-196 and FIG. 20 publish a vehicle/ADAS wrapper containing projection-headlight and HUD systems",
+    )
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Huawei Family 93632445 item {item['number']}; "
+                    f"{details[int(item['number']) - 1]}. The exact source "
+                    "publishes no ordered optical radius/surface sequence, "
+                    "intersurface spacing, numerical optical material/index/"
+                    "dispersion row, surface-specific conic/asphere coefficient, "
+                    "identified aperture-stop coordinate, focal length, F-number, "
+                    "numeric prescription-bound angular field or absolute image "
+                    "height. Wavelength, polarization, optical-power, chromaticity, "
+                    "speckle and generic lens-group/lens-assembly statements remain "
+                    "architecture metadata. Claims 1-20, including independent "
+                    "claims 1/11/18, add no separate ordered prescription. No "
+                    "source ordinal is repaired and no value is derived, measured "
+                    "from drawings, transcribed from raster, or borrowed from "
+                    "PCT/CN2024/081141, Chinese application 202310647208.1, another "
+                    "family or a shared layout"
+                ),
+            ),
+        )
+        for item in _HUAWEI_PROJECTION_ITEMS
     ]
 
 

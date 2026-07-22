@@ -1,0 +1,57 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "93632445",
+  "root_id": "US-20260079386",
+  "publication_id": "US-20260079386-A1",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260079386/attempt-0002/result.json",
+      "bytes": 26656,
+      "file_sha256": "faa174995524625e3891da35c8636f141f5d8e0c7230bc0c41ed4b41a6452c87",
+      "semantic_sha256": "53a6d195a4bdd3753c86ff6826d7c135a759d996d4f7f8a931094f0277f56691"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260079386/attempt-0003/result.json",
+      "bytes": 26656,
+      "file_sha256": "9ed5b42764d0cefa8742faa08bbed3331e71f9e47e4ea1bbfb50ca9cbafd9b68",
+      "semantic_sha256": "53a6d195a4bdd3753c86ff6826d7c135a759d996d4f7f8a931094f0277f56691"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": ["result_attempt"],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "53a6d195a4bdd3753c86ff6826d7c135a759d996d4f7f8a931094f0277f56691",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.projection_light_source_architecture_only",
+    "terminal.confirmed_no_prescription.projection_light_source_architecture_only",
+    "terminal.confirmed_no_prescription.projection_light_source_architecture_only",
+    "terminal.confirmed_no_prescription.projection_system_architecture_only",
+    "terminal.confirmed_no_prescription.projection_light_source_architecture_only",
+    "terminal.confirmed_no_prescription.projection_system_architecture_only",
+    "terminal.confirmed_no_prescription.projection_system_architecture_only",
+    "terminal.confirmed_no_prescription.head_up_display_system_wrapper_only",
+    "terminal.confirmed_no_prescription.vehicle_head_up_display_wrapper_only",
+    "terminal.confirmed_no_prescription.projection_headlight_wrapper_only",
+    "terminal.confirmed_no_prescription.ar_glasses_wrapper_only",
+    "terminal.confirmed_no_prescription.projection_light_beam_transmission_method_only",
+    "terminal.confirmed_no_prescription.projection_light_beam_transmission_method_only",
+    "terminal.confirmed_no_prescription.projection_light_beam_transmission_method_only",
+    "terminal.confirmed_no_prescription.projection_light_beam_transmission_method_only",
+    "terminal.confirmed_no_prescription.projection_method_only",
+    "terminal.confirmed_no_prescription.autonomous_vehicle_projection_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_used": false
+}

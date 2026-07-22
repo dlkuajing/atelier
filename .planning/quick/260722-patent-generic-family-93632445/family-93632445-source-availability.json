@@ -1,0 +1,123 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "93632445",
+  "root_id": "US-20260079386",
+  "publication_id": "US-20260079386-A1",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0381a731cd241d10/US-20260079386-A1.html",
+    "bytes": 147142,
+    "sha256": "0381a731cd241d1012ad710303e7e4ae301a4500ca67278e31c41769b146c861",
+    "characters": 147120,
+    "normalized_characters": 132236,
+    "normalized_sha256": "5367e0466a2cf78666ccce8be750d5ce239d90db1d844621ef8b8e5bea90b0da"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "19/401667",
+    "filed": "2025-11-26",
+    "publication_date": "2026-03-19",
+    "parent_pct_application": "PCT/CN2024/081141",
+    "parent_pct_filed": "2024-03-12",
+    "china_priority_application": "202310647208.1",
+    "china_priority_date": "2023-05-31",
+    "priority_confirmation_cross_reference_paragraph": 1
+  },
+  "source_items": [
+    {"source_item": 1, "label": "first light-source architecture", "description_range": [87, 102], "figures": ["1", "2", "3"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 2, "label": "second light-source architecture", "description_range": [103, 109], "figures": ["4", "5", "6"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 3, "label": "third light-source architecture", "description_range": [110, 116], "figures": ["7", "8"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 4, "label": "first projection-system architecture", "description_range": [117, 120], "figures": ["9"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 5, "label": "fourth light-source architecture", "description_range": [121, 123], "figures": ["10"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 6, "label": "second projection-system architecture at FIG. 11", "description_range": [124, 125], "figures": ["11"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 7, "label": "second projection-system architecture at FIG. 12 (printed duplicate retained)", "description_range": [126, 127], "figures": ["12"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 8, "label": "HUD-system wrapper", "description_range": [128, 129], "figures": ["13"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 9, "label": "vehicle/HUD wrapper", "description_range": [130, 130], "figures": [], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 10, "label": "projection-headlight wrapper", "description_range": [131, 132], "figures": ["14"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 11, "label": "AR-glasses wrapper", "description_range": [133, 133], "figures": [], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 12, "label": "first projection-light-beam transmission method", "description_range": [134, 144], "figures": ["15"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 13, "label": "second projection-light-beam transmission method", "description_range": [145, 156], "figures": ["16A", "16B"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 14, "label": "third projection-light-beam transmission method", "description_range": [157, 168], "figures": ["17"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 15, "label": "fourth projection-light-beam transmission method", "description_range": [169, 178], "figures": ["18"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 16, "label": "first projection method", "description_range": [179, 190], "figures": ["19A", "19B"], "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 17, "label": "vehicle/ADAS projection wrapper", "description_range": [191, 196], "figures": ["20"], "terminal_status": "confirmed_no_prescription"}
+  ],
+  "directly_published_architecture_metadata": [
+    "laser-source wavelength and polarization relationships",
+    "beam splitting, beam combining, phosphor and filtering architecture",
+    "optical-power and chromaticity-coordinate control relationships",
+    "speckle-contrast MathML expression",
+    "modulator, reflector, color-filter-wheel, lens-group and lens-assembly functional architecture",
+    "HUD, vehicle, projection-headlight, AR-glasses and ADAS integration"
+  ],
+  "prescription_markers_absent_from_exact_source": [
+    "an ordered optical surface radius or curvature sequence",
+    "ordered axial intersurface spacing",
+    "numerical optical material, refractive index or Abbe dispersion rows",
+    "surface-specific conic constants or asphere coefficients",
+    "an identified aperture-stop coordinate",
+    "a numeric prescription-specific focal length",
+    "a prescription-specific F-number",
+    "a numeric prescription-bound angular field",
+    "an absolute image height",
+    "surface numbers or an ordered surface prescription"
+  ],
+  "not_source_available": [
+    "permission to turn generic one-or-more-lens language into an ordered lens prescription",
+    "permission to bind the qualitative HUD front field of view to a lens prescription",
+    "permission to derive optical coordinates from wavelengths, optical powers or chromaticity coordinates",
+    "permission to repair the duplicated projection-system second-embodiment ordinal",
+    "permission to measure drawings or flowcharts",
+    "permission to transcribe or infer optical numbers from the image-only official PDF",
+    "numeric borrowing from PCT/CN2024/081141, Chinese application 202310647208.1, another family or a shared layout"
+  ],
+  "source_boundary": {
+    "radius_of_curvature_occurrences": 0,
+    "focal_length_occurrences": 0,
+    "F_number_occurrences": 0,
+    "field_of_view_occurrences": 2,
+    "angle_of_view_occurrences": 0,
+    "image_height_occurrences": 0,
+    "aspheric_occurrences": 0,
+    "refractive_index_occurrences": 0,
+    "Abbe_occurrences": 0,
+    "dispersion_occurrences": 0,
+    "lens_assembly_occurrences": 26,
+    "projection_lens_occurrences": 0,
+    "imaging_lens_occurrences": 0,
+    "aperture_stop_occurrences": 0,
+    "optical_power_occurrences": 92,
+    "wavelength_occurrences": 51,
+    "chromaticity_coordinates_occurrences": 51,
+    "lens_group_occurrences": 17,
+    "ordered_prescriptions": 0
+  },
+  "repair_policy": {
+    "architecture_metadata_promoted_to_prescription": false,
+    "generic_lens_language_promoted_to_prescription": false,
+    "wrapper_field_promoted_to_prescription": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "printed_token_repair_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "parent_or_priority_application_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 17,
+    "ordered_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 17,
+    "reason_codes": {
+      "confirmed_no_prescription.projection_light_source_architecture_only": 4,
+      "confirmed_no_prescription.projection_system_architecture_only": 3,
+      "confirmed_no_prescription.head_up_display_system_wrapper_only": 1,
+      "confirmed_no_prescription.vehicle_head_up_display_wrapper_only": 1,
+      "confirmed_no_prescription.projection_headlight_wrapper_only": 1,
+      "confirmed_no_prescription.ar_glasses_wrapper_only": 1,
+      "confirmed_no_prescription.projection_light_beam_transmission_method_only": 4,
+      "confirmed_no_prescription.projection_method_only": 1,
+      "confirmed_no_prescription.autonomous_vehicle_projection_wrapper_only": 1
+    }
+  }
+}
