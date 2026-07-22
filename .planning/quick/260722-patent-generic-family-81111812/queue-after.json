@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260722-patent-generic-family-81111812/generic-residual-after-1.json",
+  "affected_roots": 28,
+  "affected_items": 28,
+  "result_set_sha256": "a8b0123a6ca275bdb0305fb1f17fe83f7e91e21efb26755997d275ea656c14d6",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "cce52749cd6c4754d359ae25d54545d85cf715841792b6eebc3e65eb79511a14",
+    "layout_signature_count": 1,
+    "family_id": "97520240",
+    "root_ids": [
+      "US-20260110880"
+    ],
+    "publication_ids": [
+      "US-20260110880-A1"
+    ],
+    "application_numbers": [
+      "19/209987"
+    ],
+    "title": "IMAGING LENS SYSTEM",
+    "applicant_and_assignee": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/24bad625cfaa1f14/US-20260110880-A1.html",
+      "bytes": 92929,
+      "sha256": "24bad625cfaa1f1468ec1e707b0058e1ddbfe29f66cb65253a43a16435518474",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 8,
+      "example_anchor": 0,
+      "f_number": 2,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 17
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

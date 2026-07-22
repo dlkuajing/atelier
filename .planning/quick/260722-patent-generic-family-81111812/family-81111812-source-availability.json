@@ -1,0 +1,409 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "81111812",
+  "root_id": "US-12474541",
+  "publication_id": "US-12474541-B2",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/d812e6b1ee07b3f5/US-12474541-B2.html",
+    "bytes": 173216,
+    "sha256": "d812e6b1ee07b3f532cd2b0217a754c87f2f82c661f27dd15259a708a6b4bbd2",
+    "characters": 173052,
+    "normalized_characters": 133679,
+    "normalized_sha256": "e47aae12055703cfdb116d8b6ae4e53c8646949397d33baa23899506fba65510"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "17/527220",
+    "filed": "2021-11-16",
+    "patent_date": "2025-11-18",
+    "prior_publication": "US-20220334343-A1",
+    "prior_publication_date": "2022-10-20",
+    "taiwan_priority_application": "110113838",
+    "priority_date": "2021-04-16"
+  },
+  "source_items": [
+    {
+      "source_item": 1,
+      "label": "Largan 1st-embodiment 1st driving-module example",
+      "description_range": [
+        113,
+        123
+      ],
+      "figures": [
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E",
+        "1F",
+        "1G",
+        "1H",
+        "1I"
+      ],
+      "tables": [
+        1
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 2,
+      "label": "Largan 1st-embodiment 2nd driving-module example",
+      "description_range": [
+        124,
+        126
+      ],
+      "figures": [
+        "1J",
+        "1K",
+        "1L"
+      ],
+      "tables": [
+        2
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 3,
+      "label": "Largan 1st-embodiment 3rd driving-module example",
+      "description_range": [
+        127,
+        129
+      ],
+      "figures": [
+        "1M",
+        "1N",
+        "1O"
+      ],
+      "tables": [
+        3
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 4,
+      "label": "Largan 2nd-embodiment 1st driving-module example",
+      "description_range": [
+        130,
+        140
+      ],
+      "figures": [
+        "2A",
+        "2B",
+        "2C",
+        "2D",
+        "2E",
+        "2F",
+        "2G",
+        "2H",
+        "2I",
+        "2J",
+        "2K",
+        "2L"
+      ],
+      "tables": [
+        4
+      ],
+      "claims": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        18,
+        19,
+        20,
+        21
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 5,
+      "label": "Largan 2nd-embodiment 2nd driving-module example",
+      "description_range": [
+        141,
+        143
+      ],
+      "figures": [
+        "2M",
+        "2N",
+        "2O"
+      ],
+      "tables": [
+        5
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 6,
+      "label": "Largan 2nd-embodiment 3rd driving-module example",
+      "description_range": [
+        144,
+        146
+      ],
+      "figures": [
+        "2P",
+        "2Q",
+        "2R"
+      ],
+      "tables": [
+        6
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 7,
+      "label": "Largan 3rd-embodiment folded camera module",
+      "description_range": [
+        147,
+        160
+      ],
+      "figures": [
+        "3A",
+        "3B",
+        "3C",
+        "3D",
+        "3E",
+        "3F",
+        "3G",
+        "3H",
+        "3I",
+        "3J",
+        "3K"
+      ],
+      "tables": [
+        7
+      ],
+      "claims": [
+        9,
+        16,
+        17
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 8,
+      "label": "Largan 4th-embodiment 1st folded-camera example",
+      "description_range": [
+        161,
+        171
+      ],
+      "figures": [
+        "4A",
+        "4B",
+        "4C",
+        "4D",
+        "4E",
+        "4F",
+        "4G",
+        "4H"
+      ],
+      "tables": [
+        8
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 9,
+      "label": "Largan 4th-embodiment 2nd folded-camera example",
+      "description_range": [
+        172,
+        174
+      ],
+      "figures": [
+        "4I",
+        "4J",
+        "4K"
+      ],
+      "tables": [
+        9
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 10,
+      "label": "Largan 5th-embodiment folded imaging-lens-assembly module",
+      "description_range": [
+        175,
+        179
+      ],
+      "figures": [
+        "5A",
+        "5B",
+        "5C",
+        "5D",
+        "5E",
+        "5F",
+        "5G",
+        "5H",
+        "5I",
+        "5J",
+        "5K"
+      ],
+      "tables": [],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 11,
+      "label": "Largan 6th-embodiment 1st folded-camera example",
+      "description_range": [
+        180,
+        190
+      ],
+      "figures": [
+        "6A",
+        "6B",
+        "6C",
+        "6D",
+        "6E",
+        "6F",
+        "6G",
+        "6H",
+        "6I",
+        "6J",
+        "6K",
+        "6L",
+        "6M"
+      ],
+      "tables": [
+        10
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 12,
+      "label": "Largan 6th-embodiment 2nd folded-camera example",
+      "description_range": [
+        191,
+        193
+      ],
+      "figures": [
+        "6N",
+        "6O",
+        "6P"
+      ],
+      "tables": [
+        11
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "source_item": 13,
+      "label": "Largan 7th-embodiment electronic-device wrapper",
+      "description_range": [
+        194,
+        202
+      ],
+      "figures": [
+        "7A",
+        "7B",
+        "7C",
+        "7D",
+        "7E",
+        "7F"
+      ],
+      "tables": [],
+      "claims": [
+        10
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "directly_published_architecture_metadata": [
+    "driving-module lens carrier, molded structures, magnets/coils, ferromagnetic elements and rolling balls",
+    "light-blocking-hole D/d1/d2, theta/theta1/theta2, d1/D, d2/D and EDR geometry",
+    "prism/mirror incident and emergent light-path folding architecture",
+    "plastic molding material and concave-convex light-blocking shape",
+    "electronic-device ultra-wide/high-pixel/telephoto roles and qualitative zoom"
+  ],
+  "prescription_markers_absent_from_exact_source": [
+    "an ordered optical lens-surface radius sequence",
+    "ordered axial intersurface spacing",
+    "numerical optical material, refractive index or Abbe dispersion rows",
+    "surface-specific conic constants or asphere coefficients",
+    "an identified aperture-stop coordinate",
+    "a source-bound numeric focal length",
+    "a source-bound F-number",
+    "a numeric prescription-bound angular field",
+    "an absolute image height",
+    "an ordered optical surface prescription"
+  ],
+  "not_source_available": [
+    "permission to treat light-blocking-hole geometry as lens-surface coordinates",
+    "permission to treat plastic molding material as optical glass",
+    "permission to convert qualitative long-focal-length language into a numeric focal length",
+    "permission to derive optical coordinates from mechanical ratios",
+    "permission to repair printed embodiment-heading placement or the missing FIG. prefix before 5I",
+    "permission to measure drawings or transcribe raster values",
+    "numeric borrowing from Taiwan priority 110113838, US-20220334343-A1, another family or a shared layout"
+  ],
+  "source_boundary": {
+    "radius_of_curvature_occurrences": 0,
+    "curvature_radius_occurrences": 0,
+    "focal_length_occurrences": 6,
+    "F_number_occurrences": 0,
+    "field_of_view_occurrences": 1,
+    "half_field_occurrences": 0,
+    "image_height_occurrences": 0,
+    "aspheric_occurrences": 0,
+    "refractive_index_occurrences": 0,
+    "Abbe_occurrences": 0,
+    "dispersion_occurrences": 0,
+    "aperture_stop_occurrences": 0,
+    "lens_assembly_occurrences": 103,
+    "lens_group_occurrences": 0,
+    "optical_power_occurrences": 0,
+    "wavelength_occurrences": 0,
+    "convex_occurrences": 7,
+    "concave_occurrences": 7,
+    "effective_focal_occurrences": 0,
+    "entrance_pupil_occurrences": 0,
+    "surface_radius_occurrences": 0,
+    "surface_spacing_occurrences": 0,
+    "thickness_occurrences": 0,
+    "material_occurrences": 4,
+    "ordered_prescriptions": 0
+  },
+  "repair_policy": {
+    "opening_geometry_promoted_to_prescription": false,
+    "generic_lens_language_promoted_to_prescription": false,
+    "qualitative_focal_length_promoted_to_prescription": false,
+    "deployment_field_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "printed_token_repair_used": false,
+    "priority_or_prior_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 13,
+    "ordered_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 13,
+    "reason_codes": {
+      "confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only": 6,
+      "confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only": 5,
+      "confirmed_no_prescription.imaging_lens_assembly_light_folding_and_light_blocking_architecture_only": 1,
+      "confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only": 1
+    }
+  }
+}

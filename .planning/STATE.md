@@ -801,23 +801,27 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | 260722-patent-generic-family-76895572 | complete-shovel-saturation-incomplete | Exact US-12174451-B2 binds application 18/504213, prior US-20240069305-A1, parent application 17/249182 / grant US-11846826, provisional 63/027390, Family ID 76895572 and Largan Precision. The exact denominator is one related-application plus six Background/Summary and 176 Description paragraphs, claims 1-14 with claim 1 solely independent, eleven figure groups/42 declared panels and drawing sheets, 198 figure-reference tags, ten flattened tables, five inline-formula pairs and exactly eleven items. Six imaging-lens-assembly, two camera-module and two light-blocking-structure embodiments publish lens counts, convex/concave ordinal labels, opening D/A/R/dmin ratios and maximum deployment FOV only; one electronic-device wrapper adds multi-camera/qualitative zoom roles. Opening curvature is not lens-surface curvature. No item publishes an ordered optical radius/spacing/material/index/dispersion/conic/asphere sequence, or source-bound focal length, F-number or absolute image height. All eleven close as precise confirmed-no-prescription terminals without derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 2,042,458-byte official 57-page image-only wrappers decode to the same original one-bit raster set at e6d5d3b5...1bf7; original pages 45 and 48-57 were reviewed without enhancement, OCR, repair, measurement or inference. Attempts 2/3 are semantic-equal at d8db4752...3d76; generic 30 to 29; result set b89c4b87...f13; census 8e098a13...accd; summary dc7d092f...043; report 6b878c38...41c4; evidence 4577f0ce...5407; strict replay is 619/619 missing=0/corrupt=0. Complete segmented offline coverage passes 3,830 tests/1 skipped/10 real-machine deselected; focused 9/9, final patent 1081/1081, non-patent 2749/1 skipped/10 deselected, guard 10/10, Ruff/compile, 105 changed-JSON and 7,997 repository-JSON checks pass. All 123 source-evidence manifests, 2,082 path records and 1,876 complete triples rehash; 93 prior manifests contain exactly 386 permitted live-pointer leaf changes including sixteen live result-set fields while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 81111812 / US-12474541-B2 next; parent saturation remains incomplete. |
 
+| 260722-patent-generic-family-81111812 | complete-shovel-saturation-incomplete | Exact US-12474541-B2 binds application 17/527220, prior US-20220334343-A1, Taiwan priority 110113838, Family ID 81111812 and Largan Precision. The exact denominator is one priority plus eight remaining Background/Summary and 204 Description paragraphs, claims 1-21 with claims 1/11 independent, seven figure groups/88 panels on 62 drawing sheets, 420 figure-reference tags, eleven flattened tables, sixteen inline-formula pairs and thirteen disjoint items. Six driving-module light-passing-hole examples, five folded camera-module items, one folded imaging-lens-assembly item and one electronic-device wrapper publish mechanical/folding architecture only. D/d1/d2, theta/theta1/theta2, d1/D, d2/D and EDR are opening geometry; no ordered optical radii, spacings, numerical materials/index/dispersion, conics/aspheres, identified stop, numeric focal length, F-number, prescription-bound angular field or absolute image height exists. All thirteen close as precise confirmed-no-prescription terminals without repair, derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 3,822,319-byte official 83-page image-only wrappers decode to the same original one-bit raster set at 11c377dd...2446; sixteen selected original pages were reviewed without enhancement, OCR, measurement or inference. Attempts 2/3 are semantic-equal at ccf6452b...f1a1 and attempt 1 remains preserved; generic 29 to 28; result set a8b0123a...14d6; census e9b9664e...44a4; summary 7147365a...0005; report 8442c6a8...3be; evidence 7b9ae133...cf8; strict replay is 619/619 missing=0/corrupt=0. Complete segmented offline coverage passes 3,840 tests/1 skipped/10 real-machine deselected: focused 10/10, final patent 1091/1091, non-patent 2749/1 skipped/10 deselected and guard 5/5. The initial patent sweep exposed only 23 stale live pointers; targeted 23/23 and the complete second sweep pass. A whole non-patent wrapper timed out without verdict and left no process; the same 100-file set passed in stable segments. Ruff/compile, 107 changed JSON and all 8,009 filesystem JSON pass. All 124 source-evidence manifests, 2,101 path records and 1,895 complete triples rehash; 94 prior manifests contain exactly 390 permitted live-pointer leaves including sixteen live result-set fields while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 97520240 / US-20260110880-A1 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `76895572`, root/publication `US-12174451` /
-`US-12174451-B2`, is complete in
-`.planning/quick/260722-patent-generic-family-76895572/`, pending its atomic local
+For patent saturation work, Family `81111812`, root/publication `US-12474541` /
+`US-12474541-B2`, is complete in
+`.planning/quick/260722-patent-generic-family-81111812/`, pending its atomic local
 commit. Strict replay is 619/619 with result set
-`b89c4b87150b6577e738155ce9f3e159de2958a3dc922621187c04ccfd1d6f13`;
-the current generic residual contains 29 roots/items. Stable ordering selects Family
-`81111812`, root/publication `US-12474541` / `US-12474541-B2`, application
-`17/527220`, next. Its layout signature
-`c9055d280cd8498d80825b5b7e578b28fa9459cdebaa755ee7cf25b92196c9c3`
-occurs once in the residual. Open the next GSD quick only after the Family 76895572
-commit and independently reconcile the exact retained B2; do not borrow any value,
-item boundary or outcome from Family 76895572, another Largan family or a shared
-layout.
+`a8b0123a6ca275bdb0305fb1f17fe83f7e91e21efb26755997d275ea656c14d6`;
+the current generic residual contains 28 roots/items. Stable ordering selects Family
+`97520240`, root/publication `US-20260110880` / `US-20260110880-A1`, application
+`19/209987`, title `IMAGING LENS SYSTEM`, Samsung Electro-Mechanics. Its retained
+92,929-byte HTML is pinned at
+`24bad625cfaa1f1468ec1e707b0058e1ddbfe29f66cb65253a43a16435518474`;
+the layout signature
+`cce52749cd6c4754d359ae25d54545d85cf715841792b6eebc3e65eb79511a14`
+occurs once. Open the next GSD quick only after the Family 81111812 commit and
+independently reconcile the exact retained A1; do not borrow any value, item boundary
+or outcome from Family 81111812, another Samsung family or a shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

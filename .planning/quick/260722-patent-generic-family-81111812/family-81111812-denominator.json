@@ -1,0 +1,507 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "81111812",
+  "root_id": "US-12474541",
+  "publication_id": "US-12474541-B2",
+  "application_number": "17/527220",
+  "title": "Imaging lens assembly module, imaging lens assembly driving module, camera module and electronic device",
+  "lineage": {
+    "prior_publication": "US-20220334343-A1",
+    "prior_publication_date": "2022-10-20",
+    "taiwan_priority_application": "110113838",
+    "priority_date": "2021-04-16"
+  },
+  "denominator": {
+    "priority_application_numbered_paragraphs": 1,
+    "technical_field_numbered_paragraphs": 1,
+    "related_art_numbered_paragraphs": 1,
+    "summary_numbered_paragraphs": 6,
+    "background_summary_section_numbered_paragraphs": 9,
+    "brief_drawing_numbered_paragraphs": 89,
+    "shared_detailed_architecture_numbered_paragraphs": 23,
+    "source_item_numbered_paragraphs": 90,
+    "closing_numbered_paragraphs": 2,
+    "description_numbered_paragraphs": 204,
+    "total_numbered_specification_paragraphs": 213,
+    "claims": 21,
+    "independent_claims": [
+      1,
+      11
+    ],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 11,
+    "maths_objects": 0,
+    "mathml_objects": 0,
+    "inline_formula_leads": 16,
+    "inline_formula_tails": 16,
+    "custom_character_image_tags": 0,
+    "figure_reference_occurrences": 420,
+    "declared_figure_groups": 7,
+    "declared_figure_panels": 88,
+    "drawing_sheets": 62,
+    "official_pdf_pages": 83,
+    "source_items": 13,
+    "driving_module_light_blocking_example_items": 6,
+    "camera_module_light_folding_and_light_blocking_items": 5,
+    "imaging_lens_assembly_light_folding_and_light_blocking_items": 1,
+    "electronic_device_wrapper_items": 1,
+    "ordered_optical_prescriptions": 0,
+    "source_items_unmapped": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan 1st-embodiment 1st driving-module example",
+      "source_bindings": {
+        "description_range": [
+          113,
+          123
+        ],
+        "figures": [
+          "1A",
+          "1B",
+          "1C",
+          "1D",
+          "1E",
+          "1F",
+          "1G",
+          "1H",
+          "1I"
+        ],
+        "tables": [
+          1
+        ],
+        "claims": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan 1st-embodiment 2nd driving-module example",
+      "source_bindings": {
+        "description_range": [
+          124,
+          126
+        ],
+        "figures": [
+          "1J",
+          "1K",
+          "1L"
+        ],
+        "tables": [
+          2
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan 1st-embodiment 3rd driving-module example",
+      "source_bindings": {
+        "description_range": [
+          127,
+          129
+        ],
+        "figures": [
+          "1M",
+          "1N",
+          "1O"
+        ],
+        "tables": [
+          3
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan 2nd-embodiment 1st driving-module example",
+      "source_bindings": {
+        "description_range": [
+          130,
+          140
+        ],
+        "figures": [
+          "2A",
+          "2B",
+          "2C",
+          "2D",
+          "2E",
+          "2F",
+          "2G",
+          "2H",
+          "2I",
+          "2J",
+          "2K",
+          "2L"
+        ],
+        "tables": [
+          4
+        ],
+        "claims": [
+          11,
+          12,
+          13,
+          14,
+          15,
+          18,
+          19,
+          20,
+          21
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan 2nd-embodiment 2nd driving-module example",
+      "source_bindings": {
+        "description_range": [
+          141,
+          143
+        ],
+        "figures": [
+          "2M",
+          "2N",
+          "2O"
+        ],
+        "tables": [
+          5
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan 2nd-embodiment 3rd driving-module example",
+      "source_bindings": {
+        "description_range": [
+          144,
+          146
+        ],
+        "figures": [
+          "2P",
+          "2Q",
+          "2R"
+        ],
+        "tables": [
+          6
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan 3rd-embodiment folded camera module",
+      "source_bindings": {
+        "description_range": [
+          147,
+          160
+        ],
+        "figures": [
+          "3A",
+          "3B",
+          "3C",
+          "3D",
+          "3E",
+          "3F",
+          "3G",
+          "3H",
+          "3I",
+          "3J",
+          "3K"
+        ],
+        "tables": [
+          7
+        ],
+        "claims": [
+          9,
+          16,
+          17
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only"
+    },
+    {
+      "number": 8,
+      "label": "Largan 4th-embodiment 1st folded-camera example",
+      "source_bindings": {
+        "description_range": [
+          161,
+          171
+        ],
+        "figures": [
+          "4A",
+          "4B",
+          "4C",
+          "4D",
+          "4E",
+          "4F",
+          "4G",
+          "4H"
+        ],
+        "tables": [
+          8
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only"
+    },
+    {
+      "number": 9,
+      "label": "Largan 4th-embodiment 2nd folded-camera example",
+      "source_bindings": {
+        "description_range": [
+          172,
+          174
+        ],
+        "figures": [
+          "4I",
+          "4J",
+          "4K"
+        ],
+        "tables": [
+          9
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only"
+    },
+    {
+      "number": 10,
+      "label": "Largan 5th-embodiment folded imaging-lens-assembly module",
+      "source_bindings": {
+        "description_range": [
+          175,
+          179
+        ],
+        "figures": [
+          "5A",
+          "5B",
+          "5C",
+          "5D",
+          "5E",
+          "5F",
+          "5G",
+          "5H",
+          "5I",
+          "5J",
+          "5K"
+        ],
+        "tables": [],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_folding_and_light_blocking_architecture_only"
+    },
+    {
+      "number": 11,
+      "label": "Largan 6th-embodiment 1st folded-camera example",
+      "source_bindings": {
+        "description_range": [
+          180,
+          190
+        ],
+        "figures": [
+          "6A",
+          "6B",
+          "6C",
+          "6D",
+          "6E",
+          "6F",
+          "6G",
+          "6H",
+          "6I",
+          "6J",
+          "6K",
+          "6L",
+          "6M"
+        ],
+        "tables": [
+          10
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only"
+    },
+    {
+      "number": 12,
+      "label": "Largan 6th-embodiment 2nd folded-camera example",
+      "source_bindings": {
+        "description_range": [
+          191,
+          193
+        ],
+        "figures": [
+          "6N",
+          "6O",
+          "6P"
+        ],
+        "tables": [
+          11
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only"
+    },
+    {
+      "number": 13,
+      "label": "Largan 7th-embodiment electronic-device wrapper",
+      "source_bindings": {
+        "description_range": [
+          194,
+          202
+        ],
+        "figures": [
+          "7A",
+          "7B",
+          "7C",
+          "7D",
+          "7E",
+          "7F"
+        ],
+        "tables": [],
+        "claims": [
+          10
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only"
+    }
+  ],
+  "shared_architecture_boundary": {
+    "priority_application_range": [
+      1,
+      1
+    ],
+    "technical_field_range": [
+      2,
+      2
+    ],
+    "related_art_range": [
+      3,
+      3
+    ],
+    "summary_range": [
+      4,
+      9
+    ],
+    "brief_drawing_description_range": [
+      1,
+      89
+    ],
+    "shared_detailed_architecture_range": [
+      90,
+      112
+    ],
+    "item_description_range": [
+      113,
+      202
+    ],
+    "closing_description_range": [
+      203,
+      204
+    ],
+    "printed_next_heading_attached_to_preceding_paragraphs": [
+      129,
+      146,
+      160,
+      174,
+      179,
+      193
+    ],
+    "claim_1_driving_module_independent": true,
+    "claim_11_driving_module_independent": true,
+    "ordered_lens_surface_radius_rows_published": 0,
+    "ordered_axial_spacing_rows_published": 0,
+    "numerical_optical_material_or_index_dispersion_rows_published": 0,
+    "surface_specific_conic_or_asphere_rows_published": 0,
+    "source_bound_numeric_focal_length_published": false,
+    "source_bound_f_number_published": false,
+    "numeric_prescription_bound_angular_field_published": false,
+    "absolute_image_height_published": false
+  },
+  "direct_architecture_metadata": {
+    "light_blocking_hole_fields": [
+      "D",
+      "d1",
+      "d2",
+      "theta",
+      "theta1",
+      "theta2",
+      "d1/D",
+      "d2/D",
+      "EDR"
+    ],
+    "driving_components": [
+      "lens carrier",
+      "molded structures",
+      "driving magnets/coils",
+      "ferromagnetic elements",
+      "rolling balls"
+    ],
+    "folding_components": [
+      "prism or mirror",
+      "incident light path",
+      "emergent light path"
+    ],
+    "electronic_device_roles": [
+      "ultra-wide camera",
+      "high-pixel camera",
+      "telephoto camera",
+      "qualitative zoom"
+    ],
+    "opening_geometry_is_not_lens_surface_geometry": true,
+    "plastic_material_is_molding_material": true,
+    "concave_convex_is_light_blocking_shape": true,
+    "long_focal_length_language_is_qualitative": true
+  },
+  "binding_policy": {
+    "opening_geometry_promoted_to_prescription": false,
+    "generic_lens_language_promoted_to_prescription": false,
+    "qualitative_focal_length_promoted_to_prescription": false,
+    "deployment_field_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "printed_token_repair_used": false,
+    "priority_or_prior_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 13,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  }
+}
