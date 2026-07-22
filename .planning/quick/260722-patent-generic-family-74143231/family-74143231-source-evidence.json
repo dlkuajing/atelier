@@ -15,7 +15,12 @@
   },
   "bibliography": {
     "title": "REFLECTION MODULE CAPABLE OF IMAGE STABILIZATION, CAMERA  MODULE AND ELECTRONIC DEVICE",
-    "inventors": ["Lin An Chang", "Hao Jan Chen", "Ming-Ta Chou", "Chen-Yi Huang"],
+    "inventors": [
+      "Lin An Chang",
+      "Hao Jan Chen",
+      "Ming-Ta Chou",
+      "Chen-Yi Huang"
+    ],
     "applicant": "LARGAN DIGITAL CO.,LTD.",
     "assignee": "LARGAN DIGITAL CO.,LTD."
   },
@@ -38,7 +43,11 @@
     "description_numbered_paragraphs": 138,
     "total_numbered_specification_paragraphs": 148,
     "claims": 32,
-    "independent_claims": [1, 19, 28],
+    "independent_claims": [
+      1,
+      19,
+      28
+    ],
     "html_table_tags": 0,
     "flattened_table_blocks": 0,
     "maths_objects": 0,
@@ -117,14 +126,224 @@
     "a5d960809f6393699911a7db61f613499e40c0d057a636ee5f0e6b735c284f6a"
   ],
   "source_items": [
-    {"number": 1, "label": "Largan reflection/camera-module 1st embodiment", "description_range": [66, 83], "figures": [1, 2, 3, 4, 5, 6, 7], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"},
-    {"number": 2, "label": "Largan reflection/camera-module 2nd embodiment", "description_range": [84, 98], "figures": [8, 9, 10, 11, 12, 13, 14], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"},
-    {"number": 3, "label": "Largan reflection/camera-module 3rd embodiment", "description_range": [99, 117], "figures": [15, 16, 17, 18, 19, 20, 21], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"},
-    {"number": 4, "label": "Largan reflection/camera-module 4th embodiment", "description_range": [118, 123], "figures": [22, 23, 24], "claims": [19, 20, 21, 22, 23, 24, 25, 26, 27], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"},
-    {"number": 5, "label": "Largan reflection/camera-module 5th embodiment", "description_range": [124, 129], "figures": [25], "claims": [28, 29, 30, 31, 32], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"},
-    {"number": 6, "label": "Largan reflection/camera-module 6th embodiment", "description_range": [130, 136], "figures": [26, 27, 28], "claims": [28, 29, 30, 31, 32], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"},
-    {"number": 7, "label": "Largan smartphone electronic-device 7th embodiment", "description_range": [137, 143], "figures": [29, 30, 31, 32, 33], "claims": [18], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"},
-    {"number": 8, "label": "Largan smartphone electronic-device 8th embodiment", "description_range": [144, 147], "figures": [34], "claims": [18], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"}
+    {
+      "number": 1,
+      "label": "Largan reflection/camera-module 1st embodiment",
+      "description_range": [
+        66,
+        83
+      ],
+      "figures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan reflection/camera-module 2nd embodiment",
+      "description_range": [
+        84,
+        98
+      ],
+      "figures": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan reflection/camera-module 3rd embodiment",
+      "description_range": [
+        99,
+        117
+      ],
+      "figures": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan reflection/camera-module 4th embodiment",
+      "description_range": [
+        118,
+        123
+      ],
+      "figures": [
+        22,
+        23,
+        24
+      ],
+      "claims": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan reflection/camera-module 5th embodiment",
+      "description_range": [
+        124,
+        129
+      ],
+      "figures": [
+        25
+      ],
+      "claims": [
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan reflection/camera-module 6th embodiment",
+      "description_range": [
+        130,
+        136
+      ],
+      "figures": [
+        26,
+        27,
+        28
+      ],
+      "claims": [
+        28,
+        29,
+        30,
+        31,
+        32
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan smartphone electronic-device 7th embodiment",
+      "description_range": [
+        137,
+        143
+      ],
+      "figures": [
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "claims": [
+        18
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 8,
+      "label": "Largan smartphone electronic-device 8th embodiment",
+      "description_range": [
+        144,
+        147
+      ],
+      "figures": [
+        34
+      ],
+      "claims": [
+        18
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
   ],
   "prescription_boundary": {
     "ordered_radius_rows": 0,
@@ -140,45 +359,151 @@
     "device_field_promoted_to_prescription": false
   },
   "direct_architecture_metadata": {
-    "shared_r_over_d_constraints": ["0.3<R/D<12", "0.5<R/D<10"],
-    "item_r_d_ratio_observations_mm": [[0.45, 0.3, 1.5], [0.6, 0.25, 2.4], [0.45, 0.3, 1.5], [0.4, 0.79, 0.51], [0.8, 0.62, 1.29], [0.45, 0.45, 1.0]],
+    "shared_r_over_d_constraints": [
+      "0.3<R/D<12",
+      "0.5<R/D<10"
+    ],
+    "item_r_d_ratio_observations_mm": [
+      [
+        0.45,
+        0.3,
+        1.5
+      ],
+      [
+        0.6,
+        0.25,
+        2.4
+      ],
+      [
+        0.45,
+        0.3,
+        1.5
+      ],
+      [
+        0.4,
+        0.79,
+        0.51
+      ],
+      [
+        0.8,
+        0.62,
+        1.29
+      ],
+      [
+        0.45,
+        0.45,
+        1.0
+      ]
+    ],
     "coefficient_free_aspheric_option": true,
     "device_field_roles_are_qualitative": true
   },
   "official_pdf": {
-    "download_1": {"path": ".planning/quick/260722-patent-generic-family-74143231/source-review/US-20220030168-A1-official-1.pdf", "bytes": 2031087, "sha256": "988e9fa6a25af50d5289bba2a626f5093eff78dcf2b4d71f01700422bac0dd42"},
-    "download_2": {"path": ".planning/quick/260722-patent-generic-family-74143231/source-review/US-20220030168-A1-official-2.pdf", "bytes": 2031087, "sha256": "1e9fdb0075bed80f42ebbb2490f103486a7f0bdfca630a0cdf232922e56f8938"},
+    "download_1": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/source-review/US-20220030168-A1-official-1.pdf",
+      "bytes": 2031087,
+      "sha256": "988e9fa6a25af50d5289bba2a626f5093eff78dcf2b4d71f01700422bac0dd42"
+    },
+    "download_2": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/source-review/US-20220030168-A1-official-2.pdf",
+      "bytes": 2031087,
+      "sha256": "1e9fdb0075bed80f42ebbb2490f103486a7f0bdfca630a0cdf232922e56f8938"
+    },
     "page_count": 42,
     "text_layer_characters": 0,
     "embedded_page_mode": "1-bit",
-    "raster_dimensions_width_height": [2560, 3300],
+    "raster_dimensions_width_height": [
+      2560,
+      3300
+    ],
     "raster_set_sha256": "0dbd668d887adf9431f096ca5900a5798d27d35f22670a12c8cfc558d4170b63"
   },
   "replay": {
-    "attempt_2": {"path": "data/patent-ledger/replay/local-uncovered/results/US-20220030168/attempt-0002/result.json", "bytes": 13322, "sha256": "4f5ebb4ae295b250d43347b6ab45329f444f2e2f28f34365e4026184a9405d7d"},
-    "attempt_3": {"path": "data/patent-ledger/replay/local-uncovered/results/US-20220030168/attempt-0003/result.json", "bytes": 13322, "sha256": "935e3bc10e76c767c02557b49b9a6b451abfc525c3688c5c6ba01250fe3f69b0"},
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20220030168/attempt-0002/result.json",
+      "bytes": 13322,
+      "sha256": "4f5ebb4ae295b250d43347b6ab45329f444f2e2f28f34365e4026184a9405d7d"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20220030168/attempt-0003/result.json",
+      "bytes": 13322,
+      "sha256": "935e3bc10e76c767c02557b49b9a6b451abfc525c3688c5c6ba01250fe3f69b0"
+    },
     "semantic_equal": true,
     "semantic_sha256": "92b32cb67317620c0e10b7b953bf7c92191410c0dfd3ce3c496ed883afabb665",
-    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 55974, "sha256": "3d0e229a82e4106b15aa0ab15012910b204bead15431e32319d4dc4301749e56"},
-    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 58030, "sha256": "b66711f0170a7f07c0ca917a9a8627e51c6fb3c66c951a9253436fc9da737a2f"},
-    "strict_audit": {"roots_with_results": 619, "expected_roots": 619, "missing_results": 0, "corrupt_results": 0}
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 55975,
+      "sha256": "7d3971600979ae77085b2c4e4460c53b7d47120568aa0148747a28ab851da051"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 58031,
+      "sha256": "60f43fcdb3e90096271777a812e17ef18d3d5fcf7b03982a4cc5033cc735d95d"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
   },
   "census": {
-    "before": {"path": ".planning/quick/260722-patent-generic-family-74143231/generic-residual-before-32.json", "bytes": 20075, "sha256": "ccf57c944fbf38bb907d8e1f74bb114259920efcd1fb20e72c9af3f88cae6606"},
-    "after_1": {"path": ".planning/quick/260722-patent-generic-family-74143231/generic-residual-after-1.json", "bytes": 19505, "sha256": "945d36ce3b3ed81ea08103c79f4caf4d7d8cb0784ebb6331f4e637dd61238d92"},
-    "after_2": {"path": ".planning/quick/260722-patent-generic-family-74143231/generic-residual-after-2.json", "bytes": 19505, "sha256": "945d36ce3b3ed81ea08103c79f4caf4d7d8cb0784ebb6331f4e637dd61238d92"},
+    "before": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/generic-residual-before-32.json",
+      "bytes": 20075,
+      "sha256": "ccf57c944fbf38bb907d8e1f74bb114259920efcd1fb20e72c9af3f88cae6606"
+    },
+    "after_1": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/generic-residual-after-1.json",
+      "bytes": 19505,
+      "sha256": "945d36ce3b3ed81ea08103c79f4caf4d7d8cb0784ebb6331f4e637dd61238d92"
+    },
+    "after_2": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/generic-residual-after-2.json",
+      "bytes": 19505,
+      "sha256": "945d36ce3b3ed81ea08103c79f4caf4d7d8cb0784ebb6331f4e637dd61238d92"
+    },
     "before_roots": 32,
     "after_roots": 31,
     "result_set_sha256": "0a4fc9f3fa94196d4abb3cce8e463f5ffefbd9db08335d420beb9df32d9079ce"
   },
   "supporting_artifacts": {
-    "source_audit": {"path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-source-audit.md", "bytes": 5947, "sha256": "182e5780d4f4b41f63155cf3832fa0138d9db17c5f2472dbf57ca4538693674b"},
-    "raster_audit": {"path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-raster-audit.json", "bytes": 6767, "sha256": "80c9738a459fe3d8eca687cabe2526317bfb9ddec8ec5baee35097a14369bfdd"},
-    "source_availability": {"path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-source-availability.json", "bytes": 5760, "sha256": "70070243ed83d6aeeb051a7a67f7caf471489bf009d4b1a1a869d5475b4cb226"},
-    "denominator": {"path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-denominator.json", "bytes": 6891, "sha256": "e6ae194da358197953019b9ed307c57e62684d5e94f0d4281071bf847b8d472b"},
-    "replay_determinism": {"path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-replay-determinism.json", "bytes": 2129, "sha256": "09c7bc3318d6ee3f7c3a72f831dd92c1d7b576c1d4eb64d2459015659f20c84f"},
-    "queue_after": {"path": ".planning/quick/260722-patent-generic-family-74143231/queue-after.json", "bytes": 1422, "sha256": "25763eff5d51e16b20529de185ce2bd8d0d10fddeee449abbecd1b4adabf9ab5"},
-    "roots": {"path": ".planning/quick/260722-patent-generic-family-74143231/roots.txt", "bytes": 15, "sha256": "808b6aa31d47795f63c7f57bd46a49e6a92fb18e2af49b8649c866256096f1a4"}
+    "source_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-source-audit.md",
+      "bytes": 5947,
+      "sha256": "182e5780d4f4b41f63155cf3832fa0138d9db17c5f2472dbf57ca4538693674b"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-raster-audit.json",
+      "bytes": 6767,
+      "sha256": "80c9738a459fe3d8eca687cabe2526317bfb9ddec8ec5baee35097a14369bfdd"
+    },
+    "source_availability": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-source-availability.json",
+      "bytes": 5760,
+      "sha256": "70070243ed83d6aeeb051a7a67f7caf471489bf009d4b1a1a869d5475b4cb226"
+    },
+    "denominator": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-denominator.json",
+      "bytes": 6891,
+      "sha256": "e6ae194da358197953019b9ed307c57e62684d5e94f0d4281071bf847b8d472b"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-replay-determinism.json",
+      "bytes": 2129,
+      "sha256": "09c7bc3318d6ee3f7c3a72f831dd92c1d7b576c1d4eb64d2459015659f20c84f"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/queue-after.json",
+      "bytes": 1422,
+      "sha256": "25763eff5d51e16b20529de185ce2bd8d0d10fddeee449abbecd1b4adabf9ab5"
+    },
+    "roots": {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/roots.txt",
+      "bytes": 15,
+      "sha256": "808b6aa31d47795f63c7f57bd46a49e6a92fb18e2af49b8649c866256096f1a4"
+    }
   },
   "review_policy": {
     "architecture_metadata_promoted_to_prescription": false,

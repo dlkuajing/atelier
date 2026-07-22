@@ -661,6 +661,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_genius_ten_embodiment_raster_only_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_largan_low_reflective_cluster_layer_attempts(
             raw_text,
             patent_id=patent_id,
@@ -86484,6 +86492,758 @@ def _classify_genius_raster_only_optical_lens_attempts(
             ),
         )
         for item in _GENIUS_RASTER_ONLY_OPTICAL_LENS_ITEMS
+    ]
+
+
+_GENIUS_TEN_RASTER_ONLY_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Genius six-lens optical imaging lens 1st embodiment",
+        "paragraph_range": (108, 123),
+        "figures": ("6", "7A", "7B", "7C", "7D", "26", "27"),
+        "optical_table_figure": "26",
+        "asphere_table_figure": "27",
+        "system_summary_paragraph": 123,
+    },
+    {
+        "number": 2,
+        "label": "Genius six-lens optical imaging lens 2nd embodiment",
+        "paragraph_range": (124, 125),
+        "figures": ("8", "9A", "9B", "9C", "9D", "28", "29"),
+        "optical_table_figure": "28",
+        "asphere_table_figure": "29",
+        "system_summary_paragraph": 125,
+    },
+    {
+        "number": 3,
+        "label": "Genius six-lens optical imaging lens 3rd embodiment",
+        "paragraph_range": (126, 127),
+        "figures": ("10", "11A", "11B", "11C", "11D", "30", "31"),
+        "optical_table_figure": "30",
+        "asphere_table_figure": "31",
+        "system_summary_paragraph": 127,
+    },
+    {
+        "number": 4,
+        "label": "Genius six-lens optical imaging lens 4th embodiment",
+        "paragraph_range": (128, 129),
+        "figures": ("12", "13A", "13B", "13C", "13D", "32", "33"),
+        "optical_table_figure": "32",
+        "asphere_table_figure": "33",
+        "system_summary_paragraph": 129,
+    },
+    {
+        "number": 5,
+        "label": "Genius six-lens optical imaging lens 5th embodiment",
+        "paragraph_range": (130, 131),
+        "figures": ("14", "15A", "15B", "15C", "15D", "34", "35"),
+        "optical_table_figure": "34",
+        "asphere_table_figure": "35",
+        "system_summary_paragraph": 131,
+    },
+    {
+        "number": 6,
+        "label": "Genius six-lens optical imaging lens 6th embodiment",
+        "paragraph_range": (132, 133),
+        "figures": ("16", "17A", "17B", "17C", "17D", "36", "37"),
+        "optical_table_figure": "36",
+        "asphere_table_figure": "37",
+        "system_summary_paragraph": 133,
+    },
+    {
+        "number": 7,
+        "label": "Genius six-lens optical imaging lens 7th embodiment",
+        "paragraph_range": (134, 135),
+        "figures": ("18", "19A", "19B", "19C", "19D", "38", "39"),
+        "optical_table_figure": "38",
+        "asphere_table_figure": "39",
+        "system_summary_paragraph": 135,
+    },
+    {
+        "number": 8,
+        "label": "Genius six-lens optical imaging lens 8th embodiment",
+        "paragraph_range": (136, 137),
+        "figures": ("20", "21A", "21B", "21C", "21D", "40", "41"),
+        "optical_table_figure": "40",
+        "asphere_table_figure": "41",
+        "system_summary_paragraph": 137,
+    },
+    {
+        "number": 9,
+        "label": "Genius six-lens optical imaging lens 9th embodiment",
+        "paragraph_range": (138, 139),
+        "figures": ("22", "23A", "23B", "23C", "23D", "42", "43"),
+        "optical_table_figure": "42",
+        "asphere_table_figure": "43",
+        "system_summary_paragraph": 139,
+    },
+    {
+        "number": 10,
+        "label": "Genius six-lens optical imaging lens 10th embodiment",
+        "paragraph_range": (140, 141),
+        "figures": ("24", "25A", "25B", "25C", "25D", "44", "45"),
+        "optical_table_figure": "44",
+        "asphere_table_figure": "45",
+        "system_summary_paragraph": 141,
+    },
+)
+_GENIUS_TEN_RASTER_ONLY_BASELINE_FIGURES = ("1", "2", "3", "4", "5")
+_GENIUS_TEN_RASTER_ONLY_COMPARISON_FIGURES = ("46", "47")
+_GENIUS_TEN_RASTER_ONLY_FIGURE_PANELS = (
+    _GENIUS_TEN_RASTER_ONLY_BASELINE_FIGURES
+    + tuple(
+        figure
+        for item in _GENIUS_TEN_RASTER_ONLY_ITEMS
+        for figure in item["figures"]
+    )
+    + _GENIUS_TEN_RASTER_ONLY_COMPARISON_FIGURES
+)
+_GENIUS_TEN_RASTER_ONLY_PROFILE: dict[str, Any] = {
+    "family_id": "93669750",
+    "application_number": "18/970923",
+    "china_priority_application": "202411388155.7",
+    "raw_bytes": 115_187,
+    "raw_document_sha256": (
+        "3798985c70ea18a8695a2793322a49179f5e4bcccce493c0d1ab59cf644a8db1"
+    ),
+    "normalized_chars": 80_669,
+    "normalized_text_sha256": (
+        "ee8cea6dfa93cc174d20fc2cd57e5dd5b33c30425aaaad9cbc6497d3b2b46b23"
+    ),
+    "title_text": "Optical imaging lens",
+    "identity_markers": {
+        "United States Patent Application Publication 20260093094": 1,
+        "Kind Code A1": 1,
+        "Publication Date April 02, 2026": 1,
+        "Dong; Chuanbo": 2,
+        "Lin; Hai": 1,
+        "Yang; Song Lin": 1,
+        "Hsieh; Hung-Chien": 1,
+        "Applicant: Genius Electronic Optical (Xiamen) Co., Ltd. (Xiamen, CN)": 1,
+        "Assignee: Genius Electronic Optical (Xiamen) Co., Ltd. (Xiamen, CN)": 1,
+        "Family ID: 93669750": 1,
+        "Appl. No.: 18/970923": 1,
+        "Filed: December 06, 2024": 1,
+        "CN 202411388155.7 Sep. 30, 2024": 1,
+    },
+    "raw_section_body_sha256": {
+        "background_summary": (
+            "2c0dd912dba0380ca486f4a219133885cfddb3c3112c5c97d828a5aea7a219e0"
+        ),
+        "description": (
+            "6a3a340f97bb372f747103a4050698a3233f5f80e0fc6c23df18790031e99c98"
+        ),
+        "claims": (
+            "28f73d3aa9427d2d0ec66173cf7137ac1daf59a40719d82617c38637e1d6f5b7"
+        ),
+    },
+    "section_sha256": {
+        "background_summary": (
+            "dd5f116fcc53e6dab20b9827c67900f26cc4fd717dd62caa326da993ed620d09"
+        ),
+        "description": (
+            "b14017fcf1ba919d25515c05435cbd833b547c781e5ada0526c202a0f0b23234"
+        ),
+        "claims": (
+            "08ccb48c7d35a0fbe74986ca66862c1a9c93c1f7ddc30e29806c43688e2ed900"
+        ),
+    },
+    "paragraph_span_sha256": {
+        ("background_summary", 1, 11): (
+            "69227de08ad586ac7a296f55f0e5829fb2cca2007b8059e615ce4c62d203b415"
+        ),
+        ("description", 12, 84): (
+            "b7a33138842c8036dc65280bf95060a61fcc11720ba270110ea56ce8dab4caff"
+        ),
+        ("description", 85, 107): (
+            "87557055166e5cfc0f0238fd90a218717019d810f631b3b0da12187af1c31c18"
+        ),
+        ("description", 108, 123): (
+            "fbf8b0c485e6c482b639287ee797b94d5c7a14afdcd552b22a67a46ab1b4138e"
+        ),
+        ("description", 124, 125): (
+            "6d7851ee2881e556751e413f7ee3c197b3007d4b6e1fed5012336d8850243ebc"
+        ),
+        ("description", 126, 127): (
+            "2c0fe95a7edb50f868606ee7f67aa22081b793b0f34b135ade182d51d395f3cd"
+        ),
+        ("description", 128, 129): (
+            "d7d28a3f7cd99e4e08ec862081eaa4b02012991ca8a13b547dc3af209725efcd"
+        ),
+        ("description", 130, 131): (
+            "756553f1fd91ece059de37d256f15d3225c79312276d7055ce4087808c8ec8a3"
+        ),
+        ("description", 132, 133): (
+            "ab162a41c2677b31df08ae84c11a27382ccc4ba63332e418332d7f3f063038be"
+        ),
+        ("description", 134, 135): (
+            "48f58aa0363169111de1e85f590d43ef1242870bc0e9aaff82340288d325be30"
+        ),
+        ("description", 136, 137): (
+            "8b004521f44e2c7ecdea75cdd8cb6a1f03b8cd9eaec235df355c813a7751404b"
+        ),
+        ("description", 138, 139): (
+            "5af2f402a5e0fd59afbe1d941e3101480cbe8058985d8c2270619206a9d9e88d"
+        ),
+        ("description", 140, 141): (
+            "1ee193cdae05ea46a2503725c24a60471ea8432f3273ebd9f5af75f6d0c3bd1f"
+        ),
+        ("description", 142, 142): (
+            "797a8afba6b3aafe95ccef1af3417e0295032d89edab46e1ee423b200b7642e9"
+        ),
+        ("description", 143, 180): (
+            "c3a8f99d68840fc1e04991e42c2ca8acd1ead60ee07515245f6706cad8f670e7"
+        ),
+    },
+    "figref_count": 167,
+    "figref_ordered_text_sha256": (
+        "2453866335d1e58c43ec5e5829de4470f8f0399500e2e0233266af7206250d89"
+    ),
+    "figure_panels": _GENIUS_TEN_RASTER_ONLY_FIGURE_PANELS,
+    "claim_numbers": tuple(range(1, 21)),
+    "independent_claim_numbers": (1, 8, 15),
+    "claim_dependencies": (
+        (),
+        (1,),
+        (1,),
+        (1,),
+        (1,),
+        (1,),
+        (1,),
+        (),
+        (8,),
+        (8,),
+        (8,),
+        (8,),
+        (8,),
+        (8,),
+        (),
+        (15,),
+        (1,),
+        (15,),
+        (15,),
+        (15,),
+    ),
+    "claim_hash_set_sha256": (
+        "005038606bdaf7e744df2e6d6960d30b5f6a4f7f336d66536b3436df0115455a"
+    ),
+    "raw_counts": {
+        "paragraph_tags": 22,
+        "figref": 167,
+        "table_us": 0,
+        "maths": 15,
+        "mathml": 15,
+        "native_html_table": 0,
+        "inline_formula_leads": 0,
+        "inline_formula_tails": 0,
+        "custom_character_image": 0,
+    },
+    "math_ids": tuple(f"MATH-US-{number:05d}" for number in range(1, 16)),
+    "maths_raw_hash_set_sha256": (
+        "8eb83da0a9f08901d5ce4b198385610738162ffb46ff25a0d023d7b1ed4df71a"
+    ),
+    "phrase_counts": {
+        "focal length": 22,
+        "effective focal length": 4,
+        "F-number": 11,
+        "Fno": 43,
+        "field of view": 7,
+        "HFOV": 18,
+        "image height": 6,
+        "ImgH": 20,
+        "aperture stop": 8,
+        "radius": 13,
+        "curvature": 60,
+        "asphere": 0,
+        "aspheric": 43,
+        "surface number": 0,
+        "thickness": 48,
+        "Abbe": 22,
+        "conic": 1,
+        "optical data": 38,
+        "aspherical data": 0,
+        "optical prescription": 0,
+        "lens prescription": 0,
+        "refractive index": 6,
+        "lens element": 460,
+    },
+    "official_pdf": {
+        "path": (
+            "data/patent-lake/uspto-ppubs-pdf/23d02fbf8252f2593/"
+            "US-20260093094-A1.pdf"
+        ),
+        "bytes": 3_524_023,
+        "sha256": (
+            "23d02fbf8252f25931ea0266443160c70a86b565246216942c4d7a0e43f5b60f"
+        ),
+        "page_count": 48,
+        "default_raster_dimensions": (2560, 3300),
+        "exceptional_raster_dimensions": {
+            36: (2550, 3300),
+            37: (2550, 3300),
+            42: (2550, 3300),
+            46: (2550, 3300),
+            47: (2550, 3300),
+            48: (2550, 3300),
+        },
+        "decoded_raster_set_sha256": (
+            "b8d8d12f3be1a7ae3fae45d7d6101725ce37bcb74bf41ea3a81d8b3de903aaa5"
+        ),
+        "cover_page_numbers": (1,),
+        "drawing_page_numbers": tuple(range(2, 36)),
+        "specification_page_numbers": tuple(range(36, 49)),
+        "claim_page_numbers": (46, 47, 48),
+        "optical_table_page_numbers": tuple(range(14, 33, 2)),
+        "asphere_table_page_numbers": tuple(range(15, 34, 2)),
+        "common_table_page_numbers": (34, 35),
+    },
+}
+
+
+def _genius_bracketed_numbered_paragraphs(
+    text: str,
+    *,
+    section: str,
+    expected_first: int,
+    expected_last: int,
+) -> dict[int, str]:
+    matches = list(re.finditer(r"(?:^|\s)\[(\d{4})\]\s+", text))
+    numbers = tuple(int(match.group(1)) for match in matches)
+    expected = tuple(range(expected_first, expected_last + 1))
+    if numbers != expected:
+        raise PatentParseError(
+            f"Genius ten-embodiment {section} paragraph denominator changed"
+        )
+    return {
+        number: text[
+            match.end() : (
+                matches[index + 1].start()
+                if index + 1 < len(matches)
+                else len(text)
+            )
+        ].strip()
+        for index, (number, match) in enumerate(zip(numbers, matches, strict=True))
+    }
+
+
+def _genius_bracketed_paragraph_span(
+    paragraphs: dict[int, str],
+    first: int,
+    last: int,
+) -> str:
+    return " ".join(
+        f"[{number:04d}] {paragraphs[number]}"
+        for number in range(first, last + 1)
+    )
+
+
+def _classify_genius_ten_embodiment_raster_only_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 93669750 at the raster-transcription policy boundary."""
+
+    if patent_id.upper() != "US-20260093094-A1":
+        return []
+    profile = _GENIUS_TEN_RASTER_ONLY_PROFILE
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _GENIUS_TEN_RASTER_ONLY_ITEMS
+        ]
+
+    try:
+        raw_payload = raw_text.encode("utf-8")
+        if len(raw_payload) != profile["raw_bytes"] or (
+            hashlib.sha256(raw_payload).hexdigest()
+            != profile["raw_document_sha256"]
+        ):
+            raise PatentParseError(
+                f"Genius ten-embodiment official raw text changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if len(text) != profile["normalized_chars"] or (
+            hashlib.sha256(text.encode()).hexdigest()
+            != profile["normalized_text_sha256"]
+        ):
+            raise PatentParseError(
+                f"Genius ten-embodiment normalized text changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(profile['title_text'])}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("Genius ten-embodiment title binding changed")
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Genius ten-embodiment identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        raw_sections = _genius_raster_only_section_bodies(raw_text)
+        sections = {
+            name: normalize_patent_text(body) for name, body in raw_sections.items()
+        }
+        for section_name, expected_digest in profile[
+            "raw_section_body_sha256"
+        ].items():
+            if (
+                hashlib.sha256(raw_sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Genius ten-embodiment {section_name} raw section changed"
+                )
+        for section_name, expected_digest in profile["section_sha256"].items():
+            if (
+                hashlib.sha256(sections[section_name].encode()).hexdigest()
+                != expected_digest
+            ):
+                raise PatentParseError(
+                    f"Genius ten-embodiment {section_name} section changed"
+                )
+
+        paragraphs = {
+            "background_summary": _genius_bracketed_numbered_paragraphs(
+                sections["background_summary"],
+                section="background/summary",
+                expected_first=1,
+                expected_last=11,
+            ),
+            "description": _genius_bracketed_numbered_paragraphs(
+                sections["description"],
+                section="description",
+                expected_first=12,
+                expected_last=180,
+            ),
+        }
+        for (section_name, first, last), expected_digest in profile[
+            "paragraph_span_sha256"
+        ].items():
+            observed_span = _genius_bracketed_paragraph_span(
+                paragraphs[section_name], first, last
+            )
+            if hashlib.sha256(observed_span.encode()).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Genius ten-embodiment {section_name} paragraphs "
+                    f"{first}-{last} changed"
+                )
+        if not (
+            "202411388155.7" in text
+            and "Sep. 30, 2024" in text
+            and set(paragraphs["background_summary"]) == set(range(1, 12))
+            and set(paragraphs["description"]) == set(range(12, 181))
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment priority or paragraph lineage changed"
+            )
+
+        covered_item_paragraphs = {
+            paragraph
+            for item in _GENIUS_TEN_RASTER_ONLY_ITEMS
+            for paragraph in range(
+                int(item["paragraph_range"][0]),
+                int(item["paragraph_range"][1]) + 1,
+            )
+        }
+        if covered_item_paragraphs != set(range(108, 142)):
+            raise PatentParseError(
+                "Genius ten-embodiment source-item coverage changed"
+            )
+        mapped_panels = (
+            _GENIUS_TEN_RASTER_ONLY_BASELINE_FIGURES
+            + tuple(
+                figure
+                for item in _GENIUS_TEN_RASTER_ONLY_ITEMS
+                for figure in item["figures"]
+            )
+            + _GENIUS_TEN_RASTER_ONLY_COMPARISON_FIGURES
+        )
+        if mapped_panels != profile["figure_panels"] or len(mapped_panels) != 77:
+            raise PatentParseError(
+                "Genius ten-embodiment declared figure-panel denominator changed"
+            )
+        shared_preamble = _genius_bracketed_paragraph_span(
+            paragraphs["description"], 85, 107
+        )
+        if not (
+            "six lens elements" in shared_preamble
+            and "aperture stop" in shared_preamble
+            and "optical axis region" in shared_preamble
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment shared prescription terminology changed"
+            )
+        for item in _GENIUS_TEN_RASTER_ONLY_ITEMS:
+            number = int(item["number"])
+            first = int(item["paragraph_range"][0])
+            last = int(item["paragraph_range"][1])
+            item_text = " ".join(
+                paragraphs["description"][paragraph]
+                for paragraph in range(first, last + 1)
+            )
+            summary = paragraphs["description"][
+                int(item["system_summary_paragraph"])
+            ]
+            if not (
+                "embodiment of the optical imaging lens" in item_text
+                and f"FIG. {item['optical_table_figure']}" in summary
+                and f"FIG. {item['asphere_table_figure']}" in summary
+                and "optical data" in summary
+                and "aspheric surface data" in summary
+                and all(
+                    token in summary
+                    for token in ("EFL=", "HFOV=", "TTL=", "Fno=", "ImgH=")
+                )
+            ):
+                raise PatentParseError(
+                    f"Genius ten-embodiment item {number} source binding changed"
+                )
+        if not all(
+            f"FIG. {figure}" in paragraphs["description"][142]
+            for figure in _GENIUS_TEN_RASTER_ONLY_COMPARISON_FIGURES
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment common table binding changed"
+            )
+
+        figrefs = re.findall(
+            r"<figref\b[^>]*>(.*?)</figref>",
+            raw_text,
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        figref_tokens = tuple(normalize_patent_text(figref) for figref in figrefs)
+        if len(figref_tokens) != profile["figref_count"] or (
+            hashlib.sha256(("\n".join(figref_tokens) + "\n").encode()).hexdigest()
+            != profile["figref_ordered_text_sha256"]
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment ordered figure-reference denominator changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?:^|\s)(\d+)\s*\.\s+(?=(?:A|An|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError(
+                "Genius ten-embodiment claim denominator changed"
+            )
+        claim_texts = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        independent_claims = tuple(
+            number
+            for number, claim_text in zip(claim_numbers, claim_texts, strict=True)
+            if re.search(r"\bclaim\s+\d+", claim_text, re.IGNORECASE) is None
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Genius ten-embodiment independent claims changed"
+            )
+        claim_dependencies = tuple(
+            tuple(
+                int(value)
+                for value in re.findall(
+                    r"\bclaim\s+(\d+)", claim_text, re.IGNORECASE
+                )
+            )
+            for claim_text in claim_texts
+        )
+        if claim_dependencies != profile["claim_dependencies"]:
+            raise PatentParseError(
+                "Genius ten-embodiment claim dependency graph changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(claim_text.encode()).hexdigest()
+            for claim_text in claim_texts
+        )
+        if (
+            hashlib.sha256(("\n".join(claim_hashes) + "\n").encode()).hexdigest()
+            != profile["claim_hash_set_sha256"]
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment individual claims changed"
+            )
+
+        observed_raw_counts = {
+            "paragraph_tags": len(re.findall(r"<p\b", raw_text, re.IGNORECASE)),
+            "figref": len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)),
+            "table_us": len(re.findall(r"TABLE-US-", raw_text, re.IGNORECASE)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)),
+            "mathml": len(re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE)),
+            "native_html_table": len(
+                re.findall(r"<table\b", raw_text, re.IGNORECASE)
+            ),
+            "inline_formula_leads": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="lead"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "inline_formula_tails": len(
+                re.findall(
+                    r'<\?in-line-formulae[^>]*end="tail"',
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            ),
+            "custom_character_image": len(
+                re.findall(r"<img\b", raw_text, re.IGNORECASE)
+            ),
+        }
+        if observed_raw_counts != profile["raw_counts"]:
+            raise PatentParseError(
+                "Genius ten-embodiment table/formula/image denominator changed"
+            )
+        maths = re.findall(
+            r"<maths\b.*?</maths>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        math_ids = tuple(
+            match.group(1)
+            for block in maths
+            if (match := re.search(r'id="([^"]+)"', block)) is not None
+        )
+        maths_hashes = tuple(
+            hashlib.sha256(block.encode()).hexdigest() for block in maths
+        )
+        if math_ids != profile["math_ids"] or (
+            hashlib.sha256(("\n".join(maths_hashes) + "\n").encode()).hexdigest()
+            != profile["maths_raw_hash_set_sha256"]
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment MathML denominator changed"
+            )
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Genius ten-embodiment phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        if not (
+            observed_raw_counts["native_html_table"] == 0
+            and observed_raw_counts["table_us"] == 0
+            and observed_raw_counts["custom_character_image"] == 0
+            and "optical data" in sections["description"]
+            and "aspheric surface data" in sections["description"]
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment machine-readable table boundary changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        pdf_payload = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_payload) != pdf_profile["bytes"] or (
+            hashlib.sha256(pdf_payload).hexdigest() != pdf_profile["sha256"]
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment official PDF wrapper changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_payload))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Genius ten-embodiment official PDF page count changed"
+            )
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    "Genius ten-embodiment PDF page "
+                    f"{page_number} contains {len(images)} rasters; expected one"
+                )
+            image = images[0].image
+            expected_dimensions = pdf_profile[
+                "exceptional_raster_dimensions"
+            ].get(page_number, pdf_profile["default_raster_dimensions"])
+            if image.size != expected_dimensions or image.mode != "1":
+                raise PatentParseError(
+                    f"Genius ten-embodiment PDF page {page_number} raster changed"
+                )
+            page_raster_hashes.append(hashlib.sha256(image.tobytes()).hexdigest())
+            text_layer_characters += len(page.extract_text() or "")
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode()
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["decoded_raster_set_sha256"]:
+            raise PatentParseError(
+                "Genius ten-embodiment official PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Genius ten-embodiment official PDF gained text"
+            )
+        if not (
+            pdf_profile["cover_page_numbers"] == (1,)
+            and pdf_profile["drawing_page_numbers"] == tuple(range(2, 36))
+            and pdf_profile["specification_page_numbers"] == tuple(range(36, 49))
+            and pdf_profile["claim_page_numbers"] == (46, 47, 48)
+            and pdf_profile["optical_table_page_numbers"]
+            == tuple(range(14, 33, 2))
+            and pdf_profile["asphere_table_page_numbers"]
+            == tuple(range(15, 34, 2))
+            and pdf_profile["common_table_page_numbers"] == (34, 35)
+        ):
+            raise PatentParseError(
+                "Genius ten-embodiment PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all ten exact source items
+        return attempts_for_error(exc)
+
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_GENIUS_RASTER_ONLY_REASON,
+                detail=(
+                    f"Genius Family 93669750 item {item['number']}; paragraphs "
+                    f"{item['paragraph_range'][0]}-{item['paragraph_range'][1]} "
+                    f"and FIGS. {', '.join(item['figures'])} publish one exact "
+                    "six-lens optical design. The exact HTML directly publishes "
+                    "item-specific EFL, F-number, HFOV, TTL and ImgH, but the "
+                    "complete ordered surface radii, axial spacings, numerical "
+                    "material/index/dispersion rows, identified aperture-stop "
+                    "row and surface conics/asphere coefficients are printed "
+                    "only in the official PDF's one-bit raster optical/asphere "
+                    "tables. The HTML contains zero machine-readable table rows "
+                    "and the exact PDF contains zero text-layer characters. "
+                    "Project evidence policy forbids OCR, enhancement, raster "
+                    "numeric transcription, drawing measurement and inference, "
+                    "so the raster-published prescription cannot be promoted "
+                    "into formal ZMX. Claims 1-20 add lens architectures and "
+                    "inequalities, not machine-readable prescription rows. No "
+                    "value is repaired, derived or borrowed from Chinese "
+                    "priority CN202411388155.7, another same-layout family or "
+                    "any other source"
+                ),
+            ),
+        )
+        for item in _GENIUS_TEN_RASTER_ONLY_ITEMS
     ]
 
 

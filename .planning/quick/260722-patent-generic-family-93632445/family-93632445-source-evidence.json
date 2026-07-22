@@ -15,7 +15,10 @@
   },
   "bibliography": {
     "title": "Light Source, Projection System, Projection Method, and Related Apparatus",
-    "inventors": ["Qin Siyi", "Shi Guangyuan"],
+    "inventors": [
+      "Qin Siyi",
+      "Shi Guangyuan"
+    ],
     "applicant": "HUAWEI TECHNOLOGIES CO., LTD.",
     "assignee": "HUAWEI TECHNOLOGIES CO., LTD."
   },
@@ -40,7 +43,11 @@
     "description_numbered_paragraphs": 133,
     "total_numbered_specification_paragraphs": 197,
     "claims": 20,
-    "independent_claims": [1, 11, 18],
+    "independent_claims": [
+      1,
+      11,
+      18
+    ],
     "html_table_tags": 0,
     "flattened_table_blocks": 0,
     "maths_objects": 1,
@@ -124,71 +131,452 @@
     "role": "speckle contrast only"
   },
   "source_items": [
-    {"number": 1, "label": "Huawei light-source 1st embodiment", "description_range": [87, 102], "figures": ["1", "2", "3"], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"},
-    {"number": 2, "label": "Huawei light-source 2nd embodiment", "description_range": [103, 109], "figures": ["4", "5", "6"], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"},
-    {"number": 3, "label": "Huawei light-source 3rd embodiment", "description_range": [110, 116], "figures": ["7", "8"], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"},
-    {"number": 4, "label": "Huawei projection-system 1st embodiment", "description_range": [117, 120], "figures": ["9"], "claims": [11, 12, 14, 15, 16, 17], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_system_architecture_only"},
-    {"number": 5, "label": "Huawei light-source 4th embodiment", "description_range": [121, 123], "figures": ["10"], "claims": [10], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"},
-    {"number": 6, "label": "Huawei projection-system 2nd embodiment (FIG. 11)", "description_range": [124, 125], "figures": ["11"], "claims": [11], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_system_architecture_only"},
-    {"number": 7, "label": "Huawei projection-system 2nd embodiment (FIG. 12; source ordinal retained)", "description_range": [126, 127], "figures": ["12"], "claims": [11, 13], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_system_architecture_only"},
-    {"number": 8, "label": "Huawei HUD-system embodiment", "description_range": [128, 129], "figures": ["13"], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.head_up_display_system_wrapper_only"},
-    {"number": 9, "label": "Huawei vehicle/HUD embodiment", "description_range": [130, 130], "figures": [], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.vehicle_head_up_display_wrapper_only"},
-    {"number": 10, "label": "Huawei projection-headlight embodiment", "description_range": [131, 132], "figures": ["14"], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_headlight_wrapper_only"},
-    {"number": 11, "label": "Huawei AR-glasses embodiment", "description_range": [133, 133], "figures": [], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.ar_glasses_wrapper_only"},
-    {"number": 12, "label": "Huawei projection-light-beam transmission 1st embodiment", "description_range": [134, 144], "figures": ["15"], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"},
-    {"number": 13, "label": "Huawei projection-light-beam transmission 2nd embodiment", "description_range": [145, 156], "figures": ["16A", "16B"], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"},
-    {"number": 14, "label": "Huawei projection-light-beam transmission 3rd embodiment", "description_range": [157, 168], "figures": ["17"], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"},
-    {"number": 15, "label": "Huawei projection-light-beam transmission 4th embodiment", "description_range": [169, 178], "figures": ["18"], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"},
-    {"number": 16, "label": "Huawei projection-method 1st embodiment", "description_range": [179, 190], "figures": ["19A", "19B"], "claims": [18, 19, 20], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.projection_method_only"},
-    {"number": 17, "label": "Huawei vehicle/ADAS projection embodiment", "description_range": [191, 196], "figures": ["20"], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.autonomous_vehicle_projection_wrapper_only"}
+    {
+      "number": 1,
+      "label": "Huawei light-source 1st embodiment",
+      "description_range": [
+        87,
+        102
+      ],
+      "figures": [
+        "1",
+        "2",
+        "3"
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Huawei light-source 2nd embodiment",
+      "description_range": [
+        103,
+        109
+      ],
+      "figures": [
+        "4",
+        "5",
+        "6"
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Huawei light-source 3rd embodiment",
+      "description_range": [
+        110,
+        116
+      ],
+      "figures": [
+        "7",
+        "8"
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Huawei projection-system 1st embodiment",
+      "description_range": [
+        117,
+        120
+      ],
+      "figures": [
+        "9"
+      ],
+      "claims": [
+        11,
+        12,
+        14,
+        15,
+        16,
+        17
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_system_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Huawei light-source 4th embodiment",
+      "description_range": [
+        121,
+        123
+      ],
+      "figures": [
+        "10"
+      ],
+      "claims": [
+        10
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_source_architecture_only"
+    },
+    {
+      "number": 6,
+      "label": "Huawei projection-system 2nd embodiment (FIG. 11)",
+      "description_range": [
+        124,
+        125
+      ],
+      "figures": [
+        "11"
+      ],
+      "claims": [
+        11
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_system_architecture_only"
+    },
+    {
+      "number": 7,
+      "label": "Huawei projection-system 2nd embodiment (FIG. 12; source ordinal retained)",
+      "description_range": [
+        126,
+        127
+      ],
+      "figures": [
+        "12"
+      ],
+      "claims": [
+        11,
+        13
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_system_architecture_only"
+    },
+    {
+      "number": 8,
+      "label": "Huawei HUD-system embodiment",
+      "description_range": [
+        128,
+        129
+      ],
+      "figures": [
+        "13"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.head_up_display_system_wrapper_only"
+    },
+    {
+      "number": 9,
+      "label": "Huawei vehicle/HUD embodiment",
+      "description_range": [
+        130,
+        130
+      ],
+      "figures": [],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_head_up_display_wrapper_only"
+    },
+    {
+      "number": 10,
+      "label": "Huawei projection-headlight embodiment",
+      "description_range": [
+        131,
+        132
+      ],
+      "figures": [
+        "14"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_headlight_wrapper_only"
+    },
+    {
+      "number": 11,
+      "label": "Huawei AR-glasses embodiment",
+      "description_range": [
+        133,
+        133
+      ],
+      "figures": [],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.ar_glasses_wrapper_only"
+    },
+    {
+      "number": 12,
+      "label": "Huawei projection-light-beam transmission 1st embodiment",
+      "description_range": [
+        134,
+        144
+      ],
+      "figures": [
+        "15"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"
+    },
+    {
+      "number": 13,
+      "label": "Huawei projection-light-beam transmission 2nd embodiment",
+      "description_range": [
+        145,
+        156
+      ],
+      "figures": [
+        "16A",
+        "16B"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"
+    },
+    {
+      "number": 14,
+      "label": "Huawei projection-light-beam transmission 3rd embodiment",
+      "description_range": [
+        157,
+        168
+      ],
+      "figures": [
+        "17"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"
+    },
+    {
+      "number": 15,
+      "label": "Huawei projection-light-beam transmission 4th embodiment",
+      "description_range": [
+        169,
+        178
+      ],
+      "figures": [
+        "18"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_light_beam_transmission_method_only"
+    },
+    {
+      "number": 16,
+      "label": "Huawei projection-method 1st embodiment",
+      "description_range": [
+        179,
+        190
+      ],
+      "figures": [
+        "19A",
+        "19B"
+      ],
+      "claims": [
+        18,
+        19,
+        20
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.projection_method_only"
+    },
+    {
+      "number": 17,
+      "label": "Huawei vehicle/ADAS projection embodiment",
+      "description_range": [
+        191,
+        196
+      ],
+      "figures": [
+        "20"
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.autonomous_vehicle_projection_wrapper_only"
+    }
   ],
   "official_pdf": {
     "captures": [
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/source-review/US-20260079386-A1-official-1.pdf", "bytes": 2594868, "sha256": "4a80b87a5f822a2fa117a322d0d5c3e3a9eea09292b0fd4d3eb0adb2dbbca1a6"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/source-review/US-20260079386-A1-official-2.pdf", "bytes": 2594868, "sha256": "39b76d0c6fa77e8165bbd26cfa4d7047c73c442dff0b746fa183cc93edcfd99b"}
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/source-review/US-20260079386-A1-official-1.pdf",
+        "bytes": 2594868,
+        "sha256": "4a80b87a5f822a2fa117a322d0d5c3e3a9eea09292b0fd4d3eb0adb2dbbca1a6"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/source-review/US-20260079386-A1-official-2.pdf",
+        "bytes": 2594868,
+        "sha256": "39b76d0c6fa77e8165bbd26cfa4d7047c73c442dff0b746fa183cc93edcfd99b"
+      }
     ],
     "page_count": 36,
     "text_layer_characters": 0,
     "embedded_page_mode": "1-bit",
-    "default_raster_dimensions_width_height": [2560, 3300],
-    "dimension_exceptions": {"25": [2550, 3300]},
+    "default_raster_dimensions_width_height": [
+      2560,
+      3300
+    ],
+    "dimension_exceptions": {
+      "25": [
+        2550,
+        3300
+      ]
+    },
     "raster_set_sha256": "c6e601d4b4c1d66fd222e022b0d89379fdcedabb9f4f970818bb4ecd85956629",
     "retained_visual_audits": [
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/contact-pages-01-36-navigation-only.png", "bytes": 835957, "sha256": "cb5f208bcf6bcc2e82c2de096763014dfb212a6ec0726830928bbd996382679c"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-01-original.png", "bytes": 71458, "sha256": "ae46f695a705c90b7a3e634e7d6800d8c8d315d7f4a924350f8ade6d31b239f3"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-02-original.png", "bytes": 44304, "sha256": "ef09d552f15df8b31345b0552194ef541126296059d0bdd665f86f526bc53488"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-17-original.png", "bytes": 42030, "sha256": "2895e56424a617da1a071343de69c0b1d6ade18245ed83e35adff57f1bfddaaa"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-18-original.png", "bytes": 147688, "sha256": "57c46573c84579b9afc2b2cd29453f5e0cac0be11d7f92942b9b1b2e4e6d061c"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-34-original.png", "bytes": 143548, "sha256": "4a53f315f8eff82078243b877045048587e219e9a68395ace12f6580064d0a91"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-35-original.png", "bytes": 126851, "sha256": "a558548a10298ebbe5ec3ed2b1666e19347ddb9d727d938d75688c8c16f627e3"},
-      {"path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-36-original.png", "bytes": 76218, "sha256": "988312663b4a17ab4e2ec77de6f572612763143702d593b48222d0d7d56d239d"}
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/contact-pages-01-36-navigation-only.png",
+        "bytes": 835957,
+        "sha256": "cb5f208bcf6bcc2e82c2de096763014dfb212a6ec0726830928bbd996382679c"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-01-original.png",
+        "bytes": 71458,
+        "sha256": "ae46f695a705c90b7a3e634e7d6800d8c8d315d7f4a924350f8ade6d31b239f3"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-02-original.png",
+        "bytes": 44304,
+        "sha256": "ef09d552f15df8b31345b0552194ef541126296059d0bdd665f86f526bc53488"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-17-original.png",
+        "bytes": 42030,
+        "sha256": "2895e56424a617da1a071343de69c0b1d6ade18245ed83e35adff57f1bfddaaa"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-18-original.png",
+        "bytes": 147688,
+        "sha256": "57c46573c84579b9afc2b2cd29453f5e0cac0be11d7f92942b9b1b2e4e6d061c"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-34-original.png",
+        "bytes": 143548,
+        "sha256": "4a53f315f8eff82078243b877045048587e219e9a68395ace12f6580064d0a91"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-35-original.png",
+        "bytes": 126851,
+        "sha256": "a558548a10298ebbe5ec3ed2b1666e19347ddb9d727d938d75688c8c16f627e3"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-93632445/pdf-review/page-36-original.png",
+        "bytes": 76218,
+        "sha256": "988312663b4a17ab4e2ec77de6f572612763143702d593b48222d0d7d56d239d"
+      }
     ]
   },
   "replay": {
-    "attempt_2": {"path": "data/patent-ledger/replay/local-uncovered/results/US-20260079386/attempt-0002/result.json", "bytes": 26656, "sha256": "faa174995524625e3891da35c8636f141f5d8e0c7230bc0c41ed4b41a6452c87"},
-    "attempt_3": {"path": "data/patent-ledger/replay/local-uncovered/results/US-20260079386/attempt-0003/result.json", "bytes": 26656, "sha256": "9ed5b42764d0cefa8742faa08bbed3331e71f9e47e4ea1bbfb50ca9cbafd9b68"},
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260079386/attempt-0002/result.json",
+      "bytes": 26656,
+      "sha256": "faa174995524625e3891da35c8636f141f5d8e0c7230bc0c41ed4b41a6452c87"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260079386/attempt-0003/result.json",
+      "bytes": 26656,
+      "sha256": "9ed5b42764d0cefa8742faa08bbed3331e71f9e47e4ea1bbfb50ca9cbafd9b68"
+    },
     "semantic_equal": true,
     "semantic_sha256": "53a6d195a4bdd3753c86ff6826d7c135a759d996d4f7f8a931094f0277f56691",
-    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 55974, "sha256": "3d0e229a82e4106b15aa0ab15012910b204bead15431e32319d4dc4301749e56"},
-    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 58030, "sha256": "b66711f0170a7f07c0ca917a9a8627e51c6fb3c66c951a9253436fc9da737a2f"},
-    "strict_audit": {"roots_with_results": 619, "expected_roots": 619, "missing_results": 0, "corrupt_results": 0}
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 55975,
+      "sha256": "7d3971600979ae77085b2c4e4460c53b7d47120568aa0148747a28ab851da051"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 58031,
+      "sha256": "60f43fcdb3e90096271777a812e17ef18d3d5fcf7b03982a4cc5033cc735d95d"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
   },
   "census": {
-    "before": {"path": ".planning/quick/260722-patent-generic-family-93632445/generic-residual-before-31.json", "bytes": 19505, "sha256": "945d36ce3b3ed81ea08103c79f4caf4d7d8cb0784ebb6331f4e637dd61238d92"},
-    "after_1": {"path": ".planning/quick/260722-patent-generic-family-93632445/generic-residual-after-1.json", "bytes": 18866, "sha256": "f30f08fdc40f43de1fddc2172a6223679ecaf77b816a8bf45d0a8c0309852a57"},
-    "after_2": {"path": ".planning/quick/260722-patent-generic-family-93632445/generic-residual-after-2.json", "bytes": 18866, "sha256": "f30f08fdc40f43de1fddc2172a6223679ecaf77b816a8bf45d0a8c0309852a57"},
+    "before": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/generic-residual-before-31.json",
+      "bytes": 19505,
+      "sha256": "945d36ce3b3ed81ea08103c79f4caf4d7d8cb0784ebb6331f4e637dd61238d92"
+    },
+    "after_1": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/generic-residual-after-1.json",
+      "bytes": 18866,
+      "sha256": "f30f08fdc40f43de1fddc2172a6223679ecaf77b816a8bf45d0a8c0309852a57"
+    },
+    "after_2": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/generic-residual-after-2.json",
+      "bytes": 18866,
+      "sha256": "f30f08fdc40f43de1fddc2172a6223679ecaf77b816a8bf45d0a8c0309852a57"
+    },
     "before_roots": 31,
     "after_roots": 30,
     "result_set_sha256": "a40505003939ad571f601e4a0841a5d1cfd041471d096d32bbd799e01a738884"
   },
   "supporting_artifacts": {
-    "source_audit": {"path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-source-audit.md", "bytes": 6063, "sha256": "b443e5d3ef4f2e86dc13647eca5770582ea9f492e5ca6499bb741ab5349a58e2"},
-    "raster_audit": {"path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-raster-audit.json", "bytes": 6236, "sha256": "c4974361f8007fca1ba73e10000957d1d7d2e15bac5bd9127f614e82f9d8da49"},
-    "source_availability": {"path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-source-availability.json", "bytes": 7812, "sha256": "c38eca6e691d5f490f598d9775063c99e9f9964fe9ceec99d7fc216aeef6173d"},
-    "denominator": {"path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-denominator.json", "bytes": 9282, "sha256": "4e590395c4d651906cd358fdd92c498b06ea3ac6318f7edbdb31c19926c2eba6"},
-    "replay_determinism": {"path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-replay-determinism.json", "bytes": 2812, "sha256": "c3030f4620ef25170cdd8e462b179943ef285a0452a2505200b39fd716823438"},
-    "queue_after": {"path": ".planning/quick/260722-patent-generic-family-93632445/queue-after.json", "bytes": 1402, "sha256": "5ee15322ee32b2ab02b5d03b813ead359f44aa349af6a38eb03e3679eac83494"},
-    "roots": {"path": ".planning/quick/260722-patent-generic-family-93632445/roots.txt", "bytes": 15, "sha256": "5de28ed6b89db491172a7ce01bdaf393700be21e8db3cf2286d2ed68982a907e"}
+    "source_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-source-audit.md",
+      "bytes": 6063,
+      "sha256": "b443e5d3ef4f2e86dc13647eca5770582ea9f492e5ca6499bb741ab5349a58e2"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-raster-audit.json",
+      "bytes": 6236,
+      "sha256": "c4974361f8007fca1ba73e10000957d1d7d2e15bac5bd9127f614e82f9d8da49"
+    },
+    "source_availability": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-source-availability.json",
+      "bytes": 7812,
+      "sha256": "c38eca6e691d5f490f598d9775063c99e9f9964fe9ceec99d7fc216aeef6173d"
+    },
+    "denominator": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-denominator.json",
+      "bytes": 9282,
+      "sha256": "4e590395c4d651906cd358fdd92c498b06ea3ac6318f7edbdb31c19926c2eba6"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-replay-determinism.json",
+      "bytes": 2812,
+      "sha256": "c3030f4620ef25170cdd8e462b179943ef285a0452a2505200b39fd716823438"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/queue-after.json",
+      "bytes": 1402,
+      "sha256": "5ee15322ee32b2ab02b5d03b813ead359f44aa349af6a38eb03e3679eac83494"
+    },
+    "roots": {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/roots.txt",
+      "bytes": 15,
+      "sha256": "5de28ed6b89db491172a7ce01bdaf393700be21e8db3cf2286d2ed68982a907e"
+    }
   },
   "review_policy": {
     "architecture_metadata_promoted_to_prescription": false,

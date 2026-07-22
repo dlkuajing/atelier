@@ -15,7 +15,12 @@
   },
   "bibliography": {
     "title": "Imaging lens assembly module, camera module and electronic device",
-    "inventors": ["Chang; Lin-An", "Chou; Ming-Ta", "Yang; Shu-Yun", "Lin; Cheng-Feng"],
+    "inventors": [
+      "Chang; Lin-An",
+      "Chou; Ming-Ta",
+      "Yang; Shu-Yun",
+      "Lin; Cheng-Feng"
+    ],
     "applicant": "LARGAN PRECISION CO., LTD.",
     "assignee": "LARGAN PRECISION CO., LTD."
   },
@@ -43,7 +48,9 @@
     "description_numbered_paragraphs": 176,
     "total_numbered_specification_paragraphs": 183,
     "claims": 14,
-    "independent_claims": [1],
+    "independent_claims": [
+      1
+    ],
     "html_table_tags": 0,
     "flattened_table_blocks": 10,
     "maths_objects": 0,
@@ -115,62 +122,395 @@
   },
   "inline_formulae": {
     "pairs": 5,
-    "normalized_tokens": ["0.01< R/D< 3.", "0.20< d min/ D< 0.45.", "0.25< d min/ D< 0.40.", "3≤N≤8.", "3 degrees≤FOV≤40 degrees."],
+    "normalized_tokens": [
+      "0.01< R/D< 3.",
+      "0.20< d min/ D< 0.45.",
+      "0.25< d min/ D< 0.40.",
+      "3≤N≤8.",
+      "3 degrees≤FOV≤40 degrees."
+    ],
     "ordered_set_sha256": "db4a3e19d931f50b9b5608b5b5ffc8f69a1ac25fa676b2c158827b4fa374c9cc",
     "role": "opening ratios, lens count and maximum deployment FOV constraints"
   },
   "source_items": [
-    {"number": 1, "label": "Largan light-blocking imaging-lens-assembly 1st embodiment", "description_range": [63, 73], "figures": ["1A", "1B", "1C", "1D", "1E", "1F"], "tables": [1], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"},
-    {"number": 2, "label": "Largan light-blocking imaging-lens-assembly 2nd embodiment", "description_range": [74, 84], "figures": ["2A", "2B", "2C", "2D"], "tables": [2], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"},
-    {"number": 3, "label": "Largan light-blocking imaging-lens-assembly 3rd embodiment", "description_range": [85, 94], "figures": ["3A", "3B", "3C", "3D", "3E", "3F"], "tables": [3], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"},
-    {"number": 4, "label": "Largan light-blocking imaging-lens-assembly 4th embodiment", "description_range": [95, 104], "figures": ["4A", "4B", "4C"], "tables": [4], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"},
-    {"number": 5, "label": "Largan light-blocking imaging-lens-assembly 5th embodiment", "description_range": [105, 114], "figures": ["5A", "5B", "5C"], "tables": [5], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"},
-    {"number": 6, "label": "Largan light-blocking imaging-lens-assembly 6th embodiment", "description_range": [115, 124], "figures": ["6A", "6B", "6C", "6D", "6E", "6F"], "tables": [6], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"},
-    {"number": 7, "label": "Largan camera-module light-blocking 7th embodiment", "description_range": [125, 137], "figures": ["7A", "7B", "7C"], "tables": [7], "claims": [13], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.camera_module_light_blocking_architecture_only"},
-    {"number": 8, "label": "Largan camera-module light-blocking 8th embodiment", "description_range": [138, 150], "figures": ["8A", "8B", "8C"], "tables": [8], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.camera_module_light_blocking_architecture_only"},
-    {"number": 9, "label": "Largan light-blocking-structure 9th embodiment", "description_range": [151, 158], "figures": ["9"], "tables": [9], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.light_blocking_structure_architecture_only"},
-    {"number": 10, "label": "Largan light-blocking-structure 10th embodiment", "description_range": [159, 166], "figures": ["10"], "tables": [10], "claims": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.light_blocking_structure_architecture_only"},
-    {"number": 11, "label": "Largan electronic-device multi-camera 11th embodiment", "description_range": [167, 175], "figures": ["11A", "11B", "11C", "11D", "11E", "11F"], "tables": [], "claims": [14], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only"}
+    {
+      "number": 1,
+      "label": "Largan light-blocking imaging-lens-assembly 1st embodiment",
+      "description_range": [
+        63,
+        73
+      ],
+      "figures": [
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E",
+        "1F"
+      ],
+      "tables": [
+        1
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan light-blocking imaging-lens-assembly 2nd embodiment",
+      "description_range": [
+        74,
+        84
+      ],
+      "figures": [
+        "2A",
+        "2B",
+        "2C",
+        "2D"
+      ],
+      "tables": [
+        2
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan light-blocking imaging-lens-assembly 3rd embodiment",
+      "description_range": [
+        85,
+        94
+      ],
+      "figures": [
+        "3A",
+        "3B",
+        "3C",
+        "3D",
+        "3E",
+        "3F"
+      ],
+      "tables": [
+        3
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan light-blocking imaging-lens-assembly 4th embodiment",
+      "description_range": [
+        95,
+        104
+      ],
+      "figures": [
+        "4A",
+        "4B",
+        "4C"
+      ],
+      "tables": [
+        4
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan light-blocking imaging-lens-assembly 5th embodiment",
+      "description_range": [
+        105,
+        114
+      ],
+      "figures": [
+        "5A",
+        "5B",
+        "5C"
+      ],
+      "tables": [
+        5
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan light-blocking imaging-lens-assembly 6th embodiment",
+      "description_range": [
+        115,
+        124
+      ],
+      "figures": [
+        "6A",
+        "6B",
+        "6C",
+        "6D",
+        "6E",
+        "6F"
+      ],
+      "tables": [
+        6
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan camera-module light-blocking 7th embodiment",
+      "description_range": [
+        125,
+        137
+      ],
+      "figures": [
+        "7A",
+        "7B",
+        "7C"
+      ],
+      "tables": [
+        7
+      ],
+      "claims": [
+        13
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_light_blocking_architecture_only"
+    },
+    {
+      "number": 8,
+      "label": "Largan camera-module light-blocking 8th embodiment",
+      "description_range": [
+        138,
+        150
+      ],
+      "figures": [
+        "8A",
+        "8B",
+        "8C"
+      ],
+      "tables": [
+        8
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_light_blocking_architecture_only"
+    },
+    {
+      "number": 9,
+      "label": "Largan light-blocking-structure 9th embodiment",
+      "description_range": [
+        151,
+        158
+      ],
+      "figures": [
+        "9"
+      ],
+      "tables": [
+        9
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_structure_architecture_only"
+    },
+    {
+      "number": 10,
+      "label": "Largan light-blocking-structure 10th embodiment",
+      "description_range": [
+        159,
+        166
+      ],
+      "figures": [
+        "10"
+      ],
+      "tables": [
+        10
+      ],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_structure_architecture_only"
+    },
+    {
+      "number": 11,
+      "label": "Largan electronic-device multi-camera 11th embodiment",
+      "description_range": [
+        167,
+        175
+      ],
+      "figures": [
+        "11A",
+        "11B",
+        "11C",
+        "11D",
+        "11E",
+        "11F"
+      ],
+      "tables": [],
+      "claims": [
+        14
+      ],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only"
+    }
   ],
   "official_pdf": {
     "captures": [
-      {"path": ".planning/quick/260722-patent-generic-family-76895572/source-review/US-12174451-B2-official-1.pdf", "bytes": 2042458, "sha256": "a66a10cf700fd125310b30bb4f976d0556ffce0d436500e03a84eb4eb7189855"},
-      {"path": ".planning/quick/260722-patent-generic-family-76895572/source-review/US-12174451-B2-official-2.pdf", "bytes": 2042458, "sha256": "767aed22b78a73433be5eb7f670a265f0ae01886fcd2cc74bdbf1c6da5b25887"}
+      {
+        "path": ".planning/quick/260722-patent-generic-family-76895572/source-review/US-12174451-B2-official-1.pdf",
+        "bytes": 2042458,
+        "sha256": "a66a10cf700fd125310b30bb4f976d0556ffce0d436500e03a84eb4eb7189855"
+      },
+      {
+        "path": ".planning/quick/260722-patent-generic-family-76895572/source-review/US-12174451-B2-official-2.pdf",
+        "bytes": 2042458,
+        "sha256": "767aed22b78a73433be5eb7f670a265f0ae01886fcd2cc74bdbf1c6da5b25887"
+      }
     ],
     "page_count": 57,
     "text_layer_characters": 0,
     "embedded_page_mode": "1",
-    "default_raster_dimensions_width_height": [2560, 3300],
+    "default_raster_dimensions_width_height": [
+      2560,
+      3300
+    ],
     "dimension_exceptions": {},
     "raster_set_sha256": "e6d5d3b5d3ad8267e0fb408273502014585052eb8196b6de32f1939e7fc51bf7",
-    "page_roles": {"cover": [1], "references": [2], "drawings": [3, 44], "specification": [45, 57], "claims": [57]},
-    "reviewed_original_pages": [1, 2, 44, 45, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57]
+    "page_roles": {
+      "cover": [
+        1
+      ],
+      "references": [
+        2
+      ],
+      "drawings": [
+        3,
+        44
+      ],
+      "specification": [
+        45,
+        57
+      ],
+      "claims": [
+        57
+      ]
+    },
+    "reviewed_original_pages": [
+      1,
+      2,
+      44,
+      45,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57
+    ]
   },
   "replay": {
-    "attempt_2": {"path": "data/patent-ledger/replay/local-uncovered/results/US-12174451/attempt-0002/result.json", "bytes": 17810, "sha256": "e625b7995539ed83745633d887db7094844363110c184268c3bbcfc22dd93a5c"},
-    "attempt_3": {"path": "data/patent-ledger/replay/local-uncovered/results/US-12174451/attempt-0003/result.json", "bytes": 17810, "sha256": "0dc6e1d83a5a66ec0a26ba753f00cf54ea6120b5435c41fa28aba2b4c2e69584"},
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12174451/attempt-0002/result.json",
+      "bytes": 17810,
+      "sha256": "e625b7995539ed83745633d887db7094844363110c184268c3bbcfc22dd93a5c"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12174451/attempt-0003/result.json",
+      "bytes": 17810,
+      "sha256": "0dc6e1d83a5a66ec0a26ba753f00cf54ea6120b5435c41fa28aba2b4c2e69584"
+    },
     "semantic_equal": true,
     "semantic_sha256": "d8db47520b28971d413bcfbdbfed1b557fe829865f9f272c3ee856542b5a3d76",
-    "summary": {"path": "data/patent-ledger/replay/local-uncovered/summary.json", "bytes": 55974, "sha256": "3d0e229a82e4106b15aa0ab15012910b204bead15431e32319d4dc4301749e56"},
-    "report": {"path": ".planning/loop/patent-local-replay-report.md", "bytes": 58030, "sha256": "b66711f0170a7f07c0ca917a9a8627e51c6fb3c66c951a9253436fc9da737a2f"},
-    "strict_audit": {"roots_with_results": 619, "expected_roots": 619, "missing_results": 0, "corrupt_results": 0}
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 55975,
+      "sha256": "7d3971600979ae77085b2c4e4460c53b7d47120568aa0148747a28ab851da051"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 58031,
+      "sha256": "60f43fcdb3e90096271777a812e17ef18d3d5fcf7b03982a4cc5033cc735d95d"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
   },
   "census": {
-    "before": {"path": ".planning/quick/260722-patent-generic-family-76895572/generic-residual-before-30.json", "bytes": 18866, "sha256": "f30f08fdc40f43de1fddc2172a6223679ecaf77b816a8bf45d0a8c0309852a57"},
-    "after_1": {"path": ".planning/quick/260722-patent-generic-family-76895572/generic-residual-after-1.json", "bytes": 18239, "sha256": "8e098a13ff0b2c36ce0ca37d77b73ccc8f3467fc813c884cfc8403bc5b37accd"},
-    "after_2": {"path": ".planning/quick/260722-patent-generic-family-76895572/generic-residual-after-2.json", "bytes": 18239, "sha256": "8e098a13ff0b2c36ce0ca37d77b73ccc8f3467fc813c884cfc8403bc5b37accd"},
+    "before": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/generic-residual-before-30.json",
+      "bytes": 18866,
+      "sha256": "f30f08fdc40f43de1fddc2172a6223679ecaf77b816a8bf45d0a8c0309852a57"
+    },
+    "after_1": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/generic-residual-after-1.json",
+      "bytes": 18239,
+      "sha256": "8e098a13ff0b2c36ce0ca37d77b73ccc8f3467fc813c884cfc8403bc5b37accd"
+    },
+    "after_2": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/generic-residual-after-2.json",
+      "bytes": 18239,
+      "sha256": "8e098a13ff0b2c36ce0ca37d77b73ccc8f3467fc813c884cfc8403bc5b37accd"
+    },
     "before_roots": 30,
     "after_roots": 29,
     "result_set_sha256": "b89c4b87150b6577e738155ce9f3e159de2958a3dc922621187c04ccfd1d6f13"
   },
   "supporting_artifacts": {
-    "source_audit": {"path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-source-audit.md", "bytes": 6136, "sha256": "67a168aea8fb8e43f393dda2967fabb44adbaf0eeed7510f3c7b482d7c51001c"},
-    "raster_audit": {"path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-raster-audit.json", "bytes": 9361, "sha256": "481337e6db0d56d6efbbb3b240af81ce0b7b85b64aa40a415929eacffee0ef50"},
-    "source_availability": {"path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-source-availability.json", "bytes": 6918, "sha256": "0cc06daab911f2b33edf9d16f6eebc171b34ebcb38656bacadad59a04b4a597b"},
-    "denominator": {"path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-denominator.json", "bytes": 8217, "sha256": "d8df0b5d08a0a857fcc1acd3f8fe817d85969aff7c5f368fc402de48e3f7166b"},
-    "replay_determinism": {"path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-replay-determinism.json", "bytes": 2448, "sha256": "f24da0db4d1c8e61d71c87f3ddf5fa6ad10e7aea19f67b0e5bb66f8d3d03653a"},
-    "queue_after": {"path": ".planning/quick/260722-patent-generic-family-76895572/queue-after.json", "bytes": 1439, "sha256": "02c7449e860d4ee14ff0964011867c026ea830dc683212ef933b7bec594ea76a"},
-    "roots": {"path": ".planning/quick/260722-patent-generic-family-76895572/roots.txt", "bytes": 12, "sha256": "1077bf4a583fed32c59273310044cac9733dd84cab0355e5201f674061c92725"}
+    "source_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-source-audit.md",
+      "bytes": 6136,
+      "sha256": "67a168aea8fb8e43f393dda2967fabb44adbaf0eeed7510f3c7b482d7c51001c"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-raster-audit.json",
+      "bytes": 9361,
+      "sha256": "481337e6db0d56d6efbbb3b240af81ce0b7b85b64aa40a415929eacffee0ef50"
+    },
+    "source_availability": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-source-availability.json",
+      "bytes": 6918,
+      "sha256": "0cc06daab911f2b33edf9d16f6eebc171b34ebcb38656bacadad59a04b4a597b"
+    },
+    "denominator": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-denominator.json",
+      "bytes": 8217,
+      "sha256": "d8df0b5d08a0a857fcc1acd3f8fe817d85969aff7c5f368fc402de48e3f7166b"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-replay-determinism.json",
+      "bytes": 2448,
+      "sha256": "f24da0db4d1c8e61d71c87f3ddf5fa6ad10e7aea19f67b0e5bb66f8d3d03653a"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/queue-after.json",
+      "bytes": 1439,
+      "sha256": "02c7449e860d4ee14ff0964011867c026ea830dc683212ef933b7bec594ea76a"
+    },
+    "roots": {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/roots.txt",
+      "bytes": 12,
+      "sha256": "1077bf4a583fed32c59273310044cac9733dd84cab0355e5201f674061c92725"
+    }
   },
   "review_policy": {
     "opening_geometry_promoted_to_prescription": false,
