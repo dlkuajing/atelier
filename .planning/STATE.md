@@ -803,25 +803,28 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 
 | 260722-patent-generic-family-81111812 | complete-shovel-saturation-incomplete | Exact US-12474541-B2 binds application 17/527220, prior US-20220334343-A1, Taiwan priority 110113838, Family ID 81111812 and Largan Precision. The exact denominator is one priority plus eight remaining Background/Summary and 204 Description paragraphs, claims 1-21 with claims 1/11 independent, seven figure groups/88 panels on 62 drawing sheets, 420 figure-reference tags, eleven flattened tables, sixteen inline-formula pairs and thirteen disjoint items. Six driving-module light-passing-hole examples, five folded camera-module items, one folded imaging-lens-assembly item and one electronic-device wrapper publish mechanical/folding architecture only. D/d1/d2, theta/theta1/theta2, d1/D, d2/D and EDR are opening geometry; no ordered optical radii, spacings, numerical materials/index/dispersion, conics/aspheres, identified stop, numeric focal length, F-number, prescription-bound angular field or absolute image height exists. All thirteen close as precise confirmed-no-prescription terminals without repair, derivation, drawing measurement, raster transcription, family/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use. Two distinct 3,822,319-byte official 83-page image-only wrappers decode to the same original one-bit raster set at 11c377dd...2446; sixteen selected original pages were reviewed without enhancement, OCR, measurement or inference. Attempts 2/3 are semantic-equal at ccf6452b...f1a1 and attempt 1 remains preserved; generic 29 to 28; result set a8b0123a...14d6; census e9b9664e...44a4; summary 7147365a...0005; report 8442c6a8...3be; evidence 7b9ae133...cf8; strict replay is 619/619 missing=0/corrupt=0. Complete segmented offline coverage passes 3,840 tests/1 skipped/10 real-machine deselected: focused 10/10, final patent 1091/1091, non-patent 2749/1 skipped/10 deselected and guard 5/5. The initial patent sweep exposed only 23 stale live pointers; targeted 23/23 and the complete second sweep pass. A whole non-patent wrapper timed out without verdict and left no process; the same 100-file set passed in stable segments. Ruff/compile, 107 changed JSON and all 8,009 filesystem JSON pass. All 124 source-evidence manifests, 2,101 path records and 1,895 complete triples rehash; 94 prior manifests contain exactly 390 permitted live-pointer leaves including sixteen live result-set fields while frozen history remains fixed. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 97520240 / US-20260110880-A1 next; parent saturation remains incomplete. |
 
+| 260722-patent-generic-family-97520240 | complete-shovel-saturation-incomplete | Exact US-20260110880-A1 binds application 19/209987, Korean priority 10-2024-0145051, Family ID 97520240 and Samsung Electro-Mechanics. The denominator is 24 Background/Summary, ten brief-drawing and 95 detailed-description paragraphs in [0001]-[0129], claims 1-19 with claims 1/11 independent, FIGS.1-9/nine drawing sheets, 22 figure references, seventeen flattened tables, 25 MathML objects and exactly five items. Four imaging-lens-system embodiments publish 80 S1-S20 rows, 64 S1/S3-S17 asphere surfaces, 960 K/A-H/J/L-P cells, eight Telephoto/wide D1/D2 states and direct TABLE 13 focal length/F-number/ImgHT/TTL values, but no numeric angular field. Embodiments 1-3 close as `metadata_unpublished.system_angular_field_absent`; TABLE 10 additionally prints blank S18-S20 axial-distance cells, so embodiment 4 closes as `metadata_unpublished.system_angular_field_and_final_axial_distances_absent`. The electronic-device/camera-module wrapper closes as `confirmed_no_prescription.electronic_device_wrapper_only`. Two distinct 1,246,229-byte official 24-page image-only containers decode to the same one-bit raster set at 6fafdb8c...04ca; original pages 17/22/23/24 were reviewed without enhancement, OCR, repair, measurement, transcription or inference. Attempts 2/3 are semantic-equal at 5ed70937...73c9; generic 28 to 27; result set 843699ac...7c6e; census dcf3b26e...d3e9; summary 4ae45241...da1; report f100f9f0...cc52; evidence def205fd...6af1; strict replay is 619/619 missing=0/corrupt=0. Complete segmented offline coverage passes 3,850 tests/1 skipped/10 real-machine deselected: focused 10/10, final patent 1101/1101, non-patent 2749/1 skipped/10 deselected and guard 5/5. Ruff/compile, 108 changed JSON and all 7,874 repository JSON pass. All 125 source-evidence manifests, 2,121 path records and 1,915 complete triples rehash; 95 prior manifests contain exactly 394 permitted live-pointer leaves: 376 summary/report, sixteen result-set and two legacy hash-only leaves. Formal-output, contamination, protected-path, diff, primary-repository and process audits pass; CODE V/pytest/patent-worker inventories are zero. Stable ordering selects Family 86539672 / US-20240352227-A1 next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
-For patent saturation work, Family `81111812`, root/publication `US-12474541` /
-`US-12474541-B2`, is complete in
-`.planning/quick/260722-patent-generic-family-81111812/`, pending its atomic local
-commit. Strict replay is 619/619 with result set
-`a8b0123a6ca275bdb0305fb1f17fe83f7e91e21efb26755997d275ea656c14d6`;
-the current generic residual contains 28 roots/items. Stable ordering selects Family
-`97520240`, root/publication `US-20260110880` / `US-20260110880-A1`, application
-`19/209987`, title `IMAGING LENS SYSTEM`, Samsung Electro-Mechanics. Its retained
-92,929-byte HTML is pinned at
-`24bad625cfaa1f1468ec1e707b0058e1ddbfe29f66cb65253a43a16435518474`;
-the layout signature
-`cce52749cd6c4754d359ae25d54545d85cf715841792b6eebc3e65eb79511a14`
-occurs once. Open the next GSD quick only after the Family 81111812 commit and
-independently reconcile the exact retained A1; do not borrow any value, item boundary
-or outcome from Family 81111812, another Samsung family or a shared layout.
+For patent saturation work, Family `97520240`, root/publication `US-20260110880` /
+`US-20260110880-A1`, is complete in the current atomic shovel. Strict replay is
+619/619 with result set
+`843699ac02589c748683ce5202fda6c78e0669b4cc2a568c3c39e33f1c337c6e`;
+the generic residual contains 27 roots/items and its byte-exact repeated census is
+`dcf3b26e23e841ba5275abdfbc6d6d40935ce10ecf3712eec7c7d499b5d2d3e9`.
+Stable ordering selects Family `86539672`, root/publication `US-20240352227` /
+`US-20240352227-A1`, application `18/686481`, title `RESIN COMPOSITION FOR FORMING
+OPTICAL COMPONENT, MOLDED PRODUCT, AND OPTICAL COMPONENT`, Mitsui Chemicals. Open
+its GSD quick only after the Family 97520240 shovel is atomically committed. Its
+retained 94,640-byte HTML is pinned at
+`38c41444a022cbd1ec7e325020142031db4e1372e5339a8bc05b2c9f20f3541a`;
+layout signature
+`ce187bdc695585487f4461c26f6c58cbc8db711f79d98e688883d865e955a6a2`
+occurs once. Do not borrow any value, item boundary or outcome from Family 97520240,
+another materials patent or a shared layout.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

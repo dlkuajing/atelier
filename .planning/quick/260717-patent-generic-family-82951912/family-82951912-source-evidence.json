@@ -107,15 +107,15 @@
     "corrupt_results": 0,
     "missing_roots": 0,
     "report": {
-      "bytes": 57082,
+      "bytes": 57238,
       "path": ".planning/loop/patent-local-replay-report.md",
-      "sha256": "8442c6a8b890df252edd8941c45406c54c772375e4923651794f82ff4210c3be"
+      "sha256": "f100f9f04cc1c365b69af8ef3172e42e47ecccc263844985105ad2371e72cc52"
     },
     "result_set_sha256": "df9054f7d29128d7d9db857916c547ca7ce91b7a7a341876e1f3e3e31ca60780",
     "summary": {
-      "bytes": 55056,
+      "bytes": 55206,
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "sha256": "7147365ae35f04371aac92b34ada1f8616bf0d2a9689abe988411b7e724b0005"
+      "sha256": "4ae4524127429d69209e6ea83153e77d6889f24db46f9a4c5b0c3139a2e62da1"
     }
   },
   "root_ids": [

@@ -663,6 +663,14 @@ def _parse_prescription_attempts(
     if source_locked_attempts:
         return source_locked_attempts
     source_locked_attempts = (
+        _classify_samsung_reflective_eight_lens_metadata_unpublished_attempts(
+            raw_text,
+            patent_id=patent_id,
+        )
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
+    source_locked_attempts = (
         _classify_corephotonics_scanning_opfe_architecture_attempts(
             raw_text,
             patent_id=patent_id,
@@ -86076,6 +86084,864 @@ def _classify_samsung_zoom_eight_lens_metadata_unpublished_attempts(
                     "only an electronic-device/camera-module wrapper that may contain "
                     "any of systems 100-1000; they do not disclose another ordered "
                     "optical prescription"
+                ),
+            )
+        attempts.append(
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=error,
+            )
+        )
+    return attempts
+
+
+_SAMSUNG_REFLECTIVE_EIGHT_LENS_ITEMS = (
+    (
+        1,
+        "Samsung first imaging-lens-system embodiment 100",
+        (87, 96),
+        (1, 2),
+        (1, 2, 3),
+    ),
+    (
+        2,
+        "Samsung second imaging-lens-system embodiment 200",
+        (97, 105),
+        (3, 4),
+        (4, 5, 6),
+    ),
+    (
+        3,
+        "Samsung third imaging-lens-system embodiment 300",
+        (106, 114),
+        (5, 6),
+        (7, 8, 9),
+    ),
+    (
+        4,
+        "Samsung fourth imaging-lens-system embodiment 400",
+        (115, 123),
+        (7, 8),
+        (10, 11, 12),
+    ),
+    (
+        5,
+        "Samsung electronic-device/camera-module wrapper",
+        (126, 127),
+        (9,),
+        (),
+    ),
+)
+_SAMSUNG_REFLECTIVE_EIGHT_LENS_ANGULAR_FIELD_REASON = (
+    "metadata_unpublished.system_angular_field_absent"
+)
+_SAMSUNG_REFLECTIVE_EIGHT_LENS_INCOMPLETE_REASON = (
+    "metadata_unpublished.system_angular_field_and_final_axial_distances_absent"
+)
+_SAMSUNG_REFLECTIVE_EIGHT_LENS_WRAPPER_REASON = (
+    "confirmed_no_prescription.electronic_device_wrapper_only"
+)
+_SAMSUNG_REFLECTIVE_EIGHT_LENS_SPANS = (
+    (1, 24),
+    (25, 34),
+    (35, 86),
+    (87, 96),
+    (97, 105),
+    (106, 114),
+    (115, 123),
+    (124, 125),
+    (126, 127),
+    (128, 129),
+    (35, 129),
+)
+_SAMSUNG_REFLECTIVE_EIGHT_LENS_TABLE13_ROWS = {
+    "TTL": ("34.000", "33.401", "34.000", "34.760"),
+    "f": ("22.474", "22.474", "22.474", "22.474"),
+    "f_number": ("2.157", "2.175", "2.145", "2.107"),
+    "ImgHT": ("5.720", "5.720", "5.720", "5.720"),
+}
+_SAMSUNG_REFLECTIVE_EIGHT_LENS_SOURCE_PROFILES: dict[str, dict[str, Any]] = {
+    "US-20260110880-A1": {
+        "family_id": "97520240",
+        "application_number": "19/209987",
+        "raw_document_sha256": (
+            "24bad625cfaa1f1468ec1e707b0058e1ddbfe29f66cb65253a43a16435518474"
+        ),
+        "normalized_text_sha256": (
+            "4081b7ca05db90beebcb0e44c0f4c4753bc7fa32d51f162f0eadf085b27c074f"
+        ),
+        "identity_markers": {
+            "United States Patent Application Publication 20260110880 Kind Code A1": 1,
+            "Publication Date April 23, 2026": 1,
+            "Inventor(s) RYU; Seon Ho et al. IMAGING LENS SYSTEM Abstract": 1,
+            "Family ID: 97520240": 1,
+            "Applicant: SAMSUNG ELECTRO-MECHANICS CO., LTD.": 1,
+            "Assignee: SAMSUNG ELECTRO-MECHANICS CO., LTD.": 1,
+            "Appl. No.: 19/209987": 1,
+            "KR 10-2024-0145051": 1,
+            "10-2024-0145051": 2,
+            "RYU; Seon Ho": 2,
+            "KIM; Hag Chul": 1,
+            "KIM; Byung Hyun": 1,
+        },
+        "section_markers": {
+            "preamble": "US-20260110880-A1",
+            "abstract": "Abstract An imaging lens system includes",
+            "background": (
+                "Background/Summary CROSS-REFERENCE TO RELATED APPLICATION(S) [0001]"
+            ),
+            "brief": "Description BRIEF DESCRIPTION OF DRAWINGS [0025]",
+            "detailed": "DETAILED DESCRIPTION [0035]",
+            "claims": "Claims 1 . An imaging lens system",
+        },
+        "section_sha256": dict(
+            zip(
+                ("preamble", "abstract", "background", "brief", "detailed", "claims"),
+                _samsung_zoom_sha256_lines("""
+                1af9e3e7d7e216ea0d554149d27f6cb292f28b7222c701d79a6f30ba0d5b0561
+                b48a8a75b00a662cf187fc85393101f1c85eeb758ab101ebdd14450cd249389b
+                c21124ca26bdeb1d32044f687fba4b870c8bd4914dad674fd80ad8552f7c3e95
+                e741ebb44dce7ea74f59579de0682cf99dede34bedce27daecca2527de4afb4a
+                e33ad6cba55cd9929f3b2849ac5c1770ae4a9339e6fa5977ec05a725fb2dc74a
+                0e9b231dea9028b51c70a08e0936efbb6597aa39df7062cc841fcc213cbbaa22
+                """),
+                strict=True,
+            )
+        ),
+        "paragraph_ranges": {
+            "background": (1, 24),
+            "brief": (25, 34),
+            "detailed": (35, 129),
+        },
+        "paragraph_span_sha256": dict(
+            zip(
+                _SAMSUNG_REFLECTIVE_EIGHT_LENS_SPANS,
+                _samsung_zoom_sha256_lines("""
+                9cc1ec188ad7125e566b2fbb22186f6570eb19e234b48df898705c475de99b7a
+                3bccbd7fb7dcb49bd3b0b917243ffb1cc562479104d36703f090a984e0ddc829
+                d9ef7cbbe5a0bc6143f312463e2cf4a451837db2ac9996f0b2236d10dfcdf842
+                38595e5ecaad89687b08bdf4f2000f8315bf55f658287ffd77738ee2da0c6a41
+                a3fc8085d2fe10ff99d36daf426f8d4234c333a81ceafbc5f772d9a455dcc727
+                5da11ef875e7ab2a1956f4defc22f19e50f61ab10744ce86f1ea5db1a4dc570f
+                27ba061565fede1bf1cdc8b19d224cddbeb03e29677eee9cd45d8ab6528ba05e
+                7315e063ef7b97d2e35272105b8d9503f7dce35f9d26010eb1ff84fd220b7915
+                c94dee054eb8e84a4500ba89f4957d25d6628e1ebd8be2143825b0f88dff1d53
+                58cb14af81f08b5a52dc1bb93cdc20240313ea062b0571880e4dcd79f4bae7be
+                11869766995142ae3a0d722046b9719d4438e8debcc3a8a5907b8d825b6ea31b
+                """),
+                strict=True,
+            )
+        ),
+        "table_owner_paragraphs": {
+            96: (1, 2, 3),
+            105: (4, 5, 6),
+            114: (7, 8, 9),
+            123: (10, 11, 12),
+            124: (13, 14, 15, 16, 17),
+        },
+        "table_payload_sha256": _samsung_zoom_sha256_lines("""
+            98ab6c3506cb299221e14d548e53d5b1ac280481f2eb3635e7e29d36d5064388
+            d8547dd9bde6e6f6a0a85e0cd4ef5f9965e017a4116726f56b9846d756cc9094
+            4e8615c868d9450e7f01c8286c6d30400aa807714ca310a62edaf25d6f4fe3ee
+            c586972077ad2e2aab8d7702ae521f1fc324f71954667603875778ca712e5c05
+            1520d4d3f77b049c1d983de80d740727fee8af8fb9e021b227de6715d140edc5
+            2855f8daf2efc21c13179c77ab58d3958ea5e12be179347d9a339abb960f11c1
+            2a9246de11631af24980419de41c72a103b84aa1c8f566746dcc12a22448ae1e
+            5034b978a83b83ddabab5fa22e2e063871d2a3354082f5a5d8479313b3e94a34
+            4b06c8b5b4b97568ef68dc75ffd2b12087951a64202f59c16cf6f86ad1e69208
+            a672746162684dc0bc9f4f4ed930f454856945fb8caba664d66cb5c36720e7a9
+            83c20627ef48ae3ae97e06c4c4dcff6f86c9ba349eebc53b8beb240a0105ead0
+            cafb3866a0ddaa349be6095522c2c1a4110c1c69de7522b9f263ec704519891e
+            47012e8aea1ff78186c1d1b43919120d68e18c4a5af76fb037fd18b2736069ac
+            3ee8b2965c570f66d431c0f3c11299c79e59c1126b3a10a77612e41c3f223fbb
+            e21d1b1eb2db97fec4973077b5fc3e53c65bcdaa0f46a1ac67706e1c90981fc4
+            dfb90cd4fc6dd4630a50385ae49c330ac00b508142cab7e73302573007177ae7
+            c3a5543e551972b1242a633851b8096190292b9d6f24bfb3f893df36cf9251bf
+            """),
+        "table13_rows": _SAMSUNG_REFLECTIVE_EIGHT_LENS_TABLE13_ROWS,
+        "table10_blank_rows": (
+            "S18 Filter Infinity 1.5168 64.20 7.00 7.00",
+            "S19 Infinity 7.00 7.00",
+            "S20 Imaging Infinity plane",
+        ),
+        "math_numbers": (1,) + (2,) * 7 + (3,) * 8 + (4,) * 3 + (5,) * 5 + (6,),
+        "math_object_sha256": _samsung_zoom_sha256_lines("""
+            039475264bc196c7f189db51d962b54453ece17fa77375f83d5e743caff30293
+            863da81f643c9ab72453982a95fccf66b861a7c7f1bcb16be7d4431b3e69d1f3
+            6d6fe4301da062c85effe24621c5ab21688b9ffe9eb202b38f7f564e863d81d8
+            361c4e0010fa74ffb906aba9dc4fef17a308a4ba0690bcad1f89a23e36d24a2b
+            9c921a6484c11c04aec2d2673ea81dc74daac2f7c475b390a695437f0f76afef
+            bf01dc9003d61aff3927133c907200c16764a157c2bf20fae06c6330f1384b6d
+            007b28393494facebdf65c6ede96bc8fc81301420ee5643cfd7d3b089b33fdae
+            9529db0814b3039e92ea044c213def6da1cf6bd42b1523403a7a9a922c89eea6
+            4f022169e10861e47864931ed60a40373137a4d193ab53af2b7a42b2d9995df1
+            1d2f6e5cf9978338272af89cc2534702cfbf96d20a0fa3da574a452073a5c37b
+            3d3535540fc25d161b80851dfb86dbc0b170da93c1a5595c45ec8d8cbe39241c
+            0812e76ef9422b16dbe4dc854dd32118c9c9885057943be92b9084d76e0453c1
+            b6162ad5e794c0177e656ddc1f79d45a9f28012d955b8bf17279854ef3ca0470
+            d9f463f24263454b2fbb0836d2e7ba8da23a7e51cc590bba5dc2519c0bf8879a
+            f8beaeef3aab330e7ae4626081253bc2f224be1d6265280c07b16101380aa3c0
+            f8c57c36c31d26c8c06649bb6452478eec0d14941e852b2ecef462876e84bd83
+            847e3691bb6165f428cf2a8e4f16e33bf35b4361e864a5e0e75157d836f186fe
+            0cd45d4373f7f3bd349198cae855c0fc74d1c20d4b21edc24f9801bfeeb78b75
+            1fb542b204a2adcfb00dd761b26c6f6360e8fee891596d6e0078435d7cf4c213
+            dfaedb911f7b87ae2771fd6f1fb081319a510e65f7fc5937eab550062163dd03
+            096c1212402c3643c949e41234e4b065897fac83b059b36687b80860ee592976
+            aa488e743541cec20cd98ba27d3f46b5b0097212baed009ce1adf954b0ac94c1
+            f9605a8804be14d3cebb228b52c65eb5fe3f6b4422bbaa02c88dd36e5246b923
+            7cf9057fc2d0d9de3b1d36cb1a3bd76ab742a3ff676a140771e0cb4a9edf66d6
+            9cc4ce9063f9135320fbe4de129d6912f775e29553593a1d92621847902884ce
+            """),
+        "claim_numbers": tuple(range(1, 20)),
+        "independent_claim_numbers": (1, 11),
+        "claim_dependencies": (
+            (),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (1,),
+            (),
+            (11,),
+            (11,),
+            (11,),
+            (11,),
+            (11,),
+            (11,),
+            (11,),
+            (11,),
+        ),
+        "claim_sha256": _samsung_zoom_sha256_lines("""
+            21e5b870b6417cd7f948ece5f5223a6b84cf0b15f346cb2a55caddd5eeefd4ad
+            0706e14e86cf9a05d1d05631bda5ebcf9c7bb6101e0dfc89e41bfa9630236693
+            73b01e6126a38ff717383904b039c77b24e54bbeb9dcf5a6d9b7103adb1e997f
+            02bf74ecde6e5226868f1655672e2116367062852edd13d8c20ba094a76a18c9
+            1b882e15d46fdb6f83851f1e0bdf9c61854fd689e8e7678959f47e70c200b1a3
+            8db10b145b66de9d5fc65c656e5d02727338418c62f705144a895d18367451fc
+            4b07d78f6c92995a270b4908ae95f01b71bc945afdc0b2705b3434b9c1364e53
+            0d0151156e7102a3af50702df9e02d8caebb919abdabf453ca9dfc779fdd8006
+            f78ad5f908bb5e336366db59c4b2312e288e486a5eeeafbc2a63ab08b69a77c9
+            c724c557b2f41b66904c0f15bca190eb9e1545422b982744d2b5e3adf8bc6b45
+            750471bb8560d3a3c925dfa455a89e10054853a2d783f37e70ce4f90729aceb0
+            6b9ffc69e6d68286a5c7bf0437516007f7f116ffae67f3e165434f3e2d0d6a12
+            2d8baf5e82731dd3b22b647ef96bba069a5b489ff91dcec5e50c45c0b5a4c0d5
+            5e2c4b3b6b5db2cf7c526bb546ef61a65172d28a2c48ef688142350c90e5c3b6
+            a04cdc0f2643dff2e9637527757f59b00c0f582f24ecfcdb384fe75bc5dabc87
+            56101361cf05cf5c9f02e3964df3b0afa1d54c451aa22d52e84187abdd991673
+            62c0f1ab71c5ecace418e159ec160713705435b34449674e5d2415326db94a97
+            41114b545bbcbb9e3a9883520f5db08cb4cb6312cac8820c78f046c38c7f0dc6
+            4c4fe22c8cbde357fc5a476ee4d3875e52a7ae4b458dcc62d598dc81b4671d05
+            """),
+        "figref_count": 22,
+        "figure_reference_counts": (3, 2, 3, 2, 3, 2, 3, 2, 2),
+        "phrase_counts": {
+            "field of view": 0,
+            "FOV": 0,
+            "HFOV": 0,
+            "angle of view": 0,
+            "angular field": 0,
+            "field angle": 0,
+            "IMGHT": 2,
+            "IMG HT": 0,
+            "image height": 0,
+            "aperture stop": 0,
+            "(Stop)": 4,
+            "f number": 2,
+            "F-number": 0,
+            "reflective surface": 15,
+        },
+        "pdf_audit": {
+            "path": (
+                "data/patent-lake/uspto-ppubs-pdf/528d1565458311a7/US-20260110880-A1.pdf"
+            ),
+            "bytes": 1_246_229,
+            "container_sha256": (
+                "528d1565458311a7a1d301fba6b5c43cd8bfeae3f5484b2b7cf9a2ff6e509645"
+            ),
+            "page_count": 24,
+            "common_raster_dimensions": (2560, 3300),
+            "narrow_raster_dimensions": (2550, 3300),
+            "narrow_raster_page_numbers": (13, 14, 15, 16),
+            "page_raster_sha256": _samsung_zoom_sha256_lines("""
+                481ebd81408490e093e9b3aac5ae3744362657ecb3244c62b5ed6d75e18b5c1c
+                e30dd4c633ea877799521cb9cfa4b67797f1beddead7ece4a415808cf8bb40cd
+                8c57a1d9954121d8ca606c0089ba20bfcb8ca144ef81d29183021659f8a82286
+                5338242b49988a229a1a4f489dbe4c071a407112ddde6df42f0c6693ff18a9a7
+                ae1a50c7aef488119ca0bc8d2101df7d98dddbfb3a4149fdcfde629086d7803b
+                991030754116d2a9c1793096d62dbf52ffe1e06d285a4c2c6c80fd17b508f263
+                7bcd66ac74582b3af33af73dfaa167c4c5d94e324c4d3fa677c58860bfb85406
+                eae8b7b209642a52753adce98050558e33050b356fd8bc6db75bb5d27e1989d1
+                8163eb2ba52b19fabedfa23cedca3a7325107cd76d9255fabf02934c1393b3ea
+                4005be6e31ccb531d3113e7d61aaba3ac1ed763ea51f6c4df9ffc9ccf0793882
+                454f17a68453417f13cab9d2e57ee6924934ac51151bc856b007fbaf2c59a574
+                cb1aa5c1eafee56f74ddea54ff1d96ba716c08e28d129a6e7c9a5369197c7e5d
+                7787edbc35290dafe4f61dae141b26a155fe0b80ed1894ea7ae3028be5320a42
+                d526e0ece96d67cab494daf88837fa9962581f0a02901d6bd9559449d5da953d
+                1d971c533f8a0714af960aa5d08ded4a6c3b6eaa1054d4bba4a32a468bc7ee2f
+                80b173a7f09b2f0b9ebdefd303f13ec3d7c278630e555e7a2a07615aa12c5b0a
+                614ddfff68efccd24df24567367cbb23334ff6930bc8d3da31cf672f711e18cd
+                8cbe707764a04f2a3ba7b47f96405e3dc9f54aa4c68bb76c16644fedce7e804f
+                d08be07ea9435fa4e155db685248f208e6acebf157d3c1cf4000ca1b7a392460
+                8b837ede63d31b9a8481e20558435745ec8db7d966aa7f023f0c21e6d24238ae
+                9b0624944ca32fc208be62eb0cad9856828de986dace583358f5bb655a45047c
+                2c39a18842d208f1f92d65d0a090a93be27e44ed195d086884a7aeacb6b2e07c
+                1f0d0261db80ba9794206319d1cbe33b662a9b7a0ca733eb711e708d8d5a11f9
+                df8fbcda8f44e69adf177d0648aa720cc4ec058eddb697c5f2633fc688ecd312
+                """),
+            "raster_set_sha256": (
+                "6fafdb8ce988060a913ef4770ca29db5f6768d33990e4e6fc9fed0c840b404ca"
+            ),
+            "cover_page_numbers": (1,),
+            "drawing_page_numbers": tuple(range(2, 11)),
+            "specification_page_numbers": tuple(range(11, 25)),
+            "claims_page_numbers": (24,),
+        },
+    }
+}
+
+
+def _samsung_reflective_eight_lens_table_payloads(
+    paragraphs: dict[int, str],
+    owners: dict[int, tuple[int, ...]],
+) -> dict[int, str]:
+    tables: dict[int, str] = {}
+    for paragraph_number, expected_numbers in owners.items():
+        paragraph = paragraphs[paragraph_number]
+        matches = list(re.finditer(r"TABLE-US-(\d{5})", paragraph))
+        observed_numbers = tuple(int(match.group(1)) for match in matches)
+        if observed_numbers != expected_numbers:
+            raise PatentParseError(
+                "Samsung reflective eight-lens paragraph "
+                f"{paragraph_number} table ownership changed"
+            )
+        for index, match in enumerate(matches):
+            tables[observed_numbers[index]] = paragraph[
+                match.start() : (
+                    matches[index + 1].start()
+                    if index + 1 < len(matches)
+                    else len(paragraph)
+                )
+            ].strip()
+    if tuple(tables) != tuple(range(1, 18)):
+        raise PatentParseError(
+            "Samsung reflective eight-lens table denominator changed"
+        )
+    return tables
+
+
+def _samsung_reflective_eight_lens_table13_rows(
+    table_text: str,
+) -> dict[str, tuple[str, ...]]:
+    def rows(label_pattern: str) -> tuple[tuple[str, ...], ...]:
+        return tuple(
+            tuple(match.group("values").split())
+            for match in re.finditer(
+                rf"(?<!\S){label_pattern}\s+"
+                rf"(?P<values>{NUMBER_PATTERN}(?:\s+{NUMBER_PATTERN}){{3}})(?=\s|$)",
+                table_text,
+                re.IGNORECASE,
+            )
+        )
+
+    ttl = rows("TTL")
+    focal_length = rows(r"f(?!\s+number|\d)")
+    f_number = rows(r"f\s+number")
+    image_height = rows("ImgHT")
+    if not (
+        len(ttl) == len(f_number) == len(image_height) == 1
+        and len(focal_length) == 2
+        and focal_length[0] == focal_length[1]
+    ):
+        raise PatentParseError(
+            "Samsung reflective eight-lens TABLE 13 direct-row layout changed"
+        )
+    return {
+        "TTL": ttl[0],
+        "f": focal_length[0],
+        "f_number": f_number[0],
+        "ImgHT": image_height[0],
+    }
+
+
+def _classify_samsung_reflective_eight_lens_metadata_unpublished_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Classify exact Family 97520240 without deriving an angular field."""
+
+    profile = _SAMSUNG_REFLECTIVE_EIGHT_LENS_SOURCE_PROFILES.get(patent_id.upper())
+    if profile is None:
+        return []
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=number,
+                embodiment=label,
+                error=exc,
+            )
+            for number, label, _paragraphs, _figures, _tables in (
+                _SAMSUNG_REFLECTIVE_EIGHT_LENS_ITEMS
+            )
+        ]
+
+    try:
+        if (
+            hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+            != profile["raw_document_sha256"]
+        ):
+            raise PatentParseError(
+                f"Samsung reflective eight-lens official raw text hash changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if (
+            hashlib.sha256(text.encode("utf-8")).hexdigest()
+            != profile["normalized_text_sha256"]
+        ):
+            raise PatentParseError(
+                f"Samsung reflective eight-lens normalized text hash changed for {patent_id}"
+            )
+        if (
+            len(
+                re.findall(
+                    r"<h2[^>]*>\s*IMAGING\s+LENS\s+SYSTEM\s*</h2>",
+                    raw_text,
+                    re.IGNORECASE,
+                )
+            )
+            != 1
+        ):
+            raise PatentParseError(
+                "Samsung reflective eight-lens title binding changed"
+            )
+        for marker, expected in profile["identity_markers"].items():
+            observed = len(re.findall(re.escape(marker), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens identity marker {marker!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+
+        section_markers = profile["section_markers"]
+        section_names = tuple(section_markers)
+        try:
+            section_starts = {
+                name: text.index(marker) for name, marker in section_markers.items()
+            }
+        except ValueError as exc:
+            raise PatentParseError(
+                "Samsung reflective eight-lens section boundary changed"
+            ) from exc
+        if tuple(section_starts.values()) != tuple(sorted(section_starts.values())):
+            raise PatentParseError(
+                "Samsung reflective eight-lens section ordering changed"
+            )
+        sections = {
+            name: text[
+                section_starts[name] : (
+                    section_starts[section_names[index + 1]]
+                    if index + 1 < len(section_names)
+                    else len(text)
+                )
+            ]
+            for index, name in enumerate(section_names)
+        }
+        for section_name, expected_digest in profile["section_sha256"].items():
+            observed_digest = hashlib.sha256(
+                sections[section_name].encode("utf-8")
+            ).hexdigest()
+            if observed_digest != expected_digest:
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens {section_name} section changed"
+                )
+        for section_name, bounds in profile["paragraph_ranges"].items():
+            observed = tuple(
+                int(value)
+                for value in re.findall(r"\[(\d{4})\]", sections[section_name])
+            )
+            if observed != tuple(range(bounds[0], bounds[1] + 1)):
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens {section_name} paragraph denominator changed"
+                )
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]", text))
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 130)):
+            raise PatentParseError(
+                "Samsung reflective eight-lens paragraphs 1-129 changed"
+            )
+        paragraphs = {
+            number: text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else section_starts["claims"]
+                )
+            ].strip()
+            for index, (number, match) in enumerate(
+                zip(paragraph_numbers, paragraph_matches, strict=True)
+            )
+        }
+        for bounds, expected_digest in profile["paragraph_span_sha256"].items():
+            payload = "".join(
+                paragraphs[number] for number in range(bounds[0], bounds[1] + 1)
+            )
+            if hashlib.sha256(payload.encode("utf-8")).hexdigest() != expected_digest:
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens paragraph span {bounds} changed"
+                )
+
+        declared_figures: list[int] = []
+        for paragraph_number in range(25, 34):
+            match = re.match(
+                r"\[\d{4}\]\s+FIG\.\s+(\d+)\s+is\b",
+                paragraphs[paragraph_number],
+                re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError(
+                    "Samsung reflective eight-lens figure declaration paragraph "
+                    f"{paragraph_number} changed"
+                )
+            declared_figures.append(int(match.group(1)))
+        if declared_figures != list(range(1, 10)):
+            raise PatentParseError("Samsung reflective eight-lens FIGS. 1-9 changed")
+        mapped_figures = tuple(
+            figure
+            for _number, _label, _paragraphs, figures, _tables in (
+                _SAMSUNG_REFLECTIVE_EIGHT_LENS_ITEMS
+            )
+            for figure in figures
+        )
+        if mapped_figures != tuple(range(1, 10)):
+            raise PatentParseError(
+                "Samsung reflective eight-lens item-to-figure mapping changed"
+            )
+        figure_references = re.findall(
+            r"<figref\b.*?</figref>", raw_text, re.IGNORECASE | re.DOTALL
+        )
+        if len(figure_references) != profile["figref_count"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens FIGREF denominator changed"
+            )
+        figure_counter: Counter[int] = Counter()
+        for reference in figure_references:
+            reference_text = html.unescape(re.sub(r"<[^>]+>", " ", reference))
+            figure_counter.update(
+                int(value) for value in re.findall(r"\d+", reference_text)
+            )
+        figure_reference_counts = tuple(
+            figure_counter[figure] for figure in range(1, 10)
+        )
+        if figure_reference_counts != profile["figure_reference_counts"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens figure references changed"
+            )
+
+        tables = _samsung_reflective_eight_lens_table_payloads(
+            paragraphs,
+            profile["table_owner_paragraphs"],
+        )
+        table_hashes = tuple(
+            hashlib.sha256(tables[number].encode("utf-8")).hexdigest()
+            for number in range(1, 18)
+        )
+        if table_hashes != profile["table_payload_sha256"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens table payloads changed"
+            )
+        row_labels = (
+            "K",
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "J",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+        )
+        expected_headers = (
+            (1, 3, 4, 5, 6, 7, 8, 9),
+            (10, 11, 12, 13, 14, 15, 16, 17),
+        )
+        for surface_table, asphere_table in ((1, 2), (4, 5), (7, 8), (10, 11)):
+            surface_numbers = tuple(
+                int(value)
+                for value in re.findall(
+                    r"(?<![A-Za-z0-9])S(\d+)\b", tables[surface_table]
+                )
+            )
+            if surface_numbers != tuple(range(1, 21)):
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens TABLE {surface_table} S1-S20 changed"
+                )
+            stop_row = re.search(
+                r"(?<![A-Za-z0-9])S8\b(?:(?!\s+S\d+\b).)*\(Stop\)"
+                r"(?=\s+S9\b)",
+                tables[surface_table],
+                re.IGNORECASE,
+            )
+            if stop_row is None or tables[surface_table].count("(Stop)") != 1:
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens TABLE {surface_table} stop binding changed"
+                )
+            headers = tuple(
+                tuple(int(value) for value in re.findall(r"S(\d+)", header))
+                for header in re.findall(
+                    r"Surface No\.\s+((?:S\d+\s+){7}S\d+)\s+K\b",
+                    tables[asphere_table],
+                    re.IGNORECASE,
+                )
+            )
+            if headers != expected_headers:
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens TABLE {asphere_table} headers changed"
+                )
+            labels = tuple(
+                match.group(1).upper()
+                for match in re.finditer(
+                    r"(?<!\S)(K|A|B|C|D|E|F|G|H|J|L|M|N|O|P)\s+(?=[+-]?\d)",
+                    tables[asphere_table],
+                    re.IGNORECASE,
+                )
+            )
+            if labels != row_labels * 2:
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens TABLE {asphere_table} coefficient rows changed"
+                )
+        if (
+            _samsung_reflective_eight_lens_table13_rows(tables[13])
+            != profile["table13_rows"]
+        ):
+            raise PatentParseError(
+                "Samsung reflective eight-lens TABLE 13 direct values changed"
+            )
+        if any(
+            len(re.findall(re.escape(row), tables[10], re.IGNORECASE)) != 1
+            for row in profile["table10_blank_rows"]
+        ):
+            raise PatentParseError(
+                "Samsung reflective eight-lens TABLE 10 printed blank rows changed"
+            )
+
+        math_objects = re.findall(r"<maths\b.*?</maths>", raw_text, re.I | re.S)
+        math_numbers = tuple(
+            int(value)
+            for value in re.findall(
+                r'<maths\b[^>]*\bid="MATH-US-(\d{5})', raw_text, re.IGNORECASE
+            )
+        )
+        math_hashes = tuple(
+            hashlib.sha256(math_object.encode("utf-8")).hexdigest()
+            for math_object in math_objects
+        )
+        if (
+            math_numbers != profile["math_numbers"]
+            or math_hashes != profile["math_object_sha256"]
+        ):
+            raise PatentParseError(
+                "Samsung reflective eight-lens 25 MathML objects changed"
+            )
+
+        claim_matches = list(
+            re.finditer(
+                r"(?<!\S)(\d+)\s*\.\s+(?=(?:An?|The)\s)",
+                sections["claims"],
+                re.IGNORECASE,
+            )
+        )
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Samsung reflective eight-lens claims 1-19 changed")
+        claim_payloads = tuple(
+            sections["claims"][
+                match.start() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(sections["claims"])
+                )
+            ].strip()
+            for index, match in enumerate(claim_matches)
+        )
+        claim_dependencies = tuple(
+            tuple(
+                int(value) for value in re.findall(r"\bclaim\s+(\d+)\b", payload, re.I)
+            )
+            for payload in claim_payloads
+        )
+        if claim_dependencies != profile["claim_dependencies"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens claim dependencies changed"
+            )
+        independent_claims = tuple(
+            number
+            for number, dependencies in zip(
+                claim_numbers, claim_dependencies, strict=True
+            )
+            if not dependencies
+        )
+        if independent_claims != profile["independent_claim_numbers"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens independent claims changed"
+            )
+        claim_hashes = tuple(
+            hashlib.sha256(payload.encode("utf-8")).hexdigest()
+            for payload in claim_payloads
+        )
+        if claim_hashes != profile["claim_sha256"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens claim payloads changed"
+            )
+
+        for phrase, expected in profile["phrase_counts"].items():
+            observed = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
+            if observed != expected:
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens source phrase {phrase!r} occurs "
+                    f"{observed}; expected {expected}"
+                )
+        direct_angular_field_pattern = (
+            rf"\b(?:HFOV|FOV|field[ -]of[ -]view|angle[ -]of[ -]view|"
+            rf"angular\s+field|field\s+angle)\b\s*(?:is|=|:)\s*"
+            rf"{NUMBER_PATTERN}\s*(?:degrees?|掳)"
+        )
+        if re.search(direct_angular_field_pattern, text, re.IGNORECASE) is not None:
+            raise PatentParseError(
+                "Samsung reflective eight-lens source may now publish angular field"
+            )
+
+        pdf_profile = profile["pdf_audit"]
+        pdf_bytes = (ROOT / pdf_profile["path"]).read_bytes()
+        if len(pdf_bytes) != pdf_profile["bytes"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens official PDF bytes changed"
+            )
+        if hashlib.sha256(pdf_bytes).hexdigest() != pdf_profile["container_sha256"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens official PDF hash changed"
+            )
+        reader = pypdf.PdfReader(io.BytesIO(pdf_bytes))
+        if len(reader.pages) != pdf_profile["page_count"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens official PDF page count changed"
+            )
+        narrow_pages = frozenset(pdf_profile["narrow_raster_page_numbers"])
+        page_raster_hashes: list[str] = []
+        text_layer_characters = 0
+        for page_number, page in enumerate(reader.pages, start=1):
+            images = list(page.images)
+            if len(images) != 1:
+                raise PatentParseError(
+                    "Samsung reflective eight-lens PDF page "
+                    f"{page_number} contains {len(images)} rasters; expected one"
+                )
+            expected_dimensions = (
+                pdf_profile["narrow_raster_dimensions"]
+                if page_number in narrow_pages
+                else pdf_profile["common_raster_dimensions"]
+            )
+            if (
+                images[0].image.size != expected_dimensions
+                or images[0].image.mode != "1"
+            ):
+                raise PatentParseError(
+                    f"Samsung reflective eight-lens PDF page {page_number} raster changed"
+                )
+            page_raster_hashes.append(_canonical_raster_sha256(images[0].data))
+            text_layer_characters += len(page.extract_text() or "")
+        if tuple(page_raster_hashes) != pdf_profile["page_raster_sha256"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens PDF page raster hashes changed"
+            )
+        raster_set_digest = hashlib.sha256(
+            ("\n".join(page_raster_hashes) + "\n").encode("utf-8")
+        ).hexdigest()
+        if raster_set_digest != pdf_profile["raster_set_sha256"]:
+            raise PatentParseError(
+                "Samsung reflective eight-lens PDF raster set changed"
+            )
+        if text_layer_characters != 0:
+            raise PatentParseError(
+                "Samsung reflective eight-lens official PDF gained text"
+            )
+        if not (
+            pdf_profile["cover_page_numbers"] == (1,)
+            and pdf_profile["drawing_page_numbers"] == tuple(range(2, 11))
+            and pdf_profile["specification_page_numbers"] == tuple(range(11, 25))
+            and pdf_profile["claims_page_numbers"] == (24,)
+        ):
+            raise PatentParseError(
+                "Samsung reflective eight-lens PDF page roles changed"
+            )
+    except Exception as exc:  # noqa: BLE001 - retain all five exact source items
+        return attempts_for_error(exc)
+
+    attempts: list[_PrescriptionParseAttempt] = []
+    direct_rows = profile["table13_rows"]
+    for (
+        number,
+        label,
+        paragraphs,
+        figures,
+        tables,
+    ) in _SAMSUNG_REFLECTIVE_EIGHT_LENS_ITEMS:
+        if number <= 3:
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_SAMSUNG_REFLECTIVE_EIGHT_LENS_ANGULAR_FIELD_REASON,
+                detail=(
+                    f"Samsung Family 97520240 embodiment {number} (paragraphs "
+                    f"{paragraphs[0]}-{paragraphs[1]}, FIGS. {figures[0]}-{figures[1]}, "
+                    f"TABLES {tables[0]}-{tables[2]}) directly publishes S1-S20, "
+                    "S8 as the stop, sixteen S1/S3-S17 K/A-P aspheres, telephoto/wide "
+                    f"D1/D2 states, and TABLE 13 f={direct_rows['f'][number - 1]} mm, "
+                    f"F/{direct_rows['f_number'][number - 1]}, "
+                    f"ImgHT={direct_rows['ImgHT'][number - 1]} mm and "
+                    f"TTL={direct_rows['TTL'][number - 1]} mm. The exact A1 publishes "
+                    "no numeric angular field. No field is derived from focal length "
+                    "and image height, measured from drawings, transcribed from raster, "
+                    "interpolated or borrowed from another embodiment or family"
+                ),
+            )
+        elif number == 4:
+            error = PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=_SAMSUNG_REFLECTIVE_EIGHT_LENS_INCOMPLETE_REASON,
+                detail=(
+                    "Samsung Family 97520240 embodiment 4 (paragraphs 115-123, "
+                    "FIGS. 7-8, TABLES 10-12) directly publishes S1-S20, S8 as the "
+                    "stop, sixteen S1/S3-S17 K/A-P aspheres, telephoto/wide D1/D2 "
+                    f"states, and TABLE 13 f={direct_rows['f'][3]} mm, "
+                    f"F/{direct_rows['f_number'][3]}, ImgHT={direct_rows['ImgHT'][3]} "
+                    f"mm and TTL={direct_rows['TTL'][3]} mm. The exact A1 publishes no "
+                    "numeric angular field, and TABLE 10 directly leaves the S18, S19 "
+                    "and S20 Thickness/Distance cells blank. The original official "
+                    "page-22 raster confirms only that printed blank-cell boundary; "
+                    "no blank is repaired and no field or distance is derived, measured, "
+                    "transcribed, interpolated or borrowed"
+                ),
+            )
+        else:
+            error = PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=_SAMSUNG_REFLECTIVE_EIGHT_LENS_WRAPPER_REASON,
+                detail=(
+                    "Samsung Family 97520240 paragraphs 126-127 and FIG. 9 disclose "
+                    "only an electronic-device/camera-module wrapper containing an "
+                    "imaging lens system; they publish no additional ordered optical "
+                    "prescription"
                 ),
             )
         attempts.append(

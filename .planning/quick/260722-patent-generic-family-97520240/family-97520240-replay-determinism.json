@@ -1,0 +1,56 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "97520240",
+  "root_id": "US-20260110880",
+  "publication_id": "US-20260110880-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110880/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "0c1b85670f829084bf421ff292516d4d018349fdc047bd5d5fa364e71c3bfce8",
+    "result_attempt": 1,
+    "root_state": "parser_review_required"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110880/attempt-0002/result.json",
+      "bytes": 6064,
+      "sha256": "65a4c0f05fec2704936720bb6c7429007e371061ef0598e7471f27d7cb79ab7f",
+      "result_attempt": 2,
+      "file_sha256": "65a4c0f05fec2704936720bb6c7429007e371061ef0598e7471f27d7cb79ab7f",
+      "semantic_sha256": "5ed70937f280ab62db85c98e0602c03bdc0f2fed41e02bfa3a2066d4f2ad73c9"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110880/attempt-0003/result.json",
+      "bytes": 6064,
+      "sha256": "b1246ad93fbd0a85e9cbb650f4b2028eaf87b67d304c011f91e27e8c382c9066",
+      "result_attempt": 3,
+      "file_sha256": "b1246ad93fbd0a85e9cbb650f4b2028eaf87b67d304c011f91e27e8c382c9066",
+      "semantic_sha256": "5ed70937f280ab62db85c98e0602c03bdc0f2fed41e02bfa3a2066d4f2ad73c9"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "5ed70937f280ab62db85c98e0602c03bdc0f2fed41e02bfa3a2066d4f2ad73c9",
+  "terminal_reason_codes": [
+    "terminal.metadata_unpublished.system_angular_field_absent",
+    "terminal.metadata_unpublished.system_angular_field_absent",
+    "terminal.metadata_unpublished.system_angular_field_absent",
+    "terminal.metadata_unpublished.system_angular_field_and_final_axial_distances_absent",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

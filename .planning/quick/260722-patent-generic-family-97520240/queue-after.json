@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260722-patent-generic-family-97520240/generic-residual-after-1.json",
+  "affected_roots": 27,
+  "affected_items": 27,
+  "result_set_sha256": "843699ac02589c748683ce5202fda6c78e0669b4cc2a568c3c39e33f1c337c6e",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "ce187bdc695585487f4461c26f6c58cbc8db711f79d98e688883d865e955a6a2",
+    "layout_signature_count": 1,
+    "family_id": "86539672",
+    "root_ids": [
+      "US-20240352227"
+    ],
+    "publication_ids": [
+      "US-20240352227-A1"
+    ],
+    "application_numbers": [
+      "18/686481"
+    ],
+    "title": "RESIN COMPOSITION FOR FORMING OPTICAL COMPONENT, MOLDED PRODUCT, AND OPTICAL COMPONENT",
+    "applicant_and_assignee": "MITSUI CHEMICALS, INC.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/38c41444a022cbd1/US-20240352227-A1.html",
+      "bytes": 94640,
+      "sha256": "38c41444a022cbd1ec7e325020142031db4e1372e5339a8bc05b2c9f20f3541a",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 34,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 2
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}
