@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `a40505003939ad571f601e4a0841a5d1cfd041471d096d32bbd799e01a738884`
+- result_set_sha256: `b89c4b87150b6577e738155ce9f3e159de2958a3dc922621187c04ccfd1d6f13`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 29
-- `terminal`: 214
-- `parser_review_required`: 221
+- `terminal`: 215
+- `parser_review_required`: 220
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 609
-- `terminal`: 1755
-- `parser_review_required`: 1334
+- `terminal`: 1766
+- `parser_review_required`: 1333
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 684
+- `confirmed_no_prescription`: 695
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 325
@@ -48,14 +48,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `parser_review_required.all_disclosed_items_rejected`: 221
-- `terminal.all_disclosed_items_terminal`: 214
+- `parser_review_required.all_disclosed_items_rejected`: 220
+- `terminal.all_disclosed_items_terminal`: 215
 - `mixed_nonterminal.multiple_item_states`: 155
 - `converted_pending_intake.all_disclosed_items_converted`: 29
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1334
+- `parser_review_required.deterministic_parser_rejected`: 1333
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 609
 - `terminal.metadata_unpublished.system_f_number_absent`: 91
@@ -91,6 +91,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only`: 7
 - `terminal.confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only`: 7
 - `terminal.metadata_unpublished.asphere_high_order_coefficient_semantics_absent`: 7
+- `terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only`: 6
 - `terminal.confirmed_no_prescription.light_folded_camera_mechanical_dimensions_only`: 6
 - `terminal.confirmed_no_prescription.reflection_image_stabilization_architecture_only`: 6
 - `terminal.confirmed_no_prescription.shiftable_image_sensor_wire_geometry_only`: 6
@@ -133,11 +134,13 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.variable_aperture_magnet_hall_control_architecture_only`: 3
 - `terminal.metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent`: 3
 - `terminal.confirmed_no_prescription.barcode_scanner_architecture_only`: 2
+- `terminal.confirmed_no_prescription.camera_module_light_blocking_architecture_only`: 2
 - `terminal.confirmed_no_prescription.camera_module_light_blocking_compensation_architecture_only`: 2
 - `terminal.confirmed_no_prescription.compact_barcode_telephoto_architecture_only`: 2
 - `terminal.confirmed_no_prescription.deformable_lens_actuator_and_imaging_terminal_architecture_only`: 2
 - `terminal.confirmed_no_prescription.edof_microscope_architecture_only`: 2
 - `terminal.confirmed_no_prescription.electronic_device_camera_placement_and_digital_zoom_wrapper_only`: 2
+- `terminal.confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.encapsulated_camera_cord_controller_and_tether_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.first_projection_lens_schematic_materials_and_performance_only`: 2
@@ -149,6 +152,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.indicia_reader_operating_method_only`: 2
 - `terminal.confirmed_no_prescription.lens_barrel_surface_modification_and_manufacturing_architecture_only`: 2
 - `terminal.confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only`: 2
+- `terminal.confirmed_no_prescription.light_blocking_structure_architecture_only`: 2
 - `terminal.confirmed_no_prescription.light_blocking_wedge_and_dual_retainer_architecture_only`: 2
 - `terminal.confirmed_no_prescription.meta_optical_layer_and_device_architecture_only`: 2
 - `terminal.confirmed_no_prescription.metrology_results_only`: 2
@@ -232,7 +236,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.dual_working_range_imaging_engine_aiming_architecture_only`: 1
 - `terminal.confirmed_no_prescription.dye_aggregate_film_and_optical_filter_materials_only`: 1
 - `terminal.confirmed_no_prescription.dynamic_starry_sky_lamp_optical_architecture_only`: 1
-- `terminal.confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.encapsulated_camera_electromagnetic_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.encapsulated_camera_wire_loop_and_method_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.endoscope_wrapper_only`: 1
@@ -428,7 +431,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `sekonix_radius_not_numeric`: 64
 - `generic_numeric_token_rejected`: 62
 - `generic_surface_table_index_break`: 35
-- `generic_summary_metadata_missing`: 30
+- `generic_summary_metadata_missing`: 29
 - `other_sunny_s1_row_has_unexpected_extra_values_n_n_n`: 29
 - `other_finite_object_state_is_published_but_unsupported_by_the_infinity_conjugate_replay_model_object_distance_n`: 24
 - `ocr_corrupted_exponent`: 21

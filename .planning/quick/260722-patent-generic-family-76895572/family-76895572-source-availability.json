@@ -1,0 +1,115 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "76895572",
+  "root_id": "US-12174451",
+  "publication_id": "US-12174451-B2",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/cda8fd6d4eff9e12/US-12174451-B2.html",
+    "bytes": 112474,
+    "sha256": "cda8fd6d4eff9e1227beb39c5f6aa07183cf726e65f8864ec3bd6187c4e1cf8c",
+    "characters": 112401,
+    "normalized_characters": 89458,
+    "normalized_sha256": "63399ac52e9130c9427e712c356b072665f71b937ce0e0299267acceb55103a4"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "18/504213",
+    "filed": "2023-11-08",
+    "patent_date": "2024-12-24",
+    "prior_publication": "US-20240069305-A1",
+    "prior_publication_date": "2024-02-29",
+    "continuation_parent_application": "17/249182",
+    "continuation_parent_filed": "2021-02-23",
+    "continuation_parent_grant": "US-11846826",
+    "provisional_application": "63/027390",
+    "provisional_date": "2020-05-20"
+  },
+  "source_items": [
+    {"source_item": 1, "label": "first imaging-lens-assembly light-blocking architecture", "description_range": [63, 73], "figures": ["1A", "1B", "1C", "1D", "1E", "1F"], "table": 1, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 2, "label": "second imaging-lens-assembly light-blocking architecture", "description_range": [74, 84], "figures": ["2A", "2B", "2C", "2D"], "table": 2, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 3, "label": "third imaging-lens-assembly light-blocking architecture", "description_range": [85, 94], "figures": ["3A", "3B", "3C", "3D", "3E", "3F"], "table": 3, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 4, "label": "fourth imaging-lens-assembly light-blocking architecture", "description_range": [95, 104], "figures": ["4A", "4B", "4C"], "table": 4, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 5, "label": "fifth imaging-lens-assembly light-blocking architecture", "description_range": [105, 114], "figures": ["5A", "5B", "5C"], "table": 5, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 6, "label": "sixth imaging-lens-assembly light-blocking architecture", "description_range": [115, 124], "figures": ["6A", "6B", "6C", "6D", "6E", "6F"], "table": 6, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 7, "label": "seventh camera-module light-blocking architecture", "description_range": [125, 137], "figures": ["7A", "7B", "7C"], "table": 7, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 8, "label": "eighth camera-module light-blocking architecture", "description_range": [138, 150], "figures": ["8A", "8B", "8C"], "table": 8, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 9, "label": "ninth light-blocking-structure variant", "description_range": [151, 158], "figures": ["9"], "table": 9, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 10, "label": "tenth light-blocking-structure variant", "description_range": [159, 166], "figures": ["10"], "table": 10, "terminal_status": "confirmed_no_prescription"},
+    {"source_item": 11, "label": "electronic-device multi-camera wrapper", "description_range": [167, 175], "figures": ["11A", "11B", "11C", "11D", "11E", "11F"], "table": null, "terminal_status": "confirmed_no_prescription"}
+  ],
+  "directly_published_architecture_metadata": [
+    "lens-element count and object-side/image-side ordering by ordinal only",
+    "convex/concave lens-surface labels without radii or axial coordinates",
+    "lens carrier, light-blocking structure, opening and shrinking/arc geometry",
+    "opening diameter, area, arc curvature radius, minimum opening distance and their ratios",
+    "maximum deployment field of view and lens-element count",
+    "camera-module image sensor, reflecting element and driving-device architecture",
+    "electronic-device multi-camera placement and qualitative zoom role"
+  ],
+  "prescription_markers_absent_from_exact_source": [
+    "an ordered optical surface radius sequence",
+    "ordered axial intersurface spacing",
+    "numerical optical material, refractive index or Abbe dispersion rows",
+    "surface-specific conic constants or asphere coefficients",
+    "a source-bound exact focal length",
+    "a source-bound F-number",
+    "an absolute image height",
+    "an ordered surface prescription"
+  ],
+  "not_source_available": [
+    "permission to treat light-blocking-opening curvature as lens-surface curvature",
+    "permission to synthesize an optical prescription from lens count and convex/concave labels",
+    "permission to bind maximum deployment FOV to missing optical surface data",
+    "permission to derive optical coordinates from opening dimensions or ratios",
+    "permission to measure drawings",
+    "permission to transcribe or infer optical numbers from the image-only official PDF",
+    "numeric borrowing from application 17/249182, US-20240069305-A1, another family or a shared layout"
+  ],
+  "source_boundary": {
+    "radius_of_curvature_occurrences": 0,
+    "curvature_radius_occurrences": 85,
+    "focal_length_occurrences": 1,
+    "F_number_occurrences": 0,
+    "field_of_view_occurrences": 13,
+    "half_field_occurrences": 0,
+    "image_height_occurrences": 0,
+    "aspheric_occurrences": 0,
+    "refractive_index_occurrences": 0,
+    "Abbe_occurrences": 0,
+    "dispersion_occurrences": 0,
+    "aperture_stop_occurrences": 12,
+    "lens_assembly_occurrences": 162,
+    "lens_group_occurrences": 0,
+    "optical_power_occurrences": 0,
+    "wavelength_occurrences": 0,
+    "convex_occurrences": 33,
+    "concave_occurrences": 22,
+    "effective_focal_occurrences": 0,
+    "entrance_pupil_occurrences": 0,
+    "ordered_prescriptions": 0
+  },
+  "repair_policy": {
+    "opening_geometry_promoted_to_prescription": false,
+    "generic_lens_language_promoted_to_prescription": false,
+    "deployment_field_promoted_to_prescription": false,
+    "drawing_or_plot_measurement_used": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "printed_token_repair_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "parent_or_prior_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 11,
+    "ordered_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 11,
+    "reason_codes": {
+      "confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only": 6,
+      "confirmed_no_prescription.camera_module_light_blocking_architecture_only": 2,
+      "confirmed_no_prescription.light_blocking_structure_architecture_only": 2,
+      "confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only": 1
+    }
+  }
+}

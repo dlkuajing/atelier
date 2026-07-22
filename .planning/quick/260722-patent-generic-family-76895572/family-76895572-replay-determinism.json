@@ -1,0 +1,51 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "76895572",
+  "root_id": "US-12174451",
+  "publication_id": "US-12174451-B2",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12174451/attempt-0002/result.json",
+      "bytes": 17810,
+      "file_sha256": "e625b7995539ed83745633d887db7094844363110c184268c3bbcfc22dd93a5c",
+      "semantic_sha256": "d8db47520b28971d413bcfbdbfed1b557fe829865f9f272c3ee856542b5a3d76"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12174451/attempt-0003/result.json",
+      "bytes": 17810,
+      "file_sha256": "0dc6e1d83a5a66ec0a26ba753f00cf54ea6120b5435c41fa28aba2b4c2e69584",
+      "semantic_sha256": "d8db47520b28971d413bcfbdbfed1b557fe829865f9f272c3ee856542b5a3d76"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": ["result_attempt"],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "d8db47520b28971d413bcfbdbfed1b557fe829865f9f272c3ee856542b5a3d76",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.light_blocking_structure_architecture_only",
+    "terminal.confirmed_no_prescription.light_blocking_structure_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_used": false
+}
