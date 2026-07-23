@@ -963,6 +963,34 @@ protected-path/primary-repository/process audits pass. Stable ordering selects F
 `83151794`, root/publication `US-12379524` / `US-12379524-B2`, next. Parent saturation
 remains active and incomplete.
 
+Family `83151794`, root/publication `US-12379524` / `US-12379524-B2`, is the active
+exact-source GSD quick opened from committed state `11cc8f55`. The frozen pre-change
+residual contains 9 roots/items at result set
+`69498bbd5cad2fc324ee85775e3456d81a741c724e40e6bd10e5b8cfeb0f1e1e` and census
+SHA-256 `0ff765a6b59d2440154ee447597f09b8b3c62bacf7aaf8bbf6c555edee6d7b13`.
+No outcome is established until the exact B2 lineage, sections, claims, figures,
+tables and complete source-item denominator are reconciled. Parent saturation remains
+active and incomplete.
+
+Family `83151794`, root/publication `US-12379524` / `US-12379524-B2`, is complete at
+26 exact source items: thirteen optical/coating architecture datasets, six independent
+coating experiments, one long-wavelength absorbing/filtering architecture, one
+camera-module wrapper and five electronic-device wrappers. All close as precise
+`confirmed_no_prescription` terminals because the exact coating, material,
+lens-composition and wrapper data never publish a complete ordered optical
+prescription. TABLE 19's 6/6/6 experiment lens counts remain distinct from TABLES
+1-3's 5/7/6 apparatus counts; no identity mapping is repaired or inferred. No OCR,
+enhancement, raster numeric transcription, measurement, inference, worker,
+request/receipt, fingerprint, ZMX, formal intake or CODE V activity exists. Attempts
+2/3 preserve attempt 1 and are semantic-equal at `e38b0182...7195a2`; strict replay
+is 619/619 with zero missing/corrupt. Generic residual is 8 at result set
+`45ec6aed...ea31b` and repeat census `046225ba...e1eeb`. Focused 11/11, broad
+1,119/1,119, source-evidence/live-pointer 89/89 and replay/census/saturation/
+no-real-CODEV guards 56/56 pass; Ruff, compile, diff, JSON/evidence/output/
+protected-path/frozen-snapshot/primary-repository/process audits pass. Stable ordering
+selects Family `73003010`, root/publication `US-12313819` / `US-12313819-B2`, next.
+Parent saturation remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

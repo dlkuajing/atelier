@@ -1,0 +1,58 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "83151794",
+  "root_id": "US-12379524",
+  "publication_id": "US-12379524-B2",
+  "classification_source": "US-12379524-B2 only",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/2e42d8b48be61955/US-12379524-B2.html",
+    "bytes": 163447,
+    "sha256": "2e42d8b48be61955ceaa15326ca571f7d27abd52b431c19a06619dd9fa0151e1"
+  },
+  "official_pdf": {
+    "source_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12379524",
+    "captures": [
+      {
+        "path": ".planning/quick/260723-patent-generic-family-83151794/source-review/US-12379524-B2-official-1.pdf",
+        "bytes": 2440487,
+        "sha256": "a0fe9eb7882afab53b0cfc1864d3808dc2c467a235e9814e19880aed9edbc699"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-83151794/source-review/US-12379524-B2-official-2.pdf",
+        "bytes": 2440487,
+        "sha256": "3290bec834493628115c9b7f0c6883d69b75f533d1b3f43a7987e6b45a1b43a1"
+      }
+    ],
+    "page_count": 41,
+    "text_characters": 0,
+    "decoded_raster_set_sha256": "b8796448c24202a39b2b7fb7f435c589d55643f3ce7b26e7d2f00d8b26a30293",
+    "pixel_only_raster_set_sha256": "0219f42e322340c8c99ae699717ee046ebf2289c97aa68e64729e017536cf980",
+    "captures_decode_identically": true
+  },
+  "source_disclosed_lineage": [
+    {
+      "record_type": "prior_publication",
+      "identifier": "US-20230073044-A1",
+      "published": "2023-03-09",
+      "role": "bibliography_only"
+    },
+    {
+      "record_type": "us_provisional_application",
+      "identifier": "63/239,434",
+      "filed": "2021-09-01",
+      "role": "bibliography_only"
+    },
+    {
+      "record_type": "foreign_priority_application",
+      "identifier": "TW-111129234",
+      "filed": "2022-08-03",
+      "role": "bibliography_only"
+    }
+  ],
+  "external_or_related_values_used": false,
+  "ocr_used": false,
+  "raster_numeric_transcription_used": false,
+  "drawing_measurement_used": false,
+  "numeric_inference_used": false,
+  "source_repair_used": false
+}

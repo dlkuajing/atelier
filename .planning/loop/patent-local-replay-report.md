@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `69498bbd5cad2fc324ee85775e3456d81a741c724e40e6bd10e5b8cfeb0f1e1e`
+- result_set_sha256: `45ec6aed9fb425738c23defad75ed9fc44be8851dbe697cc158074411dcea31b`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 29
-- `terminal`: 235
-- `parser_review_required`: 200
+- `terminal`: 236
+- `parser_review_required`: 199
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 609
-- `terminal`: 1949
-- `parser_review_required`: 1313
+- `terminal`: 1975
+- `parser_review_required`: 1312
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 774
+- `confirmed_no_prescription`: 800
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 429
@@ -48,19 +48,19 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `terminal.all_disclosed_items_terminal`: 235
-- `parser_review_required.all_disclosed_items_rejected`: 200
+- `terminal.all_disclosed_items_terminal`: 236
+- `parser_review_required.all_disclosed_items_rejected`: 199
 - `mixed_nonterminal.multiple_item_states`: 155
 - `converted_pending_intake.all_disclosed_items_converted`: 29
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1313
+- `parser_review_required.deterministic_parser_rejected`: 1312
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 609
 - `terminal.metadata_unpublished.system_f_number_absent`: 91
 - `terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent`: 81
-- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 43
+- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 48
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
 - `conversion_retry_required.patent_budget_exhausted`: 28
 - `terminal.confirmed_no_prescription.camera_module_device_architecture_only`: 27
@@ -73,6 +73,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only`: 15
 - `terminal.metadata_unpublished.prescription_specific_f_number_and_angular_field_absent`: 15
 - `terminal.confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only`: 13
+- `terminal.confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only`: 13
 - `terminal.confirmed_no_prescription.catadioptric_thin_film_and_module_architecture_only`: 12
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only`: 12
 - `terminal.confirmed_no_prescription.imaging_lens_element_nanostructure_transmittance_architecture_only`: 12
@@ -95,6 +96,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only`: 7
 - `terminal.confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only`: 7
 - `terminal.metadata_unpublished.asphere_high_order_coefficient_semantics_absent`: 7
+- `terminal.confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only`: 6
+- `terminal.confirmed_no_prescription.camera_module_wrapper_only`: 6
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_wrapper_only`: 6
 - `terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only`: 6
 - `terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only`: 6
@@ -106,7 +109,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.metadata_unpublished.prescription_specific_efl_f_number_and_angular_field_absent`: 6
 - `terminal.metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent`: 6
 - `terminal.confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only`: 5
-- `terminal.confirmed_no_prescription.camera_module_wrapper_only`: 5
 - `terminal.confirmed_no_prescription.imaging_optical_system_plate_filter_coating_architecture_only`: 5
 - `terminal.confirmed_no_prescription.lens_driving_mechanical_architecture_only`: 5
 - `terminal.confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only`: 5
@@ -324,6 +326,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.light_field_depth_channel_architecture_only`: 1
 - `terminal.confirmed_no_prescription.light_folded_camera_module_architecture_only`: 1
 - `terminal.confirmed_no_prescription.long_range_first_order_radiometric_parameters_only`: 1
+- `terminal.confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only`: 1
 - `terminal.confirmed_no_prescription.machine_learning_camera_setting_calibration_process_only`: 1
 - `terminal.confirmed_no_prescription.medical_apparatus_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.mems_lidar_channel_architecture_only`: 1
@@ -460,8 +463,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `asphere_surface_header_missing`: 16
 - `other_optical_metadata_label_hfov_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 11
 - `other_surface_n_thickness_is_not_numeric_flt`: 11
-- `generic_summary_metadata_missing`: 9
 - `other_folded_macro_tele_system_n_whole_system_focal_token_f_is_not_officially_defined_as_efl`: 9
+- `generic_summary_metadata_missing`: 8
 - `other_asphere_table_label_token_confidence_n_is_below_n`: 8
 - `other_sunny_sto_value_is_not_numeric_surface`: 8
 - `ofilm_odd_power_asphere_unsupported`: 7

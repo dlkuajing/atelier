@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-83151794/generic-residual-after-1.json",
+  "affected_roots": 8,
+  "affected_items": 8,
+  "result_set_sha256": "45ec6aed9fb425738c23defad75ed9fc44be8851dbe697cc158074411dcea31b",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "eecd0c13cc8d522bccad64c4a72f51ecae92e3c0c0047021dd0759947ca82bb4",
+    "layout_signature_count": 1,
+    "family_id": "73003010",
+    "root_ids": [
+      "US-12313819"
+    ],
+    "publication_ids": [
+      "US-12313819-B2"
+    ],
+    "application_numbers": [
+      "17/743326"
+    ],
+    "title": "Optical imaging lens assembly, image capturing unit and electronic device",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+      "bytes": 216969,
+      "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "marker_counts": {
+      "effective_focal_length": 1,
+      "embodiment_anchor": 143,
+      "example_anchor": 0,
+      "f_number": 21,
+      "full_field": 12,
+      "half_field": 15
+    },
+    "table_count": 24
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}
