@@ -1,0 +1,26 @@
+{
+  "schema_version": "patent-family-external-members/v1",
+  "family_id": "100312404",
+  "retained_publication": {
+    "publication_id": "US-20260186252-A1",
+    "application_number": "19/292973",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/cb2188a9d66b715c/US-20260186252-A1.html",
+    "bytes": 117302,
+    "sha256": "cb2188a9d66b715c5530c72647e069e7e5bc5f17bd5ffa94164bbbb4cc05acd2"
+  },
+  "source_disclosed_lineage": [
+    {
+      "record_type": "pct_continuation_parent_application",
+      "identifier": "PCT/CN2024/144649",
+      "filed": "2024-12-31",
+      "publication_id": null,
+      "status_token": "PENDING",
+      "evidence": "official A1 Related U.S. Application Data"
+    }
+  ],
+  "separate_priority_records": [],
+  "parent_publication_identifiers": [],
+  "classification_source": "US-20260186252-A1 only",
+  "numeric_borrowing_from_lineage_or_external_sources": false,
+  "note": "The PCT parent application is bibliography only; the exact retained A1 supplies no parent publication or separate priority record, and no external value, item boundary or outcome is borrowed."
+}

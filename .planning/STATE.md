@@ -819,32 +819,35 @@ run `29233888562` success；本机 automation inventory 当前无 `atelier-loop2
 | 260723-patent-generic-family-75814376 | complete-shovel-saturation-incomplete | Exact US-20260169267-A1 binds application 19/351312, parent continuation 17/211830 / grant US-12461343, Chinese priority 202110159404.5, Family ID 75814376 and Genius Electronic Optical (Xiamen). Continuous raw markers [0001]-[0158], claims 1-20 with claims 1/14 independent, 69 declared panels on 30 drawing sheets, 151 figure references, 22 MathML objects, zero machine-readable tables and nine numerical four-lens designs reconcile completely. Two unescaped `EFL<Fno` tokens hide following markers only under whole-section normalization; the source remains unrepaired and the classifier splits exact raw markers first. HTML directly publishes each item's EFL/F-number/HFOV/TTL/ImgH, while complete ordered surface/material/asphere rows exist only in one-bit raster tables. Project policy forbids OCR, enhancement, raster numeric transcription, measurement or inference, so all nine close as `metadata_unpublished.machine_readable_prescription_and_system_tables_absent`; no value is borrowed from parent/priority or Family 94742160. Two distinct official 43-page PDFs decode to the same original raster set at 8ab3fbb9...22378. Attempts 2/3 preserve attempt 1 and are semantic-equal at 53968fa7...8508; generic 18 to 17; result set 43fb3fb7...1509b; census b6d2c005...502b5; summary 0bb8dc88...a78d22; report 93360be4...d8a08; evidence a110f12b...dd6f5; strict replay is 619/619. Focused 11/11, historical integration 156/156, split broad offline regression 784/784 plus Genius 96/96 and guard 46/46 pass; one combined wrapper timed out without a verdict or lingering process and is not claimed as passing. Ruff/compile/diff, 119 changed JSON and 7,997 repository JSON pass. All 135 manifests, 2,434 paths and 2,228 complete triples rehash; 105 historical manifests refresh exactly 244 permitted live-pointer leaves while frozen history remains fixed. Formal-output, contamination, protected-path, primary-repository and process audits pass. Family 94742160 / US-20260177783-A1 is next; parent saturation remains incomplete. |
 | 260723-patent-generic-family-94742160 | complete-shovel-saturation-incomplete | Exact US-20260177783-A1 binds application 19/054915, Chinese priority 202411918281.9, no domestic related-application record, Family ID 94742160 and Genius Electronic Optical (Xiamen). Two Background plus eight Summary and 148 Description paragraphs form continuous [0001]-[0158]; claims 1-20 have claims 1/8/15 independent; 62 declared panels occupy 27 drawing sheets; the HTML contains 137 figure references, 20 MathML objects, zero machine-readable tables and eight numerical six-lens designs. Paragraphs 91-122/FIGS.6-37 bind eight disjoint cross-section/aberration/optical-table/asphere-table groups; FIG.38 is common. HTML directly publishes each item's EFL/F-number/HFOV/TTL/ImgH, while complete ordered surface/material/asphere rows exist only in official one-bit raster tables. Project policy forbids OCR, enhancement, raster numeric transcription, measurement or inference, so all eight close as `metadata_unpublished.machine_readable_prescription_and_system_tables_absent`; no value is borrowed from priority or completed same-layout families. Two distinct official 40-page PDFs decode to the same original raster set at d894e8e1...e167. Attempts 2/3 preserve attempt 1 and are canonical-semantic-equal at 43923b70...6c34cb; generic 17 to 16; result set 3a75d1d1...c0f0e; census a7c38759...44a9f; summary 35c8120e...b534f; report fa813b0b...94408; evidence b0542d16...2ab77; strict replay is 619/619. Focused 11/11, historical integration 161/161, broad non-PDF/non-raster regression 1027/1027 and replay/census/no-real-CODEV guard 46/46 pass; one PDF/raster wrapper timed out without a verdict or lingering process and is not claimed as passing. Ruff/compile/diff, 120 changed JSON and all 8,010 repository JSON pass. All 136 manifests, 2,456 paths and 2,250 complete triples rehash; 106 historical manifests refresh exactly 249 permitted live-pointer leaves while frozen history remains fixed. Formal-output, contamination, protected-path, primary-repository and process audits pass. Family 100312404 / US-20260186252-A1 is next; parent saturation remains incomplete. |
 
+| 260723-patent-generic-family-100312404 | complete-shovel-saturation-incomplete | Exact US-20260186252-A1 binds seven six-lens numerical source items, 201 continuous numbered paragraphs, 10 claims, 28 declared figure panels, 52 MathML objects and 15 flattened TABLE-US blocks. Every ordered surface table publishes a blank ST row between R4/R5, but no prescription-specific stop coordinate; item 2 additionally preserves malformed R12/A24 `1.12590-05`, and item 5 preserves IH 3.268/3.135 conflict. No stop split, token repair, value selection, OCR, raster transcription, inference or lineage borrowing occurs. Two 32-page official PDF wrappers decode to the same original one-bit raster set. Seven precise metadata terminals replay twice without worker/ZMX/formal intake; semantic hash a82fb13a...ed461, generic 16 to 15, result set 34c3f3c7...dd69c, census 760e016f...67d6e, strict replay 619/619. Focused 13/13, historical integration 164/164, broad offline 1056/1056 and guard 46/46 pass; all 8,023 JSON and 2,304 evidence triples rehash. Family 81112283 / US-12625341-B2 is next; parent saturation remains incomplete. |
+
 ## Session Continuity
 
 Resume from `.planning/loop/prod-loop2-final-handoff-2026-07-13.md`.
 
 For patent saturation work, exact Family `94742160`, root/publication
-`US-20260177783` / `US-20260177783-A1`, is complete in GSD quick
-`.planning/quick/260723-patent-generic-family-94742160/`. Exact source reconciliation
-proves eight six-lens numerical designs. HTML directly publishes item-specific EFL,
-HFOV, TTL, Fno and ImgH, while complete ordered surface/material/asphere rows exist
-only in official one-bit raster figures. No OCR, enhancement, repair, measurement,
-raster numeric transcription or inference was used. All eight close as
-`metadata_unpublished.machine_readable_prescription_and_system_tables_absent`.
-Attempts 2/3 preserve attempt 1 and are canonical-semantic-equal at
-`43923b70ccead6421015a5602615c839d5878e8ba2588a2ce7f08dc9796c34cb`;
-strict replay is 619/619 with zero missing/corrupt. Generic residual is 17 to 16,
-result set `3a75d1d1ddb2218f10cfdca899433d32aaf9a6b758988d3d7cce4d77dabc0f0e`,
-and byte-identical census SHA-256 is
+`US-20260177783` / `US-20260177783-A1`, completed and committed at `4c6c4591`.
+Its eight six-lens numerical designs close as
+`metadata_unpublished.machine_readable_prescription_and_system_tables_absent`; generic
+residual is 17 to 16, result set is
+`3a75d1d1ddb2218f10cfdca899433d32aaf9a6b758988d3d7cce4d77dabc0f0e`, and
+byte-identical census SHA-256 is
 `a7c38759a36b4efdf47414bea2090d7926dfa1620c8018afc5ba53179fd44a9f`.
-Live summary/report are `35c8120e...b534f` / `fa813b0b...94408`; source evidence
-is `b0542d16...2ab77`. Stable ordering selects exact Family `100312404`,
-root/publication `US-20260186252` / `US-20260186252-A1`, application `19/292973`,
-title `IMAGING OPTICAL LENS`, Changzhou AAC Raytech Optronics, next. Its retained
-117,302-byte HTML is pinned at
-`cb2188a9d66b715c5530c72647e069e7e5bc5f17bd5ffa94164bbbb4cc05acd2`.
-No item boundary, value or outcome has yet been assigned to the next family; parent
-saturation remains incomplete.
+
+Family `100312404`, root/publication `US-20260186252` / `US-20260186252-A1`,
+completed as an exact-source GSD quick. Seven six-lens source items publish ordered
+surface/material/asphere rows, but the blank ST row has no prescription-specific axial
+coordinate: [0100] only places ST between L2/L3 and [0132] defines d4 as the unsplit
+R4-to-R5 spacing. Item 2 also preserves malformed R12/A24 token `1.12590-05`; item 5
+preserves conflicting IH 3.268 versus 3.135. No coordinate/token/value is inferred,
+repaired or selected. Attempts 2/3 preserve attempt 1 and are semantic-equal at
+`a82fb13a...ed461`; generic residual is 16 to 15, result set is
+`34c3f3c7f9af6a695e8b406583ae5637b529ffac0d0760fb3b9332c7a11dd69c`,
+and byte-identical after-census SHA-256 is
+`760e016fe5981f46759d0687657300a9728f52a15484c9e90dca8d54f7467d6e`.
+Strict replay is 619/619 with missing=0/corrupt=0; no worker, conversion output,
+formal intake or CODE V activity occurred. Stable ordering selects Family `81112283`,
+root `US-12625341`, next. Parent saturation remains active and incomplete.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

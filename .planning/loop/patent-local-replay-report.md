@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `3a75d1d1ddb2218f10cfdca899433d32aaf9a6b758988d3d7cce4d77dabc0f0e`
+- result_set_sha256: `34c3f3c7f9af6a695e8b406583ae5637b529ffac0d0760fb3b9332c7a11dd69c`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 29
-- `terminal`: 228
-- `parser_review_required`: 207
+- `terminal`: 229
+- `parser_review_required`: 206
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 609
-- `terminal`: 1878
-- `parser_review_required`: 1320
+- `terminal`: 1885
+- `parser_review_required`: 1319
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -41,21 +41,21 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `confirmed_no_prescription`: 726
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
-- `metadata_unpublished`: 406
+- `metadata_unpublished`: 413
 - `trace_failed`: 631
 - `trace_timeout`: 115
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `terminal.all_disclosed_items_terminal`: 228
-- `parser_review_required.all_disclosed_items_rejected`: 207
+- `terminal.all_disclosed_items_terminal`: 229
+- `parser_review_required.all_disclosed_items_rejected`: 206
 - `mixed_nonterminal.multiple_item_states`: 155
 - `converted_pending_intake.all_disclosed_items_converted`: 29
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1320
+- `parser_review_required.deterministic_parser_rejected`: 1319
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 609
 - `terminal.metadata_unpublished.system_f_number_absent`: 91
@@ -106,6 +106,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.light_path_folding_element_mechanical_dimensions_only`: 5
 - `terminal.metadata_unpublished.non_working_retracted_state_has_no_system_metadata`: 5
 - `terminal.metadata_unpublished.prescription_specific_absolute_image_height_absent`: 5
+- `terminal.metadata_unpublished.prescription_specific_stop_surface_position_absent`: 5
 - `terminal.metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent`: 5
 - `terminal.metadata_unpublished.system_stop_f_number_and_angular_field_absent`: 5
 - `terminal.confirmed_no_prescription.antireflective_nanostructure_air_gap_geometry_only`: 4
@@ -419,6 +420,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.metadata_unpublished.imaging_lens_100c_stop_axial_coordinate_absent`: 1
 - `terminal.metadata_unpublished.imaging_lens_100d_stop_axial_coordinate_absent`: 1
 - `terminal.metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent`: 1
+- `terminal.metadata_unpublished.prescription_specific_stop_surface_position_absent_and_asphere_a24_malformed`: 1
+- `terminal.metadata_unpublished.prescription_specific_stop_surface_position_absent_and_image_height_conflicting`: 1
 - `terminal.metadata_unpublished.qcon_q6_q10_basis_definitions_and_surface_index_mapping_absent`: 1
 - `terminal.metadata_unpublished.qcon_q6_q11_basis_definitions_absent`: 1
 - `terminal.metadata_unpublished.qcon_q6_q7_basis_definitions_and_system_stop_absent`: 1
@@ -449,7 +452,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `ocr_corrupted_exponent`: 21
 - `other_finite_object_state_is_published_but_unsupported_by_the_infinity_conjugate_replay_model_object_distance_n_mm`: 20
 - `asphere_surface_header_missing`: 16
-- `generic_summary_metadata_missing`: 16
+- `generic_summary_metadata_missing`: 15
 - `other_optical_metadata_label_hfov_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 11
 - `other_surface_n_thickness_is_not_numeric_flt`: 11
 - `other_folded_macro_tele_system_n_whole_system_focal_token_f_is_not_officially_defined_as_efl`: 9

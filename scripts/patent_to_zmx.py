@@ -446,6 +446,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_aac_six_lens_missing_stop_position_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = (
         _classify_aac_near_eye_folded_three_lens_missing_metadata_attempts(
             raw_text,
@@ -98851,6 +98857,676 @@ def _classify_gyrus_small_scale_objective_attempts(
             ),
         )
         for item in _GYRUS_SMALL_SCALE_ITEMS
+    ]
+
+
+_AAC_SIX_LENS_MISSING_STOP_REASON = (
+    "metadata_unpublished.prescription_specific_stop_surface_position_absent"
+)
+_AAC_SIX_LENS_MALFORMED_ASPHERE_REASON = (
+    "metadata_unpublished.prescription_specific_stop_surface_position_absent_"
+    "and_asphere_a24_malformed"
+)
+_AAC_SIX_LENS_CONFLICTING_IH_REASON = (
+    "metadata_unpublished.prescription_specific_stop_surface_position_absent_"
+    "and_image_height_conflicting"
+)
+_AAC_SIX_LENS_MISSING_STOP_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "AAC six-lens first embodiment",
+        "paragraph_range": (109, 164),
+        "tables": (1, 2),
+        "figures": (1, 2, 3, 4),
+        "lens_reference": 10,
+        "metadata_paragraph": 164,
+        "paragraph_metadata": ("0.873", "3.201", "119.85"),
+        "table15_metadata": ("1.965", "2.251", "6.087", "3.201", "119.85"),
+        "reason_code": _AAC_SIX_LENS_MISSING_STOP_REASON,
+    },
+    {
+        "number": 2,
+        "label": "AAC six-lens second embodiment",
+        "paragraph_range": (165, 170),
+        "tables": (3, 4),
+        "figures": (5, 6, 7, 8),
+        "lens_reference": 20,
+        "metadata_paragraph": 170,
+        "paragraph_metadata": ("0.928", "3.184", "115.67"),
+        "table15_metadata": ("2.088", "2.250", "5.567", "3.184", "115.67"),
+        "reason_code": _AAC_SIX_LENS_MALFORMED_ASPHERE_REASON,
+    },
+    {
+        "number": 3,
+        "label": "AAC six-lens third embodiment",
+        "paragraph_range": (171, 176),
+        "tables": (5, 6),
+        "figures": (9, 10, 11, 12),
+        "lens_reference": 30,
+        "metadata_paragraph": 176,
+        "paragraph_metadata": ("0.716", "3.100", "129.20"),
+        "table15_metadata": ("1.610", "2.249", "5.903", "3.100", "129.20"),
+        "reason_code": _AAC_SIX_LENS_MISSING_STOP_REASON,
+    },
+    {
+        "number": 4,
+        "label": "AAC six-lens fourth embodiment",
+        "paragraph_range": (177, 182),
+        "tables": (7, 8),
+        "figures": (13, 14, 15, 16),
+        "lens_reference": 40,
+        "metadata_paragraph": 182,
+        "paragraph_metadata": ("1.060", "3.269", "109.77"),
+        "table15_metadata": ("2.386", "2.251", "5.323", "3.269", "109.77"),
+        "reason_code": _AAC_SIX_LENS_MISSING_STOP_REASON,
+    },
+    {
+        "number": 5,
+        "label": "AAC six-lens fifth embodiment",
+        "paragraph_range": (183, 188),
+        "tables": (9, 10),
+        "figures": (17, 18, 19, 20),
+        "lens_reference": 50,
+        "metadata_paragraph": 188,
+        "paragraph_metadata": ("0.796", "3.268", "124.37"),
+        "table15_metadata": ("1.791", "2.250", "5.968", "3.135", "124.37"),
+        "reason_code": _AAC_SIX_LENS_CONFLICTING_IH_REASON,
+    },
+    {
+        "number": 6,
+        "label": "AAC six-lens sixth embodiment",
+        "paragraph_range": (189, 194),
+        "tables": (11, 12),
+        "figures": (21, 22, 23, 24),
+        "lens_reference": 60,
+        "metadata_paragraph": 194,
+        "paragraph_metadata": ("0.918", "3.131", "117.33"),
+        "table15_metadata": ("2.066", "2.251", "6.058", "3.131", "117.33"),
+        "reason_code": _AAC_SIX_LENS_MISSING_STOP_REASON,
+    },
+    {
+        "number": 7,
+        "label": "AAC six-lens comparative embodiment",
+        "paragraph_range": (195, 200),
+        "tables": (13, 14),
+        "figures": (25, 26, 27, 28),
+        "lens_reference": 70,
+        "metadata_paragraph": 200,
+        "paragraph_metadata": ("0.852", "3.072", "121.06"),
+        "table15_metadata": ("1.917", "2.250", "5.958", "3.072", "121.06"),
+        "reason_code": _AAC_SIX_LENS_MISSING_STOP_REASON,
+    },
+)
+_AAC_SIX_LENS_TABLE_CORE_SHA256 = (
+    "851d2c0f8cb8b92e3f1a6255846f1ad712db198b5000dee955799303198340d5",
+    "14b099cdcfc6bb966a7c5aab6baef9f9cdc2b4cf62605772f184bf7a39716f5d",
+    "5e3fa20a4b83803084b8cba6bfab66a6a400123a5beb52351c45acce868d6fde",
+    "718fab563c9a3a2b96996b0a258882c4d307fd90b4b6490a4aac888933ff72b3",
+    "6a2883328a240c38147d68fb87054a13246fbedfc57f4b8642301a6a0260003a",
+    "5cea5e414d3ef948186ab28a127e4e0cd0e6ea08a18e081c0b0be0db52a3035c",
+    "a27d2faee12a6c4c9d283c29dbd8196ceee2b8c763c8194727d6de92b49fe611",
+    "3666d60da90b3355069364f8a3c09d59c468f6f4792d0025aa480b5ffd4664d5",
+    "4b806747cbc1a816c38bd5da631a8a1d10f63654d20c5db20f0e81ee95815673",
+    "1ba8e638ca41ec0d58100fc590b5f886932e3503464611422a09ce3f22baaf0e",
+    "3adcb4b11093079956b71456f268196b0fbd8c71fa5112d5cac5c0171cb9ea84",
+    "1bbcaaaeaa2c8287d789984571baa9645e5ea8f8bd5179c2628d84a3dbfe91cf",
+    "2d560289c3d0d7327824b6d54e4fd67f80c7ce4f04ecc7e5747b88490a75edc5",
+    "653ec55097a5f3573640643d5595f9442e0fae3e9fe0f689dbd08b3538756d6a",
+    "b7e4251133e1474cfff197c24f9a6fde58fe577806981ecbeb2bab0e9912e8d8",
+)
+_AAC_SIX_LENS_STOP_SPANS = (
+    "ST Infinity / / / / / /",
+    "ST Infinity / / / / //",
+    "ST Infinity / / / / / /",
+    "ST Infinity / / / / /",
+    "ST Infinity / / / / / /",
+    "ST Infinity / / / / / /",
+    "ST Infinity / / / / / /",
+)
+_AAC_SIX_LENS_TABLE15_ROWS = (
+    "f 1.965 2.088 1.610 2.386",
+    "FNO 2.251 2.250 2.249 2.251",
+    "TTL 6.087 5.567 5.903 5.323",
+    "IH 3.201 3.184 3.100 3.269",
+    "FOV 119.85° 115.67° 129.20° 109.77°",
+    "f 1.791 2.066 1.917 /",
+    "FNO 2.250 2.251 2.250 /",
+    "TTL 5.968 6.058 5.958 /",
+    "IH 3.135 3.131 3.072 /",
+    "FOV 124.37° 117.33° 121.06° /",
+)
+_AAC_SIX_LENS_MISSING_STOP_PROFILE: dict[str, Any] = {
+    "family_id": "100312404",
+    "application_number": "19/292973",
+    "parent_application": "PCT/CN2024/144649",
+    "raw_chars": 112_975,
+    "raw_bytes": 117_302,
+    "raw_document_sha256": ("cb2188a9d66b715c5530c72647e069e7e5bc5f17bd5ffa94164bbbb4cc05acd2"),
+    "normalized_chars": 75_757,
+    "normalized_text_sha256": ("a2f51aecad9e9a0a1b83398976cbe150068e08a6fa72f054857c50fd79a30c7c"),
+    "title": "IMAGING OPTICAL LENS",
+    "headings": (
+        "Abstract",
+        "Related U.S. Application Data",
+        "Publication Classification",
+        "Background/Summary",
+        "Description",
+        "Claims",
+    ),
+    "raw_counts": {
+        "paragraph_tags": 21,
+        "figref": 90,
+        "table_us": 15,
+        "maths": 52,
+        "math": 52,
+        "native_table": 0,
+        "custom_img": 0,
+    },
+    "official_pdfs": (
+        {
+            "path": (
+                ".planning/quick/260723-patent-generic-family-100312404/"
+                "source-review/US-20260186252-A1-official-1.pdf"
+            ),
+            "bytes": 2_119_684,
+            "sha256": ("a0f39d5e5213a5ac42d297c8485b71c7056ec4b0781efcb6bccd23ef9ce508da"),
+        },
+        {
+            "path": (
+                ".planning/quick/260723-patent-generic-family-100312404/"
+                "source-review/US-20260186252-A1-official-2.pdf"
+            ),
+            "bytes": 2_119_684,
+            "sha256": ("5bedb9783a276c7c36b3e51dc0c2bce52aea91fef191f98f25fb2f66b8ad3091"),
+        },
+    ),
+    "official_pdf": {
+        "page_count": 32,
+        "default_raster_dimensions": (2560, 3300),
+        "exceptional_raster_dimensions": {
+            17: (2550, 3300),
+            19: (2550, 3300),
+            20: (2550, 3300),
+            21: (2550, 3300),
+            23: (2550, 3300),
+            32: (2550, 3300),
+        },
+        "decoded_raster_set_sha256": (
+            "81de45c8c31b2dfe53f5f114bae654613a189b07689b1782e773abf7253048e5"
+        ),
+        "pixel_only_raster_set_sha256": (
+            "7ae0af004dde8a9dc0c1c45e2cb3f29c9f347ab3277b6277271f971c43998a0b"
+        ),
+        "cover_page_numbers": (1,),
+        "drawing_page_numbers": tuple(range(2, 17)),
+        "specification_page_numbers": tuple(range(17, 32)),
+        "claim_page_numbers": (31, 32),
+        "reviewed_original_page_numbers": (1, 16, 17, 21, 22, 23, 31, 32),
+    },
+}
+
+
+def _aac_six_lens_table_cores(text: str) -> tuple[str, ...]:
+    return tuple(
+        re.split(r"\s+(?=\[\d{4}\])", block.text, maxsplit=1)[0].strip()
+        for block in _patent_table_blocks(text)
+    )
+
+
+def _classify_aac_six_lens_missing_stop_position_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 100312404 without inventing seven stop coordinates."""
+
+    if patent_id.upper() != "US-20260186252-A1":
+        return []
+    profile = _AAC_SIX_LENS_MISSING_STOP_PROFILE
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _AAC_SIX_LENS_MISSING_STOP_ITEMS
+        ]
+
+    try:
+        raw_payload = raw_text.encode("utf-8")
+        if not (
+            len(raw_text) == profile["raw_chars"]
+            and len(raw_payload) == profile["raw_bytes"]
+            and hashlib.sha256(raw_payload).hexdigest() == profile["raw_document_sha256"]
+        ):
+            raise PatentParseError(
+                f"AAC six-lens missing-stop official raw text changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if not (
+            len(text) == profile["normalized_chars"]
+            and hashlib.sha256(text.encode("utf-8")).hexdigest()
+            == profile["normalized_text_sha256"]
+        ):
+            raise PatentParseError(
+                f"AAC six-lens missing-stop normalized text changed for {patent_id}"
+            )
+        title_pattern = re.compile(
+            rf"<h2[^>]*>\s*{re.escape(str(profile['title']))}\s*</h2>",
+            re.IGNORECASE,
+        )
+        if len(title_pattern.findall(raw_text)) != 1:
+            raise PatentParseError("AAC six-lens missing-stop title binding changed")
+        for marker, expected_count in (
+            ("Family ID: 100312404", 1),
+            ("Appl. No.: 19/292973", 1),
+            ("Filed: August 07, 2025", 1),
+            ("Changzhou AAC Raytech Optronics Co., Ltd.", 1),
+            ("Zhang; Tao", 2),
+            ("Publication Date July 02, 2026", 1),
+        ):
+            if len(re.findall(re.escape(marker), text, re.IGNORECASE)) != expected_count:
+                raise PatentParseError(
+                    f"AAC six-lens missing-stop identity marker {marker!r} changed"
+                )
+        related_marker = (
+            "parent WO continuation PCT/CN2024/144649 20241231 PENDING child US 19292973"
+        )
+        if len(re.findall(re.escape(related_marker), text, re.IGNORECASE)) != 1:
+            raise PatentParseError("AAC six-lens missing-stop parent binding changed")
+
+        headings = tuple(
+            normalize_patent_text(value)
+            for value in re.findall(r"<h3[^>]*>(.*?)</h3>", raw_text, re.IGNORECASE | re.DOTALL)
+        )
+        if headings != profile["headings"] or "Foreign Application Priority Data" in headings:
+            raise PatentParseError("AAC six-lens missing-stop section lineage changed")
+
+        raw_counts = {
+            "paragraph_tags": len(re.findall(r"<p(?:\s|>)", raw_text, re.IGNORECASE)),
+            "figref": len(re.findall(r"<figref\b", raw_text, re.IGNORECASE)),
+            "table_us": len(re.findall(r"TABLE-US-\d{5}", raw_text, re.IGNORECASE)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.IGNORECASE)),
+            "math": len(re.findall(r"<math(?:\s|>)", raw_text, re.IGNORECASE)),
+            "native_table": len(re.findall(r"<table(?:\s|>)", raw_text, re.IGNORECASE)),
+            "custom_img": len(re.findall(r"<img(?:\s|>)", raw_text, re.IGNORECASE)),
+        }
+        if raw_counts != profile["raw_counts"]:
+            raise PatentParseError(f"AAC six-lens missing-stop source counts changed: {raw_counts}")
+
+        paragraph_matches = list(re.finditer(r"\[(\d{4})\]\s*", text))
+        paragraph_numbers = tuple(int(match.group(1)) for match in paragraph_matches)
+        if paragraph_numbers != tuple(range(1, 202)):
+            raise PatentParseError("AAC six-lens missing-stop 201-paragraph denominator changed")
+        claims_start = text.index("Claims 1 . An imaging optical lens")
+        paragraphs = {
+            int(match.group(1)): text[
+                match.start() : (
+                    paragraph_matches[index + 1].start()
+                    if index + 1 < len(paragraph_matches)
+                    else claims_start
+                )
+            ]
+            for index, match in enumerate(paragraph_matches)
+        }
+        section_starts = (
+            ("TECHNICAL FIELD", 1),
+            ("BACKGROUND", 2),
+            ("SUMMARY", 4),
+            ("BRIEF DESCRIPTION OF THE DRAWINGS", 40),
+            ("DETAILED DESCRIPTION OF THE EMBODIMENTS", 69),
+        )
+        for heading, paragraph_number in section_starts:
+            marker = f"{heading} [{paragraph_number:04d}]"
+            if len(re.findall(re.escape(marker), text, re.IGNORECASE)) != 1:
+                raise PatentParseError(
+                    f"AAC six-lens missing-stop section marker {marker!r} changed"
+                )
+
+        mapped_item_paragraphs: set[int] = set()
+        heading_names = (
+            "First Embodiment",
+            "Second Embodiment",
+            "Third Embodiment",
+            "Fourth Embodiment",
+            "Fifth Embodiment",
+            "Sixth Embodiment",
+            "Comparative Embodiment",
+        )
+        metadata_pattern = re.compile(
+            r"\(ENPD\).*? is (?P<enpd>[0-9.]+) mm,.*?IH is "
+            r"(?P<ih>[0-9.]+) mm,.*? (?:is|view is) (?P<fov>[0-9.]+)°"
+        )
+        for item, heading in zip(_AAC_SIX_LENS_MISSING_STOP_ITEMS, heading_names, strict=True):
+            first, last = item["paragraph_range"]
+            if (
+                len(
+                    re.findall(
+                        rf"{re.escape(heading)}\s+\[{int(first):04d}\]",
+                        text,
+                        re.IGNORECASE,
+                    )
+                )
+                != 1
+            ):
+                raise PatentParseError(
+                    f"AAC six-lens missing-stop item {item['number']} heading changed"
+                )
+            item_text = "".join(paragraphs[number] for number in range(int(first), int(last) + 1))
+            surface_table, asphere_table = item["tables"]
+            for table_number in (surface_table, asphere_table):
+                if item_text.count(f"TABLE-US-{table_number:05d}") != 1:
+                    raise PatentParseError(
+                        f"AAC six-lens missing-stop item {item['number']} "
+                        f"TABLE {table_number} binding changed"
+                    )
+            for figure in item["figures"]:
+                if len(re.findall(rf"\bFIG\.\s*{figure}\b", item_text)) < 1:
+                    raise PatentParseError(
+                        f"AAC six-lens missing-stop item {item['number']} FIG. {figure} binding changed"
+                    )
+            metadata = metadata_pattern.search(paragraphs[int(item["metadata_paragraph"])])
+            observed_metadata = (
+                (
+                    metadata.group("enpd"),
+                    metadata.group("ih"),
+                    metadata.group("fov"),
+                )
+                if metadata is not None
+                else ()
+            )
+            if observed_metadata != item["paragraph_metadata"]:
+                raise PatentParseError(
+                    f"AAC six-lens missing-stop item {item['number']} direct metadata changed"
+                )
+            mapped_item_paragraphs.update(range(int(first), int(last) + 1))
+        if mapped_item_paragraphs != set(range(109, 201)):
+            raise PatentParseError(
+                "AAC six-lens missing-stop source-item paragraph coverage changed"
+            )
+
+        brief_start = text.index("BRIEF DESCRIPTION OF THE DRAWINGS")
+        detailed_start = text.index("DETAILED DESCRIPTION OF THE EMBODIMENTS")
+        declared_figures = tuple(
+            int(value)
+            for value in re.findall(
+                r"FIG\.\s*(\d+)\s+is\s+",
+                text[brief_start:detailed_start],
+                re.IGNORECASE,
+            )
+        )
+        if declared_figures != tuple(range(1, 29)):
+            raise PatentParseError("AAC six-lens missing-stop 28-figure denominator changed")
+
+        claims_html_match = re.search(
+            r"<h3>Claims</h3>(?P<body>.*?)</section>",
+            raw_text,
+            re.IGNORECASE | re.DOTALL,
+        )
+        if claims_html_match is None:
+            raise PatentParseError("AAC six-lens missing-stop claims section missing")
+        claim_matches = list(re.finditer(r"<b>(\d+)</b>\.", claims_html_match.group("body")))
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != tuple(range(1, 11)):
+            raise PatentParseError("AAC six-lens missing-stop claims 1-10 denominator changed")
+        claim_bodies = {
+            int(match.group(1)): normalize_patent_text(
+                claims_html_match.group("body")[
+                    match.end() : (
+                        claim_matches[index + 1].start()
+                        if index + 1 < len(claim_matches)
+                        else len(claims_html_match.group("body"))
+                    )
+                ]
+            )
+            for index, match in enumerate(claim_matches)
+        }
+        if not (
+            claim_bodies[1].startswith("An imaging optical lens")
+            and all(
+                claim_bodies[number].startswith("The imaging optical lens of claim 1")
+                for number in range(2, 11)
+            )
+        ):
+            raise PatentParseError("AAC six-lens missing-stop claim dependency graph changed")
+
+        table_cores = _aac_six_lens_table_cores(text)
+        if len(table_cores) != 15:
+            raise PatentParseError("AAC six-lens missing-stop fifteen-table denominator changed")
+        table_digests = tuple(
+            hashlib.sha256(core.encode("utf-8")).hexdigest() for core in table_cores
+        )
+        if table_digests != _AAC_SIX_LENS_TABLE_CORE_SHA256:
+            raise PatentParseError("AAC six-lens missing-stop table cores changed")
+
+        surface_labels = (
+            "R1",
+            "R2",
+            "R3",
+            "R4",
+            "ST",
+            "R5",
+            "R6",
+            "R7",
+            "R8",
+            "R9",
+            "R10",
+            "R11",
+            "R12",
+            "R13",
+            "R14",
+        )
+        for item, expected_stop_span in zip(
+            _AAC_SIX_LENS_MISSING_STOP_ITEMS,
+            _AAC_SIX_LENS_STOP_SPANS,
+            strict=True,
+        ):
+            core = table_cores[int(item["tables"][0]) - 1]
+            observed_labels = tuple(
+                match.group(0) for match in re.finditer(r"\b(?:R(?:1[0-4]|[1-9])|ST)\b", core)
+            )
+            stop_match = re.search(r"\bST\b.*?(?=\bR5\b)", core)
+            spacings = tuple(
+                float(value)
+                for _number, value in re.findall(r"\bd(1[0-4]|[1-9])=\s*([0-9.]+)", core)
+            )
+            if not (
+                observed_labels == surface_labels
+                and stop_match is not None
+                and stop_match.group(0).strip() == expected_stop_span
+                and len(spacings) == 14
+                and math.isclose(
+                    sum(spacings),
+                    float(item["table15_metadata"][2]),
+                    rel_tol=0.0,
+                    abs_tol=1e-9,
+                )
+            ):
+                raise PatentParseError(
+                    f"AAC six-lens missing-stop item {item['number']} surface/stop topology changed"
+                )
+
+        expected_headers = (
+            "A4 A6 A8 A10 A12",
+            "A14 A16 A18 A20 A22",
+            "A24 A26 A28 A30",
+        )
+        observed_anomalies: dict[int, tuple[tuple[int, int, str], ...]] = {}
+        number_pattern = re.compile(rf"{NUMBER_PATTERN}$", re.IGNORECASE)
+        for table_number in range(2, 15, 2):
+            core = table_cores[table_number - 1]
+            headers = list(
+                re.finditer(
+                    r"Conic coefficient Aspheric coefficient K "
+                    r"(?P<columns>A\d+(?: A\d+)*)",
+                    core,
+                )
+            )
+            if tuple(match.group("columns") for match in headers) != expected_headers:
+                raise PatentParseError(
+                    f"AAC six-lens missing-stop TABLE {table_number} coefficient headers changed"
+                )
+            anomalies: list[tuple[int, int, str]] = []
+            for segment_number, header in enumerate(headers, start=1):
+                segment_end = (
+                    headers[segment_number].start() if segment_number < len(headers) else len(core)
+                )
+                segment = core[header.end() : segment_end]
+                row_matches = list(re.finditer(r"\bR(?P<number>1[0-2]|[1-9])\b", segment))
+                if tuple(int(match.group("number")) for match in row_matches) != tuple(
+                    range(1, 13)
+                ):
+                    raise PatentParseError(
+                        f"AAC six-lens missing-stop TABLE {table_number} segment {segment_number} rows changed"
+                    )
+                for row_index, row in enumerate(row_matches):
+                    row_end = (
+                        row_matches[row_index + 1].start()
+                        if row_index + 1 < len(row_matches)
+                        else len(segment)
+                    )
+                    tokens = segment[row.end() : row_end].strip().split()
+                    if len(tokens) != 6:
+                        raise PatentParseError(
+                            f"AAC six-lens missing-stop TABLE {table_number} R{row.group('number')} width changed"
+                        )
+                    anomalies.extend(
+                        (
+                            segment_number,
+                            int(row.group("number")),
+                            token,
+                        )
+                        for token in tokens
+                        if token != "/" and number_pattern.fullmatch(token) is None
+                    )
+            observed_anomalies[table_number] = tuple(anomalies)
+        if observed_anomalies != {
+            2: (),
+            4: ((3, 12, "1.12590-05"),),
+            6: (),
+            8: (),
+            10: (),
+            12: (),
+            14: (),
+        }:
+            raise PatentParseError(
+                f"AAC six-lens missing-stop coefficient anomalies changed: {observed_anomalies}"
+            )
+
+        table15 = table_cores[14]
+        for row in _AAC_SIX_LENS_TABLE15_ROWS:
+            if len(re.findall(re.escape(row), table15)) != 1:
+                raise PatentParseError(f"AAC six-lens missing-stop TABLE 15 row {row!r} changed")
+        if not (
+            "aperture ST of the imaging optical lenses 10 , 20 , 30 , 40 , 50 , "
+            "and 60 is arranged between the second lens L2 and the third lens L3"
+            in paragraphs[100]
+            and "d4: on-axis distance from the image-side surface of the second lens "
+            "L2 to the object-side surface of the third lens L3"
+            in paragraphs[132]
+            and _AAC_SIX_LENS_MISSING_STOP_ITEMS[4]["paragraph_metadata"][1]
+            != _AAC_SIX_LENS_MISSING_STOP_ITEMS[4]["table15_metadata"][3]
+        ):
+            raise PatentParseError("AAC six-lens missing-stop coordinate/conflict boundary changed")
+
+        pdf_profile = profile["official_pdf"]
+        observed_raster_sets: list[tuple[str, ...]] = []
+        for wrapper in profile["official_pdfs"]:
+            pdf_payload = (ROOT / wrapper["path"]).read_bytes()
+            if not (
+                len(pdf_payload) == wrapper["bytes"]
+                and hashlib.sha256(pdf_payload).hexdigest() == wrapper["sha256"]
+            ):
+                raise PatentParseError("AAC six-lens missing-stop official PDF wrapper changed")
+            reader = pypdf.PdfReader(io.BytesIO(pdf_payload))
+            if len(reader.pages) != pdf_profile["page_count"]:
+                raise PatentParseError("AAC six-lens missing-stop official PDF page count changed")
+            raster_hashes: list[str] = []
+            pixel_only_hashes: list[str] = []
+            text_layer_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        "AAC six-lens missing-stop PDF page "
+                        f"{page_number} contains {len(images)} rasters; expected one"
+                    )
+                image = images[0].image
+                expected_dimensions = pdf_profile["exceptional_raster_dimensions"].get(
+                    page_number, pdf_profile["default_raster_dimensions"]
+                )
+                if image.size != expected_dimensions or image.mode != "1":
+                    raise PatentParseError(
+                        f"AAC six-lens missing-stop PDF page {page_number} raster changed"
+                    )
+                digest = hashlib.sha256()
+                digest.update(image.mode.encode("ascii"))
+                digest.update(b"\0")
+                digest.update(str(image.size).encode("ascii"))
+                digest.update(b"\0")
+                digest.update(image.tobytes())
+                raster_hashes.append(digest.hexdigest())
+                pixel_only_hashes.append(hashlib.sha256(image.tobytes()).hexdigest())
+                text_layer_characters += len(page.extract_text() or "")
+            raster_set_digest = hashlib.sha256(
+                ("\n".join(raster_hashes) + "\n").encode("ascii")
+            ).hexdigest()
+            pixel_only_set_digest = hashlib.sha256(
+                ("\n".join(pixel_only_hashes) + "\n").encode("ascii")
+            ).hexdigest()
+            if not (
+                raster_set_digest == pdf_profile["decoded_raster_set_sha256"]
+                and pixel_only_set_digest == pdf_profile["pixel_only_raster_set_sha256"]
+                and text_layer_characters == 0
+            ):
+                raise PatentParseError("AAC six-lens missing-stop official PDF raster set changed")
+            observed_raster_sets.append(tuple(raster_hashes))
+        if len(set(observed_raster_sets)) != 1:
+            raise PatentParseError("AAC six-lens missing-stop official PDF captures disagree")
+        if not (
+            pdf_profile["cover_page_numbers"] == (1,)
+            and pdf_profile["drawing_page_numbers"] == tuple(range(2, 17))
+            and pdf_profile["specification_page_numbers"] == tuple(range(17, 32))
+            and pdf_profile["claim_page_numbers"] == (31, 32)
+            and pdf_profile["reviewed_original_page_numbers"] == (1, 16, 17, 21, 22, 23, 31, 32)
+        ):
+            raise PatentParseError("AAC six-lens missing-stop official PDF page roles changed")
+    except Exception as exc:  # noqa: BLE001 - retain all seven exact-source items
+        return attempts_for_error(exc)
+
+    details = {
+        _AAC_SIX_LENS_MISSING_STOP_REASON: (
+            "the exact surface and coefficient tables publish R1-R14, d1-d14, "
+            "materials and R1-R12 conic/A4-A30 data, and TABLE 15 publishes direct "
+            "f/FNO/TTL/IH/FOV; ST is shown only as a blank row between R4 and R5, "
+            "while d4 is explicitly the full R4-to-R5 distance, so the stop's "
+            "prescription-specific axial coordinate is not published"
+        ),
+        _AAC_SIX_LENS_MALFORMED_ASPHERE_REASON: (
+            "the exact second-embodiment tables have the same unpublished ST "
+            "coordinate, and TABLE 4 additionally publishes malformed normalized "
+            "R12/A24 token 1.12590-05; neither the coordinate nor the coefficient is "
+            "repaired, inferred or transcribed from raster"
+        ),
+        _AAC_SIX_LENS_CONFLICTING_IH_REASON: (
+            "the exact fifth-embodiment tables have the same unpublished ST "
+            "coordinate, and paragraph [0188] publishes IH 3.268 mm while TABLE 15 "
+            "publishes IH 3.135; neither value is selected or repaired"
+        ),
+    }
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="metadata_unpublished",
+                reason_code=str(item["reason_code"]),
+                detail=details[str(item["reason_code"])],
+            ),
+        )
+        for item in _AAC_SIX_LENS_MISSING_STOP_ITEMS
     ]
 
 
