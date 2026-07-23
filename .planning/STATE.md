@@ -1122,6 +1122,53 @@ live-pointer leaves while frozen history remains fixed. Stable ordering selects 
 `71134482`, root/publication `US-11249275` / `US-11249275-B2`, next. Parent saturation
 remains active and incomplete.
 
+Family `71134482`, root/publication `US-11249275` / `US-11249275-B2`, is active in
+GSD quick `260723-patent-generic-family-71134482-root-11249275`, opened from committed
+Family 83598290 state at `b9210315` before detailed source investigation. The exact
+retained 90,008-byte HTML is pinned at `83994e5a...95f8`; the one-occurrence layout
+signature is `f4d6827c...6b7c47`. Entry queue counts (99 embodiment, five table and
+zero effective-focal-length/example/F-number/full-field/half-field anchors) are routing
+observations only, not source-item boundaries or outcomes. The byte-identical
+pre-change census contains three residual roots at result set `ea632b15...228c1874`
+and census hash `a844bfe7...572664b4`. Exact source, table, claim, section and figure
+reconciliation must precede classification; no related-root, family or layout
+borrowing is permitted. Parent saturation remains active and incomplete.
+
+Exact source reconciliation for Family `71134482` now freezes nine source items: five
+plastic-lens-barrel/imaging-lens-module annular-light-trap architectures and four
+electronic-device camera-module wrappers. Background/Summary paragraphs 1-9,
+Description paragraphs 1-101, claims 1-18, 24 declared figure panels, 121 figure
+references, five flattened tables and five inline-formula pairs reconcile completely.
+TABLES 1-5 publish only molded-light-trap `DG1/DG2/D/d/EDR/HG` geometry; the exact B2
+publishes no ordered optical radius, spacing, material/index/dispersion, conic or
+asphere data and no focal length, F-number, angular field or image height. All nine
+items therefore freeze as precise `confirmed_no_prescription` terminals. Complete
+machine-readable HTML settles every boundary, so no PDF/raster review, OCR,
+enhancement, repair, measurement, numeric raster transcription, inference,
+lineage/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or
+CODE V activity is authorized. Parent saturation remains active and incomplete.
+
+Family `71134482`, root/publication `US-11249275` / `US-11249275-B2`, is complete at
+nine exact source items: five plastic-lens-barrel/imaging-lens-module annular-light-
+trap architectures and four electronic-device camera-module wrappers. All nine close
+as precise `confirmed_no_prescription` terminals because the exact B2 publishes no
+ordered optical prescription or required focal-length/F-number/angular-field/image-
+height metadata. Complete machine-readable HTML settles every boundary, so no PDF/
+raster review, OCR, enhancement, repair, measurement, numeric raster transcription,
+inference, lineage/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal
+intake or CODE V use occurs. Attempts 2/3 preserve attempt 1 and are canonical-
+semantic-equal at `667e5e39...ec209`; strict replay is 619/619 missing=0/corrupt=0.
+Generic residual falls 3 to 2; result set `0a4a572f...2d7ec`; census
+`14232534...7b6d`; summary `783d683f...20498`; report `65f8e39d...cc0ac`; source
+evidence `c6b93261...f26cc`. Focused 9/9, broad non-PDF/non-raster 1,150/1,150,
+source-evidence/live-pointer 87/87 and replay/census/saturation/no-real-CODEV guards
+56/56 pass. Ruff, compile, diff, 8,330 workspace JSON files and 150 source-evidence
+manifests/2,896 references/2,596 unique paths pass. One hundred twenty historical
+manifests refresh exactly 607 permitted live-pointer leaves while frozen history
+remains fixed. Stable ordering selects Family `88416367`, root/publication
+`US-12523851` / `US-12523851-B2`, next. Parent saturation remains active and
+incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

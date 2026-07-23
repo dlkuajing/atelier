@@ -57,14 +57,30 @@
     ],
     "claim_dependencies": [
       [],
-      [1],
-      [1],
-      [1],
-      [4],
-      [1],
-      [1],
-      [1],
-      [1]
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        4
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ]
     ],
     "asphere_power_definition": "KA and Am, m=3 through 20; Am multiplies h^m",
     "nonzero_odd_coefficient_labels": [
@@ -84,48 +100,111 @@
       "item_number": 1,
       "label": "Fujifilm wide-angle Example 1",
       "source_evidence": {
-        "description_paragraph_range": [32, 44],
-        "figure_panels": ["1", "4A", "4B", "4C", "4D"],
-        "tables": [1, 2, 3, 10]
+        "description_paragraph_range": [
+          32,
+          44
+        ],
+        "figure_panels": [
+          "1",
+          "4A",
+          "4B",
+          "4C",
+          "4D"
+        ],
+        "tables": [
+          1,
+          2,
+          3,
+          10
+        ]
       },
       "ledger_state": "parser_review_required",
       "reason_code": "parser_review_required.deterministic_parser_rejected",
-      "published_nonzero_odd_power_surfaces": [3, 17, 18],
+      "published_nonzero_odd_power_surfaces": [
+        3,
+        17,
+        18
+      ],
       "conversion_boundary": "The current PatentSurface/CODE V XASPHERE mapping supports only even radial powers"
     },
     {
       "item_number": 2,
       "label": "Fujifilm wide-angle Example 2",
       "source_evidence": {
-        "description_paragraph_range": [45, 49],
-        "figure_panels": ["2", "5A", "5B", "5C", "5D"],
-        "tables": [4, 5, 6, 10]
+        "description_paragraph_range": [
+          45,
+          49
+        ],
+        "figure_panels": [
+          "2",
+          "5A",
+          "5B",
+          "5C",
+          "5D"
+        ],
+        "tables": [
+          4,
+          5,
+          6,
+          10
+        ]
       },
       "ledger_state": "parser_review_required",
       "reason_code": "parser_review_required.deterministic_parser_rejected",
-      "published_nonzero_odd_power_surfaces": [3, 8, 18, 19],
+      "published_nonzero_odd_power_surfaces": [
+        3,
+        8,
+        18,
+        19
+      ],
       "conversion_boundary": "The current PatentSurface/CODE V XASPHERE mapping supports only even radial powers"
     },
     {
       "item_number": 3,
       "label": "Fujifilm wide-angle Example 3",
       "source_evidence": {
-        "description_paragraph_range": [50, 57],
-        "figure_panels": ["3", "6A", "6B", "6C", "6D"],
-        "tables": [7, 8, 9, 10]
+        "description_paragraph_range": [
+          50,
+          57
+        ],
+        "figure_panels": [
+          "3",
+          "6A",
+          "6B",
+          "6C",
+          "6D"
+        ],
+        "tables": [
+          7,
+          8,
+          9,
+          10
+        ]
       },
       "ledger_state": "parser_review_required",
       "reason_code": "parser_review_required.deterministic_parser_rejected",
-      "published_nonzero_odd_power_surfaces": [3, 19, 20],
+      "published_nonzero_odd_power_surfaces": [
+        3,
+        19,
+        20
+      ],
       "conversion_boundary": "The current PatentSurface/CODE V XASPHERE mapping supports only even radial powers"
     },
     {
       "item_number": 4,
       "label": "Fujifilm mirrorless-camera imaging apparatus wrapper",
       "source_evidence": {
-        "description_paragraph_range": [58, 61],
-        "figure_panels": ["7A", "7B"],
-        "claim_numbers": [9]
+        "description_paragraph_range": [
+          58,
+          61
+        ],
+        "figure_panels": [
+          "7A",
+          "7B"
+        ],
+        "claim_numbers": [
+          9
+        ]
       },
       "ledger_state": "terminal",
       "terminal_status": "confirmed_no_prescription",
@@ -148,7 +227,10 @@
     "codev_calls": 0
   },
   "replay_state": {
-    "attempts": [2, 3],
+    "attempts": [
+      2,
+      3
+    ],
     "semantic_sha256": "94c74710ad3c87cf7a0ddb80a7d95db0ffd97f939e0193ec26380bf32950bfc3",
     "semantic_equal": true,
     "append_only_prefix_preserved": true,
@@ -160,13 +242,13 @@
     },
     "summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 59943,
-      "sha256": "0a25c285d55b7abfd8a2aa1e31f571e243b352ec123deed9174aef9e50421474"
+      "bytes": 60123,
+      "sha256": "783d683f43a604be5f1adb8dec7135bd16fec5db9cfd7e5b635a00ac64520498"
     },
     "report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 62098,
-      "sha256": "cc8461c84af29144b43842f77bdf7380cd088f406e338cebc8d4c0f07459a9d0"
+      "bytes": 62284,
+      "sha256": "65f8e39dee8a9316ac0606c0a1d07a26aeb5f1fafc305f2b548dbe5a0d5cc0ac"
     }
   },
   "generic_census": {
@@ -176,20 +258,22 @@
     "after_result_set_sha256": "689525e59b648050ec1bbf0d6748b3f9ffcdd16d12ac34442b9fc79943d42c0b",
     "repeat_census_equal": true,
     "next_family_id": "83598290",
-    "next_root_ids": ["US-12270974"],
+    "next_root_ids": [
+      "US-12270974"
+    ],
     "saturation_complete": false
   },
   "live_shared_outputs": {
-    "result_set_sha256": "ea632b150e975408a0cfa021c433a6bd870f86d69e305fcf276c713a228c1874",
+    "result_set_sha256": "0a4a572f9c788d896db4873f4dae39ad5fd8190bf7cdb4fbe83701c4e522d7ec",
     "replay_summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 59943,
-      "sha256": "0a25c285d55b7abfd8a2aa1e31f571e243b352ec123deed9174aef9e50421474"
+      "bytes": 60123,
+      "sha256": "783d683f43a604be5f1adb8dec7135bd16fec5db9cfd7e5b635a00ac64520498"
     },
     "replay_report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 62098,
-      "sha256": "cc8461c84af29144b43842f77bdf7380cd088f406e338cebc8d4c0f07459a9d0"
+      "bytes": 62284,
+      "sha256": "65f8e39dee8a9316ac0606c0a1d07a26aeb5f1fafc305f2b548dbe5a0d5cc0ac"
     }
   },
   "evidence": {
@@ -266,13 +350,13 @@
     },
     "replay_summary": {
       "path": "data/patent-ledger/replay/local-uncovered/summary.json",
-      "bytes": 59943,
-      "sha256": "0a25c285d55b7abfd8a2aa1e31f571e243b352ec123deed9174aef9e50421474"
+      "bytes": 60123,
+      "sha256": "783d683f43a604be5f1adb8dec7135bd16fec5db9cfd7e5b635a00ac64520498"
     },
     "replay_report": {
       "path": ".planning/loop/patent-local-replay-report.md",
-      "bytes": 62098,
-      "sha256": "cc8461c84af29144b43842f77bdf7380cd088f406e338cebc8d4c0f07459a9d0"
+      "bytes": 62284,
+      "sha256": "65f8e39dee8a9316ac0606c0a1d07a26aeb5f1fafc305f2b548dbe5a0d5cc0ac"
     }
   },
   "invariants": {

@@ -1,0 +1,64 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "71134482",
+  "root_id": "US-11249275",
+  "publication_id": "US-11249275-B2",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-11249275/attempt-0001/result.json",
+    "bytes": 1272,
+    "sha256": "66f06a48a7268bfb9e0e9a9e0f4e14e961e302c5e116d2e070a25b2f8f5143a4",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "bd572c948ccd45436b15a8c227039708cb70b76f09ca1acf0516451487ad44c8"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-11249275/attempt-0002/result.json",
+      "bytes": 12556,
+      "sha256": "6ee2c0dfd4def67aa901613817fa3e5b32cac1f6a53065aa1cb4db657e6700d9",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "667e5e39db98c0a7acad9329e04e04bdcd740cef494c0e290a213d66304ec209"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-11249275/attempt-0003/result.json",
+      "bytes": 12556,
+      "sha256": "d4d9bba24910743286f64f5f60ae5ba337367d6d9e95581a00cc05970fb325bd",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "667e5e39db98c0a7acad9329e04e04bdcd740cef494c0e290a213d66304ec209"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "667e5e39db98c0a7acad9329e04e04bdcd740cef494c0e290a213d66304ec209",
+  "item_reason_codes": [
+    "terminal.confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only",
+    "terminal.confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only",
+    "terminal.confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only",
+    "terminal.confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only",
+    "terminal.confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_camera_module_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "prescription_fingerprints_absent": true,
+  "candidate_zmx": 0,
+  "formal_intake_items": 0,
+  "codev_calls": 0
+}

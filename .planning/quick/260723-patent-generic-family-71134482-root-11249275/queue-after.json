@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-71134482-root-11249275/generic-residual-after-1.json",
+  "affected_roots": 2,
+  "affected_items": 2,
+  "result_set_sha256": "0a4a572f9c788d896db4873f4dae39ad5fd8190bf7cdb4fbe83701c4e522d7ec",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "f941c9e4c369ecb5d3171dc10043a943ed3de5ffbcf13847b33c75ba3d15748b",
+    "layout_signature_count": 1,
+    "family_id": "88416367",
+    "root_ids": [
+      "US-12523851"
+    ],
+    "publication_ids": [
+      "US-12523851-B2"
+    ],
+    "application_numbers": [
+      "18/339612"
+    ],
+    "title": "Wide-angle lens assembly",
+    "applicant": "Sunny Optics(Zhongshan)Co., Ltd.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/d3c7aab12147c84f/US-12523851-B2.html",
+      "sha256": "d3c7aab12147c84f6a76a046b62e56343b0ec874c7100484e7600f59ea1f4a4d",
+      "bytes": 72004
+    },
+    "marker_counts": {
+      "effective_focal_length": 75,
+      "embodiment_anchor": 15,
+      "example_anchor": 0,
+      "f_number": 7,
+      "full_field": 20,
+      "half_field": 0
+    },
+    "table_count": 11
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}
