@@ -1013,6 +1013,25 @@ protected-path/frozen-snapshot/primary-repository/process audits pass. Stable or
 selects Family `95073324`, root/publication `US-20260147257` /
 `US-20260147257-A1`, next. Parent saturation remains active and incomplete.
 
+Family `95073324`, root/publication `US-20260147257` / `US-20260147257-A1`, is
+complete at eight exact source items: first-example WIDE/TELE states, four fixed-focus
+examples, a camera-module wrapper and an imaging-device wrapper. The first two remain
+precise parser-review nonterminals because source-order aperture-stop `D7=-1.000`
+cannot be accepted or reordered by the safe sequential contract; the other four
+remain precise parser-review nonterminals because their directly published nonzero odd
+radial asphere terms cannot be carried by the current even-power schema. Only the two
+wrappers close as `confirmed_no_prescription` terminals. No OCR, enhancement, repair,
+raster numeric transcription, measurement, inference, lineage borrowing, worker,
+request/receipt, fingerprint, ZMX, formal intake or CODE V activity exists. Attempts
+2/3 preserve attempt 1 and are semantic-equal at `f583e01f...21bd3a`; strict replay
+is 619/619 with zero missing/corrupt. Generic residual is 6 at result set
+`d25e5501...76be05` and repeat census `a7055970...6d386`. Focused 9/9, broad
+1,117/1,117, source-evidence/live-pointer 83/83 and replay/census/saturation/
+no-real-CODEV guards 56/56 pass; Ruff, compile, diff, JSON/evidence/output/protected-
+path/frozen-snapshot/primary-repository/process audits pass. Stable ordering selects
+Family `83151794`, root/publication `US-20250334721` / `US-20250334721-A1`, next.
+Parent saturation remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,
