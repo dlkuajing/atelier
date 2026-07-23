@@ -1,0 +1,998 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "83151794",
+  "root_id": "US-20250334721",
+  "publication_id": "US-20250334721-A1",
+  "application_number": "19/260917",
+  "title": "OPTICAL IMAGING LENS ASSEMBLY, IMAGING APPARATUS AND ELECTRONIC DEVICE",
+  "continuation_isolation": {
+    "selected_root_only": true,
+    "parent_application": "17/820604",
+    "parent_grant": "US-12379524",
+    "provisional_application": "63/239434",
+    "foreign_priority": "TW 111129234",
+    "values_item_boundaries_or_outcomes_borrowed_from_parent": false
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b60f9d0e106d0592/US-20250334721-A1.html",
+    "raw_bytes": 139967,
+    "raw_characters": 139114,
+    "raw_sha256": "b60f9d0e106d05922a0c06b41e71fd6f7db784d718d9cda036a1cc56090db4e7",
+    "normalized_characters": 122240,
+    "normalized_sha256": "9fd0a70475d04392eb1d6cc068db85d67fb7300fec92e00d1cb23b6c5b964071",
+    "raw_section_sha256": {
+      "background_summary": "d284815ca839168ec985b69444b7beb47999e6fbfbd73955aa6ce8b980922d80",
+      "description": "ff8350007ae2626880daaafcc8bcbb186233cd0220984d219b157fdc4a597634",
+      "claims": "4771a412d1f62b1e3c502861668288fb63c64203b8ff8447ac0f2ee62518ad8f"
+    },
+    "normalized_section_sha256": {
+      "background_summary": "6c438d86278acc0247455c1d95038e3c2b2968d67f8f51fa219f871bfbcf563d",
+      "description": "bf21afa9ca41cf4f5eab0ecf7d294c8edeb1b1d5706be028f2db77959bd4fdbd",
+      "claims": "a97a931a246e4e8753f4a9b3ef6872d9edad4427515cad53a034a8e13051c2e4"
+    },
+    "paragraph_set_sha256": {
+      "background_summary": "cdec3a4248d6f988a3fabd8131cc8b4b36f16ea665e0d3ca2ad7f0dfa3ac40a4",
+      "description": "0cd7a611bf6edac8e5ebe41d4234819f009d3da6278fc50f5f794a2bc0097fdd",
+      "claims": "829275621540983d5ee16a4d5ea35b5354d25b6388841707ad621e2774167d08"
+    },
+    "description_span_sha256": [
+      {
+        "first": 8,
+        "last": 27,
+        "sha256": "e206888c7ef9ccbd868a02dcddf650f93892d10eef4b806616f1b009a8e12ca3"
+      },
+      {
+        "first": 28,
+        "last": 49,
+        "sha256": "b23deb0f2be02a416025ac92d949f46bf4bbe093fdc01c00784d57e84c10e525"
+      },
+      {
+        "first": 50,
+        "last": 51,
+        "sha256": "7fdea207d89f5370c268d2bd178e55d3e76a2f2c9f639afbc4c0b142ec653481"
+      },
+      {
+        "first": 52,
+        "last": 87,
+        "sha256": "842de884338151f00a36bbf5421bec27acaa52b06dda2e35162d5a8641d54639"
+      },
+      {
+        "first": 88,
+        "last": 95,
+        "sha256": "6b19bf7b0b145d83a0033d5abc9cc2c3b7d08f2c2a21b3cb4204fb7eb4a7ee08"
+      },
+      {
+        "first": 96,
+        "last": 98,
+        "sha256": "0fa89583ee9a2f51f13c0fffce8768cae5f37bf580c63fa5890879a71c2a9b2c"
+      },
+      {
+        "first": 99,
+        "last": 101,
+        "sha256": "05dd7fcc622015e10f241c80832ff9bbf234f9f5e0338b43dd7ec09afa4dd2ac"
+      },
+      {
+        "first": 102,
+        "last": 104,
+        "sha256": "927a7d1bc8af64686ea9e302d19ea9aba06e19a106f6fb443851a1d171d693c4"
+      },
+      {
+        "first": 105,
+        "last": 107,
+        "sha256": "1c8583e275e1e940df8d32df79bc18967aa6d4caefe92ea2535910522d2d287e"
+      },
+      {
+        "first": 108,
+        "last": 110,
+        "sha256": "ba0c1e534e453e5d36e5f5e04775c8a0a0261a63e865fc1c385a4a04fd385b22"
+      },
+      {
+        "first": 111,
+        "last": 113,
+        "sha256": "da01f0866b2b2f7f08bf1e2ea1653ffd293bd33ac0d1a1bff3bea0e35a24b40c"
+      },
+      {
+        "first": 114,
+        "last": 116,
+        "sha256": "107871cfb05fd5c0e56462054712d670815e820dc3589c301a8b8406d18918ce"
+      },
+      {
+        "first": 117,
+        "last": 119,
+        "sha256": "a7913909a2cf1a19d8ea80b7985bd41cc916f8096b1d9503740aefc14adb51de"
+      },
+      {
+        "first": 120,
+        "last": 122,
+        "sha256": "7a579ded46682642166a93a65411b57cb37f8d2de6b2d6d56c1f9fec1e557215"
+      },
+      {
+        "first": 123,
+        "last": 125,
+        "sha256": "db277d5b39723042e8c695f0437725be49d67ca98bde2e6818e6af66c73e229d"
+      },
+      {
+        "first": 126,
+        "last": 128,
+        "sha256": "3f5d60b58ec34d94697c57cbe184d87bbab55aac672bd106ec29f60e06f62337"
+      },
+      {
+        "first": 129,
+        "last": 131,
+        "sha256": "4780da113b3672d20126d1b3e866849d3e9e82c1288024f68f51cdbac11ae30b"
+      },
+      {
+        "first": 132,
+        "last": 146,
+        "sha256": "540247e85457be8ffff79ac35ee40b55afc6e2d603af2505ade7c7c2b5e0bf09"
+      },
+      {
+        "first": 147,
+        "last": 149,
+        "sha256": "862a9c198b0dcd512d2ab7661a529e6c95c86f6d85b9d2b417efd70aa65b0d7b"
+      },
+      {
+        "first": 150,
+        "last": 151,
+        "sha256": "c493167316811d1ae34ce1696bc36b128e5d4f3dd971c5bfef26a88e3f17ed04"
+      },
+      {
+        "first": 152,
+        "last": 153,
+        "sha256": "c97d775fd6364407846a2cd2d0cbdf3ddf27a6113e23fc71a265e9818d49c2ee"
+      },
+      {
+        "first": 154,
+        "last": 156,
+        "sha256": "498e8b116788e71656f5d9d0bf7f79c90331c55fda197803646448c20e33e1e7"
+      },
+      {
+        "first": 157,
+        "last": 158,
+        "sha256": "94f1ec8f8fe9764b78beeccdcd5d14666fef0cfa3472bec6d2e59896d9817388"
+      },
+      {
+        "first": 159,
+        "last": 160,
+        "sha256": "7054c3121561d8c418f355e63efe31c5216ddaebfcf3191ca3227904f30e16e9"
+      },
+      {
+        "first": 161,
+        "last": 165,
+        "sha256": "435daa54d3f3ea64137e990aa9048a9a09bba8884f40a2e57bd6dda953b1446c"
+      }
+    ],
+    "sections": {
+      "background_summary_paragraphs": 7,
+      "description_paragraphs": 158,
+      "claims": 18,
+      "independent_claims": 1,
+      "machine_readable_tables": 19,
+      "optical_coating_architecture_tables": 13,
+      "coating_experiment_tables": 6,
+      "inline_formula_pairs": 1,
+      "mathml_objects": 13,
+      "figref_tags": 80,
+      "declared_figure_panels": 19,
+      "native_html_tables": 0,
+      "native_html_rows": 0,
+      "native_html_cells": 0,
+      "embedded_images": 0
+    },
+    "declared_figure_panels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7A",
+      "7B",
+      "8",
+      "9A",
+      "9B",
+      "9C",
+      "10",
+      "11",
+      "12A",
+      "12B",
+      "13A",
+      "13B",
+      "13C"
+    ],
+    "figref_ordered_text_sha256": "f37c8e66e8fa13370a8a97b49b96a032668920c53f066f38de6a376070ebce3e",
+    "table_bindings": [
+      {
+        "number": 1,
+        "description_paragraph": 95,
+        "normalized_payload_sha256": "1e8adc712ea52b3901a4dcbc7e74bb17a0fd1a24df98e8224ab7c28fe52c6c5c",
+        "normalized_payload_tokens": 97
+      },
+      {
+        "number": 2,
+        "description_paragraph": 98,
+        "normalized_payload_sha256": "e1edf3ea6f18b3e733dc7ea098d01691f61b74eeb1fc41fe7bdcb156dad7e370",
+        "normalized_payload_tokens": 88
+      },
+      {
+        "number": 3,
+        "description_paragraph": 101,
+        "normalized_payload_sha256": "3d152cb264ff4cd66aea9e0f6f1cae73eedf611a6aa12d0309f83b37d4fd48f1",
+        "normalized_payload_tokens": 100
+      },
+      {
+        "number": 4,
+        "description_paragraph": 104,
+        "normalized_payload_sha256": "c915418fe18d02ed16f3fff86db2d679f1c4ad734718760818c77e1f9f57ead5",
+        "normalized_payload_tokens": 97
+      },
+      {
+        "number": 5,
+        "description_paragraph": 107,
+        "normalized_payload_sha256": "17667996f6f22b0858a090c077bbbe33a1fc06e63f74deb867d3e715d85618cb",
+        "normalized_payload_tokens": 96
+      },
+      {
+        "number": 6,
+        "description_paragraph": 110,
+        "normalized_payload_sha256": "783566c65c8487697179e35a1639a85d312891b07a2082114ee2f15ee832fbe5",
+        "normalized_payload_tokens": 117
+      },
+      {
+        "number": 7,
+        "description_paragraph": 113,
+        "normalized_payload_sha256": "bec8f08d7d8548e3f181bb349e61a66ec525b4cf6b410c027654bdbb62d84058",
+        "normalized_payload_tokens": 234
+      },
+      {
+        "number": 8,
+        "description_paragraph": 116,
+        "normalized_payload_sha256": "d2fb24e88b83bf0efe29dc03caacef38927c7ef11de313946d69b4111cfbadb0",
+        "normalized_payload_tokens": 237
+      },
+      {
+        "number": 9,
+        "description_paragraph": 119,
+        "normalized_payload_sha256": "12bdb48fb05dad8ceef58f52d01412c7da3d47d57e60910ecef39708fc6f18cf",
+        "normalized_payload_tokens": 237
+      },
+      {
+        "number": 10,
+        "description_paragraph": 122,
+        "normalized_payload_sha256": "17f878995fcc0a2f464ecdf96e9242561d65a151a7150ab460a59cec56916880",
+        "normalized_payload_tokens": 257
+      },
+      {
+        "number": 11,
+        "description_paragraph": 125,
+        "normalized_payload_sha256": "b7e851475c24a6b2b82c89c1e1e7483a0697a10690901adee05706d2d59319b4",
+        "normalized_payload_tokens": 283
+      },
+      {
+        "number": 12,
+        "description_paragraph": 128,
+        "normalized_payload_sha256": "f561a0505f8da5a4151478c18f53f2f0d320c6a87f5294e11766cce9226d8b4d",
+        "normalized_payload_tokens": 281
+      },
+      {
+        "number": 13,
+        "description_paragraph": 131,
+        "normalized_payload_sha256": "8cc1f357d55989734fa440925b7303ab6b18b913619d4e158067c6a652d08adc",
+        "normalized_payload_tokens": 339
+      },
+      {
+        "number": 14,
+        "description_paragraph": 132,
+        "normalized_payload_sha256": "ba8bc58c53956ec3107e1388d6fc5bb93b28d303a2d4294a51a2272a578b7ac4",
+        "normalized_payload_tokens": 85
+      },
+      {
+        "number": 15,
+        "description_paragraph": 133,
+        "normalized_payload_sha256": "2c665dc62636abedcd6edce5194a04f6f013fb5daf6723985ffa67a5ef4c608e",
+        "normalized_payload_tokens": 80
+      },
+      {
+        "number": 16,
+        "description_paragraph": 138,
+        "normalized_payload_sha256": "c436463be634ab62f6ea37cd217d2d0a7317c0035bbd0334cade23ba83501157",
+        "normalized_payload_tokens": 113
+      },
+      {
+        "number": 17,
+        "description_paragraph": 141,
+        "normalized_payload_sha256": "c0a5f108c3030892e981b9019777686c54a6851394d39ac7c041ef70302c5194",
+        "normalized_payload_tokens": 76
+      },
+      {
+        "number": 18,
+        "description_paragraph": 143,
+        "normalized_payload_sha256": "dfe4a2b07044ba0782030f2f553b504ed8eb2c32cb2a546c0686b6429d183134",
+        "normalized_payload_tokens": 719
+      },
+      {
+        "number": 19,
+        "description_paragraph": 144,
+        "normalized_payload_sha256": "5aa45715397a4e541e4a78451f1a18db14aa57f1f621707660a21d133d164b31",
+        "normalized_payload_tokens": 726
+      }
+    ],
+    "mathml_ids": [
+      "MATH-US-00001",
+      "MATH-US-00002",
+      "MATH-US-00003",
+      "MATH-US-00004",
+      "MATH-US-00005",
+      "MATH-US-00006",
+      "MATH-US-00007",
+      "MATH-US-00008",
+      "MATH-US-00009",
+      "MATH-US-00010",
+      "MATH-US-00011",
+      "MATH-US-00012",
+      "MATH-US-00013"
+    ],
+    "mathml_raw_set_sha256": "06dac6fa46f40672c81809ce255d3993e9aae1d164c6ad85ecddb5b8cbb2cf99",
+    "mathml_normalized_set_sha256": "436e3b9583572981b4a97109eaf497c006fe632142ecc44b5c18c9d508c9cd15",
+    "claim_dependencies": [
+      [],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        3
+      ],
+      [
+        3
+      ],
+      [
+        3
+      ],
+      [
+        1
+      ],
+      [
+        7
+      ],
+      [
+        1
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        1
+      ],
+      [
+        12
+      ],
+      [
+        1
+      ],
+      [
+        14
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        17
+      ]
+    ],
+    "phrase_counts": {
+      "focal length": 0,
+      "effective focal length": 0,
+      "EFL": 250,
+      "F-number": 0,
+      "Fno": 0,
+      "field of view": 2,
+      "full field": 0,
+      "HFOV": 0,
+      "half field": 0,
+      "image height": 0,
+      "ImgH": 0,
+      "aperture stop": 1,
+      "radius": 0,
+      "curvature": 0,
+      "asphere": 0,
+      "aspheric": 0,
+      "surface number": 0,
+      "thickness": 80,
+      "Abbe": 10,
+      "conic": 0,
+      "refractive index": 31,
+      "gradient refractive": 40,
+      "coating": 421,
+      "optical prescription": 0,
+      "lens prescription": 0,
+      "optical lens element": 587
+    },
+    "source_review": {
+      "machine_readable_html_settled_all_category_table_and_item_boundaries": true,
+      "official_pdf_review_required": false,
+      "pdf_or_raster_used": false,
+      "ocr_used": false,
+      "enhancement_used": false,
+      "repair_used": false,
+      "measurement_used": false,
+      "raster_numeric_transcription_used": false,
+      "numeric_inference_used": false
+    }
+  },
+  "source_items": [
+    {
+      "item_number": 1,
+      "label": "Largan continuation optical/coating embodiment 1",
+      "source_evidence": {
+        "paragraph_range": [
+          88,
+          95
+        ],
+        "figures": [
+          "1"
+        ],
+        "tables": [
+          1
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 2,
+      "label": "Largan continuation optical/coating embodiment 2",
+      "source_evidence": {
+        "paragraph_range": [
+          96,
+          98
+        ],
+        "figures": [],
+        "tables": [
+          2
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 3,
+      "label": "Largan continuation optical/coating embodiment 3",
+      "source_evidence": {
+        "paragraph_range": [
+          99,
+          101
+        ],
+        "figures": [],
+        "tables": [
+          3
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 4,
+      "label": "Largan continuation optical/coating embodiment 4",
+      "source_evidence": {
+        "paragraph_range": [
+          102,
+          104
+        ],
+        "figures": [],
+        "tables": [
+          4
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 5,
+      "label": "Largan continuation optical/coating embodiment 5",
+      "source_evidence": {
+        "paragraph_range": [
+          105,
+          107
+        ],
+        "figures": [],
+        "tables": [
+          5
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 6,
+      "label": "Largan continuation optical/coating embodiment 6",
+      "source_evidence": {
+        "paragraph_range": [
+          108,
+          110
+        ],
+        "figures": [],
+        "tables": [
+          6
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 7,
+      "label": "Largan continuation optical/coating embodiment 7",
+      "source_evidence": {
+        "paragraph_range": [
+          111,
+          113
+        ],
+        "figures": [],
+        "tables": [
+          7
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 8,
+      "label": "Largan continuation optical/coating embodiment 8",
+      "source_evidence": {
+        "paragraph_range": [
+          114,
+          116
+        ],
+        "figures": [],
+        "tables": [
+          8
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 9,
+      "label": "Largan continuation optical/coating embodiment 9",
+      "source_evidence": {
+        "paragraph_range": [
+          117,
+          119
+        ],
+        "figures": [],
+        "tables": [
+          9
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 10,
+      "label": "Largan continuation optical/coating embodiment 10",
+      "source_evidence": {
+        "paragraph_range": [
+          120,
+          122
+        ],
+        "figures": [],
+        "tables": [
+          10
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 11,
+      "label": "Largan continuation optical/coating embodiment 11",
+      "source_evidence": {
+        "paragraph_range": [
+          123,
+          125
+        ],
+        "figures": [],
+        "tables": [
+          11
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 12,
+      "label": "Largan continuation optical/coating embodiment 12",
+      "source_evidence": {
+        "paragraph_range": [
+          126,
+          128
+        ],
+        "figures": [],
+        "tables": [
+          12
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 13,
+      "label": "Largan continuation optical/coating embodiment 13",
+      "source_evidence": {
+        "paragraph_range": [
+          129,
+          131
+        ],
+        "figures": [],
+        "tables": [
+          13
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 14,
+      "label": "Largan continuation anti-reflective first comparative experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "2"
+        ],
+        "tables": [
+          14,
+          17,
+          18
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 15,
+      "label": "Largan continuation anti-reflective second comparative experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            132
+          ],
+          [
+            146,
+            146
+          ]
+        ],
+        "figures": [
+          "7A"
+        ],
+        "tables": [
+          14
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 16,
+      "label": "Largan continuation anti-reflective third comparative experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "3"
+        ],
+        "tables": [
+          15,
+          18
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 17,
+      "label": "Largan continuation anti-reflective first embodiment experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            146
+          ]
+        ],
+        "figures": [
+          "4",
+          "7B"
+        ],
+        "tables": [
+          15,
+          17,
+          19
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 18,
+      "label": "Largan continuation anti-reflective second embodiment experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "5"
+        ],
+        "tables": [
+          16,
+          17,
+          19
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 19,
+      "label": "Largan continuation anti-reflective third embodiment experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "6"
+        ],
+        "tables": [
+          16,
+          17,
+          19
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 20,
+      "label": "Largan continuation long-wavelength absorbing/filtering architecture",
+      "source_evidence": {
+        "description_paragraphs": [
+          50,
+          51
+        ],
+        "background_paragraphs": [
+          7
+        ],
+        "figures": []
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 21,
+      "label": "Largan continuation fourteenth-embodiment camera-module wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          147,
+          148,
+          149
+        ],
+        "claim_numbers": [
+          17
+        ],
+        "figures": [
+          "8"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 22,
+      "label": "Largan continuation fifteenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          150,
+          151
+        ],
+        "figures": [
+          "9A",
+          "9B",
+          "9C"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 23,
+      "label": "Largan continuation sixteenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          152,
+          153
+        ],
+        "figures": [
+          "10"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 24,
+      "label": "Largan continuation seventeenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          154,
+          155,
+          156
+        ],
+        "figures": [
+          "11"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 25,
+      "label": "Largan continuation eighteenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          157,
+          158
+        ],
+        "figures": [
+          "12A",
+          "12B"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 26,
+      "label": "Largan continuation nineteenth-embodiment vehicle wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          159,
+          160
+        ],
+        "background_paragraphs": [
+          6
+        ],
+        "claim_numbers": [
+          18
+        ],
+        "figures": [
+          "13A",
+          "13B",
+          "13C"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    }
+  ],
+  "optical_interpretation": {
+    "source_items": 26,
+    "optical_coating_architecture_items": 13,
+    "coating_experiment_items": 6,
+    "long_wavelength_architecture_items": 1,
+    "camera_module_wrapper_items": 1,
+    "electronic_device_wrapper_items": 5,
+    "published_ordered_optical_prescriptions": 0,
+    "machine_readable_ordered_optical_prescriptions": 0,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_system_focal_length_published": false,
+    "absolute_image_height_published": false,
+    "parent_or_related_root_values_used": false,
+    "ocr_or_raster_numeric_transcription_authorized": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 26,
+    "nonterminal_items": 0,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "ledger_denominator": {
+    "frozen_cohort_roots": 1,
+    "disclosed_items": 26,
+    "optical_prescription_items": 0,
+    "terminal_items": 26,
+    "nonterminal_items": 0,
+    "replayed_items": 26,
+    "root_state": "terminal",
+    "replay_attempts": [
+      2,
+      3
+    ],
+    "replay_semantic_sha256": "604c85d75ecdd0c3988ff7f4ec5ae612f6093e5523b5da442e73eeb596cb36ac",
+    "candidate_zmx": 0,
+    "formal_intake_items": 0,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "codev_calls": 0
+  }
+}

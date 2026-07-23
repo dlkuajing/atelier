@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `d25e55011dcc69583ca7b9b298980acfbb61839ed8ad3e430353e8f42676be05`
+- result_set_sha256: `f295cb3cbb289be12dfdab410a7fb31e7db00339a148f90c43805412c9c68613`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 29
-- `terminal`: 236
-- `parser_review_required`: 197
+- `terminal`: 237
+- `parser_review_required`: 196
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 609
-- `terminal`: 1979
-- `parser_review_required`: 1336
+- `terminal`: 2005
+- `parser_review_required`: 1335
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 804
+- `confirmed_no_prescription`: 830
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 429
@@ -48,24 +48,25 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 ## Root reason codes
 
-- `terminal.all_disclosed_items_terminal`: 236
-- `parser_review_required.all_disclosed_items_rejected`: 197
+- `terminal.all_disclosed_items_terminal`: 237
+- `parser_review_required.all_disclosed_items_rejected`: 196
 - `mixed_nonterminal.multiple_item_states`: 157
 - `converted_pending_intake.all_disclosed_items_converted`: 29
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1336
+- `parser_review_required.deterministic_parser_rejected`: 1335
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 609
 - `terminal.metadata_unpublished.system_f_number_absent`: 91
 - `terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent`: 81
-- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 49
+- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 54
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
 - `conversion_retry_required.patent_budget_exhausted`: 28
 - `terminal.confirmed_no_prescription.camera_module_device_architecture_only`: 27
 - `terminal.confirmed_no_prescription.freeform_tir_display_architecture_only`: 27
 - `terminal.metadata_unpublished.prescription_specific_angular_field_absent`: 27
+- `terminal.confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only`: 26
 - `terminal.confirmed_no_prescription.lens_barrel_absorbing_geometry_only`: 21
 - `terminal.confirmed_no_prescription.mechanical_lens_module_geometry_only`: 21
 - `terminal.metadata_unpublished.stop_axial_coordinate_absent`: 17
@@ -73,7 +74,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.folded_image_sensor_filter_and_nano_rough_surface_architecture_only`: 15
 - `terminal.metadata_unpublished.prescription_specific_f_number_and_angular_field_absent`: 15
 - `terminal.confirmed_no_prescription.light_blocking_sheet_aperture_geometry_only`: 13
-- `terminal.confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only`: 13
+- `terminal.confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only`: 12
 - `terminal.confirmed_no_prescription.catadioptric_thin_film_and_module_architecture_only`: 12
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only`: 12
 - `terminal.confirmed_no_prescription.imaging_lens_element_nanostructure_transmittance_architecture_only`: 12
@@ -87,17 +88,16 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.plastic_optical_element_gate_vestige_and_nozzle_geometry_only`: 9
 - `terminal.confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only`: 9
 - `terminal.metadata_unpublished.configuration_hfov_and_qcon_q6_definition_absent`: 9
+- `terminal.confirmed_no_prescription.camera_module_wrapper_only`: 8
 - `terminal.confirmed_no_prescription.electronic_device_deployment_wrapper_only`: 8
 - `terminal.confirmed_no_prescription.light_blocking_sheet_mechanical_architecture_only`: 8
 - `terminal.confirmed_no_prescription.variable_aperture_camera_module_architecture_only`: 8
 - `terminal.metadata_unpublished.absolute_image_height_absent`: 8
 - `terminal.metadata_unpublished.system_f_number_and_image_height_absent`: 8
-- `terminal.confirmed_no_prescription.camera_module_wrapper_only`: 7
 - `terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only`: 7
 - `terminal.confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only`: 7
 - `terminal.confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only`: 7
 - `terminal.metadata_unpublished.asphere_high_order_coefficient_semantics_absent`: 7
-- `terminal.confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only`: 6
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_wrapper_only`: 6
 - `terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only`: 6
 - `terminal.confirmed_no_prescription.imaging_lens_assembly_light_blocking_architecture_only`: 6
@@ -169,6 +169,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only`: 2
 - `terminal.confirmed_no_prescription.light_blocking_structure_architecture_only`: 2
 - `terminal.confirmed_no_prescription.light_blocking_wedge_and_dual_retainer_architecture_only`: 2
+- `terminal.confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only`: 2
 - `terminal.confirmed_no_prescription.meta_optical_layer_and_device_architecture_only`: 2
 - `terminal.confirmed_no_prescription.metrology_results_only`: 2
 - `terminal.confirmed_no_prescription.microscopy_experimental_results_only`: 2
@@ -326,7 +327,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.light_field_depth_channel_architecture_only`: 1
 - `terminal.confirmed_no_prescription.light_folded_camera_module_architecture_only`: 1
 - `terminal.confirmed_no_prescription.long_range_first_order_radiometric_parameters_only`: 1
-- `terminal.confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only`: 1
 - `terminal.confirmed_no_prescription.machine_learning_camera_setting_calibration_process_only`: 1
 - `terminal.confirmed_no_prescription.medical_apparatus_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.mems_lidar_channel_architecture_only`: 1
@@ -472,7 +472,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_metadata_label_fno_has_n_exact_ocr_prefixes_asphere_table_label_token_confidence_n_is_below_n`: 7
 - `other_published_focus_tunable_component_focal_length_infinity_at_object_distance_infinity_cannot_be_represented_b_a0ff872bb261`: 7
 - `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 7
-- `generic_summary_metadata_missing`: 6
 - `other_folded_zoom_system_n_surface_index_break_expected_s8_found_s7`: 6
 - `other_kantatsu_missing_half_field_example_n_published_half_field_value_is_absent_from_the_table_header`: 6
 - `other_optical_table_has_n_accepted_radius_headers_asphere_table_has_n_exact_surface_headers_fig_n_panel_n_fno_lab_25f8d3f7f98f`: 6
@@ -480,6 +479,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6
 - `sekonix_surface_row_incomplete`: 6
+- `generic_summary_metadata_missing`: 5
 - `other_seven_lens_asphere_label_token_confidence_n_is_below_n`: 5
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a36_n`: 5
 - `other_ability_pdf_numeric_cell_at_n_n_has_n_values_above_confidence_gate`: 4

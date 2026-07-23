@@ -1032,6 +1032,29 @@ path/frozen-snapshot/primary-repository/process audits pass. Stable ordering sel
 Family `83151794`, root/publication `US-20250334721` / `US-20250334721-A1`, next.
 Parent saturation remains active and incomplete.
 
+Family `83151794`, root/publication `US-20250334721` / `US-20250334721-A1`, is
+complete at 26 exact source items independently of the earlier completed
+`US-12379524-B2` root: thirteen optical/coating architecture datasets, six coating
+experiments, one long-wave absorbing/filtering architecture, one camera-module
+wrapper and five device wrappers. Nineteen machine-readable table payloads publish
+composition/order, coated-lens identity, FOV/TD/SDmax, coating stacks and material/
+property/test scalars, but no ordered optical prescription or prescription-specific
+focal length, F-number or image height. All 26 therefore close as precise
+`confirmed_no_prescription` terminals under five existing namespaces. The retained
+HTML completely settles all category/table/item boundaries, so no PDF/raster review,
+OCR, enhancement, repair, measurement, numeric transcription, derivation, inference,
+prior-root borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V
+activity occurs. Attempts 2/3 preserve attempt 1 and are semantic-equal at
+`604c85d7...b36ac`; strict replay is 619/619 with zero missing/corrupt. Generic
+residual falls 6 to 5; result set is `f295cb3c...c68613` and repeat census is
+`7a5ddea8...7ae92`. Focused 9/9, broad non-PDF/non-raster 1,126/1,126,
+source-evidence/live-pointer 84/84 and replay/census/saturation/no-real-CODEV guards
+56/56 pass. Ruff, compile, diff, 8,298 workspace JSON and 147 source-evidence
+manifests/2,820 references/2,532 unique paths pass. One hundred seventeen historical
+manifests refresh exactly 572 permitted live-pointer leaves while frozen history
+remains fixed. Stable ordering selects Family `51536052`, root/publication
+`US-9835833` / `US-9835833-B2`, next. Parent saturation remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

@@ -1,0 +1,816 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "83151794",
+  "root_id": "US-20250334721",
+  "publication_id": "US-20250334721-A1",
+  "application_number": "19/260917",
+  "title": "OPTICAL IMAGING LENS ASSEMBLY, IMAGING APPARATUS AND ELECTRONIC DEVICE",
+  "source_denominator": {
+    "frozen_roots": 1,
+    "source_items": 26,
+    "optical_prescription_items": 0,
+    "nonterminal_items": 0,
+    "terminal_items": 26,
+    "root_state": "terminal"
+  },
+  "continuation_isolation": {
+    "selected_root_only": true,
+    "parent_application": "17/820604",
+    "parent_grant": "US-12379524",
+    "provisional_application": "63/239434",
+    "foreign_priority": "TW 111129234",
+    "values_item_boundaries_or_outcomes_borrowed_from_parent": false
+  },
+  "source_structure": {
+    "background_summary_paragraphs": 7,
+    "description_paragraphs": 158,
+    "claims": 18,
+    "independent_claims": 1,
+    "machine_readable_tables": 19,
+    "optical_coating_architecture_tables": 13,
+    "coating_experiment_tables": 6,
+    "inline_formula_pairs": 1,
+    "mathml_objects": 13,
+    "figref_tags": 80,
+    "declared_figure_panels": 19,
+    "native_html_tables": 0,
+    "native_html_rows": 0,
+    "native_html_cells": 0,
+    "embedded_images": 0,
+    "raw_characters": 139114,
+    "normalized_characters": 122240,
+    "declared_figure_panel_values": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7A",
+      "7B",
+      "8",
+      "9A",
+      "9B",
+      "9C",
+      "10",
+      "11",
+      "12A",
+      "12B",
+      "13A",
+      "13B",
+      "13C"
+    ],
+    "mathml_ids": [
+      "MATH-US-00001",
+      "MATH-US-00002",
+      "MATH-US-00003",
+      "MATH-US-00004",
+      "MATH-US-00005",
+      "MATH-US-00006",
+      "MATH-US-00007",
+      "MATH-US-00008",
+      "MATH-US-00009",
+      "MATH-US-00010",
+      "MATH-US-00011",
+      "MATH-US-00012",
+      "MATH-US-00013"
+    ],
+    "claim_dependencies": [
+      [],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        3
+      ],
+      [
+        3
+      ],
+      [
+        3
+      ],
+      [
+        1
+      ],
+      [
+        7
+      ],
+      [
+        1
+      ],
+      [
+        9
+      ],
+      [
+        10
+      ],
+      [
+        1
+      ],
+      [
+        12
+      ],
+      [
+        1
+      ],
+      [
+        14
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        17
+      ]
+    ]
+  },
+  "source_items": [
+    {
+      "item_number": 1,
+      "label": "Largan continuation optical/coating embodiment 1",
+      "source_evidence": {
+        "paragraph_range": [
+          88,
+          95
+        ],
+        "figures": [
+          "1"
+        ],
+        "tables": [
+          1
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 2,
+      "label": "Largan continuation optical/coating embodiment 2",
+      "source_evidence": {
+        "paragraph_range": [
+          96,
+          98
+        ],
+        "figures": [],
+        "tables": [
+          2
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 3,
+      "label": "Largan continuation optical/coating embodiment 3",
+      "source_evidence": {
+        "paragraph_range": [
+          99,
+          101
+        ],
+        "figures": [],
+        "tables": [
+          3
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 4,
+      "label": "Largan continuation optical/coating embodiment 4",
+      "source_evidence": {
+        "paragraph_range": [
+          102,
+          104
+        ],
+        "figures": [],
+        "tables": [
+          4
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 5,
+      "label": "Largan continuation optical/coating embodiment 5",
+      "source_evidence": {
+        "paragraph_range": [
+          105,
+          107
+        ],
+        "figures": [],
+        "tables": [
+          5
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 6,
+      "label": "Largan continuation optical/coating embodiment 6",
+      "source_evidence": {
+        "paragraph_range": [
+          108,
+          110
+        ],
+        "figures": [],
+        "tables": [
+          6
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 7,
+      "label": "Largan continuation optical/coating embodiment 7",
+      "source_evidence": {
+        "paragraph_range": [
+          111,
+          113
+        ],
+        "figures": [],
+        "tables": [
+          7
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 8,
+      "label": "Largan continuation optical/coating embodiment 8",
+      "source_evidence": {
+        "paragraph_range": [
+          114,
+          116
+        ],
+        "figures": [],
+        "tables": [
+          8
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 9,
+      "label": "Largan continuation optical/coating embodiment 9",
+      "source_evidence": {
+        "paragraph_range": [
+          117,
+          119
+        ],
+        "figures": [],
+        "tables": [
+          9
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 10,
+      "label": "Largan continuation optical/coating embodiment 10",
+      "source_evidence": {
+        "paragraph_range": [
+          120,
+          122
+        ],
+        "figures": [],
+        "tables": [
+          10
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 11,
+      "label": "Largan continuation optical/coating embodiment 11",
+      "source_evidence": {
+        "paragraph_range": [
+          123,
+          125
+        ],
+        "figures": [],
+        "tables": [
+          11
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 12,
+      "label": "Largan continuation optical/coating embodiment 12",
+      "source_evidence": {
+        "paragraph_range": [
+          126,
+          128
+        ],
+        "figures": [],
+        "tables": [
+          12
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 13,
+      "label": "Largan continuation optical/coating embodiment 13",
+      "source_evidence": {
+        "paragraph_range": [
+          129,
+          131
+        ],
+        "figures": [],
+        "tables": [
+          13
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 14,
+      "label": "Largan continuation anti-reflective first comparative experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "2"
+        ],
+        "tables": [
+          14,
+          17,
+          18
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 15,
+      "label": "Largan continuation anti-reflective second comparative experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            132
+          ],
+          [
+            146,
+            146
+          ]
+        ],
+        "figures": [
+          "7A"
+        ],
+        "tables": [
+          14
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 16,
+      "label": "Largan continuation anti-reflective third comparative experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "3"
+        ],
+        "tables": [
+          15,
+          18
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 17,
+      "label": "Largan continuation anti-reflective first embodiment experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            146
+          ]
+        ],
+        "figures": [
+          "4",
+          "7B"
+        ],
+        "tables": [
+          15,
+          17,
+          19
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 18,
+      "label": "Largan continuation anti-reflective second embodiment experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "5"
+        ],
+        "tables": [
+          16,
+          17,
+          19
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 19,
+      "label": "Largan continuation anti-reflective third embodiment experiment",
+      "source_evidence": {
+        "description_ranges": [
+          [
+            132,
+            145
+          ]
+        ],
+        "figures": [
+          "6"
+        ],
+        "tables": [
+          16,
+          17,
+          19
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 20,
+      "label": "Largan continuation long-wavelength absorbing/filtering architecture",
+      "source_evidence": {
+        "description_paragraphs": [
+          50,
+          51
+        ],
+        "background_paragraphs": [
+          7
+        ],
+        "figures": []
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 21,
+      "label": "Largan continuation fourteenth-embodiment camera-module wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          147,
+          148,
+          149
+        ],
+        "claim_numbers": [
+          17
+        ],
+        "figures": [
+          "8"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 22,
+      "label": "Largan continuation fifteenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          150,
+          151
+        ],
+        "figures": [
+          "9A",
+          "9B",
+          "9C"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 23,
+      "label": "Largan continuation sixteenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          152,
+          153
+        ],
+        "figures": [
+          "10"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 24,
+      "label": "Largan continuation seventeenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          154,
+          155,
+          156
+        ],
+        "figures": [
+          "11"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 25,
+      "label": "Largan continuation eighteenth-embodiment smartphone wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          157,
+          158
+        ],
+        "figures": [
+          "12A",
+          "12B"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    },
+    {
+      "item_number": 26,
+      "label": "Largan continuation nineteenth-embodiment vehicle wrapper",
+      "source_evidence": {
+        "description_paragraphs": [
+          159,
+          160
+        ],
+        "background_paragraphs": [
+          6
+        ],
+        "claim_numbers": [
+          18
+        ],
+        "figures": [
+          "13A",
+          "13B",
+          "13C"
+        ]
+      },
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false
+    }
+  ],
+  "classification": {
+    "status": "confirmed_no_prescription",
+    "reason_counts": {
+      "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only": 13,
+      "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only": 6,
+      "confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only": 1,
+      "confirmed_no_prescription.camera_module_wrapper_only": 1,
+      "confirmed_no_prescription.electronic_device_wrapper_only": 5
+    },
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "replay_state": {
+    "attempts": [
+      2,
+      3
+    ],
+    "semantic_sha256": "604c85d75ecdd0c3988ff7f4ec5ae612f6093e5523b5da442e73eeb596cb36ac",
+    "semantic_equal": true,
+    "append_only_prefix_preserved": true,
+    "strict_replay": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    },
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 59552,
+      "sha256": "1b14a41d63928441cc2eed279fb33f15e7bb5da68442ee0ac995fe36c1de5e02"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 61698,
+      "sha256": "d7d249ebcf2bfbefbfce9401a7e79eafcb37bf5a5cfd5f041d76ace9813b4c10"
+    }
+  },
+  "generic_census": {
+    "before_affected_roots": 6,
+    "after_affected_roots": 5,
+    "before_result_set_sha256": "d25e55011dcc69583ca7b9b298980acfbb61839ed8ad3e430353e8f42676be05",
+    "after_result_set_sha256": "f295cb3cbb289be12dfdab410a7fb31e7db00339a148f90c43805412c9c68613",
+    "repeat_census_equal": true,
+    "next_family_id": "51536052",
+    "next_root_ids": [
+      "US-9835833"
+    ],
+    "saturation_complete": false
+  },
+  "live_shared_outputs": {
+    "result_set_sha256": "f295cb3cbb289be12dfdab410a7fb31e7db00339a148f90c43805412c9c68613",
+    "replay_summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 59552,
+      "sha256": "1b14a41d63928441cc2eed279fb33f15e7bb5da68442ee0ac995fe36c1de5e02"
+    },
+    "replay_report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 61698,
+      "sha256": "d7d249ebcf2bfbefbfce9401a7e79eafcb37bf5a5cfd5f041d76ace9813b4c10"
+    }
+  },
+  "evidence": {
+    "raw_source": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b60f9d0e106d0592/US-20250334721-A1.html",
+      "bytes": 139967,
+      "sha256": "b60f9d0e106d05922a0c06b41e71fd6f7db784d718d9cda036a1cc56090db4e7",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "quick_plan": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/260723-patent-generic-family-83151794-root-20250334721-PLAN.md",
+      "bytes": 4793,
+      "sha256": "48583cf502c1d4ee3512176656008a6db965c28448c7fc2811be5bdb3ed2c5a7"
+    },
+    "roots": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/roots.txt",
+      "bytes": 15,
+      "sha256": "1bee6d5c421965c1dc976a76b8a8af58e3fdccdb5d4b4469be54a8a61491196b"
+    },
+    "denominator": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/family-83151794-root-US-20250334721-denominator.json",
+      "bytes": 29897,
+      "sha256": "1717030c491cae2261164a74b8ff1035356a12858cbc8d212bc3c7141d34114b"
+    },
+    "source_audit": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/family-83151794-root-US-20250334721-source-audit.md",
+      "bytes": 4594,
+      "sha256": "6986b6ecf96ee1018a73553943b688b5a0247bb31d716207336f121ac9c50218"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/family-83151794-root-US-20250334721-replay-determinism.json",
+      "bytes": 2505,
+      "sha256": "e9d041d87586f192b85001149805a0d253e971e5d364a3a9a959c2b0ee3c71ec"
+    },
+    "live_pointer_refresh_audit": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/family-83151794-root-US-20250334721-live-pointer-refresh-audit.json",
+      "bytes": 70003,
+      "sha256": "b51c27548b8b0046e781a1cb7e7c7fa8b171f3bfd1a1331f6c0d0f592a39204b"
+    },
+    "generic_residual_before": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/generic-residual-before-6.json",
+      "bytes": 4106,
+      "sha256": "a7055970500690eb9caf029c1d30dab65bcb28d035e4abd94626c76e7626d386"
+    },
+    "generic_residual_after_1": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/generic-residual-after-1.json",
+      "bytes": 3464,
+      "sha256": "7a5ddea88c97702f732b1bd2e26fa7328933d3c1fff668aff13334bc9767ae92"
+    },
+    "generic_residual_after_2": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/generic-residual-after-2.json",
+      "bytes": 3464,
+      "sha256": "7a5ddea88c97702f732b1bd2e26fa7328933d3c1fff668aff13334bc9767ae92"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/queue-after.json",
+      "bytes": 1450,
+      "sha256": "07eeedacf1ff104a814aeeb50b2ee2414bb21b07897963a29fe40d4b4eeb853b"
+    },
+    "attempt_1": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250334721/attempt-0001/result.json",
+      "bytes": 1299,
+      "sha256": "977993b5cb8901cfafc3438caa92e186a101e2ba75ebb2b528e90e5119e3f00a"
+    },
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250334721/attempt-0002/result.json",
+      "bytes": 28714,
+      "sha256": "500e022e73d1f43d90eda222807250c415d24d73ab06b5ad57d61459f41b871d"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250334721/attempt-0003/result.json",
+      "bytes": 28714,
+      "sha256": "9561f02538bfc5eb2ec7ba01471d49094244f09e1f16894462a913ec50d3f627"
+    },
+    "replay_summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 59552,
+      "sha256": "1b14a41d63928441cc2eed279fb33f15e7bb5da68442ee0ac995fe36c1de5e02"
+    },
+    "replay_report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 61698,
+      "sha256": "d7d249ebcf2bfbefbfce9401a7e79eafcb37bf5a5cfd5f041d76ace9813b4c10"
+    }
+  },
+  "invariants": {
+    "all_26_source_items_reconciled": true,
+    "all_19_tables_bound": true,
+    "source_drift_reopens_all_26_items": true,
+    "parent_or_prior_root_values_borrowed": false,
+    "official_pdf_or_raster_review_required": false,
+    "official_pdf_or_raster_used": false,
+    "no_ocr_or_raster_numeric_transcription": true,
+    "no_numeric_derivation_repair_or_inference": true,
+    "worker_launches_absent": true,
+    "codev_calls_absent": true,
+    "saturation_complete": false
+  }
+}
