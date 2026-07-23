@@ -1,0 +1,280 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "81112283",
+  "root_id": "US-12625341",
+  "publication_id": "US-12625341-B2",
+  "sections": {
+    "background_summary_paragraphs": 7,
+    "description_paragraphs": 123,
+    "brief_drawing_paragraphs": 21,
+    "common_detailed_description_paragraphs": 27,
+    "source_item_paragraphs": 74,
+    "common_closing_paragraphs": 1,
+    "total_numbered_paragraphs": 130,
+    "claims": 18,
+    "independent_claims": 2,
+    "figref_tags": 95,
+    "declared_figure_panels": 20,
+    "drawing_sheets": 20,
+    "inline_formula_lead_tail_pairs": 19,
+    "flattened_table_us_blocks": 7,
+    "native_html_tables": 0,
+    "mathml_objects": 0,
+    "embedded_figure_images": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan first light-blocking-sheet assembly embodiment",
+      "paragraph_range": [
+        49,
+        60
+      ],
+      "figures": [
+        "1A",
+        "1B",
+        "1C"
+      ],
+      "table": 1,
+      "table_paragraph": 60,
+      "placement_paragraph": 51,
+      "placement_sequence": [
+        "optical lens element:121",
+        "light blocking sheet:111",
+        "optical lens element:122",
+        "light blocking sheet:112",
+        "optical lens element:123",
+        "light blocking sheet:113",
+        "optical lens element:124",
+        "light blocking sheet:114",
+        "optical lens element:125"
+      ],
+      "lens_count": 5,
+      "sheet_count": 4,
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_and_lens_placement_architecture_only",
+      "terminal_status": "confirmed_no_prescription",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 2,
+      "label": "Largan second light-blocking-sheet assembly embodiment",
+      "paragraph_range": [
+        61,
+        71
+      ],
+      "figures": [
+        "2A",
+        "2B",
+        "2C"
+      ],
+      "table": 2,
+      "table_paragraph": 71,
+      "placement_paragraph": 62,
+      "placement_sequence": [
+        "optical lens element:221",
+        "light blocking sheet:211",
+        "optical lens element:222",
+        "light blocking sheet:212",
+        "optical lens element:223",
+        "light blocking sheet:213",
+        "light blocking sheet:214",
+        "optical lens element:224",
+        "light blocking sheet:215",
+        "optical lens element:225",
+        "light blocking sheet:216"
+      ],
+      "lens_count": 5,
+      "sheet_count": 6,
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_and_lens_placement_architecture_only",
+      "terminal_status": "confirmed_no_prescription",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 3,
+      "label": "Largan third light-blocking-sheet assembly embodiment",
+      "paragraph_range": [
+        72,
+        81
+      ],
+      "figures": [
+        "3A",
+        "3B",
+        "3C"
+      ],
+      "table": 3,
+      "table_paragraph": 81,
+      "placement_paragraph": 73,
+      "placement_sequence": [
+        "optical lens element:321",
+        "optical lens element:322",
+        "light blocking sheet:311",
+        "optical lens element:323",
+        "light blocking sheet:312",
+        "optical lens element:324",
+        "light blocking sheet:313",
+        "light blocking sheet:314",
+        "optical lens element:325",
+        "light blocking sheet:315",
+        "optical lens element:326"
+      ],
+      "lens_count": 6,
+      "sheet_count": 5,
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_and_lens_placement_architecture_only",
+      "terminal_status": "confirmed_no_prescription",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 4,
+      "label": "Largan fourth light-blocking-sheet assembly embodiment",
+      "paragraph_range": [
+        82,
+        92
+      ],
+      "figures": [
+        "4A",
+        "4B",
+        "4C"
+      ],
+      "table": 4,
+      "table_paragraph": 92,
+      "placement_paragraph": 83,
+      "placement_sequence": [
+        "optical lens element:421",
+        "optical lens element:422",
+        "light blocking sheet:411",
+        "optical lens element:423",
+        "light blocking sheet:412",
+        "optical lens element:424",
+        "light blocking sheet:413",
+        "optical lens element:425",
+        "light blocking sheet:414",
+        "light blocking sheet:415",
+        "optical lens element:426"
+      ],
+      "lens_count": 6,
+      "sheet_count": 5,
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_and_lens_placement_architecture_only",
+      "terminal_status": "confirmed_no_prescription",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 5,
+      "label": "Largan fifth light-blocking-sheet assembly embodiment",
+      "paragraph_range": [
+        93,
+        102
+      ],
+      "figures": [
+        "5A",
+        "5B",
+        "5C"
+      ],
+      "table": 5,
+      "table_paragraph": 102,
+      "placement_paragraph": 94,
+      "placement_sequence": [
+        "optical lens element:521",
+        "light blocking sheet:511",
+        "optical lens element:522",
+        "light blocking sheet:512",
+        "optical lens element:523",
+        "light blocking sheet:513",
+        "optical lens element:524",
+        "light blocking sheet:514",
+        "light blocking sheet:515",
+        "optical lens element:525",
+        "light blocking sheet:516",
+        "optical lens element:526"
+      ],
+      "lens_count": 6,
+      "sheet_count": 6,
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_and_lens_placement_architecture_only",
+      "terminal_status": "confirmed_no_prescription",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 6,
+      "label": "Largan sixth light-blocking-sheet assembly embodiment",
+      "paragraph_range": [
+        103,
+        113
+      ],
+      "figures": [
+        "6A",
+        "6B",
+        "6C"
+      ],
+      "table": 6,
+      "table_paragraph": 113,
+      "placement_paragraph": 104,
+      "placement_sequence": [
+        "optical lens element:621",
+        "optical lens element:622",
+        "light blocking sheet:611",
+        "optical lens element:623",
+        "light blocking sheet:612",
+        "optical lens element:624",
+        "light blocking sheet:613",
+        "optical lens element:625"
+      ],
+      "lens_count": 5,
+      "sheet_count": 3,
+      "reason_code": "confirmed_no_prescription.light_blocking_sheet_and_lens_placement_architecture_only",
+      "terminal_status": "confirmed_no_prescription",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 7,
+      "label": "Largan electronic-device seventh embodiment",
+      "paragraph_range": [
+        114,
+        122
+      ],
+      "figures": [
+        "7A",
+        "7B"
+      ],
+      "table": 7,
+      "table_paragraph": 121,
+      "placement_paragraph": null,
+      "placement_sequence": [],
+      "lens_count": null,
+      "sheet_count": null,
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_wrapper_only",
+      "terminal_status": "confirmed_no_prescription",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    }
+  ],
+  "counts": {
+    "source_items": 7,
+    "light_blocking_sheet_and_lens_placement_items": 6,
+    "electronic_device_multi_camera_wrapper_items": 1,
+    "published_ordered_optical_prescriptions": 0,
+    "complete_source_bound_prescriptions": 0,
+    "confirmed_no_prescription_items": 7,
+    "metadata_unpublished_items": 0,
+    "terminal_items": 7,
+    "nonterminal_items": 0
+  },
+  "table_boundary": {
+    "tables_1_through_6": "light-blocking-sheet geometry, lens outer diameter, FOV1/EFL and ratios only",
+    "table_7": "three electronic-device deployment FOV ranges only",
+    "lens_surface_prescription_tables": 0
+  },
+  "classification": {
+    "items_1_through_6": "confirmed_no_prescription.light_blocking_sheet_and_lens_placement_architecture_only",
+    "item_7": "confirmed_no_prescription.electronic_device_multi_camera_wrapper_only"
+  },
+  "worker_outputs_authorized": false,
+  "conversion_requests_authorized": false,
+  "formal_zmx_authorized": false,
+  "formal_case_intake_authorized": false,
+  "codev_calls_authorized": false
+}
