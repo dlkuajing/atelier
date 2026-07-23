@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-88416367-root-12523851/generic-residual-after-1.json",
+  "affected_roots": 1,
+  "affected_items": 1,
+  "result_set_sha256": "dd57462aadd206e9c5d495b3699201294a041e732776e7f560f604c6254e8a1a",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "fd9effbaf6fa8c47e55c3c964acb452ea0355a4484d5fddc94108732b816fbb7",
+    "layout_signature_count": 1,
+    "family_id": "81139502",
+    "root_ids": [
+      "US-20260172701"
+    ],
+    "publication_ids": [
+      "US-20260172701-A1"
+    ],
+    "application_numbers": [
+      "18/716311"
+    ],
+    "title": "ALL-LIGHT-FIELD IMAGING CAMERA AND IMAGING METHOD THEREOF, AND ALL-LIGHT-FIELD IMAGING DEVICE",
+    "applicant": "SHANGHAI ADVANCED RESEARCH INSTITUTE, CHINESE ACADEMY OF SCIENCES",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/6ef1af059f59265b/US-20260172701-A1.html",
+      "sha256": "6ef1af059f59265bcca8d25610833a7e04cd980e54b6b5cb5a74f55dbc936935",
+      "bytes": 75297
+    },
+    "marker_counts": {
+      "effective_focal_length": 15,
+      "embodiment_anchor": 9,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 0
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

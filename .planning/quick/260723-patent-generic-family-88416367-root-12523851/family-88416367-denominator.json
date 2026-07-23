@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "family_id": "88416367",
+  "application_number": "18/339612",
+  "root_ids": [
+    "US-12523851"
+  ],
+  "publication_ids": [
+    "US-12523851-B2"
+  ],
+  "lineage": {
+    "prior_publication": "US-20230341660-A1",
+    "prior_publication_date": "2023-10-26",
+    "china_priorities": [
+      "202310349216.8",
+      "202320690538.4"
+    ],
+    "priority_date": "2023-03-31",
+    "related_publication_values_borrowed": false
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 31,
+    "description_numbered_paragraphs": 84,
+    "claims": 20,
+    "independent_claims": 1,
+    "declared_drawing_panels": 5,
+    "ordered_figure_references": 21,
+    "html_native_tables": 0,
+    "flattened_table_blocks": 11,
+    "html_images": 0,
+    "mathml_objects": 1,
+    "math_objects": 1,
+    "inline_formula_pairs": 0,
+    "source_declared_embodiments": 5,
+    "source_items": 5,
+    "ordered_optical_prescriptions": 5,
+    "metadata_unpublished_items": 5,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "brief_description_of_drawings": [1, 6],
+    "common_architecture_and_conditions": [7, 47],
+    "shared_table_and_asphere_definition": [48, 53],
+    "embodiment_1": [54, 59],
+    "embodiment_2": [60, 65],
+    "embodiment_3": [66, 71],
+    "embodiment_4": [72, 77],
+    "embodiment_5": [78, 83],
+    "closing": [84, 84]
+  },
+  "claim_dependency_graph": [
+    [],
+    [1], [1], [1], [1], [1], [1], [1], [1], [1],
+    [1], [1], [1], [1], [1], [1], [1], [1], [1], [1]
+  ],
+  "claim_scope": {
+    "wide_angle_lens_assembly_architecture_and_ratio_conditions": [1, 20],
+    "claims_create_additional_source_items": false
+  },
+  "shared_evidence": {
+    "description_paragraphs": [48, 53],
+    "tables": [1],
+    "mathml_formula": "MATH-US-00001",
+    "role": "conditional-ratio comparison and even-power asphere definition",
+    "creates_additional_source_item": false
+  },
+  "items": [
+    {
+      "item_number": 1,
+      "embodiment_number": 1,
+      "label": "Sunny ten-lens wide-angle assembly Embodiment 1",
+      "description_paragraphs": [54, 59],
+      "figures": [1],
+      "tables": [1, 2, 3],
+      "surface_rows": 22,
+      "stop_surface_number": 11,
+      "aspheric_surface_numbers": [3, 4, 9, 10, 19, 20],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_and_angular_field_absent"
+    },
+    {
+      "item_number": 2,
+      "embodiment_number": 2,
+      "label": "Sunny ten-lens wide-angle assembly Embodiment 2",
+      "description_paragraphs": [60, 65],
+      "figures": [2],
+      "tables": [1, 4, 5],
+      "surface_rows": 21,
+      "stop_surface_number": 10,
+      "aspheric_surface_numbers": [3, 4, 8, 9, 18, 19],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_and_angular_field_absent"
+    },
+    {
+      "item_number": 3,
+      "embodiment_number": 3,
+      "label": "Sunny ten-lens wide-angle assembly Embodiment 3",
+      "description_paragraphs": [66, 71],
+      "figures": [3],
+      "tables": [1, 6, 7],
+      "surface_rows": 21,
+      "stop_surface_number": 10,
+      "aspheric_surface_numbers": [3, 4, 8, 9, 18, 19],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_and_angular_field_absent"
+    },
+    {
+      "item_number": 4,
+      "embodiment_number": 4,
+      "label": "Sunny ten-lens wide-angle assembly Embodiment 4",
+      "description_paragraphs": [72, 77],
+      "figures": [4],
+      "tables": [1, 8, 9],
+      "surface_rows": 21,
+      "stop_surface_number": 10,
+      "aspheric_surface_numbers": [3, 4, 8, 9, 11, 12, 18, 19],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_and_angular_field_absent"
+    },
+    {
+      "item_number": 5,
+      "embodiment_number": 5,
+      "label": "Sunny ten-lens wide-angle assembly Embodiment 5",
+      "description_paragraphs": [78, 83],
+      "figures": [5],
+      "tables": [1, 10, 11],
+      "surface_rows": 21,
+      "stop_surface_number": 10,
+      "aspheric_surface_numbers": [3, 4, 8, 9, 11, 12, 16, 17, 18, 19],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_and_angular_field_absent"
+    }
+  ],
+  "table_boundary": {
+    "table_paragraphs": [[1, 50], [2, 56], [3, 58], [4, 62], [5, 64], [6, 68], [7, 70], [8, 74], [9, 76], [10, 80], [11, 82]],
+    "surface_tables": [2, 4, 6, 8, 10],
+    "asphere_tables": [3, 5, 7, 9, 11],
+    "shared_conditional_table": 1,
+    "ordered_raw_table_paragraph_set_sha256": "0e0ef5874c1ceb6e21086b483c0c744498790d0244ad7f7097ce6d72341312aa",
+    "ordered_normalized_table_paragraph_set_sha256": "159bb79373867df809325bc862174847c0ab8a9a49ee852a9becc1344d00fc90"
+  },
+  "prescription_boundary": {
+    "ordered_lens_surface_radius_rows_published": true,
+    "ordered_axial_spacing_rows_published": true,
+    "numerical_optical_index_and_dispersion_rows_published": true,
+    "surface_specific_conic_and_even_A4_through_A16_rows_published": true,
+    "identified_aperture_stop_published": true,
+    "prescription_specific_f_over_enpd_values": [1.80, 1.70, 1.80, 1.70, 1.8],
+    "prescription_specific_numeric_total_efl_values_published": 0,
+    "prescription_specific_numeric_angular_field_values_published": 0,
+    "prescription_specific_absolute_image_height_values_published": 0,
+    "source_wide_fno_upper_bound_occurrences": 7,
+    "source_wide_fov_lower_bound_occurrences": 7,
+    "source_wide_bounds_promoted_to_exact_item_metadata": false,
+    "paraxial_efl_derived_from_surface_tables": false,
+    "field_derived_from_geometry_or_bound": false
+  },
+  "literal_source_conflicts": {
+    "description_paragraph_48_says_four_embodiments": true,
+    "five_numbered_embodiment_sections_figures_and_table_pairs_published": true,
+    "denominator_resolution": "preserve the literal sentence; bind the five independently enumerated FIG.1-FIG.5 and TABLES 2-11 items"
+  },
+  "binding_policy": {
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "pdf_or_raster_review_used": false,
+    "ocr_used": false,
+    "raster_numeric_transcription_used": false,
+    "printed_token_repair_used": false,
+    "priority_or_prior_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

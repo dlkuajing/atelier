@@ -1169,6 +1169,57 @@ remains fixed. Stable ordering selects Family `88416367`, root/publication
 `US-12523851` / `US-12523851-B2`, next. Parent saturation remains active and
 incomplete.
 
+Family `88416367`, root/publication `US-12523851` / `US-12523851-B2`, is active in
+GSD quick `260723-patent-generic-family-88416367-root-12523851`, opened from committed
+Family 71134482 state at `be5f59e7` before detailed source investigation. The exact
+retained 72,004-byte HTML is pinned at `d3c7aab1...1f4a4d`; the one-occurrence layout
+signature is `f941c9e4...15748b`. Entry queue counts (75 effective-focal-length, 15
+embodiment, seven F-number, 20 full-field, eleven table and zero example/half-field
+anchors) are routing observations only, not source-item boundaries or outcomes. The
+byte-identical pre-change census contains two residual roots at result set
+`0a4a572f...2d7ec` and census hash `14232534...7b6d`. Exact source, table, claim,
+section and figure reconciliation must precede classification; no related-root,
+family or layout borrowing is permitted. Parent saturation remains active and
+incomplete.
+
+Exact source reconciliation for Family `88416367` now freezes five numerical ten-lens
+wide-angle prescriptions: Description 54-59/FIG.1/TABLES 1-3, 60-65/FIG.2/TABLES
+1,4-5, 66-71/FIG.3/TABLES 1,6-7, 72-77/FIG.4/TABLES 1,8-9 and
+78-83/FIG.5/TABLES 1,10-11. Background/Summary 1-31, Description 1-84, claims
+1-20, five declared figure panels, 21 figure references, eleven flattened tables and
+one MathML asphere equation reconcile completely. Each item publishes ordered radii,
+thicknesses, index/Abbe rows, an exact STO row, K and even A4-A16 coefficients plus a
+direct TABLE 1 `F/ENPD` value, but no prescription-specific numeric total EFL, exact
+angular field or absolute image height. The repeated source-wide `FNO≤1.8` and
+`FOV≥160°` bounds are not promoted to exact item metadata, and no paraxial EFL or
+field is derived. Paragraph 48's literal “four embodiments” is preserved; the five
+independently enumerated headings, figures and table pairs establish the item
+denominator. All five therefore freeze as precise
+`metadata_unpublished.prescription_specific_efl_and_angular_field_absent` terminals.
+Complete machine-readable HTML settles every boundary, so no PDF/raster review, OCR,
+enhancement, repair, measurement, numeric raster transcription, inference,
+lineage/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or
+CODE V activity is authorized. Parent saturation remains active and incomplete.
+
+**Patent saturation latest authoritative update (2026-07-23, Family 88416367):**
+This supersedes the completed Family 71134482 snapshot. Exact US-12523851-B2 closes
+five numerical ten-lens wide-angle prescriptions as
+`metadata_unpublished.prescription_specific_efl_and_angular_field_absent`. Each item
+directly publishes complete ordered surfaces, materials, stops, K/even A4-A16
+coefficients and F/ENPD, but no prescription-specific numeric total EFL, exact angular
+field or absolute image height; source-wide FNO/FOV bounds remain bounds and no value is
+derived. No PDF/raster review, OCR, repair, measurement, inference, lineage/layout
+borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use occurs.
+Attempts 2/3 preserve attempt 1 and are canonical-semantic-equal at
+`b321338385bc4a1f270353fb200c583171b15c6a0ad7cd2b91c9bb66ca7a5b39`.
+Strict replay remains 619/619 with missing=0/corrupt=0. Generic residual falls 2 to 1;
+result set is `dd57462aadd206e9c5d495b3699201294a041e732776e7f560f604c6254e8a1a`
+and repeat census SHA-256 is
+`a0ec3b06b647cc48154d63e0d0d953cb3c5f6a3f77479a332cf48ca33b53b559`.
+Focused 9/9, broad non-PDF/non-raster 1,159/1,159, source-evidence/live-pointer
+88/88 and guards 56/56 pass. Stable ordering selects the last residual Family
+`81139502` / `US-20260172701-A1` next. Parent saturation remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

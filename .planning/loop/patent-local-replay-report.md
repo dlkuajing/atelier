@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `0a4a572f9c788d896db4873f4dae39ad5fd8190bf7cdb4fbe83701c4e522d7ec`
+- result_set_sha256: `dd57462aadd206e9c5d495b3699201294a041e732776e7f560f604c6254e8a1a`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -19,8 +19,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root states
 
 - `converted_pending_intake`: 29
-- `terminal`: 239
-- `parser_review_required`: 193
+- `terminal`: 240
+- `parser_review_required`: 192
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
@@ -29,8 +29,8 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Item states
 
 - `converted_pending_intake`: 609
-- `terminal`: 2060
-- `parser_review_required`: 1335
+- `terminal`: 2065
+- `parser_review_required`: 1334
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -41,21 +41,21 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `confirmed_no_prescription`: 840
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
-- `metadata_unpublished`: 474
+- `metadata_unpublished`: 479
 - `trace_failed`: 631
 - `trace_timeout`: 115
 - `externally_blocked`: 0
 
 ## Root reason codes
 
-- `terminal.all_disclosed_items_terminal`: 239
-- `parser_review_required.all_disclosed_items_rejected`: 193
+- `terminal.all_disclosed_items_terminal`: 240
+- `parser_review_required.all_disclosed_items_rejected`: 192
 - `mixed_nonterminal.multiple_item_states`: 158
 - `converted_pending_intake.all_disclosed_items_converted`: 29
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1335
+- `parser_review_required.deterministic_parser_rejected`: 1334
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 609
 - `terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent`: 126
@@ -115,6 +115,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only`: 5
 - `terminal.metadata_unpublished.non_working_retracted_state_has_no_system_metadata`: 5
 - `terminal.metadata_unpublished.prescription_specific_absolute_image_height_absent`: 5
+- `terminal.metadata_unpublished.prescription_specific_efl_and_angular_field_absent`: 5
 - `terminal.metadata_unpublished.prescription_specific_stop_surface_position_absent`: 5
 - `terminal.metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent`: 5
 - `terminal.metadata_unpublished.system_stop_f_number_and_angular_field_absent`: 5
@@ -497,7 +498,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sekonix_glass_code_cannot_be_split_deterministically_bsc7_hoya`: 3
 - `other_sunny_asphere_row_s7_has_more_values_than_headers_token`: 3
 - `other_unsupported_nonzero_fujifilm_asphere_terms_s3_a3_n_s4_a3_n_s14_a3_n_s15_a3_n`: 3
-- `generic_summary_metadata_missing`: 2
 - `other_ability_two_five_lens_surface_row_sequence_mismatch_s1_s2_s3_s4_s5_s6_s7_s8_s9_s10_s11_s12_s13_s14`: 2
 - `other_asphere_table_label_token_confidence_n_is_below_n_genius_six_comparison_2_drawing_sheet_header_confidence_n_is_below_n`: 2
 - `other_circle_optics_publishes_a_seven_lens_prescription_in_figs_8c_n_and_8c_n_but_only_n_table_region_numeric_ocr_6e54024052e3`: 2
@@ -535,6 +535,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_sunny_asphere_row_s5_has_more_values_than_headers_token`: 2
 - `other_sunny_long_focus_embodiment_n_publishes_p1_p2_mirrors_signed_coordinate_reversals_and_unlabeled_coordinate_0b6d77e09f4d`: 2
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r4_a2_n`: 2
+- `generic_summary_metadata_missing`: 1
 - `ofilm_first_embodiment_missing_radii_and_odd_asphere`: 1
 - `other_ability_ol1_asphere_cells_are_not_independently_classified_fail_closed`: 1
 - `other_ability_three_lens_row_s3_has_incomplete_material_data`: 1
