@@ -898,6 +898,29 @@ conversion output, formal intake or CODE V activity occurred. Stable ordering se
 Family `68161657`, root/publication `US-12140783` / `US-12140783-B2`, next. Parent
 saturation remains active and incomplete.
 
+Family `68161657`, root/publication `US-12140783` / `US-12140783-B2`, is the active
+exact-source GSD quick opened from committed state `b8ddbc3`. The frozen pre-change
+residual contains 12 roots/items at result set
+`f9d1f940d17f6466ae2bc20a44e87abe78ba36d7129973782622ce298069dd77` and census
+SHA-256 `8c629beb4b9579c3d3952bc5c5e289c2430935a8460d3586b23a93e398f8b32e`.
+No outcome is established until the exact B2 lineage, sections, claims, figures,
+tables and complete source-item denominator are reconciled. Parent saturation remains
+active and incomplete.
+
+Family `68161657`, root/publication `US-12140783` / `US-12140783-B2`, is complete at
+17 exact source items: two lens-architecture/chief-ray-path items, eleven absorbing-
+material/spectral items and four electronic-device wrappers. All are precise
+`confirmed_no_prescription` terminals; no ordered optical prescription, worker,
+request/receipt, fingerprint, ZMX, formal intake or CODE V activity exists. Attempts
+2/3 preserve attempt 1 and are semantic-equal at `60cb31d5...1b114`; strict replay is
+619/619 with zero missing/corrupt. Generic residual is 11 at result set
+`62f15743...bd352` and repeat census `237f846c...23a7e`. Focused 11/11, broad
+1075/1075, refreshed live-pointer assertions 10/10 and replay/census/saturation/
+no-real-CODEV guards 56/56 pass; Ruff, compile, diff, JSON/evidence/output/protected-
+path/primary-repository/process audits pass. Stable ordering selects Family
+`50942169`, root/publication `US-9274312` / `US-9274312-B2`, next. Parent saturation
+remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

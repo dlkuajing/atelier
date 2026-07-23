@@ -1,0 +1,366 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "68161657",
+  "root_id": "US-12140783",
+  "publication_id": "US-12140783-B2",
+  "sections": {
+    "background_summary_scoped_paragraphs": 11,
+    "description_paragraphs": 163,
+    "total_numbered_paragraphs": 174,
+    "brief_drawing_paragraphs": 10,
+    "common_detailed_description_paragraphs": 51,
+    "source_item_intro_paragraphs": 3,
+    "common_closing_paragraphs": 1,
+    "lens_architecture_item_paragraphs": 30,
+    "spectral_material_item_paragraphs": 59,
+    "electronic_device_wrapper_paragraphs": 9,
+    "claims": 15,
+    "independent_claims": 3,
+    "figref_tags": 32,
+    "declared_figure_panels": 9,
+    "drawing_sheets": 9,
+    "flattened_table_us_blocks": 23,
+    "named_tables": 13,
+    "inline_formula_pairs": 14,
+    "mathml_objects": 0,
+    "native_html_tables": 0,
+    "embedded_figure_images": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan absorbing-lens architecture Embodiment 1",
+      "source_item": "numbered embodiment 1",
+      "paragraph_range": [
+        63,
+        76
+      ],
+      "figures": [
+        "1"
+      ],
+      "tables": [
+        1
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_architecture_and_chief_ray_path_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 2,
+      "label": "Largan absorbing-lens architecture Embodiment 2",
+      "source_item": "numbered embodiment 2",
+      "paragraph_range": [
+        77,
+        92
+      ],
+      "figures": [
+        "2"
+      ],
+      "tables": [
+        2
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_lens_architecture_and_chief_ray_path_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 3,
+      "label": "Largan absorbing-material Comparative Embodiment 1",
+      "source_item": "comparative embodiment 1",
+      "paragraph_range": [
+        94,
+        98
+      ],
+      "figures": [],
+      "tables": [
+        3,
+        4
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 4,
+      "label": "Largan absorbing-material Comparative Embodiment 2",
+      "source_item": "comparative embodiment 2",
+      "paragraph_range": [
+        99,
+        101
+      ],
+      "figures": [],
+      "tables": [
+        5
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 5,
+      "label": "Largan absorbing-material Embodiment 3",
+      "source_item": "numbered embodiment 3",
+      "paragraph_range": [
+        102,
+        107
+      ],
+      "figures": [],
+      "tables": [
+        6,
+        7
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 6,
+      "label": "Largan absorbing-material Embodiment 4",
+      "source_item": "numbered embodiment 4",
+      "paragraph_range": [
+        108,
+        113
+      ],
+      "figures": [],
+      "tables": [
+        8,
+        9
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 7,
+      "label": "Largan absorbing-material Embodiment 5",
+      "source_item": "numbered embodiment 5",
+      "paragraph_range": [
+        114,
+        119
+      ],
+      "figures": [],
+      "tables": [
+        10,
+        11
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 8,
+      "label": "Largan absorbing-material Embodiment 6",
+      "source_item": "numbered embodiment 6",
+      "paragraph_range": [
+        120,
+        125
+      ],
+      "figures": [],
+      "tables": [
+        12,
+        13
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 9,
+      "label": "Largan absorbing-material Embodiment 7",
+      "source_item": "numbered embodiment 7",
+      "paragraph_range": [
+        126,
+        131
+      ],
+      "figures": [],
+      "tables": [
+        14,
+        15
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 10,
+      "label": "Largan absorbing-material Embodiment 8",
+      "source_item": "numbered embodiment 8",
+      "paragraph_range": [
+        132,
+        137
+      ],
+      "figures": [],
+      "tables": [
+        16,
+        17
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 11,
+      "label": "Largan absorbing-material Embodiment 9",
+      "source_item": "numbered embodiment 9",
+      "paragraph_range": [
+        138,
+        142
+      ],
+      "figures": [],
+      "tables": [
+        18,
+        19
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 12,
+      "label": "Largan absorbing-material Embodiment 10",
+      "source_item": "numbered embodiment 10",
+      "paragraph_range": [
+        143,
+        147
+      ],
+      "figures": [],
+      "tables": [
+        20,
+        21
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 13,
+      "label": "Largan absorbing-material Embodiment 11",
+      "source_item": "numbered embodiment 11",
+      "paragraph_range": [
+        148,
+        152
+      ],
+      "figures": [],
+      "tables": [
+        22,
+        23
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_absorbing_material_spectral_data_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 14,
+      "label": "Largan electronic-device wrapper Embodiment 12",
+      "source_item": "numbered embodiment 12",
+      "paragraph_range": [
+        154,
+        158
+      ],
+      "figures": [
+        "3A",
+        "3B",
+        "3C",
+        "3D"
+      ],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 15,
+      "label": "Largan electronic-device wrapper Embodiment 13",
+      "source_item": "numbered embodiment 13",
+      "paragraph_range": [
+        159,
+        160
+      ],
+      "figures": [
+        "4"
+      ],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 16,
+      "label": "Largan electronic-device wrapper Embodiment 14",
+      "source_item": "numbered embodiment 14",
+      "paragraph_range": [
+        161,
+        161
+      ],
+      "figures": [
+        "5"
+      ],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 17,
+      "label": "Largan electronic-device wrapper Embodiment 15",
+      "source_item": "numbered embodiment 15",
+      "paragraph_range": [
+        162,
+        162
+      ],
+      "figures": [
+        "6"
+      ],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    }
+  ],
+  "counts": {
+    "source_items": 17,
+    "lens_architecture_and_chief_ray_path_items": 2,
+    "light_absorbing_material_spectral_items": 11,
+    "electronic_device_wrapper_items": 4,
+    "published_ordered_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 17,
+    "terminal_items": 17,
+    "nonterminal_items": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tables": 0,
+    "unmapped_inline_formula_pairs": 0,
+    "unmapped_source_items": 0
+  },
+  "worker_outputs_authorized": false,
+  "conversion_requests_authorized": false,
+  "formal_zmx_authorized": false,
+  "formal_case_intake_authorized": false,
+  "codev_calls_authorized": false,
+  "numeric_inference_or_repair_performed": false,
+  "lineage_value_borrowing_performed": false
+}
