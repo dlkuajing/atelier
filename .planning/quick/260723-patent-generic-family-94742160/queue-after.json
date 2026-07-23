@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-94742160/generic-residual-after-1.json",
+  "affected_roots": 16,
+  "affected_items": 16,
+  "result_set_sha256": "3a75d1d1ddb2218f10cfdca899433d32aaf9a6b758988d3d7cce4d77dabc0f0e",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "d2a40664ec98e866c8179b3e64a86a1e20e5b55f64396e8b7181575eaa2e9a32",
+    "layout_signature_count": 1,
+    "family_id": "100312404",
+    "root_ids": [
+      "US-20260186252"
+    ],
+    "publication_ids": [
+      "US-20260186252-A1"
+    ],
+    "application_numbers": [
+      "19/292973"
+    ],
+    "title": "IMAGING OPTICAL LENS",
+    "applicant_and_assignee": "Changzhou AAC Raytech Optronics Co., Ltd.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/cb2188a9d66b715c/US-20260186252-A1.html",
+      "sha256": "cb2188a9d66b715c5530c72647e069e7e5bc5f17bd5ffa94164bbbb4cc05acd2",
+      "bytes": 117302
+    },
+    "marker_counts": {
+      "effective_focal_length": 1,
+      "embodiment_anchor": 75,
+      "example_anchor": 0,
+      "f_number": 7,
+      "full_field": 39,
+      "half_field": 0
+    },
+    "table_count": 15
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}
