@@ -452,6 +452,12 @@ def _parse_prescription_attempts(
     )
     if source_locked_attempts:
         return source_locked_attempts
+    source_locked_attempts = _classify_largan_gate_nozzle_geometry_attempts(
+        raw_text,
+        patent_id=patent_id,
+    )
+    if source_locked_attempts:
+        return source_locked_attempts
     source_locked_attempts = _classify_aac_six_lens_missing_stop_position_attempts(
         raw_text,
         patent_id=patent_id,
@@ -99719,6 +99725,826 @@ def _classify_largan_light_blocking_sheet_placement_attempts(
             ),
         )
         for item in _LARGAN_FAMILY_81112283_ITEMS
+    ]
+
+
+_LARGAN_GATE_NOZZLE_GEOMETRY_REASON = (
+    "confirmed_no_prescription.plastic_optical_element_gate_vestige_and_nozzle_geometry_only"
+)
+_LARGAN_FAMILY_98608050_ITEMS: tuple[dict[str, Any], ...] = (
+    {
+        "number": 1,
+        "label": "Largan first-embodiment plastic-prism gate/nozzle base",
+        "paragraphs": (72, 73, 74, 75, 82, 83, 84),
+        "figures": ("1A", "1B", "1C", "1D", "1E", "1L", "1M", "1N", "1O", "1P", "1Q", "1R"),
+        "tables": ("1A", "1D"),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 2,
+        "label": "Largan first-embodiment gate/nozzle example 1",
+        "paragraphs": (76,),
+        "figures": ("1F",),
+        "tables": ("1B",),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 3,
+        "label": "Largan first-embodiment gate/nozzle example 2",
+        "paragraphs": (77,),
+        "figures": ("1G",),
+        "tables": ("1C",),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 4,
+        "label": "Largan first-embodiment concave-nozzle example 3",
+        "paragraphs": (78,),
+        "figures": ("1H",),
+        "tables": (),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 5,
+        "label": "Largan first-embodiment convex-nozzle example 4",
+        "paragraphs": (79,),
+        "figures": ("11", "1I"),
+        "tables": (),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 6,
+        "label": "Largan first-embodiment wave-nozzle example 5",
+        "paragraphs": (80,),
+        "figures": ("1J",),
+        "tables": (),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 7,
+        "label": "Largan first-embodiment stepped-nozzle example 6",
+        "paragraphs": (81,),
+        "figures": ("1K",),
+        "tables": (),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 8,
+        "label": "Largan second-embodiment plastic-prism gate/nozzle assembly",
+        "paragraphs": (85, 86, 87),
+        "figures": ("2A", "2B", "2C", "2D", "2E", "2F"),
+        "tables": ("2A",),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 9,
+        "label": "Largan third-embodiment plastic-lens gate/nozzle assembly",
+        "paragraphs": (88, 89, 90),
+        "figures": ("3A", "3B", "3C", "3D", "3E", "3F", "3G"),
+        "tables": ("3A",),
+        "reason_code": _LARGAN_GATE_NOZZLE_GEOMETRY_REASON,
+    },
+    {
+        "number": 10,
+        "label": "Largan fourth-embodiment multi-camera electronic-device wrapper",
+        "paragraphs": tuple(range(91, 100)),
+        "figures": ("4A", "4B", "4C", "4D", "4E"),
+        "tables": (),
+        "reason_code": _LARGAN_MULTI_CAMERA_WRAPPER_REASON,
+    },
+    {
+        "number": 11,
+        "label": "Largan fifth-embodiment multi-camera electronic-device wrapper",
+        "paragraphs": (100, 101, 102),
+        "figures": ("5",),
+        "tables": (),
+        "reason_code": _LARGAN_MULTI_CAMERA_WRAPPER_REASON,
+    },
+)
+_LARGAN_FAMILY_98608050_PROFILE: dict[str, Any] = {
+    "family_id": "98608050",
+    "application_number": "19/389134",
+    "priority_application": "US-63/721653",
+    "raw_chars": 94_694,
+    "raw_bytes": 94_971,
+    "raw_document_sha256": ("c21a506eeee412df125623d67418241f4d4f41bbb7ad139e8e6ddd7ba95abc04"),
+    "normalized_chars": 71_509,
+    "normalized_text_sha256": ("6f0fff4d29261f787f6e0680afda812959209f2406725c6572c4754c80def5d2"),
+    "title": "IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "headings": (
+        "Abstract",
+        "Related U.S. Application Data",
+        "Publication Classification",
+        "Background/Summary",
+        "Description",
+        "Claims",
+    ),
+    "identity_markers": {
+        "<title>US-20260140289-A1 - Patent Public Search | USPTO</title>": 1,
+        '<span id="category">Patent Application Publication</span>': 1,
+        '<span class="grid-col-1 text-top text-right">20260140289</span>': 1,
+        "May 21, 2026": 1,
+        "FAN; Chen-Wei": 2,
+        "CHEN; Yo Him": 1,
+        "CHENG; Jyun-Jia": 1,
+        "LARGAN PRECISION CO., LTD.": 1,
+        "<span>98608050</span>": 1,
+        "<span>19/389134</span>": 1,
+        "<span>November 14, 2025</span>": 1,
+        "us-provisional-application US 63721653 20241118": 1,
+        "63/721,653": 1,
+        "Nov. 18, 2024": 1,
+    },
+    "raw_section_sha256": {
+        "background_summary": "91a188975d08d1a904b87069c2da5ef9770ec9e65c4599a6ef19fa5de8bde6c4",
+        "description": "84c9bec4356aeb64cfa76b5f91cc09bed11db22218247086ecb70d2167cdadfb",
+        "claims": "3cee303449e22878e7541317b8fb83550c25ffa10fc03da277250cea28098ccd",
+    },
+    "section_sha256": {
+        "background_summary": "81da07381dabf98f876d29016ee9e3f01736701e1610f16e6ed1addf77966c62",
+        "description": "f24968713599ce06e92658cab4e25cc330e186dca42ffab99fadd8c8f8435437",
+        "claims": "2d93d014418e45a1c4f97580cc2ede52e7761d8748caa6e8b7c4cfe6309b57a4",
+    },
+    "paragraph_span_sha256": {
+        (
+            "background_summary",
+            1,
+            9,
+        ): "4da3e6ba46334f2a7087ef6336ac2df444e2bf1dafbf6067eb21420a6bb31737",
+        ("description", 10, 47): "1866db20f33108003121fb6d03c39089c124b5418c9eb3f7d0d9df24121552c7",
+        ("description", 48, 70): "68d98c8d9219c07122ce1da8f6f242e5be13fa3be7cd2a0600b432fb8d49ff47",
+        ("description", 71, 71): "c6ed8976089ca6d24b4b7adf90d7d4957ad07e3ac71098d847171eca66fcdc25",
+        ("description", 72, 84): "66d26f94427df12a7763524500a9028f96f5e9f88ca43a0556d3cae826440c10",
+        ("description", 85, 87): "490d4503d727516d407ebd6aa48a6384dd8c416e56c2551639a10c2b346ee67a",
+        ("description", 88, 90): "cd6292b1270cd232848e8d4ae3fc4aeffadf631ffe0f444d5297e1fdb6d51bd7",
+        ("description", 91, 99): "1be32344ebea5f814b4354cdba50bf1adc6ac1a34c732c13d4cebfb8fb8161c4",
+        (
+            "description",
+            100,
+            102,
+        ): "befed4979386ca3801e4010ce20aa5e896f59845cd17f3c286f6eba0fe1efe3f",
+        (
+            "description",
+            103,
+            103,
+        ): "56b5f76e3faaa196a0aba68f0f8c22c5d7ebf08b3cba9c9894a1d34df439747c",
+        (
+            "description",
+            10,
+            103,
+        ): "c629c3d81bb869df648212bc86500637edbeed6cab709f277fef2afd361e079b",
+    },
+    "claim_numbers": tuple(range(1, 46)),
+    "independent_claim_numbers": (1, 13, 23, 33),
+    "claim_sha256": (
+        "746d323d25c46648bbc97a1316e8e4083975c6d9fdd561042e0ec3dac0d5055a",
+        "a79d272b4f0fa091c1056f681e32f816535bb04125be0b9b4e0d5ef8243af83f",
+        "22981ff2f7083c5a5f434a70b3799decfeadb5aa5d4eeaddb46cfc92a3c132c7",
+        "3ae338ddda5bb0f3478b6271a85c7854448c97e2ea8b08b7d5f817e24b432374",
+        "464fe037e1a7defc2f29caeb703781655fe1e2ac1104ce43fad191ec1c694942",
+        "a0d5a0e19ad2dbfd9a4bb052f6565da097d1a9f947b03297eb8108b76625ac25",
+        "5937a6a2756113567325a7f7913d05068c4d685d2a30bd2d32e5e5ec4106ec7b",
+        "d5794db83da33d68ee097258e5879a45b365d90a8f784b62b4d7df23fd0e206f",
+        "f9e669050a1d88c9d8d5c4a89a512ee10a5c11886023e75241295ad0bf558baf",
+        "2bb803f10ac2d868b41aafbe5cb835a74cd4b0abec3faf3275981e7059264d32",
+        "bf023ea019797dcc1b551486ba06c61db44cda1e687c64bf88e8d58561038b6c",
+        "1311cb23e28ed324821029a3e773c6663e5ba709498e2cc0bafa1dfbeb55afd5",
+        "e4ba38bed915659f41f7b58fc6ff9b38f15ea06aa60610058b2d8d82c23cb51e",
+        "404c8dd2b36fe5fea91d6bb20d1c510231ac7e7d33d590e1f8a9ce035583bb87",
+        "3794a5d83724f12f35a1a1f1d02817c1bebec58ab3944d8096fc455d3337053d",
+        "b4186ad7841e079b3771d067901ff4cb98cb168608aac2aea017d356e57105ae",
+        "deebd0434a0bda799dd49430d81472a3076e34331660b98b35ef6d7a9dfc2691",
+        "4f206b57ffbf28a6a5c54372b0c8b07b5c258066122e733514ecb0a48e03e663",
+        "e4c82529f9f99e6ea72c2af662d5bad3be7cd008a0a196a0058b424e841ec64a",
+        "d56e4dcded94da0aaa42d5c537fcad13540cfe54ed8f673bb1df01732b3c6aea",
+        "1cc5dd962cd55be33c645ed57b5df55900db654bd5265496d3ab43b591fc2161",
+        "3db6dad0ea05f70f103cbf2cac55ed57cfad27f4fda52223019be812cec5f416",
+        "54c9bde6900cfdae72e075b9eb715c276c9d0114316a5d88a213c7b67dba3f08",
+        "1958ba8105506f395d6e80aba5db6747b4319733599cb175a58a1917add3ccb3",
+        "a6b1a257325fe79412ff4cc2111eeabf3f86b78a41d5bafd4084a7765d540927",
+        "71c8928b1e567686271f155aeff85f440ba34fc4a5a1e6851aea8ad6a2d0e3c8",
+        "92cb52ee040e3eae657ac720094df3626ecfa4c74d0414b9a1892bf0d20702d4",
+        "021623567c7abdcb991bc7b8c59460e1952b896441ee3b2456ed255411394dd2",
+        "d7e4679b7763444371aff10f00f8d4ad430b1652028b02144a56cc5637d16e45",
+        "a5f12105e8c7dc5c3f561dbee9562c5b7aaf29e7b6ce0feaaac77403913167a1",
+        "9106cb97f90175ec27b1f876641129a1f6bcbe6a488202d46d997b1550162ded",
+        "6310f715002586fc8f2c0fecb52e646ddc9caa8d928b70dfb2a755ebff005d5a",
+        "c1e16edd73377b6cbba18ab959236835bb5a9370af0a6600d12157588a201bea",
+        "526488d123d546c73b28caf0292b7b14b48bd1a0c1b1dd12597aca707df8ae9a",
+        "81931fceb97e20bf7f98e8729ce365e1eb9d8d5774beeed8887660115321f1d7",
+        "104ae7c3bf2a56ad6d7b282bea13877bb6b74edf2dbb249a2d07f3a70c75b969",
+        "902e834c0bc930a888cdc12eff002741835b475a9923da0c220ad0b81703b341",
+        "42c99ef7308bc1aca8fadb513adf8a92951a94ff3b3ba1b2e542f73c683f48a6",
+        "c2b6e9bd25a0a1d9e1e3fc3c6964a3d6a29133bd6e695e494df4687fa1fe1688",
+        "acc1274164b522ead3277f884d785e0a40046572c0a6d260e46884b95fb95193",
+        "7a463969c271b77b48459561318bd55f50611eeee74ba2b6a86e9349da94a66c",
+        "ebe1cef5ded40ef8c261a636a18c7d560a02b036888c2403b7509ed1394a2382",
+        "97d4fcc57a4dc4a9c7f3958e923fcde8cc10049adf6ff820211a8cb9ebeb9e57",
+        "420392c2710b49d51c5b6a304795cb07e44d50f170d155d0bacac5dc3f057cb4",
+        "d1f8c405f6fcae014f2d62305cd6a35337e558e027ca58d6ea0fc32b12b9323b",
+    ),
+    "math_ids": (
+        "MATH-US-00001",
+        "MATH-US-00002",
+        "MATH-US-00003",
+        "MATH-US-00003-2",
+        "MATH-US-00004",
+        "MATH-US-00005",
+        "MATH-US-00006",
+        "MATH-US-00007",
+        "MATH-US-00008",
+        "MATH-US-00009",
+        "MATH-US-00010",
+        "MATH-US-00011",
+        "MATH-US-00012",
+        "MATH-US-00013",
+        "MATH-US-00014",
+        "MATH-US-00015",
+        "MATH-US-00015-2",
+        "MATH-US-00015-3",
+        "MATH-US-00016",
+        "MATH-US-00017",
+        "MATH-US-00018",
+        "MATH-US-00019",
+        "MATH-US-00020",
+        "MATH-US-00021",
+        "MATH-US-00022",
+        "MATH-US-00023",
+    ),
+    "figure_panels": (
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E",
+        "1F",
+        "1G",
+        "1H",
+        "11",
+        "1J",
+        "1K",
+        "1L",
+        "1M",
+        "1N",
+        "1O",
+        "1P",
+        "1Q",
+        "1R",
+        "2A",
+        "2B",
+        "2C",
+        "2D",
+        "2E",
+        "2F",
+        "3A",
+        "3B",
+        "3C",
+        "3D",
+        "3E",
+        "3F",
+        "3G",
+        "4A",
+        "4B",
+        "4C",
+        "4D",
+        "4E",
+        "5",
+    ),
+    "raw_counts": {
+        "paragraph_tags": 21,
+        "figref": 176,
+        "table_us": 6,
+        "native_table": 0,
+        "maths": 26,
+        "math": 26,
+        "inline_formula_leads": 0,
+        "inline_formula_tails": 0,
+        "custom_img": 0,
+    },
+    "table_sha256": (
+        "f75f48b34f73bfb2ac56583b2dd2946c104083ccce54f9c096b8ba8257f6e2dd",
+        "2d99120200e272caf751882adb56c8c18aa7e05774b9dec4e4d6cc963c501dbd",
+        "898d2a579092898cccf8061c666ba432214bd7662a263058c05d7fdfbdd9d20a",
+        "920d2e2d8de7ff8e239748b17724cdcfcb3d93008bb0708f48cac861aaea353e",
+        "92a3041d63544f72b09054f76d41b0cba01278dc9a5810d76d17cfce126dad12",
+        "537a27a7b7b79d1c7f313a1bbbeaf56028e38ec3472e37452c110f59bce04208",
+    ),
+    "table_set_sha256": "20ea01f5d6c3788ccb5c0a330a0b4f836ee3a8805a6677d0d8eea5a1b8407973",
+    "official_pdfs": (
+        {
+            "path": ".planning/quick/260723-patent-generic-family-98608050/source-review/US-20260140289-A1-official-1.pdf",
+            "bytes": 1_755_069,
+            "sha256": "cbad469af21f76b63c2167045578aaa07cfcd8d42b1af9caa251650bcd7e8343",
+        },
+        {
+            "path": ".planning/quick/260723-patent-generic-family-98608050/source-review/US-20260140289-A1-official-2.pdf",
+            "bytes": 1_755_069,
+            "sha256": "3a566c985961b51b097282378595d0c5d2260a1e2ceefe9349fa9f1b945d0ff8",
+        },
+    ),
+    "official_pdf": {
+        "page_count": 47,
+        "default_raster_dimensions": (2560, 3300),
+        "exceptional_raster_dimensions": {
+            44: (2550, 3300),
+            45: (2550, 3300),
+            46: (2550, 3300),
+            47: (2550, 3300),
+        },
+        "raster_mode": "1",
+        "decoded_raster_set_sha256": "dfd091cccea8fff18fa876e2e226ddf1193ff0a63dc969b40d2c0033f5b244e0",
+        "pixel_only_raster_set_sha256": "ce8d7fa640633ec49f630883d4a1b5a38a1a60d9badb804124b8d8d8eade8edd",
+        "cover_pages": (1,),
+        "drawing_pages": tuple(range(2, 36)),
+        "specification_pages": tuple(range(36, 45)),
+        "claim_pages": tuple(range(44, 48)),
+        "reviewed_original_pages": (1, 2, 5, 9, 17, 23, 30, 35, 40, 41, 42, 43, 44, 45, 46, 47),
+    },
+}
+
+
+def _largan_family_98608050_sections(raw_text: str) -> dict[str, str]:
+    patterns = {
+        "background_summary": r"<h3>Background/Summary</h3>\s*(.*?)\s*</section>",
+        "description": r"<h3>Description</h3>\s*<p>(.*?)</p>\s*</section>",
+        "claims": r"<h3>Claims</h3>\s*<p>(.*?)</p>\s*</section>",
+    }
+    bodies: dict[str, str] = {}
+    for name, pattern in patterns.items():
+        matches = re.findall(pattern, raw_text, re.IGNORECASE | re.DOTALL)
+        if len(matches) != 1:
+            raise PatentParseError(f"Largan Family 98608050 {name} raw section count changed")
+        bodies[name] = matches[0]
+    return bodies
+
+
+def _largan_family_98608050_numbered_paragraphs(
+    body: str,
+    *,
+    section: str,
+    expected_first: int,
+    expected_last: int,
+) -> dict[int, str]:
+    markers = list(re.finditer(r"\[(\d{4})\]\s*", body))
+    numbers = tuple(int(marker.group(1)) for marker in markers)
+    if numbers != tuple(range(expected_first, expected_last + 1)):
+        raise PatentParseError(f"Largan Family 98608050 {section} paragraph denominator changed")
+    return {
+        number: normalize_patent_text(
+            body[
+                marker.end() : (
+                    markers[index + 1].start() if index + 1 < len(markers) else len(body)
+                )
+            ]
+        )
+        for index, (number, marker) in enumerate(zip(numbers, markers, strict=True))
+    }
+
+
+def _largan_family_98608050_paragraph_span(
+    paragraphs: dict[int, str], first: int, last: int
+) -> str:
+    return " ".join(f"[{number:04d}] {paragraphs[number]}" for number in range(first, last + 1))
+
+
+def _largan_family_98608050_table_payload(
+    paragraph: str,
+    *,
+    table_number: int,
+    table_label: str,
+) -> str:
+    match = re.search(
+        rf"(TABLE-US-{table_number:05d}\s+TABLE\s+{re.escape(table_label)}\s+.*)$",
+        paragraph,
+        re.IGNORECASE | re.DOTALL,
+    )
+    if match is None:
+        raise PatentParseError(f"Largan Family 98608050 TABLE {table_label} boundary changed")
+    return re.sub(
+        r"\s+(?:[2-4](?:nd|rd|th) Embodiment)$",
+        "",
+        match.group(1),
+        flags=re.IGNORECASE,
+    ).strip()
+
+
+def _classify_largan_gate_nozzle_geometry_attempts(
+    raw_text: str,
+    *,
+    patent_id: str,
+) -> list[_PrescriptionParseAttempt]:
+    """Close exact Family 98608050 without treating gate geometry as a prescription."""
+
+    if patent_id.upper() != "US-20260140289-A1":
+        return []
+    profile = _LARGAN_FAMILY_98608050_PROFILE
+
+    def attempts_for_error(exc: Exception) -> list[_PrescriptionParseAttempt]:
+        return [
+            _PrescriptionParseAttempt(
+                embodiment_number=int(item["number"]),
+                embodiment=str(item["label"]),
+                error=exc,
+            )
+            for item in _LARGAN_FAMILY_98608050_ITEMS
+        ]
+
+    try:
+        raw_payload = raw_text.encode("utf-8")
+        if not (
+            len(raw_text) == profile["raw_chars"]
+            and len(raw_payload) == profile["raw_bytes"]
+            and hashlib.sha256(raw_payload).hexdigest() == profile["raw_document_sha256"]
+        ):
+            raise PatentParseError(
+                f"Largan Family 98608050 official raw text changed for {patent_id}"
+            )
+        text = normalize_patent_text(raw_text)
+        if not (
+            len(text) == profile["normalized_chars"]
+            and hashlib.sha256(text.encode()).hexdigest() == profile["normalized_text_sha256"]
+        ):
+            raise PatentParseError(
+                f"Largan Family 98608050 normalized text changed for {patent_id}"
+            )
+
+        title_matches = re.findall(r"<h2[^>]*>(.*?)</h2>", raw_text, re.I | re.S)
+        if not (
+            len(title_matches) == 1 and normalize_patent_text(title_matches[0]) == profile["title"]
+        ):
+            raise PatentParseError("Largan Family 98608050 title changed")
+        headings = tuple(
+            normalize_patent_text(value)
+            for value in re.findall(r"<h3>(.*?)</h3>", raw_text, re.I | re.S)
+        )
+        if headings != profile["headings"]:
+            raise PatentParseError("Largan Family 98608050 section headings changed")
+        for marker, expected_count in profile["identity_markers"].items():
+            if raw_text.count(marker) != expected_count:
+                raise PatentParseError(f"Largan Family 98608050 identity marker changed: {marker}")
+
+        raw_sections = _largan_family_98608050_sections(raw_text)
+        for name, body in raw_sections.items():
+            if hashlib.sha256(body.encode()).hexdigest() != profile["raw_section_sha256"][name]:
+                raise PatentParseError(f"Largan Family 98608050 raw {name} section changed")
+            normalized = normalize_patent_text(body)
+            if hashlib.sha256(normalized.encode()).hexdigest() != profile["section_sha256"][name]:
+                raise PatentParseError(f"Largan Family 98608050 normalized {name} section changed")
+
+        background = _largan_family_98608050_numbered_paragraphs(
+            raw_sections["background_summary"],
+            section="background/summary",
+            expected_first=1,
+            expected_last=9,
+        )
+        description = _largan_family_98608050_numbered_paragraphs(
+            raw_sections["description"],
+            section="description",
+            expected_first=10,
+            expected_last=103,
+        )
+        paragraph_sets = {
+            "background_summary": background,
+            "description": description,
+        }
+        for (section, first, last), expected in profile["paragraph_span_sha256"].items():
+            span = _largan_family_98608050_paragraph_span(paragraph_sets[section], first, last)
+            if hashlib.sha256(span.encode()).hexdigest() != expected:
+                raise PatentParseError(
+                    f"Largan Family 98608050 {section} paragraphs {first}-{last} changed"
+                )
+
+        mapped: set[int] = set()
+        for item in _LARGAN_FAMILY_98608050_ITEMS:
+            item_paragraphs = tuple(int(value) for value in item["paragraphs"])
+            if mapped.intersection(item_paragraphs):
+                raise PatentParseError(
+                    "Largan Family 98608050 source-item paragraph overlap changed"
+                )
+            mapped.update(item_paragraphs)
+            item_text = " ".join(description[number] for number in item_paragraphs)
+            for figure in item["figures"]:
+                number = str(figure)[:-1] if str(figure)[-1:].isalpha() else str(figure)
+                suffix = str(figure)[-1] if str(figure)[-1:].isalpha() else ""
+                if (
+                    re.search(
+                        rf"\bFIG\.\s*{re.escape(number)}\s*{re.escape(suffix)}\b",
+                        item_text,
+                        re.IGNORECASE,
+                    )
+                    is None
+                ):
+                    raise PatentParseError(
+                        f"Largan Family 98608050 item {item['number']} FIG. {figure} binding changed"
+                    )
+        if mapped != set(range(72, 103)):
+            raise PatentParseError("Largan Family 98608050 source-item paragraph coverage changed")
+        if not (
+            description[71].endswith("1st Embodiment")
+            and description[84].endswith("2nd Embodiment")
+            and description[87].endswith("3rd Embodiment")
+            and description[90].endswith("4th Embodiment")
+            and description[99].endswith("5th Embodiment")
+        ):
+            raise PatentParseError("Largan Family 98608050 embodiment heading ownership changed")
+        nozzle_shapes = {
+            78: "divergent nozzle surface 132 is a concave arc surface",
+            79: "divergent nozzle surface 132 is a convex arc surface",
+            80: "divergent nozzle surface 132 is a wave arc surface",
+            81: "divergent nozzle surface 132 is a stepped surface",
+        }
+        if any(value not in description[number] for number, value in nozzle_shapes.items()):
+            raise PatentParseError(
+                "Largan Family 98608050 explicit nozzle-example topology changed"
+            )
+        if not (
+            description[79].startswith("FIG. 11")
+            and "In FIG. 1 I" in description[79]
+            and description[88].count("optical imaging lens assemblies 320") == 2
+            and "can move relative to each other" in description[88]
+            and "includes a plurality of camera modules" in description[91]
+            and "aforementioned 1st Embodiment to 3rd Embodiment" in description[91]
+            and "includes a camera module" in description[100]
+            and "aforementioned 1st Embodiment to 3rd Embodiment" in description[100]
+        ):
+            raise PatentParseError(
+                "Largan Family 98608050 source-item architecture boundary changed"
+            )
+
+        table_bindings = (("1A", 75), ("1B", 76), ("1C", 77), ("1D", 82), ("2A", 87), ("3A", 90))
+        table_payloads = tuple(
+            _largan_family_98608050_table_payload(
+                description[paragraph],
+                table_number=index,
+                table_label=label,
+            )
+            for index, (label, paragraph) in enumerate(table_bindings, start=1)
+        )
+        if (
+            tuple(hashlib.sha256(payload.encode()).hexdigest() for payload in table_payloads)
+            != profile["table_sha256"]
+        ):
+            raise PatentParseError("Largan Family 98608050 table payloads changed")
+        if (
+            hashlib.sha256(("\n".join(table_payloads) + "\n").encode()).hexdigest()
+            != profile["table_set_sha256"]
+        ):
+            raise PatentParseError("Largan Family 98608050 table set changed")
+        if not (
+            all(
+                token in payload
+                for payload in (table_payloads[0], table_payloads[1], table_payloads[2])
+                for token in (
+                    "Ac (mm.sup.2)",
+                    "As (mm.sup.2)",
+                    "Ag (mm.sup.2)",
+                    "As/Ag",
+                    "(As + Ag)/Ac",
+                    "degrees",
+                )
+            )
+            and all(
+                token in table_payloads[3]
+                for token in (
+                    "Dio1 (mm)",
+                    "Dio2 (mm)",
+                    "Dio (mm)",
+                    "Dg (mm)",
+                    "Dg/Dio",
+                    "Hs1/Dg",
+                    "Hs2/Dg",
+                )
+            )
+            and all(
+                token in payload
+                for payload in (table_payloads[4], table_payloads[5])
+                for token in (
+                    "Ac (mm.sup.2)",
+                    "As (mm.sup.2)",
+                    "Ag (mm.sup.2)",
+                    "Dio (mm)",
+                    "Dg (mm)",
+                    "Hs (mm)",
+                    "Dg/Dio",
+                    "Hs/Dg",
+                )
+            )
+        ):
+            raise PatentParseError("Largan Family 98608050 gate/nozzle table schema changed")
+
+        claims_html = raw_sections["claims"]
+        claim_matches = list(re.finditer(r"<b>(\d+)</b>\.", claims_html))
+        claim_numbers = tuple(int(match.group(1)) for match in claim_matches)
+        if claim_numbers != profile["claim_numbers"]:
+            raise PatentParseError("Largan Family 98608050 claim denominator changed")
+        claim_fragments = {
+            int(match.group(1)): claims_html[
+                match.end() : (
+                    claim_matches[index + 1].start()
+                    if index + 1 < len(claim_matches)
+                    else len(claims_html)
+                )
+            ]
+            for index, match in enumerate(claim_matches)
+        }
+        claims = {
+            number: normalize_patent_text(fragment) for number, fragment in claim_fragments.items()
+        }
+        if (
+            tuple(hashlib.sha256(claims[number].encode()).hexdigest() for number in claim_numbers)
+            != profile["claim_sha256"]
+        ):
+            raise PatentParseError("Largan Family 98608050 claim bodies changed")
+        independent = tuple(
+            number
+            for number, body in claims.items()
+            if re.search(r"\bclaim\s+\d+", body, re.IGNORECASE) is None
+        )
+        if not (
+            independent == profile["independent_claim_numbers"]
+            and all(claims[number].startswith("An imaging lens assembly") for number in independent)
+            and all(
+                claims[number].startswith("An electronic device")
+                and f"imaging lens assembly of claim {parent}" in claims[number]
+                for number, parent in zip(range(42, 46), independent, strict=True)
+            )
+            and "Dg" in claims[13]
+            and "Dq" in claim_fragments[13]
+            and "is es" in claims[5]
+            and "is es" in claims[37]
+            and "[0008] +" in text
+        ):
+            raise PatentParseError(
+                "Largan Family 98608050 claim dependency or literal anomaly changed"
+            )
+        math_ids = tuple(re.findall(r'<maths\s+id="([^"]+)"', claims_html, re.IGNORECASE))
+        if math_ids != profile["math_ids"]:
+            raise PatentParseError("Largan Family 98608050 MathML denominator changed")
+
+        declared_panels = []
+        for paragraph_number in range(11, 48):
+            match = re.match(
+                r"FIG\.\s*(\d+)\s*([A-Z]?)\s+is\b",
+                description[paragraph_number],
+                re.IGNORECASE,
+            )
+            if match is None:
+                raise PatentParseError("Largan Family 98608050 figure declaration changed")
+            declared_panels.append((match.group(1) + match.group(2)).upper())
+        if tuple(declared_panels) != profile["figure_panels"]:
+            raise PatentParseError("Largan Family 98608050 37-panel denominator changed")
+
+        raw_counts = {
+            "paragraph_tags": len(re.findall(r"<p(?:\s|>)", raw_text, re.I)),
+            "figref": len(re.findall(r"<figref\b", raw_text, re.I)),
+            "table_us": len(re.findall(r"TABLE-US-\d{5}", raw_text, re.I)),
+            "native_table": len(re.findall(r"<table(?:\s|>)", raw_text, re.I)),
+            "maths": len(re.findall(r"<maths\b", raw_text, re.I)),
+            "math": len(re.findall(r"<math(?:\s|>)", raw_text, re.I)),
+            "inline_formula_leads": len(
+                re.findall(r'<\?in-line-formulae[^>]*end="lead"', raw_text, re.I)
+            ),
+            "inline_formula_tails": len(
+                re.findall(r'<\?in-line-formulae[^>]*end="tail"', raw_text, re.I)
+            ),
+            "custom_img": len(re.findall(r"<img(?:\s|>)", raw_text, re.I)),
+        }
+        if raw_counts != profile["raw_counts"]:
+            raise PatentParseError(
+                f"Largan Family 98608050 source container counts changed: {raw_counts}"
+            )
+
+        forbidden_prescription_patterns = (
+            r"\bradi(?:us|i)\b",
+            r"\bcurvature\b",
+            r"\bsurface\s+spacing\b",
+            r"\bmaterials?\b",
+            r"\brefractive\s+index\b",
+            r"\bAbbe\b",
+            r"\bdispersion\b",
+            r"\baspher(?:e|ic|ical)\b",
+            r"\bconic\b",
+            r"\baperture\s+stop\b",
+            r"\bstop\s+surface\b",
+            r"\bF[- ]?number\b",
+            r"\bFno\b",
+            r"\bimage\s+height\b",
+            r"\beffective\s+focal\s+length\b",
+            r"\bwavelength\b",
+            r"\blens\s+data\b",
+            r"\bdiameter\b",
+        )
+        if any(re.search(pattern, text, re.I) for pattern in forbidden_prescription_patterns):
+            raise PatentParseError("Largan Family 98608050 prescription-marker boundary changed")
+        if not (
+            len(re.findall(r"\bthickness\b", text, re.I)) == 1
+            and "thickness of the light blocking layer 150" in description[84]
+            and len(re.findall(r"\boptical surface\b", text, re.I)) == 1
+            and "affecting the optical surface when cutting the injecting opening"
+            in description[59]
+            and len(re.findall(r"\bfocal lengths?\b", text, re.I)) == 2
+            and "changing the focal length" in description[88]
+            and "different focal lengths" in description[99]
+            and len(re.findall(r"\baperture\b", text, re.I)) == 3
+            and all("light pass aperture" in description[number] for number in (57, 68, 84))
+        ):
+            raise PatentParseError(
+                "Largan Family 98608050 contextual optical-marker boundary changed"
+            )
+
+        pdf_profile = profile["official_pdf"]
+        observed_raster_sets: list[tuple[str, ...]] = []
+        for wrapper in profile["official_pdfs"]:
+            pdf_payload = (ROOT / wrapper["path"]).read_bytes()
+            if not (
+                len(pdf_payload) == wrapper["bytes"]
+                and hashlib.sha256(pdf_payload).hexdigest() == wrapper["sha256"]
+            ):
+                raise PatentParseError("Largan Family 98608050 official PDF wrapper changed")
+            reader = pypdf.PdfReader(io.BytesIO(pdf_payload))
+            if len(reader.pages) != pdf_profile["page_count"]:
+                raise PatentParseError("Largan Family 98608050 official PDF page count changed")
+            raster_hashes: list[str] = []
+            pixel_hashes: list[str] = []
+            text_characters = 0
+            for page_number, page in enumerate(reader.pages, start=1):
+                images = list(page.images)
+                if len(images) != 1:
+                    raise PatentParseError(
+                        f"Largan Family 98608050 PDF page {page_number} raster count changed"
+                    )
+                image = images[0].image
+                expected_size = pdf_profile["exceptional_raster_dimensions"].get(
+                    page_number, pdf_profile["default_raster_dimensions"]
+                )
+                if not (image.size == expected_size and image.mode == pdf_profile["raster_mode"]):
+                    raise PatentParseError(
+                        f"Largan Family 98608050 PDF page {page_number} raster changed"
+                    )
+                digest = hashlib.sha256()
+                digest.update(image.mode.encode("ascii"))
+                digest.update(b"\0")
+                digest.update(str(image.size).encode("ascii"))
+                digest.update(b"\0")
+                digest.update(image.tobytes())
+                raster_hashes.append(digest.hexdigest())
+                pixel_hashes.append(hashlib.sha256(image.tobytes()).hexdigest())
+                text_characters += len(page.extract_text() or "")
+            if not (
+                hashlib.sha256(("\n".join(raster_hashes) + "\n").encode()).hexdigest()
+                == pdf_profile["decoded_raster_set_sha256"]
+                and hashlib.sha256(("\n".join(pixel_hashes) + "\n").encode()).hexdigest()
+                == pdf_profile["pixel_only_raster_set_sha256"]
+                and text_characters == 0
+            ):
+                raise PatentParseError("Largan Family 98608050 official PDF raster set changed")
+            observed_raster_sets.append(tuple(raster_hashes))
+        if len(set(observed_raster_sets)) != 1:
+            raise PatentParseError("Largan Family 98608050 official PDF captures disagree")
+        if not (
+            pdf_profile["cover_pages"] == (1,)
+            and pdf_profile["drawing_pages"] == tuple(range(2, 36))
+            and pdf_profile["specification_pages"] == tuple(range(36, 45))
+            and pdf_profile["claim_pages"] == tuple(range(44, 48))
+        ):
+            raise PatentParseError("Largan Family 98608050 official PDF page roles changed")
+    except Exception as exc:  # noqa: BLE001 - retain all eleven exact-source items
+        return attempts_for_error(exc)
+
+    details = {
+        _LARGAN_GATE_NOZZLE_GEOMETRY_REASON: (
+            "the exact source publishes only plastic-element gate vestige, divergent "
+            "nozzle, cut vestige, light-blocking and deployment geometry; it publishes "
+            "no ordered optical radius, spacing, material/index/dispersion, conic/"
+            "asphere, identified stop, F-number or image-height data"
+        ),
+        _LARGAN_MULTI_CAMERA_WRAPPER_REASON: (
+            "the exact source item is a smartphone/multi-camera deployment wrapper "
+            "that may use the preceding assemblies and adds no separate ordered "
+            "optical prescription"
+        ),
+    }
+    return [
+        _PrescriptionParseAttempt(
+            embodiment_number=int(item["number"]),
+            embodiment=str(item["label"]),
+            error=PatentTerminalParseError(
+                status="confirmed_no_prescription",
+                reason_code=str(item["reason_code"]),
+                detail=(
+                    f"Largan Family 98608050 item {item['number']}, Description "
+                    f"paragraphs {','.join(str(value) for value in item['paragraphs'])}, "
+                    f"FIGS. {', '.join(item['figures'])}"
+                    + (f", TABLES {', '.join(item['tables'])}" if item["tables"] else "")
+                    + f": {details[str(item['reason_code'])]}. The conclusion uses only "
+                    "the exact retained A1 and two matching official original raster "
+                    "sets; literal source conflicts are preserved, and no OCR, "
+                    "enhancement, drawing measurement, raster numeric transcription, "
+                    "derivation, repair or priority/family borrowing is used"
+                ),
+            ),
+        )
+        for item in _LARGAN_FAMILY_98608050_ITEMS
     ]
 
 

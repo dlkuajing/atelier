@@ -1,0 +1,738 @@
+{
+  "schema_version": "patent-family-computed-facts/v1",
+  "family_id": "98608050",
+  "root_id": "US-20260140289",
+  "publication_id": "US-20260140289-A1",
+  "application_number": "19/389134",
+  "title": "IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+  "applicant": "LARGAN PRECISION CO., LTD.",
+  "priority_application": "US-63/721653",
+  "priority_date": "2024-11-18",
+  "classification_source": "exact retained US-20260140289-A1 only",
+  "raw_document": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/c21a506eeee412df/US-20260140289-A1.html",
+    "characters": 94694,
+    "bytes": 94971,
+    "sha256": "c21a506eeee412df125623d67418241f4d4f41bbb7ad139e8e6ddd7ba95abc04"
+  },
+  "normalized_document": {
+    "characters": 71509,
+    "sha256": "6f0fff4d29261f787f6e0680afda812959209f2406725c6572c4754c80def5d2"
+  },
+  "headings": [
+    "Abstract",
+    "Related U.S. Application Data",
+    "Publication Classification",
+    "Background/Summary",
+    "Description",
+    "Claims"
+  ],
+  "identity_marker_counts": {
+    "United States Patent Application Publication": 0,
+    "US 2026/0140289 A1": 0,
+    "May 21, 2026": 1,
+    "Fan; Chen-Wei": 2,
+    "Chen; Yo Him": 1,
+    "Cheng; Jyun-Jia": 1,
+    "LARGAN PRECISION CO., LTD.": 1,
+    "Family ID: 98608050": 0,
+    "Appl. No.: 19/389134": 0,
+    "Filed: Nov. 14, 2025": 0,
+    "63/721653": 0,
+    "Nov. 18, 2024": 1
+  },
+  "sections": {
+    "background_summary": {
+      "raw_characters": 6971,
+      "raw_sha256": "91a188975d08d1a904b87069c2da5ef9770ec9e65c4599a6ef19fa5de8bde6c4",
+      "normalized_characters": 6894,
+      "normalized_sha256": "81da07381dabf98f876d29016ee9e3f01736701e1610f16e6ed1addf77966c62"
+    },
+    "description": {
+      "raw_characters": 58732,
+      "raw_sha256": "84c9bec4356aeb64cfa76b5f91cc09bed11db22218247086ecb70d2167cdadfb",
+      "normalized_characters": 48740,
+      "normalized_sha256": "f24968713599ce06e92658cab4e25cc330e186dca42ffab99fadd8c8f8435437"
+    },
+    "claims": {
+      "raw_characters": 23998,
+      "raw_sha256": "3cee303449e22878e7541317b8fb83550c25ffa10fc03da277250cea28098ccd",
+      "normalized_characters": 14180,
+      "normalized_sha256": "2d93d014418e45a1c4f97580cc2ede52e7761d8748caa6e8b7c4cfe6309b57a4"
+    }
+  },
+  "section_paragraph_counts": {
+    "background_summary": 9,
+    "description": 94,
+    "total": 103
+  },
+  "paragraph_span_sha256": {
+    "background_summary:1-9": "4da3e6ba46334f2a7087ef6336ac2df444e2bf1dafbf6067eb21420a6bb31737",
+    "description:10-47": "1866db20f33108003121fb6d03c39089c124b5418c9eb3f7d0d9df24121552c7",
+    "description:48-70": "68d98c8d9219c07122ce1da8f6f242e5be13fa3be7cd2a0600b432fb8d49ff47",
+    "description:71-71": "c6ed8976089ca6d24b4b7adf90d7d4957ad07e3ac71098d847171eca66fcdc25",
+    "description:72-84": "66d26f94427df12a7763524500a9028f96f5e9f88ca43a0556d3cae826440c10",
+    "description:85-87": "490d4503d727516d407ebd6aa48a6384dd8c416e56c2551639a10c2b346ee67a",
+    "description:88-90": "cd6292b1270cd232848e8d4ae3fc4aeffadf631ffe0f444d5297e1fdb6d51bd7",
+    "description:91-99": "1be32344ebea5f814b4354cdba50bf1adc6ac1a34c732c13d4cebfb8fb8161c4",
+    "description:100-102": "befed4979386ca3801e4010ce20aa5e896f59845cd17f3c286f6eba0fe1efe3f",
+    "description:103-103": "56b5f76e3faaa196a0aba68f0f8c22c5d7ebf08b3cba9c9894a1d34df439747c",
+    "description:10-103": "c629c3d81bb869df648212bc86500637edbeed6cab709f277fef2afd361e079b"
+  },
+  "claims": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45
+    ],
+    "independent_numbers": [
+      1,
+      13,
+      23,
+      33
+    ],
+    "body_sha256": [
+      "746d323d25c46648bbc97a1316e8e4083975c6d9fdd561042e0ec3dac0d5055a",
+      "a79d272b4f0fa091c1056f681e32f816535bb04125be0b9b4e0d5ef8243af83f",
+      "22981ff2f7083c5a5f434a70b3799decfeadb5aa5d4eeaddb46cfc92a3c132c7",
+      "3ae338ddda5bb0f3478b6271a85c7854448c97e2ea8b08b7d5f817e24b432374",
+      "464fe037e1a7defc2f29caeb703781655fe1e2ac1104ce43fad191ec1c694942",
+      "a0d5a0e19ad2dbfd9a4bb052f6565da097d1a9f947b03297eb8108b76625ac25",
+      "5937a6a2756113567325a7f7913d05068c4d685d2a30bd2d32e5e5ec4106ec7b",
+      "d5794db83da33d68ee097258e5879a45b365d90a8f784b62b4d7df23fd0e206f",
+      "f9e669050a1d88c9d8d5c4a89a512ee10a5c11886023e75241295ad0bf558baf",
+      "2bb803f10ac2d868b41aafbe5cb835a74cd4b0abec3faf3275981e7059264d32",
+      "bf023ea019797dcc1b551486ba06c61db44cda1e687c64bf88e8d58561038b6c",
+      "1311cb23e28ed324821029a3e773c6663e5ba709498e2cc0bafa1dfbeb55afd5",
+      "e4ba38bed915659f41f7b58fc6ff9b38f15ea06aa60610058b2d8d82c23cb51e",
+      "404c8dd2b36fe5fea91d6bb20d1c510231ac7e7d33d590e1f8a9ce035583bb87",
+      "3794a5d83724f12f35a1a1f1d02817c1bebec58ab3944d8096fc455d3337053d",
+      "b4186ad7841e079b3771d067901ff4cb98cb168608aac2aea017d356e57105ae",
+      "deebd0434a0bda799dd49430d81472a3076e34331660b98b35ef6d7a9dfc2691",
+      "4f206b57ffbf28a6a5c54372b0c8b07b5c258066122e733514ecb0a48e03e663",
+      "e4c82529f9f99e6ea72c2af662d5bad3be7cd008a0a196a0058b424e841ec64a",
+      "d56e4dcded94da0aaa42d5c537fcad13540cfe54ed8f673bb1df01732b3c6aea",
+      "1cc5dd962cd55be33c645ed57b5df55900db654bd5265496d3ab43b591fc2161",
+      "3db6dad0ea05f70f103cbf2cac55ed57cfad27f4fda52223019be812cec5f416",
+      "54c9bde6900cfdae72e075b9eb715c276c9d0114316a5d88a213c7b67dba3f08",
+      "1958ba8105506f395d6e80aba5db6747b4319733599cb175a58a1917add3ccb3",
+      "a6b1a257325fe79412ff4cc2111eeabf3f86b78a41d5bafd4084a7765d540927",
+      "71c8928b1e567686271f155aeff85f440ba34fc4a5a1e6851aea8ad6a2d0e3c8",
+      "92cb52ee040e3eae657ac720094df3626ecfa4c74d0414b9a1892bf0d20702d4",
+      "021623567c7abdcb991bc7b8c59460e1952b896441ee3b2456ed255411394dd2",
+      "d7e4679b7763444371aff10f00f8d4ad430b1652028b02144a56cc5637d16e45",
+      "a5f12105e8c7dc5c3f561dbee9562c5b7aaf29e7b6ce0feaaac77403913167a1",
+      "9106cb97f90175ec27b1f876641129a1f6bcbe6a488202d46d997b1550162ded",
+      "6310f715002586fc8f2c0fecb52e646ddc9caa8d928b70dfb2a755ebff005d5a",
+      "c1e16edd73377b6cbba18ab959236835bb5a9370af0a6600d12157588a201bea",
+      "526488d123d546c73b28caf0292b7b14b48bd1a0c1b1dd12597aca707df8ae9a",
+      "81931fceb97e20bf7f98e8729ce365e1eb9d8d5774beeed8887660115321f1d7",
+      "104ae7c3bf2a56ad6d7b282bea13877bb6b74edf2dbb249a2d07f3a70c75b969",
+      "902e834c0bc930a888cdc12eff002741835b475a9923da0c220ad0b81703b341",
+      "42c99ef7308bc1aca8fadb513adf8a92951a94ff3b3ba1b2e542f73c683f48a6",
+      "c2b6e9bd25a0a1d9e1e3fc3c6964a3d6a29133bd6e695e494df4687fa1fe1688",
+      "acc1274164b522ead3277f884d785e0a40046572c0a6d260e46884b95fb95193",
+      "7a463969c271b77b48459561318bd55f50611eeee74ba2b6a86e9349da94a66c",
+      "ebe1cef5ded40ef8c261a636a18c7d560a02b036888c2403b7509ed1394a2382",
+      "97d4fcc57a4dc4a9c7f3958e923fcde8cc10049adf6ff820211a8cb9ebeb9e57",
+      "420392c2710b49d51c5b6a304795cb07e44d50f170d155d0bacac5dc3f057cb4",
+      "d1f8c405f6fcae014f2d62305cd6a35337e558e027ca58d6ea0fc32b12b9323b"
+    ],
+    "claim_13_mathml_variable_mismatch_preserved": false,
+    "claim_5_literal_es_preserved": true,
+    "claim_37_literal_es_preserved": true
+  },
+  "declared_figures": [
+    {
+      "paragraph": 11,
+      "literal_panel": "1A",
+      "sha256": "600af8c097b775869d1eb262642b4792ac93643bcc43dbeaa9342d7b297bad55"
+    },
+    {
+      "paragraph": 12,
+      "literal_panel": "1B",
+      "sha256": "39a536c737566fe99fc722013d316975cdf71265d5c2dc6f1b914efaca42b2ec"
+    },
+    {
+      "paragraph": 13,
+      "literal_panel": "1C",
+      "sha256": "4bdb495058eda3d32735272839fcc7ccbca42f4639a1bbfe6ff34f93e9828289"
+    },
+    {
+      "paragraph": 14,
+      "literal_panel": "1D",
+      "sha256": "de7d9690ee0ccd2a43d5278f494376b0ff4cf67651d260716296ae30a4719bee"
+    },
+    {
+      "paragraph": 15,
+      "literal_panel": "1E",
+      "sha256": "a07465bd5b2e277fa480cb5bb63f5dfd431232f7e3c06110b3c155073f99f51d"
+    },
+    {
+      "paragraph": 16,
+      "literal_panel": "1F",
+      "sha256": "138238c096a03a4acb4789043b711c039d1f3ccecb13efc3442ce1aa7d8985f3"
+    },
+    {
+      "paragraph": 17,
+      "literal_panel": "1G",
+      "sha256": "980fb56dbd134279b77f82cb5db8a27888dfbc9983d704b078d6530d6f9063da"
+    },
+    {
+      "paragraph": 18,
+      "literal_panel": "1H",
+      "sha256": "c3ac9907ce3d1d83c15f6b4872e460350318055df9420e7c926b303e73834eba"
+    },
+    {
+      "paragraph": 19,
+      "literal_panel": "11",
+      "sha256": "8bf9726ccb968e897cd7f49542777e1399186af58605986667f5724d555677bb"
+    },
+    {
+      "paragraph": 20,
+      "literal_panel": "1J",
+      "sha256": "53fc0ab01302884afdc733dbf08114cc9a3bccf9f77f9548a667748de065caab"
+    },
+    {
+      "paragraph": 21,
+      "literal_panel": "1K",
+      "sha256": "a85bfc3bccfa580c1388b29786a9d91a1648338aa9b5bb25d588c6c66ef82c93"
+    },
+    {
+      "paragraph": 22,
+      "literal_panel": "1L",
+      "sha256": "e2088d2a483924b99855c2ebb0974cda03736b999fdf2dd13c5dc93947386063"
+    },
+    {
+      "paragraph": 23,
+      "literal_panel": "1M",
+      "sha256": "5d746ec465fa243c48e2b3a352dac1594260f693c7ebd617f3034b7e8a6cd661"
+    },
+    {
+      "paragraph": 24,
+      "literal_panel": "1N",
+      "sha256": "588d01d7dde060995000bbf4de634fce2c6d3cd7e07bdd47f8817ed4eb22651f"
+    },
+    {
+      "paragraph": 25,
+      "literal_panel": "1O",
+      "sha256": "6280ef7f5a78d5a896d30654af5c46187b1799432e3f3b04536da29a09b49260"
+    },
+    {
+      "paragraph": 26,
+      "literal_panel": "1P",
+      "sha256": "95b6be1187a1f645ea460f9d067666c279d93c53a36b0d6ebbc7166465e0faec"
+    },
+    {
+      "paragraph": 27,
+      "literal_panel": "1Q",
+      "sha256": "7d601ca7a96ae3de384361f87e0f320479a3f54075bf6b352adbaebd3df6987b"
+    },
+    {
+      "paragraph": 28,
+      "literal_panel": "1R",
+      "sha256": "5de585c00afeea9e288b1a682b85857c97d8dfaa9e13cfdcc50f6cf4ff30ead6"
+    },
+    {
+      "paragraph": 29,
+      "literal_panel": "2A",
+      "sha256": "abef870ad56930ed5da764b05326a40884108749e75af9cc48664760ec1a9688"
+    },
+    {
+      "paragraph": 30,
+      "literal_panel": "2B",
+      "sha256": "da57837e5a2715ffb0577f5535ec052b4200174ea013228f8ec2fb728d51e830"
+    },
+    {
+      "paragraph": 31,
+      "literal_panel": "2C",
+      "sha256": "25d98d327fb1737b8da33c0c2f4bb09fa896b5955c39058bcb9e184ad1221f33"
+    },
+    {
+      "paragraph": 32,
+      "literal_panel": "2D",
+      "sha256": "198e1ef6d4e0850e9f81474a433be248ec38c4c46e060f0e2193702a1d37b118"
+    },
+    {
+      "paragraph": 33,
+      "literal_panel": "2E",
+      "sha256": "3f3ebf84dbd2c6de3d897a49e8982762cac226e7293c8bccea59a587dc48948f"
+    },
+    {
+      "paragraph": 34,
+      "literal_panel": "2F",
+      "sha256": "11a20413f8ceaa38a74db42258a68f8e9a004109b2fcc1fd13f4bc33105e85d0"
+    },
+    {
+      "paragraph": 35,
+      "literal_panel": "3A",
+      "sha256": "4b26c17304493ae409ecd7f482131c971ea27d32a72d648c0c1fd91216409306"
+    },
+    {
+      "paragraph": 36,
+      "literal_panel": "3B",
+      "sha256": "0c3d4869001ab2f6e9a73404a1869c5fb4d01ba5281a3f35e0aff97f9dcac521"
+    },
+    {
+      "paragraph": 37,
+      "literal_panel": "3C",
+      "sha256": "c363c1dea7cbc1a4e99f6bf9a91f4da97309b7d52f890a9028246f23bb9cd6c4"
+    },
+    {
+      "paragraph": 38,
+      "literal_panel": "3D",
+      "sha256": "f8ed1f0553dfabf4b5287968aa3027e9fb93cf8d2172d8224a7aece33748ab64"
+    },
+    {
+      "paragraph": 39,
+      "literal_panel": "3E",
+      "sha256": "b35186f777e9b9f467884eb42401d8713a939c0c133df4f799d90374bd7d6fa4"
+    },
+    {
+      "paragraph": 40,
+      "literal_panel": "3F",
+      "sha256": "f9a37f415dfbecab57148fd8c185775a8f98774f42facab33a8455dea8a69865"
+    },
+    {
+      "paragraph": 41,
+      "literal_panel": "3G",
+      "sha256": "edc452b4b1bececfe8a8f00d55b312e7371c71177a2daa4f4dd2e8ba31f0cc87"
+    },
+    {
+      "paragraph": 42,
+      "literal_panel": "4A",
+      "sha256": "ad7a9451e97889f9c229f5327af89b547a79af1f67bee12230b95d0311a0cf41"
+    },
+    {
+      "paragraph": 43,
+      "literal_panel": "4B",
+      "sha256": "d3dee7361e9ae49fa1c800ead54cb2f3464bead8e561b18da42982c3623cddcc"
+    },
+    {
+      "paragraph": 44,
+      "literal_panel": "4C",
+      "sha256": "7ba6dc0ca8a08d566f9831982091603953f28dc348a3288d38f6c0e4e0f2d823"
+    },
+    {
+      "paragraph": 45,
+      "literal_panel": "4D",
+      "sha256": "1f1bcb2b1361cb2f4078c001c60b8bf702e5c57def21003642b31cbde3ca1fb8"
+    },
+    {
+      "paragraph": 46,
+      "literal_panel": "4E",
+      "sha256": "94963369cf29c6ae38739f46fa1517e2faa50bd60a0fa5e9f9f3147e71c0797d"
+    },
+    {
+      "paragraph": 47,
+      "literal_panel": "5",
+      "sha256": "455b45107aea23f86b27682378e90b20aa3bb0aaee61aa654dc36d374bdf78e6"
+    }
+  ],
+  "figure_0019_literal": "11",
+  "description_0079_contains_literal_fig_11_and_fig_1i": true,
+  "tables": [
+    {
+      "number": 1,
+      "label": "1A",
+      "paragraph": 75,
+      "payload": "TABLE-US-00001 TABLE 1A 1st Embodiment Ac (mm.sup.2) 15.9 θs 130 degrees As (mm.sup.2) 3.76 As/Ag 0.23 Ag (mm.sup.2) 16.6 (As + Ag)/Ac 1.28",
+      "characters": 139,
+      "sha256": "f75f48b34f73bfb2ac56583b2dd2946c104083ccce54f9c096b8ba8257f6e2dd"
+    },
+    {
+      "number": 2,
+      "label": "1B",
+      "paragraph": 76,
+      "payload": "TABLE-US-00002 TABLE 1B 1st Example of 1st Embodiment Ac (mm.sup.2) 11.52 θs 150 degrees As (mm.sup.2) 8.14 As/Ag 0.49 Ag (mm.sup.2) 16.6 (As + Ag)/Ac 2.15",
+      "characters": 155,
+      "sha256": "2d99120200e272caf751882adb56c8c18aa7e05774b9dec4e4d6cc963c501dbd"
+    },
+    {
+      "number": 3,
+      "label": "1C",
+      "paragraph": 77,
+      "payload": "TABLE-US-00003 TABLE 1C 2nd Example of 1st Embodiment Ac (mm.sup.2) 18.08 θs 105 degrees As (mm.sup.2) 1.58 As/Ag 0.1 Ag (mm.sup.2) 16.6 (As + Ag)/Ac 1.01",
+      "characters": 154,
+      "sha256": "898d2a579092898cccf8061c666ba432214bd7662a263058c05d7fdfbdd9d20a"
+    },
+    {
+      "number": 4,
+      "label": "1D",
+      "paragraph": 82,
+      "payload": "TABLE-US-00004 TABLE 1D 1st Embodiment Dio1 (mm) 4.36 Hs2 (mm) 0.33 Dio2 (mm) 4.36 Dg/Dio 0.61 Dio (mm) 8.72 Hs1/Dg 0.04 Dg (mm) 5.35 Hs2/Dg 0.06 Hs1 (mm) 0.2",
+      "characters": 158,
+      "sha256": "920d2e2d8de7ff8e239748b17724cdcfcb3d93008bb0708f48cac861aaea353e"
+    },
+    {
+      "number": 5,
+      "label": "2A",
+      "paragraph": 87,
+      "payload": "TABLE-US-00005 TABLE 2A 2nd Embodiment Ac (mm.sup.2) 11.27 Dio1 (mm) 1.73 As (mm.sup.2) 0.6 Dio2 (mm) 4.65 Ag (mm.sup.2) 1.12 Dio3 (mm) 4.65 As/Ag 0.54 Dio4 (mm) 1.73 (As + Ag)/Ac 0.15 Dio (mm) 12.76 θs 142 degrees Dg/Dio 0.34 Hs (mm) 0.15 Hs/Dg 0.03 Dg (mm) 4.36",
+      "characters": 263,
+      "sha256": "92a3041d63544f72b09054f76d41b0cba01278dc9a5810d76d17cfce126dad12"
+    },
+    {
+      "number": 6,
+      "label": "3A",
+      "paragraph": 90,
+      "payload": "TABLE-US-00006 TABLE 3A 3rd Embodiment Ac (mm.sup.2) 1.6 Hs (mm) 0.1 As (mm.sup.2) 0.13 Dg (mm) 2.67 Ag (mm.sup.2) 1.08 Dio (mm) 1.41 As/Ag 0.12 Dg/Dio 1.89 (As + Ag)/Ac 0.76 Hs/Dg 0.04 θs 120 degrees",
+      "characters": 200,
+      "sha256": "537a27a7b7b79d1c7f313a1bbbeaf56028e38ec3472e37452c110f59bce04208"
+    }
+  ],
+  "table_set_sha256": "20ea01f5d6c3788ccb5c0a330a0b4f836ee3a8805a6677d0d8eea5a1b8407973",
+  "mathml": [
+    {
+      "id": "MATH-US-00001",
+      "num": "00001",
+      "raw_sha256": "d61b686dd80efc9a1f169b6be471f2b98d3940028008d90d4867674060c6892c",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00002",
+      "num": "00002",
+      "raw_sha256": "c1ae62169ba340fe996fa12f0b01e59a6b09d817c42df4a5ad1c0f39b890ff9d",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00003",
+      "num": "00003",
+      "raw_sha256": "39de073dc929ba0aeff0f2a7f91d3088466a1f91f0aa492ed7280e9b9cfecc54",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00003-2",
+      "num": "00003.2",
+      "raw_sha256": "bbc95fab265f5134fa3ec8097fe534633e01dffbf7f794386d636de80a9e901e",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00004",
+      "num": "00004",
+      "raw_sha256": "340e9349cfc843d620a251f1511029d3ec0715f59207e92999f13df893a88b63",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00005",
+      "num": "00005",
+      "raw_sha256": "7de45cf06e9770aa2f0a12468e13fb253467d2250dd94bef5f9b9d3cf3a067bc",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00006",
+      "num": "00006",
+      "raw_sha256": "c3b14a24f7bbe3b3024cd20fd237bf270a27319653d986dff3a342af0b3ed982",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00007",
+      "num": "00007",
+      "raw_sha256": "86073baf35bb312666e56764cedb0563c9d8483a0de423a201613c97eb05278c",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00008",
+      "num": "00008",
+      "raw_sha256": "d16e0ecc569c52b19349e1ba80311d45d6bf1672eab1c7648351ba94b0c02d6e",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00009",
+      "num": "00009",
+      "raw_sha256": "f4819e9ed66cfb6178894ec2a579924e7215df9062be49e1cc0e47aa063c37d0",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00010",
+      "num": "00010",
+      "raw_sha256": "0ebd0d84eab1a78b4577e2c565acb78456513a802110fd1f7b31fc281e5369f7",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00011",
+      "num": "00011",
+      "raw_sha256": "f2278fee97de069bf282e55a22215cba3d3352c04e5f9745c06ed3891270f99d",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00012",
+      "num": "00012",
+      "raw_sha256": "53d1059abf8f0eac567934dd3e4c89fdf0cd039dbcf21cabafef228df3381fff",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00013",
+      "num": "00013",
+      "raw_sha256": "cb9ef824d13c367a38f34df6de5c797a93f3b0ff4ac5791933cce22755f16312",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00014",
+      "num": "00014",
+      "raw_sha256": "0a38616dbd53c005c2bdfb359ea1fae641cab08d597b978d711a89bd81e335ea",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00015",
+      "num": "00015",
+      "raw_sha256": "e0121446d582aa54af6503ad0a70068dfc582c6507d75c170102232868c1fde7",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00015-2",
+      "num": "00015.2",
+      "raw_sha256": "076d95ba68acb928af01214f804806213751565a1aae76859d5f80ed01f36038",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00015-3",
+      "num": "00015.3",
+      "raw_sha256": "71483871b22beff8fbe8a61441db35b0ee762d5f1767483c385b87dc6e227ab1",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00016",
+      "num": "00016",
+      "raw_sha256": "1a22aed6513d8cc5b0c6dceb790a5f0ca8db25c8b60b587bee1c8891d1298033",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00017",
+      "num": "00017",
+      "raw_sha256": "ba1fe89acd2682aea35e6b229873a4aac7031de3841b9b208d2cf9c9bbf6c53b",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00018",
+      "num": "00018",
+      "raw_sha256": "52d9795f6ec3bb3e1ee0672f1d054c3aa8782f57f537ca8fbd60181f1a4d9538",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00019",
+      "num": "00019",
+      "raw_sha256": "2105dd406cae13eb05333df26c7e6ed522aa88adb3d8c689d7ffd08f8f1973ea",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00020",
+      "num": "00020",
+      "raw_sha256": "e7be32a0536d5e0750d09d643c86318b4cd4071d2864ef9d906203b6b2ca094e",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00021",
+      "num": "00021",
+      "raw_sha256": "597f89d58f93ac000b27cde915fdd65a7e4a8cd4f42f1ab634b21378c1028e1a",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00022",
+      "num": "00022",
+      "raw_sha256": "8f4d60bd36a7e8768a57bab9be4a35252a3924a33b3bb59fd88feaed14fad7db",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "id": "MATH-US-00023",
+      "num": "00023",
+      "raw_sha256": "468f15f1ae7d21bf68c30c309709742eb9dec7b2f49221bc86efec89adff47e3",
+      "normalized_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "raw_container_counts": {
+    "paragraph_tags": 21,
+    "figref_tags": 176,
+    "table_us_blocks": 6,
+    "native_html_tables": 0,
+    "maths_objects": 26,
+    "math_objects": 26,
+    "inline_formula_leads": 0,
+    "inline_formula_tails": 0,
+    "img_tags": 0,
+    "numbered_paragraphs": 103,
+    "claims": 45,
+    "declared_figure_panels": 37
+  },
+  "prescription_marker_counts": {
+    "radius": {
+      "count": 0,
+      "locations": []
+    },
+    "curvature": {
+      "count": 0,
+      "locations": []
+    },
+    "surface_radius": {
+      "count": 0,
+      "locations": []
+    },
+    "surface_spacing": {
+      "count": 0,
+      "locations": []
+    },
+    "thickness": {
+      "count": 1,
+      "locations": [
+        "description:84"
+      ]
+    },
+    "material": {
+      "count": 0,
+      "locations": []
+    },
+    "refractive_index": {
+      "count": 0,
+      "locations": []
+    },
+    "abbe": {
+      "count": 0,
+      "locations": []
+    },
+    "dispersion": {
+      "count": 0,
+      "locations": []
+    },
+    "asphere": {
+      "count": 0,
+      "locations": []
+    },
+    "conic": {
+      "count": 0,
+      "locations": []
+    },
+    "aperture_stop": {
+      "count": 0,
+      "locations": []
+    },
+    "stop_surface": {
+      "count": 0,
+      "locations": []
+    },
+    "f_number": {
+      "count": 0,
+      "locations": []
+    },
+    "image_height": {
+      "count": 0,
+      "locations": []
+    },
+    "effective_focal_length": {
+      "count": 0,
+      "locations": []
+    },
+    "focal_length": {
+      "count": 1,
+      "locations": [
+        "description:88"
+      ]
+    },
+    "optical_surface": {
+      "count": 1,
+      "locations": [
+        "description:59"
+      ]
+    },
+    "lens_surface": {
+      "count": 0,
+      "locations": []
+    },
+    "lens_data": {
+      "count": 0,
+      "locations": []
+    },
+    "wavelength": {
+      "count": 0,
+      "locations": []
+    },
+    "aperture": {
+      "count": 3,
+      "locations": [
+        "description:57",
+        "description:68",
+        "description:84"
+      ]
+    },
+    "diameter": {
+      "count": 0,
+      "locations": []
+    },
+    "lens_group": {
+      "count": 0,
+      "locations": []
+    }
+  },
+  "source_item_partition": {
+    "common_background": [
+      1,
+      9
+    ],
+    "brief_drawings": [
+      10,
+      47
+    ],
+    "common_detailed_description": [
+      48,
+      70
+    ],
+    "item_intro": [
+      71,
+      71
+    ],
+    "source_item_paragraph_union": [
+      72,
+      102
+    ],
+    "common_closing": [
+      103,
+      103
+    ]
+  },
+  "numeric_inference_from_rasters": false,
+  "numeric_transcription_from_rasters": false,
+  "ocr_used": false,
+  "source_repair_used": false,
+  "lineage_value_borrowing": false
+}
