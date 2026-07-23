@@ -1076,6 +1076,52 @@ frozen history remains fixed. Stable ordering selects Family `83598290`,
 root/publication `US-12270974` / `US-12270974-B1`, next. Parent saturation remains
 active and incomplete.
 
+Family `83598290`, root/publication `US-12270974` / `US-12270974-B1`, is active in
+GSD quick `260723-patent-generic-family-83598290-root-12270974`, opened from committed
+Family 51536052 state at `c6fdf4c1` before detailed source investigation. The exact
+retained 82,194-byte HTML is pinned at `21f07ee5...7993a`; the one-occurrence layout
+signature is `f3d265df...a134e`. Entry queue counts (144 embodiment, two full-field,
+one half-field and zero effective-focal-length/example/F-number/table anchors) are
+routing observations only, not source-item boundaries or outcomes. The byte-identical
+pre-change census contains four residual roots at result set `689525e5...d42c0b` and
+census hash `6225aa06...f3ce61`. Exact source, table, claim, section and figure
+reconciliation must precede classification; no related-root, family or layout
+borrowing is permitted. Parent saturation remains active and incomplete.
+
+Exact source reconciliation for Family `83598290` now freezes 45 optical states: each
+of 15 embodiments directly publishes infinity, 500 mm and close-focus configurations;
+the close distance is 200 mm only for Embodiments 7-9 and 150 mm otherwise. FIG. 31 is
+a shared comparison, claims are architecture scope, and neither adds an item. The exact
+HTML contains zero machine-readable prescription/system tables or images. Two official
+73-page PDF captures have different wrapper hashes but pixel-identical one-bit raster
+sequences and zero text layer; all 15 prescription-chart originals plus five boundary
+pages were reviewed only for category/topology/page role. With OCR, enhancement,
+measurement, numeric raster transcription and inference all forbidden, every one of the
+45 states is frozen as
+`metadata_unpublished.machine_readable_prescription_and_system_tables_absent`. Any
+pinned source, item, PDF or raster drift must reopen all 45 to parser review. Parent
+saturation remains active and incomplete.
+
+Family `83598290`, root/publication `US-12270974` / `US-12270974-B1`, is complete at
+45 exact optical states: infinity, 500 mm and close focus for each of 15 embodiments.
+The close distance is 200 mm only for Embodiments 7-9 and 150 mm otherwise. Complete
+ordered prescription/system charts exist only in official one-bit rasters; exact HTML
+has zero machine-readable tables/images and both exact 73-page PDF captures have zero
+text layer. Under the no-OCR/no-raster-transcription boundary, all 45 close as precise
+`metadata_unpublished.machine_readable_prescription_and_system_tables_absent`
+terminals. No repair, derivation, measurement, inference, lineage/layout borrowing,
+worker/request/receipt/fingerprint/ZMX/formal intake or CODE V activity exists.
+Attempts 2/3 preserve attempt 1 and are semantic-equal at `41c16411...e64cabe`;
+strict replay is 619/619 with zero missing/corrupt. Generic residual falls 4 to 3 at
+result set `ea632b15...228c1874` and repeat census `a844bfe7...572664b4`. Focused
+10/10, broad non-PDF/non-raster 1,141/1,141, source-evidence/live-pointer 102/102 and
+replay/census/saturation/no-real-CODEV guards 56/56 pass. Ruff, compile, diff,
+3,338 workspace JSON and 149 source-evidence manifests/2,881 references/2,583 unique
+paths pass. One hundred nineteen historical manifests refresh exactly 598 permitted
+live-pointer leaves while frozen history remains fixed. Stable ordering selects Family
+`71134482`, root/publication `US-11249275` / `US-11249275-B2`, next. Parent saturation
+remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

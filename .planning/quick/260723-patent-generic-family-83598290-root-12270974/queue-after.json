@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-83598290-root-12270974/generic-residual-after-1.json",
+  "affected_roots": 3,
+  "affected_items": 3,
+  "result_set_sha256": "ea632b150e975408a0cfa021c433a6bd870f86d69e305fcf276c713a228c1874",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "f4d6827ce77d817a6ab270c40d10d33a63582bc9b0d2a6c0cd1333f88f6b7c47",
+    "layout_signature_count": 1,
+    "family_id": "71134482",
+    "root_ids": [
+      "US-11249275"
+    ],
+    "publication_ids": [
+      "US-11249275-B2"
+    ],
+    "application_numbers": [
+      "16/655485"
+    ],
+    "title": "Plastic lens barrel, imaging lens module and electronic device",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/83994e5a12da5c58/US-11249275-B2.html",
+      "sha256": "83994e5a12da5c584ba80234480214f8fe3f840697699f168ae38aed580495f8",
+      "bytes": 90008
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 99,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 5
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

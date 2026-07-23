@@ -1,0 +1,100 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "83598290",
+  "root_id": "US-12270974",
+  "publication_id": "US-12270974-B1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-12270974/attempt-0001/result.json",
+    "bytes": 1272,
+    "sha256": "e0040a182dcb46809d4cc244174f9c46273d93b1d3338c5761d296fce69dc513",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "888506e1e1359c2cdebfb1e5a1bee83235cbbd79fe94e8fbedd22e2265a982ee"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12270974/attempt-0002/result.json",
+      "bytes": 72389,
+      "sha256": "51f32b0c954899f5923a7e71425a0b277b54e74562e4b3069223c658e33a300b",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "41c16411c2cae335b173c1abfacd48292703a05eec336ca8555796e34e64cabe"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12270974/attempt-0003/result.json",
+      "bytes": 72389,
+      "sha256": "dc5094942b4ae1fc92bf8ec419c35fa07805d405ff240fe1eee4393f1f3a22b8",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "41c16411c2cae335b173c1abfacd48292703a05eec336ca8555796e34e64cabe"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "41c16411c2cae335b173c1abfacd48292703a05eec336ca8555796e34e64cabe",
+  "item_reason_codes": [
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "prescription_fingerprints_absent": true,
+  "candidate_zmx": 0,
+  "formal_intake_items": 0,
+  "codev_calls": 0
+}
