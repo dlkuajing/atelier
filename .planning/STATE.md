@@ -1220,6 +1220,57 @@ Focused 9/9, broad non-PDF/non-raster 1,159/1,159, source-evidence/live-pointer
 88/88 and guards 56/56 pass. Stable ordering selects the last residual Family
 `81139502` / `US-20260172701-A1` next. Parent saturation remains active and incomplete.
 
+The final generic-residual GSD quick is now active for Family `81139502`, root/publication
+`US-20260172701` / `US-20260172701-A1`, application `18/716311`, from clean committed
+Family 88416367 state `84c78e7e`. The exact retained 75,297-byte official HTML is pinned
+at `6ef1af059f59265bcca8d25610833a7e04cd980e54b6b5cb5a74f55dbc936935`;
+its title and Shanghai Advanced Research Institute applicant identity are entry
+bibliography only. The one-occurrence layout signature is
+`fd9effbaf6fa8c47e55c3c964acb452ea0355a4484d5fddc94108732b816fbb7`.
+The completed before census is copied byte-for-byte at
+`a0ec3b06b647cc48154d63e0d0d953cb3c5f6a3f77479a332cf48ca33b53b559`
+and contains one root/item at result set
+`dd57462aadd206e9c5d495b3699201294a041e732776e7f560f604c6254e8a1a`.
+Marker counts remain routing observations, not a source-item or prescription denominator;
+no classification follows until exact lineage and all sections, paragraphs, claims,
+figures, equations and tables reconcile independently. No related-publication, family or
+layout borrowing is permitted. Parent saturation remains active and incomplete.
+
+Exact Family `81139502` source reconciliation freezes four independently declared
+items in US-20260172701-A1: the full-light-field camera (Description 32-69, FIG.1,
+MathML 1-15, claims 1-5), imaging method (70-77, claims 6-8), ground-glass device
+(78-89, FIG.2, MathML 16-17, claims 9/11), and microscopy device (90-99, FIG.3,
+MathML 18-19, claims 9/10). Background/Summary 1-26, Description 27-100, claims
+1-11, three declared figures, nine figure references and all 19 formulas reconcile;
+shared drawing/preamble 27-31 and closing 100 create no extra item. The source has no
+table/image tag and no ordered surface radius, spacing, material/index/dispersion,
+conic, asphere, prescription stop or system-level lens prescription. Published
+50/180/100 mm and 180/100 mm component focal lengths, objective magnification/NA,
+wavelength and detector sampling values are first-order device specifications, not
+ordered lens prescriptions. All four items therefore freeze as precise
+`confirmed_no_prescription` terminals. Exact machine-readable HTML settles every
+boundary, so no PDF/raster review, OCR, repair, measurement, inference,
+lineage/layout borrowing, worker/request/receipt/fingerprint/ZMX/formal intake or
+CODE V activity is authorized. Parent saturation remains active and incomplete.
+
+**Patent generic residual latest authoritative update (2026-07-23, Family 81139502):**
+Exact US-20260172701-A1 closes four source items as precise
+`confirmed_no_prescription` terminals: the full-light-field camera architecture,
+imaging method, ground-glass device architecture and microscopy device architecture.
+The exact HTML publishes no ordered lens prescription; symbolic/component focal lengths,
+objective magnification/NA, wavelength and detector values are not promoted or derived.
+No PDF/raster review, OCR, repair, measurement, inference, lineage/layout borrowing,
+worker/request/receipt/fingerprint/ZMX/formal intake or CODE V use occurs. Attempts 2/3
+preserve attempt 1 and are canonical-semantic-equal at
+`231d564b57da2dcec8dcacc641669e4fef17bdf06b6227d12b3bf78dd402d7b1`.
+Strict replay is 619/619 with missing=0/corrupt=0. The generic residual falls 1 to 0;
+result set is `feeb0e16f34a49567a8a24b552b45e14a430bea2c4e54fda921eb3282f04b337`
+and repeat census SHA-256 is
+`d1cb2eee8acf1b998bfe64282dfc9f0335e7529c3998028deb1fedb05a6f0c11`.
+Focused 9/9, broad non-PDF/non-raster 1,168/1,168, source-evidence/live-pointer
+105/105 and guards 56/56 pass. The generic-summary residual goal is complete with no
+next exact group; broader patent saturation remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

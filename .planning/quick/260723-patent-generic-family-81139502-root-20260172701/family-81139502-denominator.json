@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "family_id": "81139502",
+  "application_number": "18/716311",
+  "root_ids": [
+    "US-20260172701"
+  ],
+  "publication_ids": [
+    "US-20260172701-A1"
+  ],
+  "lineage": {
+    "pct_application": "PCT/CN2022/132841",
+    "pct_filing_date": "2022-11-18",
+    "china_priority_application": "202111548124.X",
+    "priority_date": "2021-12-16",
+    "related_publication_values_borrowed": false
+  },
+  "source_identity": {
+    "raw_chars": 74998,
+    "raw_bytes": 75297,
+    "raw_document_sha256": "6ef1af059f59265bcca8d25610833a7e04cd980e54b6b5cb5a74f55dbc936935",
+    "normalized_chars": 58442,
+    "normalized_text_sha256": "940a3d888f288c9d3364dfd74be84d16881c814fcb798003271701d96a140ff9",
+    "layout_signature": "fd9effbaf6fa8c47e55c3c964acb452ea0355a4484d5fddc94108732b816fbb7"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 26,
+    "description_numbered_paragraphs": 74,
+    "claims": 11,
+    "independent_claims": 2,
+    "declared_drawing_panels": 3,
+    "ordered_figure_references": 9,
+    "html_native_tables": 0,
+    "flattened_table_blocks": 0,
+    "html_images": 0,
+    "mathml_objects": 19,
+    "math_objects": 19,
+    "source_declared_embodiments": 4,
+    "source_items": 4,
+    "ordered_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 4,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_formulae": 0,
+    "unmapped_source_items": 0
+  },
+  "raw_source_topology": {
+    "headings": [
+      "Abstract",
+      "Foreign Application Priority Data",
+      "Publication Classification",
+      "Background/Summary",
+      "Description",
+      "Claims"
+    ],
+    "paragraph_tags": 22,
+    "figref_tags": 9,
+    "table_us_blocks": 0,
+    "maths_tags": 19,
+    "math_tags": 19,
+    "native_table_tags": 0,
+    "native_tr_tags": 0,
+    "native_td_tags": 0,
+    "image_tags": 0,
+    "raw_section_sha256": {
+      "background_summary": "640845da50f0499fdc176394bf9bebb2b9760ce6d07c0db609eef53adfb99998",
+      "description": "dec6829f1b647155cbf6533adb131a6b0cd0c1d040bf97733fa5bc3315ef81a9",
+      "claims": "f09f03d1c554c110630dc13acd77ee49f82b640d4b2d2bb113fd09ed2d47f706"
+    },
+    "normalized_section_sha256": {
+      "background_summary": "00643413a7e00dfa2fd618356ca085105c179072b4108c219471fbff7aa20915",
+      "description": "98175c4e4ce99b145dc90a0d057dd2b63ffd15d9ffbb2d14f7537549a4a06168",
+      "claims": "7189c8d16a37012c80e9520c72ab9f09b730a09e1ed2208e49cb7cabcb98df6a"
+    },
+    "raw_paragraph_set_sha256": {
+      "background_summary": "813c6e428f23658890bac4e87c3d49cc7df44c50a9cb8e091dade528a48f4f3f",
+      "description": "1ae34c8fb22fc09632d6f23717f6711fe701fd3287014727e14b9f90993099a9",
+      "claims": "2d14dd973798a4629db0c0764d23a6debef0b91fd78d878e59120777d2f5cfcf"
+    },
+    "normalized_paragraph_set_sha256": {
+      "background_summary": "f695717c327cfd7eaf537e96b393b21cfd4e56fd4d53646a8a7b88aa5354d502",
+      "description": "ba0c11b49a8a63c2e801ad8c2c22c7203651bed19d209e766036659c03e36b6a",
+      "claims": "a7b51cb079be9738398632e4b406eb0e2abdf656aba0ed305674e5349d8cdfd4"
+    }
+  },
+  "section_ranges": {
+    "background_prior_art": [1, 9],
+    "background_camera_summary": [10, 15],
+    "background_method_summary": [16, 20],
+    "background_device_summary": [21, 22],
+    "background_shared_advantages": [23, 26],
+    "brief_description_of_drawings": [27, 29],
+    "common_embodiment_preamble": [30, 31],
+    "embodiment_1_camera": [32, 69],
+    "embodiment_2_method": [70, 77],
+    "embodiment_3_ground_glass_device": [78, 89],
+    "embodiment_4_microscopy_device": [90, 99],
+    "closing": [100, 100]
+  },
+  "description_span_sha256": {
+    "27-29": "f373edabe819639d03b6f3f2ee1e952a04e687a7cdc431b85439b6f55bc22ca2",
+    "30-31": "f8bf108edc87bc652e2c0d87533564f6e8b3727d95031aed99bffd010b9526f6",
+    "32-69": "80344859e5f7ae6e1e91257d9d7bb3371c7da82065fa441b6ea0691d6eb81d77",
+    "70-77": "80808deeed29013f35725dddb756a55f8204a59e81964e47ebce6dd05aeca803",
+    "78-89": "5f54e6054271a270584324a80c0eaa61d81810771849b3f085097ed966f66425",
+    "90-99": "6ec1badc309984b8199c4744a15778e45786380a50fa42910c2f290408f1c6cb",
+    "100-100": "945ac699b85e1a31c0aec679510891e7fffbed3af1307b284fcc20afc49e8a15"
+  },
+  "figure_boundary": {
+    "declared_figures": [1, 2, 3],
+    "ordered_figref_text": [
+      "FIG. 1",
+      "FIG. 2",
+      "FIG. 3",
+      "FIG. 1",
+      "FIG. 1",
+      "FIG. 2",
+      "FIG. 2",
+      "FIG. 3",
+      "FIG. 3"
+    ],
+    "ordered_figref_text_sha256": "0597a67f45a630465f93a294a0335b2438d29902c4860282346932273d6997f4"
+  },
+  "claim_dependency_graph": [
+    [],
+    [1],
+    [1],
+    [1],
+    [1],
+    [],
+    [6],
+    [6],
+    [1],
+    [9],
+    [9]
+  ],
+  "claim_scope": {
+    "camera_architecture_claims": [1, 2, 3, 4, 5],
+    "imaging_method_claims": [6, 7, 8],
+    "device_claims": [9, 10, 11],
+    "independent_claim_numbers": [1, 6],
+    "claims_create_additional_source_items": false
+  },
+  "formula_boundary": {
+    "ordered_math_ids_sha256": "503f95facc17f121911570bd3c02999ff02b1731e67490246a0d871d33de5953",
+    "ordered_raw_formula_hash_set_sha256": "37947e6e4b8d46a120a2baf04e20daa4a97f8be3d27616ce6837bd9670812d79",
+    "embodiment_1_math_ids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "embodiment_2_math_ids": [],
+    "embodiment_3_math_ids": [16, 17],
+    "embodiment_4_math_ids": [18, 19],
+    "formula_role": "Fourier-iteration, sampling and detector-grid equations only",
+    "creates_additional_source_item": false
+  },
+  "items": [
+    {
+      "item_number": 1,
+      "embodiment_number": 1,
+      "label": "Full-light-field imaging camera architecture",
+      "description_paragraphs": [32, 69],
+      "figures": [1],
+      "math_ids": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+      "claims": [1, 2, 3, 4, 5],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.full_light_field_camera_architecture_only"
+    },
+    {
+      "item_number": 2,
+      "embodiment_number": 2,
+      "label": "Full-light-field imaging method",
+      "description_paragraphs": [70, 77],
+      "figures": [],
+      "math_ids": [],
+      "claims": [6, 7, 8],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.full_light_field_imaging_method_only"
+    },
+    {
+      "item_number": 3,
+      "embodiment_number": 3,
+      "label": "Ground-glass full-light-field imaging device architecture",
+      "description_paragraphs": [78, 89],
+      "figures": [2],
+      "math_ids": [16, 17],
+      "claims": [9, 11],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.ground_glass_full_light_field_device_architecture_only"
+    },
+    {
+      "item_number": 4,
+      "embodiment_number": 4,
+      "label": "Microscopy full-light-field imaging device architecture",
+      "description_paragraphs": [90, 99],
+      "figures": [3],
+      "math_ids": [18, 19],
+      "claims": [9, 10],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.microscopy_full_light_field_device_architecture_only"
+    }
+  ],
+  "prescription_boundary": {
+    "ordered_lens_surface_radius_rows_published": false,
+    "ordered_axial_spacing_rows_published": false,
+    "numerical_optical_index_and_dispersion_rows_published": false,
+    "surface_specific_conic_or_asphere_rows_published": false,
+    "identified_aperture_stop_published": false,
+    "radius_of_curvature_occurrences": 0,
+    "aspheric_occurrences": 0,
+    "conic_occurrences": 0,
+    "abbe_occurrences": 0,
+    "refractive_index_occurrences": 0,
+    "first_embodiment_fourier_lens_focal_length_is_symbolic": true,
+    "ground_glass_device_component_focal_lengths_mm": [50, 180, 100],
+    "microscopy_device_component_focal_lengths_mm": [180, 100],
+    "component_focal_lengths_are_not_ordered_lens_prescriptions": true
+  },
+  "binding_policy": {
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "pdf_or_raster_review_used": false,
+    "ocr_used": false,
+    "raster_numeric_transcription_used": false,
+    "printed_token_repair_used": false,
+    "priority_or_pct_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}
