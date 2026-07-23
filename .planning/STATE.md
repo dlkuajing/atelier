@@ -1055,6 +1055,27 @@ manifests refresh exactly 572 permitted live-pointer leaves while frozen history
 remains fixed. Stable ordering selects Family `51536052`, root/publication
 `US-9835833` / `US-9835833-B2`, next. Parent saturation remains active and incomplete.
 
+Family `51536052`, root/publication `US-9835833` / `US-9835833-B2`, is complete at
+four exact source items. Three numerical prescriptions remain precise parser-review
+nonterminals because TABLES 3/6/9 directly publish nonzero odd A3 through A19 radial
+terms that the current even-power PatentSurface/CODE V XASPHERE mapping cannot carry;
+the mirrorless-camera imaging-apparatus wrapper closes as a precise
+`confirmed_no_prescription` terminal. Complete machine-readable HTML settles every
+lineage, item, section, paragraph, claim, figure, formula and table boundary, so no
+PDF/raster review, OCR, enhancement, repair, measurement, numeric transcription,
+inference, related-root borrowing, worker/request/receipt/fingerprint/ZMX/formal
+intake or CODE V activity occurs. Attempts 2/3 preserve attempt 1 and are semantic-
+equal at `94c74710...0bfc3`; strict replay is 619/619 with zero missing/corrupt.
+Generic residual falls 5 to 4 at result set `689525e5...d42c0b` and repeat census
+`6225aa06...f3ce61`; source evidence is `97d7764b...706016`. Focused 8/8, broad
+non-PDF/non-raster 1,134/1,134, source-evidence/live-pointer 97/97 and replay/census/
+saturation/no-real-CODEV guards 56/56 pass. Ruff, compile, diff, 8,161 workspace JSON
+and 148 source-evidence manifests/2,840 references/2,546 unique paths pass. One hundred
+eighteen historical manifests refresh exactly 585 permitted live-pointer leaves while
+frozen history remains fixed. Stable ordering selects Family `83598290`,
+root/publication `US-12270974` / `US-12270974-B1`, next. Parent saturation remains
+active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

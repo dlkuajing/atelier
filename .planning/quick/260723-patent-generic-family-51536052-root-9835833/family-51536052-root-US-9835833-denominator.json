@@ -1,0 +1,244 @@
+{
+  "schema_version": 1,
+  "family_id": "51536052",
+  "root_id": "US-9835833",
+  "publication_id": "US-9835833-B2",
+  "application_number": "14/848945",
+  "title": "Wide angle lens and imaging apparatus",
+  "applicant": "FUJIFILM Corporation",
+  "inventors": [
+    "Noda; Taiga"
+  ],
+  "patent_date": "2017-12-05",
+  "filing_date": "2015-09-09",
+  "lineage": {
+    "relationship": "continuation",
+    "parent_application": "PCT/JP2013/007647",
+    "parent_filing_date": "2013-12-26",
+    "priority_application": "JP 2013-052925",
+    "priority_date": "2013-03-15",
+    "prior_publication": "US-20150378136-A1",
+    "prior_publication_date": "2015-12-31",
+    "numeric_values_imported_from_parent_or_peer": false
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/9b1038d3ad24d262/US-9835833-B2.html",
+    "raw_bytes": 54311,
+    "raw_characters": 53468,
+    "raw_sha256": "9b1038d3ad24d26282a720e3e9e0ee07fdae49d2e49e850ce9b004cacfdb419d",
+    "normalized_characters": 41159,
+    "normalized_sha256": "9db69ec2ce098224060a0734f44bdfc9cc27ee7db85a194bbce0b0e17a7cf8a0",
+    "layout_signature": "f2ee5ee92d4a0b008bfd5f1ae621a2b874005c56b8827866002047dc08d8d075",
+    "raw_counts": {
+      "paragraph_tags": 31,
+      "figref": 26,
+      "table_us": 10,
+      "maths": 0,
+      "math": 0,
+      "native_table": 0,
+      "native_tr": 0,
+      "native_td": 0,
+      "formula_pi_lead": 18,
+      "formula_pi_tail": 18,
+      "img": 0
+    },
+    "raw_section_sha256": {
+      "abstract": "0bddb818f0b9010c784991e16572056668baca94f8dce2f3e14df65232988172",
+      "background_summary": "a74a912a655b2ff475b41579192ca1c9a91bd11b0cf45f8d78f909c0d7a8dcec",
+      "description": "74b8f63c4f04f4ac3814e3a5d24c10e160112c160243d74b39c8b5830a534c40",
+      "claims": "a4088072d287ae11ed2a50958f6306b375aa5a9fbc3b20a2aab7250abceb7918"
+    },
+    "section_sha256": {
+      "abstract": "baafff5d0160f4e30deb364ffb0f4e8faf29f612076551632db481875a9ba4d9",
+      "background_summary": "59dc87a2924d8ce44fbed67dcce5187d86ba03d19feb2a0afa160fca09477de7",
+      "description": "1878243521f128c1ac3460712b95cc513395c93f6db61a1065c1cf9ee76b5206",
+      "claims": "9153833f628630e259a1a4ea05987ff913b62486c9a6c016340845f2b1721b3a"
+    },
+    "paragraphs": {
+      "background_summary": [1, 25],
+      "description": [1, 62],
+      "consecutive": true,
+      "paragraph_set_sha256": {
+        "background_summary": "baa3a6aa878d0973aa74b91901e4f36ebe7c9f2e9d708c92e11f27c418cb9203",
+        "description": "e232848704314ce6d77005776525da7c3c57eb36cdf82342eccd6b2666bcefa9",
+        "claims": "35a60cfa77671f258e1f92172e6cc6be768ae8e4f48612ed0c6c1f9e9053b82d"
+      },
+      "span_sha256": {
+        "background-summary-1-25": "1e02453b10a6947ea480df149fbc31565319ae8eae9d280e7f04c6b431c17c3c",
+        "brief-1-8": "86a81e6bdf49465fad7eaf945398887fd76d0577c06dd850f1d9e8cb13478fe0",
+        "architecture-9-31": "880b432bba27df8353293b830ee47d3a723b4018ecded95c920e07b0cfb8a4c2",
+        "example-1-32-44": "095eba5ff4f9fc913912b798ef4a15aabcebd4542db13c48f6e3ade5ff27f01e",
+        "example-2-45-49": "1764648ca728ac3825da265dbf31e3bee2ab55a4b4a20792bdfadbdef4898d55",
+        "example-3-50-57": "2259f1cf5a83e2fe52ee04c4b979973dd2d0ffcdc95e79de909b435f1d345d06",
+        "wrapper-58-61": "d7a4291838cddb3bc9e15015cc4556412755c283c9e27829c10ff5ef37c8c474",
+        "closing-62": "37afc083563b65d82a4caa1d175b51337463178d4ba308dd3d0da9e00a3a9970"
+      }
+    },
+    "claims": {
+      "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "independent": [1],
+      "dependencies": {
+        "2": [1],
+        "3": [1],
+        "4": [1],
+        "5": [4],
+        "6": [1],
+        "7": [1],
+        "8": [1],
+        "9": [1]
+      }
+    },
+    "figures": {
+      "declared_panels": [
+        "1", "2", "3",
+        "4A", "4B", "4C", "4D",
+        "5A", "5B", "5C", "5D",
+        "6A", "6B", "6C", "6D",
+        "7A", "7B"
+      ],
+      "declared_panel_count": 17,
+      "figref_occurrences": 26,
+      "ordered_figref_text_sha256": "3e733e94e03b1dfde993bd15c8f3b6a14b9687ab64d5f129efd125cf8f17cd25"
+    },
+    "formulas": {
+      "mathml_objects": 0,
+      "inline_formula_pairs": 18,
+      "asphere_power_definition": "KA and Am, m=3 through 20; Am multiplies h^m"
+    },
+    "tables": {
+      "count": 10,
+      "paragraph_bindings": {
+        "1": 40, "2": 41, "3": 42,
+        "4": 47, "5": 48, "6": 49,
+        "7": 52, "8": 53, "9": 54,
+        "10": 56
+      },
+      "roles": {
+        "1": "Example 1 ordered lens data",
+        "2": "Example 1 system metadata",
+        "3": "Example 1 asphere coefficients",
+        "4": "Example 2 ordered lens data",
+        "5": "Example 2 system metadata",
+        "6": "Example 2 asphere coefficients",
+        "7": "Example 3 ordered lens data",
+        "8": "Example 3 system metadata",
+        "9": "Example 3 asphere coefficients",
+        "10": "shared conditional-formula comparison for Examples 1-3"
+      },
+      "normalized_payload_sha256": [
+        "64a6e7cd1c6b300086c0fc8fc5321d8ce78c5babdfe8843c86bf2e4fdc5549c8",
+        "8777fe7b3839b07203328107b1354bfef384ad21d6e36ef49b7a2b8945454635",
+        "3a69a0a5f5fc7d25df7b55ce070b63086391d618bf83a50ed473f521fe2c0abe",
+        "f4a95c3df156b5a7b73e7c816e3060870b9f89c2b1ee9d1484315933a859088f",
+        "81998080f8c8de21e88bc8b68848f20dbb4d7b788c12388ada2f8bf9bebd7c39",
+        "300278fbcfec520c8d19d25ecb396d3cae17a62a5a5065c34e8b1e486a077455",
+        "140134c6d1ac27a2f48dc3728ac66dd2cc562a7901b7910f248d505fed630a5f",
+        "e707769c50606850768323c7ccac160daec380d0cf1ebd92891d16592704d798",
+        "6f2663c94b62fdf9c058175df80cc8abbc730e5971dfb0611ce71fc3dd39567c",
+        "01aea433832a9f51be8e1d9fd8f0a7cab520d229114c93e09b33b0f68efa67ef"
+      ],
+      "normalized_payload_token_counts": [125, 16, 89, 128, 16, 109, 133, 16, 89, 41],
+      "system_metadata": {
+        "1": {"f_mm": 12.37, "back_focus_mm": 1.0, "f_number": 2.89, "full_field_deg": 100.34},
+        "2": {"f_mm": 12.37, "back_focus_mm": 1.0, "f_number": 2.89, "full_field_deg": 98.82},
+        "3": {"f_mm": 12.37, "back_focus_mm": 1.0, "f_number": 2.88, "full_field_deg": 101.26}
+      },
+      "surface_boundaries": {
+        "1": {"first": 1, "last": 23, "stop": 13, "aspheres": [3, 17, 18]},
+        "4": {"first": 1, "last": 24, "stop": 12, "aspheres": [3, 8, 18, 19]},
+        "7": {"first": 1, "last": 25, "stop": 13, "aspheres": [3, 19, 20]}
+      },
+      "coefficient_labels": ["KA", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "A11", "A12", "A13", "A14", "A15", "A16", "A17", "A18", "A19", "A20"],
+      "nonzero_odd_power_surfaces": {
+        "3": {
+          "A3": [3, 17, 18], "A5": [3, 17, 18], "A7": [3, 17, 18],
+          "A9": [3, 17, 18], "A11": [3, 17, 18], "A13": [3, 17, 18],
+          "A15": [3, 17, 18], "A17": [3, 17, 18], "A19": [3, 17, 18]
+        },
+        "6": {
+          "A3": [3, 8, 18, 19], "A5": [3, 8, 18, 19], "A7": [3, 8, 18, 19],
+          "A9": [3, 8, 18, 19], "A11": [3, 8, 18, 19], "A13": [3, 8, 18, 19],
+          "A15": [3, 8, 18, 19], "A17": [3, 8, 18, 19], "A19": [3, 8, 18, 19]
+        },
+        "9": {
+          "A3": [3, 19, 20], "A5": [3, 19, 20], "A7": [3, 19, 20],
+          "A9": [3, 19, 20], "A11": [3, 19, 20], "A13": [3, 19, 20],
+          "A15": [3, 19, 20], "A17": [3, 19, 20], "A19": [3, 19, 20]
+        }
+      }
+    }
+  },
+  "source_denominator": {
+    "items": [
+      {
+        "item_number": 1,
+        "label": "Fujifilm wide-angle Example 1",
+        "paragraphs": [32, 44],
+        "figure_panels": ["1", "4A", "4B", "4C", "4D"],
+        "tables": [1, 2, 3, 10],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "TABLE 3 directly publishes nonzero odd radial powers A3 through A19 on aspherical surfaces 3, 17 and 18; the current PatentSurface/CODE V XASPHERE mapping supports only even radial powers"
+      },
+      {
+        "item_number": 2,
+        "label": "Fujifilm wide-angle Example 2",
+        "paragraphs": [45, 49],
+        "figure_panels": ["2", "5A", "5B", "5C", "5D"],
+        "tables": [4, 5, 6, 10],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "TABLE 6 directly publishes nonzero odd radial powers A3 through A19 on aspherical surfaces 3, 8, 18 and 19; the current PatentSurface/CODE V XASPHERE mapping supports only even radial powers"
+      },
+      {
+        "item_number": 3,
+        "label": "Fujifilm wide-angle Example 3",
+        "paragraphs": [50, 57],
+        "figure_panels": ["3", "6A", "6B", "6C", "6D"],
+        "tables": [7, 8, 9, 10],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "TABLE 9 directly publishes nonzero odd radial powers A3 through A19 on aspherical surfaces 3, 19 and 20; the current PatentSurface/CODE V XASPHERE mapping supports only even radial powers"
+      },
+      {
+        "item_number": 4,
+        "label": "Fujifilm mirrorless-camera imaging apparatus wrapper",
+        "paragraphs": [58, 61],
+        "figure_panels": ["7A", "7B"],
+        "claims": [9],
+        "ledger_state": "terminal",
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.imaging_apparatus_wrapper_only",
+        "detail": "The mirrorless-camera disclosure deploys the disclosed wide-angle lens with a body, mount, sensor, controls, signal processing and recording medium but adds no independent ordered optical prescription"
+      }
+    ],
+    "generic_architecture_is_example_1": true,
+    "shared_table_10_is_not_a_new_item": true,
+    "conversion_boundary": "All three optical prescriptions retain directly published nonzero A3/A5/A7/A9/A11/A13/A15/A17/A19 radial terms. None may be dropped or approximated into the current even-power sequential contract; all three remain precise nonterminal parser-review items.",
+    "coordinate_values_synthesized": 0,
+    "related_publication_numeric_values_imported": false,
+    "raster_numeric_values_transcribed": false
+  },
+  "official_pdf": {
+    "reviewed": false,
+    "reason": "The complete machine-readable B2 HTML settles bibliography, item, section, paragraph, claim, figure, formula and table boundaries and directly establishes the unsupported odd-power terms; no PDF or raster evidence is required."
+  },
+  "ledger_denominator": {
+    "frozen_cohort_roots": 1,
+    "disclosed_items": 4,
+    "optical_prescription_items": 3,
+    "parser_review_required_items": 3,
+    "wrapper_items": 1,
+    "terminal_items": 1,
+    "replayed_items": 4,
+    "root_state": "mixed_nonterminal",
+    "replay_attempts": [2, 3],
+    "replay_semantic_sha256": "94c74710ad3c87cf7a0ddb80a7d95db0ffd97f939e0193ec26380bf32950bfc3",
+    "candidate_zmx": 0,
+    "formal_intake_items": 0,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "codev_calls": 0
+  }
+}

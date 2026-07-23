@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `f295cb3cbb289be12dfdab410a7fb31e7db00339a148f90c43805412c9c68613`
+- result_set_sha256: `689525e59b648050ec1bbf0d6748b3f9ffcdd16d12ac34442b9fc79943d42c0b`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,17 +20,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 29
 - `terminal`: 237
-- `parser_review_required`: 196
+- `parser_review_required`: 195
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 157
+- `mixed_nonterminal`: 158
 
 ## Item states
 
 - `converted_pending_intake`: 609
-- `terminal`: 2005
-- `parser_review_required`: 1335
+- `terminal`: 2006
+- `parser_review_required`: 1337
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 830
+- `confirmed_no_prescription`: 831
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 429
@@ -49,13 +49,13 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root reason codes
 
 - `terminal.all_disclosed_items_terminal`: 237
-- `parser_review_required.all_disclosed_items_rejected`: 196
-- `mixed_nonterminal.multiple_item_states`: 157
+- `parser_review_required.all_disclosed_items_rejected`: 195
+- `mixed_nonterminal.multiple_item_states`: 158
 - `converted_pending_intake.all_disclosed_items_converted`: 29
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1335
+- `parser_review_required.deterministic_parser_rejected`: 1337
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 609
 - `terminal.metadata_unpublished.system_f_number_absent`: 91
@@ -161,6 +161,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.first_relay_lens_schematic_materials_and_performance_only`: 2
 - `terminal.confirmed_no_prescription.folded_imaging_optical_system_prism_filter_coating_architecture_only`: 2
 - `terminal.confirmed_no_prescription.folded_reflective_refractive_member_and_stray_light_simulation_architecture_only`: 2
+- `terminal.confirmed_no_prescription.imaging_apparatus_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.imaging_device_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.imaging_lens_system_architecture_only`: 2
 - `terminal.confirmed_no_prescription.in_vehicle_system_wrapper_only`: 2
@@ -304,7 +305,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.image_module_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.image_production_and_device_integration_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.imaging_apparatus_lens_chassis_alignment_architecture_only`: 1
-- `terminal.confirmed_no_prescription.imaging_apparatus_wrapper_only`: 1
 - `terminal.confirmed_no_prescription.imaging_lens_assembly_antenna_trace_architecture_only`: 1
 - `terminal.confirmed_no_prescription.imaging_lens_assembly_light_folding_and_light_blocking_architecture_only`: 1
 - `terminal.confirmed_no_prescription.indicia_reader_computer_readable_medium_only`: 1
@@ -479,9 +479,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a2_n`: 6
 - `other_validationerror_n_validation_error_for_patentsurfaceinput_thickness_mm_input_should_be_a_finite_number_type_a33fea814b08`: 6
 - `sekonix_surface_row_incomplete`: 6
-- `generic_summary_metadata_missing`: 5
 - `other_seven_lens_asphere_label_token_confidence_n_is_below_n`: 5
 - `other_unsupported_nonzero_aac_raytech_asphere_term_r1_a36_n`: 5
+- `generic_summary_metadata_missing`: 4
 - `other_ability_pdf_numeric_cell_at_n_n_has_n_values_above_confidence_gate`: 4
 - `other_ability_zoom_s15_abbe_number_token_token_confidence_n_is_below_n`: 4
 - `other_ability_zoom_surface_label_token_confidence_n_is_below_n`: 4
@@ -663,6 +663,9 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_eea76338c7ce`: 1
 - `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_f68540c688b2`: 1
 - `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_ff376d2cb42f`: 1
+- `other_published_table_n_nonzero_odd_power_radial_asphere_terms_a3_a5_a7_a9_a11_a13_a15_a17_a19_on_surfaces_n_n_n_3e5f0df7426d`: 1
+- `other_published_table_n_nonzero_odd_power_radial_asphere_terms_a3_a5_a7_a9_a11_a13_a15_a17_a19_on_surfaces_n_n_n_f0fa78fc9732`: 1
+- `other_published_table_n_nonzero_odd_power_radial_asphere_terms_a3_a5_a7_a9_a11_a13_a15_a17_a19_on_surfaces_n_n_n_f57cfabe3f28`: 1
 - `other_published_table_n_nonzero_odd_power_radial_asphere_terms_on_l6_surfaces_n_n_cannot_be_represented_by_the_cu_8806526df5e0`: 1
 - `other_published_table_n_nonzero_odd_power_radial_asphere_terms_on_l6_surfaces_n_n_cannot_be_represented_by_the_cu_8b76bc3b0058`: 1
 - `other_published_table_n_nonzero_odd_power_radial_asphere_terms_on_l6_surfaces_n_n_cannot_be_represented_by_the_cu_ac2febf2c176`: 1
