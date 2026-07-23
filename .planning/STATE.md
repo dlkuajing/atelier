@@ -838,9 +838,29 @@ The shared layout signature
 has two remaining roots in two distinct families; the next quick must select only
 Family 75814376/root US-20260169267 and exclude Family 94742160/root
 US-20260177783. Do not borrow any value, item boundary or outcome across those
-families or a shared layout. Open the next GSD quick only after the Family 94589695
-commit; copy the completed 18-root census byte-for-byte before detailed source
-investigation. No source conclusion for Family 75814376 has been made yet.
+families or a shared layout. GSD quick
+`.planning/quick/260723-patent-generic-family-75814376/` is active from clean
+committed Family 94589695 state `dcf0127b`. Its exact pre-change 18-root census is
+copied byte-for-byte at SHA-256
+`e98826a3a4c06f0df5be6b70b7099685b0b4ae0cd10bb933f8b7cda3d915bf55`.
+Family 75814376/root US-20260169267 is complete and ready to commit. Exact source
+reconciliation proves nine four-lens numerical items. The HTML directly publishes
+item-specific EFL, HFOV, TTL, Fno and ImgH, while complete ordered
+surface/material/asphere rows exist only in official one-bit raster figures. Two
+official 43-page downloads decode to the same raster set at
+`8ab3fbb9d29e39e6a61b49ee41a3bd137fa24ef976a6dbb244b8936e62022378`.
+No OCR, enhancement, repair, measurement, raster numeric transcription or inference
+was used. All nine exact items close as
+`metadata_unpublished.machine_readable_prescription_and_system_tables_absent`.
+Attempts 2/3 preserve attempt 1 and are semantic-equal at
+`53968fa7f39998dd457d46565c0e5624c2ac81bd5cd8315181f09397d7d28508`;
+strict replay is 619/619 with zero missing/corrupt. Generic residual is 18 to 17,
+result set `43fb3fb781e5e17f13ffdd1a0f169283d691f2e44b866fe3558a2deadd11509b`,
+and byte-identical census SHA-256 is
+`b6d2c005c0e88d1ca0200bfffea5f6e1031f5d0ef166d38420dae8340a2502b5`.
+Live summary/report are `0bb8dc88...a78d22` / `93360be4...d8a08`; source evidence
+is `a110f12b...dd6f5`. Family 94742160/root US-20260177783 is next by stable
+ordering; parent saturation remains incomplete.
 
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer

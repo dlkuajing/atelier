@@ -1,0 +1,1139 @@
+{
+  "schema_version": "patent-family-raster-audit/v1",
+  "family_id": "75814376",
+  "publication_id": "US-20260169267-A1",
+  "downloads": [
+    {
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/US-20260169267-A1-official-1.pdf",
+      "bytes": 2721765,
+      "sha256": "c30677bc0d4a98523ff444e16fab175725f1d3100f41b636031d86eb819188f3",
+      "page_count": 43,
+      "text_layer_characters": 0,
+      "ordered_raster_set_sha256": "8ab3fbb9d29e39e6a61b49ee41a3bd137fa24ef976a6dbb244b8936e62022378",
+      "pages": [
+        {
+          "page": 1,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "07fb98db2d55999792e68b19bad6677d96b87954befc5fa6670a758a4afa4770"
+        },
+        {
+          "page": 2,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c755bf455e9591b2f608dc245ea85394466177bebee11a9a90c31828f29ef129"
+        },
+        {
+          "page": 3,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "cf6cc3d48ff57a95380715c025d91566031fd033ef976e8814e15ddbbdcf3247"
+        },
+        {
+          "page": 4,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "83688a3089a31ee5d6a5738d8fe17c39213f2b176375f7ab6ddf0b3a90b3bcdb"
+        },
+        {
+          "page": 5,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "123f7e3a81604df679835f7452fc8867db6d9494e3eb3c07f9e6dee74817d909"
+        },
+        {
+          "page": 6,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "373254921c184c1a56069cc045d5d8f6abbfb69c6484e8a03d5e0131c90b25f6"
+        },
+        {
+          "page": 7,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "37d24d4116ad5f9ec50c2b679a45c4f529e9603bbec2f42f27a43efebb119bb7"
+        },
+        {
+          "page": 8,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "e36fdb582b07c33d211da8c5f2a95aa0dee4ee86b771172d6e6d134d66f56673"
+        },
+        {
+          "page": 9,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "eecdf36f364ff847c5305ef291c20e00ec6388366c30a9e2776ee79c24465388"
+        },
+        {
+          "page": 10,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f3d124a55daf83c3f991518829bddd05ccf42b38050d11866d86ef10d4dd3006"
+        },
+        {
+          "page": 11,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d8164893c9f4896314544acf5c2ed7d09cc3f66ad1931155496240b79f545f45"
+        },
+        {
+          "page": 12,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c1ee404803c8ee2289dea68e7560c9c48a96976fedfedaa4db4ec0ec2c214f3e"
+        },
+        {
+          "page": 13,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "99af1fa8463dd547af573c11c13d68e23494e2e1829c4e9feb7ffcdcd18f6eb0"
+        },
+        {
+          "page": 14,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "bf3a98192ad285fbe0e2d37d35d9c94fa78e487977a8ade2c54a2d4ce159e48d"
+        },
+        {
+          "page": 15,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b10ed8b7913492bc3740534780b2ddf8c2d377e3ebd15b3bf032ec9c4ab875c6"
+        },
+        {
+          "page": 16,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f04b87bb43af66d1983198628b70636f28399c1d3d805628bb20194a88c037f0"
+        },
+        {
+          "page": 17,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "64de9e080abfcdd6be51bd4c25e3a3c95077b9fc5e8974635df93ada632d6315"
+        },
+        {
+          "page": 18,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f429de61abfbb3d841b0766f39c44fb73988a990573454d2b207be73a68e8465"
+        },
+        {
+          "page": 19,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "51a2fbc431566852c9183b400417b8c3c1d3b3fefe6fe62548e46ed05c6701e1"
+        },
+        {
+          "page": 20,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "41c2167df6bf4e8068025ce2fa42936d28eea08e6db29f836d154c2f0a55e997"
+        },
+        {
+          "page": 21,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c935d4aa5d66f4c0aeb1482992516a148389102ce74248d0141a6971f13e8917"
+        },
+        {
+          "page": 22,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "9767678476d79227a8805ff91eba67266591ccbb6e9a2e38c31f5807ff36a8bf"
+        },
+        {
+          "page": 23,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "5f2f0ebfa714925209f2c95f9222fe3be1d59c67694c43d7eb2e9c17ff7c84c0"
+        },
+        {
+          "page": 24,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "fee1d66e89d54bb6417696bf9f127bb9757bc81ba0fe0fb68097f3a12b8df7da"
+        },
+        {
+          "page": 25,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "331052805278b135034fb65b5b3d3b907169595e863ff9121944b5b4ad1ca7bc"
+        },
+        {
+          "page": 26,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "106feac3a2e8f4e7624061e2e04150d277bfde450ed05caeff221d091960cde1"
+        },
+        {
+          "page": 27,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c559b77dad76cfd3619006ab0c39c705f0781122f004178d9b66fbda96ff90e5"
+        },
+        {
+          "page": 28,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "fe0113208b791925e82a9672c8d1dd352414e08ca295067087e17e48fc254e46"
+        },
+        {
+          "page": 29,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c89599f80855d757403629b93e1e9bd21e7c98ca0acccad473674fbcdaf0bb33"
+        },
+        {
+          "page": 30,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "704150841fc9da69d65714b0078c6372cdfdddf2123e5c8fa108e502b909c6e8"
+        },
+        {
+          "page": 31,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c0720b58d63a9519b17f895cb73bb5e1398504637e7881172cf45fe77e480456"
+        },
+        {
+          "page": 32,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "50298f0fd513dbd74b3abaca9416f958972bd86b80d8c68a68df2cd561fc0af1"
+        },
+        {
+          "page": 33,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "364c8f68f30fe7456f72f5e01a9dcda8494e3379e24e60c7890452a16b08a7f0"
+        },
+        {
+          "page": 34,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "ae80fc207b5141bd5e3877861a70644d419ad22da97b6fed5e20e437ae8d2774"
+        },
+        {
+          "page": 35,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d91f334d048f0e1c97d7199f1853d0bfad5504717c1e1f2e5e32a848d5a91aac"
+        },
+        {
+          "page": 36,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "5d14b1a2282bbe75249a56312ce008818af9fd6675ca58bcbd1bd2f91a7843c4"
+        },
+        {
+          "page": 37,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "dc2de9e43678dd9cfc5febb88a90e9aa9af333fb0312253172741e4488bd3fb4"
+        },
+        {
+          "page": 38,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "10b0b41cf91f72efbd0cd3c4675b343faee96c6f658e69c073ba900b0a50e790"
+        },
+        {
+          "page": 39,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "13224f26306b61f65c23042fc3ef088386c4e9b1cef27e12727e1a11c3e50445"
+        },
+        {
+          "page": 40,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "08493e8a61008dca7d383ec806c5dcfc4e676e92bc760ac0e225e657d180bc47"
+        },
+        {
+          "page": 41,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "3a72b73ab90a5b21cc474d8ef26e7bb618821f9d5a29207111d6279b9676c351"
+        },
+        {
+          "page": 42,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "08da30f07b4bdbc6e5aaa97aba3871e6b8ba07494fcb8d8d7a0f0cf2aa257e46"
+        },
+        {
+          "page": 43,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "efaa7cfc08153f643049127d57f8461b09683ce92bd77d01bd6eba8a95c8b6ac"
+        }
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/US-20260169267-A1-official-2.pdf",
+      "bytes": 2721765,
+      "sha256": "4b9a714dc4e7f73c044fc3f4cb64d33222ad5525afbf08e54eb09d5c62ba1edb",
+      "page_count": 43,
+      "text_layer_characters": 0,
+      "ordered_raster_set_sha256": "8ab3fbb9d29e39e6a61b49ee41a3bd137fa24ef976a6dbb244b8936e62022378",
+      "pages": [
+        {
+          "page": 1,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "07fb98db2d55999792e68b19bad6677d96b87954befc5fa6670a758a4afa4770"
+        },
+        {
+          "page": 2,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c755bf455e9591b2f608dc245ea85394466177bebee11a9a90c31828f29ef129"
+        },
+        {
+          "page": 3,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "cf6cc3d48ff57a95380715c025d91566031fd033ef976e8814e15ddbbdcf3247"
+        },
+        {
+          "page": 4,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "83688a3089a31ee5d6a5738d8fe17c39213f2b176375f7ab6ddf0b3a90b3bcdb"
+        },
+        {
+          "page": 5,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "123f7e3a81604df679835f7452fc8867db6d9494e3eb3c07f9e6dee74817d909"
+        },
+        {
+          "page": 6,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "373254921c184c1a56069cc045d5d8f6abbfb69c6484e8a03d5e0131c90b25f6"
+        },
+        {
+          "page": 7,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "37d24d4116ad5f9ec50c2b679a45c4f529e9603bbec2f42f27a43efebb119bb7"
+        },
+        {
+          "page": 8,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "e36fdb582b07c33d211da8c5f2a95aa0dee4ee86b771172d6e6d134d66f56673"
+        },
+        {
+          "page": 9,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "eecdf36f364ff847c5305ef291c20e00ec6388366c30a9e2776ee79c24465388"
+        },
+        {
+          "page": 10,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f3d124a55daf83c3f991518829bddd05ccf42b38050d11866d86ef10d4dd3006"
+        },
+        {
+          "page": 11,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d8164893c9f4896314544acf5c2ed7d09cc3f66ad1931155496240b79f545f45"
+        },
+        {
+          "page": 12,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c1ee404803c8ee2289dea68e7560c9c48a96976fedfedaa4db4ec0ec2c214f3e"
+        },
+        {
+          "page": 13,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "99af1fa8463dd547af573c11c13d68e23494e2e1829c4e9feb7ffcdcd18f6eb0"
+        },
+        {
+          "page": 14,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "bf3a98192ad285fbe0e2d37d35d9c94fa78e487977a8ade2c54a2d4ce159e48d"
+        },
+        {
+          "page": 15,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b10ed8b7913492bc3740534780b2ddf8c2d377e3ebd15b3bf032ec9c4ab875c6"
+        },
+        {
+          "page": 16,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f04b87bb43af66d1983198628b70636f28399c1d3d805628bb20194a88c037f0"
+        },
+        {
+          "page": 17,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "64de9e080abfcdd6be51bd4c25e3a3c95077b9fc5e8974635df93ada632d6315"
+        },
+        {
+          "page": 18,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f429de61abfbb3d841b0766f39c44fb73988a990573454d2b207be73a68e8465"
+        },
+        {
+          "page": 19,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "51a2fbc431566852c9183b400417b8c3c1d3b3fefe6fe62548e46ed05c6701e1"
+        },
+        {
+          "page": 20,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "41c2167df6bf4e8068025ce2fa42936d28eea08e6db29f836d154c2f0a55e997"
+        },
+        {
+          "page": 21,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c935d4aa5d66f4c0aeb1482992516a148389102ce74248d0141a6971f13e8917"
+        },
+        {
+          "page": 22,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "9767678476d79227a8805ff91eba67266591ccbb6e9a2e38c31f5807ff36a8bf"
+        },
+        {
+          "page": 23,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "5f2f0ebfa714925209f2c95f9222fe3be1d59c67694c43d7eb2e9c17ff7c84c0"
+        },
+        {
+          "page": 24,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "fee1d66e89d54bb6417696bf9f127bb9757bc81ba0fe0fb68097f3a12b8df7da"
+        },
+        {
+          "page": 25,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "331052805278b135034fb65b5b3d3b907169595e863ff9121944b5b4ad1ca7bc"
+        },
+        {
+          "page": 26,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "106feac3a2e8f4e7624061e2e04150d277bfde450ed05caeff221d091960cde1"
+        },
+        {
+          "page": 27,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c559b77dad76cfd3619006ab0c39c705f0781122f004178d9b66fbda96ff90e5"
+        },
+        {
+          "page": 28,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "fe0113208b791925e82a9672c8d1dd352414e08ca295067087e17e48fc254e46"
+        },
+        {
+          "page": 29,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c89599f80855d757403629b93e1e9bd21e7c98ca0acccad473674fbcdaf0bb33"
+        },
+        {
+          "page": 30,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "704150841fc9da69d65714b0078c6372cdfdddf2123e5c8fa108e502b909c6e8"
+        },
+        {
+          "page": 31,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "c0720b58d63a9519b17f895cb73bb5e1398504637e7881172cf45fe77e480456"
+        },
+        {
+          "page": 32,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "50298f0fd513dbd74b3abaca9416f958972bd86b80d8c68a68df2cd561fc0af1"
+        },
+        {
+          "page": 33,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "364c8f68f30fe7456f72f5e01a9dcda8494e3379e24e60c7890452a16b08a7f0"
+        },
+        {
+          "page": 34,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "ae80fc207b5141bd5e3877861a70644d419ad22da97b6fed5e20e437ae8d2774"
+        },
+        {
+          "page": 35,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d91f334d048f0e1c97d7199f1853d0bfad5504717c1e1f2e5e32a848d5a91aac"
+        },
+        {
+          "page": 36,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "5d14b1a2282bbe75249a56312ce008818af9fd6675ca58bcbd1bd2f91a7843c4"
+        },
+        {
+          "page": 37,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "dc2de9e43678dd9cfc5febb88a90e9aa9af333fb0312253172741e4488bd3fb4"
+        },
+        {
+          "page": 38,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "10b0b41cf91f72efbd0cd3c4675b343faee96c6f658e69c073ba900b0a50e790"
+        },
+        {
+          "page": 39,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "13224f26306b61f65c23042fc3ef088386c4e9b1cef27e12727e1a11c3e50445"
+        },
+        {
+          "page": 40,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "08493e8a61008dca7d383ec806c5dcfc4e676e92bc760ac0e225e657d180bc47"
+        },
+        {
+          "page": 41,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "3a72b73ab90a5b21cc474d8ef26e7bb618821f9d5a29207111d6279b9676c351"
+        },
+        {
+          "page": 42,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "08da30f07b4bdbc6e5aaa97aba3871e6b8ba07494fcb8d8d7a0f0cf2aa257e46"
+        },
+        {
+          "page": 43,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "efaa7cfc08153f643049127d57f8461b09683ce92bd77d01bd6eba8a95c8b6ac"
+        }
+      ]
+    }
+  ],
+  "decoded_download_raster_sets_identical": true,
+  "exact_pixel_exports": [
+    {
+      "page": 1,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-001.png",
+      "bytes": 66981,
+      "sha256": "50b6d3ed658bd13ecc23d41ed7f3659cf2167c551ade7dbaefc41e780f601d71",
+      "source_raster_sha256": "07fb98db2d55999792e68b19bad6677d96b87954befc5fa6670a758a4afa4770"
+    },
+    {
+      "page": 2,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-002.png",
+      "bytes": 40488,
+      "sha256": "7ecf293ce7bc13b62d8a3768f50256222d911545b3a16dc64908c884d6c13602",
+      "source_raster_sha256": "c755bf455e9591b2f608dc245ea85394466177bebee11a9a90c31828f29ef129"
+    },
+    {
+      "page": 3,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-003.png",
+      "bytes": 67226,
+      "sha256": "cd3f441eb82128c7b990900d9ea07e9dba4113a0cf80157d089753b6ae63f1f9",
+      "source_raster_sha256": "cf6cc3d48ff57a95380715c025d91566031fd033ef976e8814e15ddbbdcf3247"
+    },
+    {
+      "page": 4,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-004.png",
+      "bytes": 67416,
+      "sha256": "21a53196b6a72dddde53e5a63facf18e11230cf4f22fdcb6b672b7e4d2cb3a36",
+      "source_raster_sha256": "83688a3089a31ee5d6a5738d8fe17c39213f2b176375f7ab6ddf0b3a90b3bcdb"
+    },
+    {
+      "page": 5,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-005.png",
+      "bytes": 61209,
+      "sha256": "63499b9cfd8e1aacafce461058e899d6478ffc7e6da1a1e902798b278fa3fa32",
+      "source_raster_sha256": "123f7e3a81604df679835f7452fc8867db6d9494e3eb3c07f9e6dee74817d909"
+    },
+    {
+      "page": 6,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-006.png",
+      "bytes": 62540,
+      "sha256": "36c2df297b345f9cdbf845885d4af77a385ad3efdd122290ddba42c37cf6fa8b",
+      "source_raster_sha256": "373254921c184c1a56069cc045d5d8f6abbfb69c6484e8a03d5e0131c90b25f6"
+    },
+    {
+      "page": 7,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-007.png",
+      "bytes": 64775,
+      "sha256": "407311d15e04ffedeb80ec80181df4319c294a7aba8d22a5abc301e7cf169bcb",
+      "source_raster_sha256": "37d24d4116ad5f9ec50c2b679a45c4f529e9603bbec2f42f27a43efebb119bb7"
+    },
+    {
+      "page": 8,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-008.png",
+      "bytes": 59730,
+      "sha256": "c3b5a7bba0af1fabbe96617fdb13ca16696523dfe54c06aec4648b03674a5029",
+      "source_raster_sha256": "e36fdb582b07c33d211da8c5f2a95aa0dee4ee86b771172d6e6d134d66f56673"
+    },
+    {
+      "page": 9,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-009.png",
+      "bytes": 62434,
+      "sha256": "641f4bc005d9bd1dc2e0ec229807a0fab2f4c6ecb11e87fb366c975363a4d12f",
+      "source_raster_sha256": "eecdf36f364ff847c5305ef291c20e00ec6388366c30a9e2776ee79c24465388"
+    },
+    {
+      "page": 10,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-010.png",
+      "bytes": 62928,
+      "sha256": "6b70ba381821672c05b7ee46fc768fe4f05ddff5a005fb63a30dbc45eee789d3",
+      "source_raster_sha256": "f3d124a55daf83c3f991518829bddd05ccf42b38050d11866d86ef10d4dd3006"
+    },
+    {
+      "page": 11,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-011.png",
+      "bytes": 62583,
+      "sha256": "8a432e63640eedebc67de58db588a50af123a29f96cada42d0c24753990b1758",
+      "source_raster_sha256": "d8164893c9f4896314544acf5c2ed7d09cc3f66ad1931155496240b79f545f45"
+    },
+    {
+      "page": 12,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-012.png",
+      "bytes": 61020,
+      "sha256": "1c6b3de0f7dc348a1b179282ef59746f47252f7166a0d91a730b93705fa53d8d",
+      "source_raster_sha256": "c1ee404803c8ee2289dea68e7560c9c48a96976fedfedaa4db4ec0ec2c214f3e"
+    },
+    {
+      "page": 13,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-013.png",
+      "bytes": 55345,
+      "sha256": "38a40ba67092a686074aa310ca49688fe7dda0adf1a3274811c0ae6e27e74ffc",
+      "source_raster_sha256": "99af1fa8463dd547af573c11c13d68e23494e2e1829c4e9feb7ffcdcd18f6eb0"
+    },
+    {
+      "page": 14,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-014.png",
+      "bytes": 85114,
+      "sha256": "73049f43dbc38ea9932dc06887382d97bd01729e422b674f1ce98d0c5b6cc336",
+      "source_raster_sha256": "bf3a98192ad285fbe0e2d37d35d9c94fa78e487977a8ade2c54a2d4ce159e48d"
+    },
+    {
+      "page": 15,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-015.png",
+      "bytes": 55910,
+      "sha256": "75621a475315d236173f4334e6139ea04e5cf6b987a44256356c354ed6f2918c",
+      "source_raster_sha256": "b10ed8b7913492bc3740534780b2ddf8c2d377e3ebd15b3bf032ec9c4ab875c6"
+    },
+    {
+      "page": 16,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-016.png",
+      "bytes": 48888,
+      "sha256": "f3789e6d4b1385739942f63800f4d9ac671e9a9b09f620e1cc97fe884efb385b",
+      "source_raster_sha256": "f04b87bb43af66d1983198628b70636f28399c1d3d805628bb20194a88c037f0"
+    },
+    {
+      "page": 17,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-017.png",
+      "bytes": 55210,
+      "sha256": "a13900b058690b995b9e81b386a9412d0f42b436b0b104be5e9c966287399280",
+      "source_raster_sha256": "64de9e080abfcdd6be51bd4c25e3a3c95077b9fc5e8974635df93ada632d6315"
+    },
+    {
+      "page": 18,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-018.png",
+      "bytes": 66682,
+      "sha256": "db6b9ee078739bab37329f8447aca911e75c716bde4b6883d10caf5e43ef249d",
+      "source_raster_sha256": "f429de61abfbb3d841b0766f39c44fb73988a990573454d2b207be73a68e8465"
+    },
+    {
+      "page": 19,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-019.png",
+      "bytes": 55234,
+      "sha256": "dbe2a93a1a5919d0ff6823b1918e1fabb64fc2b2d57f4f2ce45293f203835acb",
+      "source_raster_sha256": "51a2fbc431566852c9183b400417b8c3c1d3b3fefe6fe62548e46ed05c6701e1"
+    },
+    {
+      "page": 20,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-020.png",
+      "bytes": 84730,
+      "sha256": "2c36488f7d85fd8fbedfdafdd41ef99144108e053fe07d41067d61f5e45241f0",
+      "source_raster_sha256": "41c2167df6bf4e8068025ce2fa42936d28eea08e6db29f836d154c2f0a55e997"
+    },
+    {
+      "page": 21,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-021.png",
+      "bytes": 55204,
+      "sha256": "28755a529ea722127ec6f49fb0404e02fae12f4d1ed0e6bfa79f0e6ef8e04c09",
+      "source_raster_sha256": "c935d4aa5d66f4c0aeb1482992516a148389102ce74248d0141a6971f13e8917"
+    },
+    {
+      "page": 22,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-022.png",
+      "bytes": 85414,
+      "sha256": "d50cd7775f34a3b6f6b60d100ed39be75ce3c444c60e5950a987333d13f6fa4f",
+      "source_raster_sha256": "9767678476d79227a8805ff91eba67266591ccbb6e9a2e38c31f5807ff36a8bf"
+    },
+    {
+      "page": 23,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-023.png",
+      "bytes": 55364,
+      "sha256": "b47d5fde1cfec01cf346ea3d0a9223a72e2052de23e9bfc92fabf16f8d669f39",
+      "source_raster_sha256": "5f2f0ebfa714925209f2c95f9222fe3be1d59c67694c43d7eb2e9c17ff7c84c0"
+    },
+    {
+      "page": 24,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-024.png",
+      "bytes": 85227,
+      "sha256": "e0f369e98e8519c9e43319f7003240638e5c4452b98db7ba56bfaaf20437abe8",
+      "source_raster_sha256": "fee1d66e89d54bb6417696bf9f127bb9757bc81ba0fe0fb68097f3a12b8df7da"
+    },
+    {
+      "page": 25,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-025.png",
+      "bytes": 55829,
+      "sha256": "28537597c82c02588075dd1a7469aa48e99bdb6c34d962f01cc7bc19850b4ce7",
+      "source_raster_sha256": "331052805278b135034fb65b5b3d3b907169595e863ff9121944b5b4ad1ca7bc"
+    },
+    {
+      "page": 26,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-026.png",
+      "bytes": 85211,
+      "sha256": "26c14e4b5155f3139b5549200d5c63636b2697b22034d24b8eff18a90a61e37d",
+      "source_raster_sha256": "106feac3a2e8f4e7624061e2e04150d277bfde450ed05caeff221d091960cde1"
+    },
+    {
+      "page": 27,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-027.png",
+      "bytes": 55580,
+      "sha256": "336a86a7714924f9b2809138f9265f033a1db7f6f107954a4f5787dd06a7ff68",
+      "source_raster_sha256": "c559b77dad76cfd3619006ab0c39c705f0781122f004178d9b66fbda96ff90e5"
+    },
+    {
+      "page": 28,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-028.png",
+      "bytes": 66889,
+      "sha256": "876820151c2f8c866bb50fa0aa170f4917b95d9bc26d5c10f5d8aefc47028799",
+      "source_raster_sha256": "fe0113208b791925e82a9672c8d1dd352414e08ca295067087e17e48fc254e46"
+    },
+    {
+      "page": 29,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-029.png",
+      "bytes": 54701,
+      "sha256": "831a84a387f9628420743fad277a3aa12257cd69f934a79acfae49f6c5b4e331",
+      "source_raster_sha256": "c89599f80855d757403629b93e1e9bd21e7c98ca0acccad473674fbcdaf0bb33"
+    },
+    {
+      "page": 30,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-030.png",
+      "bytes": 48759,
+      "sha256": "071da84d5ee23772fae29e786f4d06b483a730bb20d4ab6c1c486297e54b0dbb",
+      "source_raster_sha256": "704150841fc9da69d65714b0078c6372cdfdddf2123e5c8fa108e502b909c6e8"
+    },
+    {
+      "page": 31,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-031.png",
+      "bytes": 79659,
+      "sha256": "ec15a31904189cef11f80acce5f15383cfb5c4ff401eabbfd83214349a978eea",
+      "source_raster_sha256": "c0720b58d63a9519b17f895cb73bb5e1398504637e7881172cf45fe77e480456"
+    },
+    {
+      "page": 32,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-032.png",
+      "bytes": 115014,
+      "sha256": "e95ff736ec6784a881b3f22c311800b82a9d41a46f9493f9079649bca6f5bfdf",
+      "source_raster_sha256": "50298f0fd513dbd74b3abaca9416f958972bd86b80d8c68a68df2cd561fc0af1"
+    },
+    {
+      "page": 33,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-033.png",
+      "bytes": 128390,
+      "sha256": "c12f3442f1d0c37cd331749005092de7068d9d1355c5334eafc8502a9ecbb89f",
+      "source_raster_sha256": "364c8f68f30fe7456f72f5e01a9dcda8494e3379e24e60c7890452a16b08a7f0"
+    },
+    {
+      "page": 34,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-034.png",
+      "bytes": 137795,
+      "sha256": "618f0731f0bbb09c535a6673b59bed2d3f1adb9dbd2cd0f1b4193b79aa077225",
+      "source_raster_sha256": "ae80fc207b5141bd5e3877861a70644d419ad22da97b6fed5e20e437ae8d2774"
+    },
+    {
+      "page": 35,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-035.png",
+      "bytes": 161382,
+      "sha256": "ed6d72657b7c800e200df86d33e70fa7ea5474a2dac94fdea9896974e436d40c",
+      "source_raster_sha256": "d91f334d048f0e1c97d7199f1853d0bfad5504717c1e1f2e5e32a848d5a91aac"
+    },
+    {
+      "page": 36,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-036.png",
+      "bytes": 155046,
+      "sha256": "ffbd94e98398b63e09e37fac3dff7bc93ee6f1ba2cc7720c67267a68723076bf",
+      "source_raster_sha256": "5d14b1a2282bbe75249a56312ce008818af9fd6675ca58bcbd1bd2f91a7843c4"
+    },
+    {
+      "page": 37,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-037.png",
+      "bytes": 139967,
+      "sha256": "5950006229d6a04aa775de820f20d80e41de9041fce6448bf4798d64bdc98a19",
+      "source_raster_sha256": "dc2de9e43678dd9cfc5febb88a90e9aa9af333fb0312253172741e4488bd3fb4"
+    },
+    {
+      "page": 38,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-038.png",
+      "bytes": 145551,
+      "sha256": "e30e586619218b30ed32fe4eeb03087b1646c41d2229ce21cd31365370da9c65",
+      "source_raster_sha256": "10b0b41cf91f72efbd0cd3c4675b343faee96c6f658e69c073ba900b0a50e790"
+    },
+    {
+      "page": 39,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-039.png",
+      "bytes": 150427,
+      "sha256": "f89c22d170450afb7fa913cee9afbf5d0194658c643e58be803d2d71530cfab2",
+      "source_raster_sha256": "13224f26306b61f65c23042fc3ef088386c4e9b1cef27e12727e1a11c3e50445"
+    },
+    {
+      "page": 40,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-040.png",
+      "bytes": 144444,
+      "sha256": "060fa6fb78d0eb3b7c9e4a65f0d3a772a6b6777630e178f2289d04e9f7c540c9",
+      "source_raster_sha256": "08493e8a61008dca7d383ec806c5dcfc4e676e92bc760ac0e225e657d180bc47"
+    },
+    {
+      "page": 41,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-041.png",
+      "bytes": 149004,
+      "sha256": "f4334294d6166515533aa3aacb1aa1871cb3308a281f76d462a31dc79985516b",
+      "source_raster_sha256": "3a72b73ab90a5b21cc474d8ef26e7bb618821f9d5a29207111d6279b9676c351"
+    },
+    {
+      "page": 42,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-042.png",
+      "bytes": 147322,
+      "sha256": "8292a4aff510845d090040e41bbc3f717c992ba364ffd2842a492b8149fc1db5",
+      "source_raster_sha256": "08da30f07b4bdbc6e5aaa97aba3871e6b8ba07494fcb8d8d7a0f0cf2aa257e46"
+    },
+    {
+      "page": 43,
+      "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/pages/page-043.png",
+      "bytes": 18677,
+      "sha256": "08a381d526153c02767e9abf802394a7c9b743fc6ed9fd403cbaea916ed8045a",
+      "source_raster_sha256": "efaa7cfc08153f643049127d57f8461b09683ce92bd77d01bd6eba8a95c8b6ac"
+    }
+  ],
+  "page_roles": {
+    "cover_pages": [
+      1
+    ],
+    "drawing_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "specification_pages": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+    ],
+    "claim_pages": [
+      41,
+      42,
+      43
+    ],
+    "cross_section_and_aberration_pages": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "optical_table_pages": [
+      13,
+      15,
+      17,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29
+    ],
+    "asphere_table_pages": [
+      14,
+      16,
+      18,
+      20,
+      22,
+      24,
+      26,
+      28,
+      30
+    ],
+    "common_table_pages": [
+      31
+    ]
+  },
+  "reviewed_original_pages": [
+    4,
+    12,
+    13,
+    14,
+    29,
+    30,
+    31,
+    32,
+    40,
+    41,
+    42,
+    43
+  ],
+  "contact_sheet": {
+    "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/pdf-review/contact-sheet.png",
+    "bytes": 1125542,
+    "sha256": "3f24e7e345a2850a3e7eeb4c6fe54cc7095f644c7b3034e9cbd4091ab9fce05d",
+    "navigation_only": true
+  },
+  "review_policy": {
+    "official_originals_only": true,
+    "contact_sheet_navigation_only": true,
+    "image_enhancement_used": false,
+    "ocr_used": false,
+    "ocr_repair_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false
+  }
+}
