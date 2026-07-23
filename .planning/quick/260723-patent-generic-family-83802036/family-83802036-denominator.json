@@ -1,0 +1,312 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "83802036",
+  "root_id": "US-12631845",
+  "publication_id": "US-12631845-B2",
+  "sections": {
+    "background_summary_paragraphs": 6,
+    "description_paragraphs": 120,
+    "claims": 19,
+    "independent_claims": 1,
+    "machine_readable_tables": 10,
+    "optical_prescription_tables": 0,
+    "polygonal_geometry_tables": 10,
+    "inline_formula_pairs": 10,
+    "mathml_objects": 0,
+    "figref_tags": 222,
+    "declared_figure_panels": 49,
+    "drawing_sheets": 37,
+    "native_html_tables": 0,
+    "native_html_rows": 0,
+    "native_html_cells": 0,
+    "embedded_images": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan polygonal-aperture first embodiment example 1",
+      "paragraph_range": [
+        68,
+        73
+      ],
+      "figures": [
+        "1A",
+        "1B",
+        "1C",
+        "1D",
+        "1E",
+        "1F",
+        "1G",
+        "1H"
+      ],
+      "tables": [
+        "1A"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 2,
+      "label": "Largan polygonal-aperture first embodiment example 2",
+      "paragraph_range": [
+        74,
+        79
+      ],
+      "figures": [
+        "1I",
+        "1J",
+        "1K",
+        "1L",
+        "1M",
+        "1N"
+      ],
+      "tables": [
+        "1B"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 3,
+      "label": "Largan polygonal-aperture first embodiment example 3",
+      "paragraph_range": [
+        80,
+        82
+      ],
+      "figures": [
+        "1O"
+      ],
+      "tables": [
+        "1C"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 4,
+      "label": "Largan polygonal-aperture second embodiment example 1",
+      "paragraph_range": [
+        83,
+        88
+      ],
+      "figures": [
+        "2A",
+        "2B",
+        "2C",
+        "2D",
+        "2E",
+        "2F",
+        "2G",
+        "2H"
+      ],
+      "tables": [
+        "2A"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 5,
+      "label": "Largan polygonal-aperture second embodiment example 2",
+      "paragraph_range": [
+        89,
+        94
+      ],
+      "figures": [
+        "2I",
+        "2J",
+        "2K",
+        "2L",
+        "2M",
+        "2N"
+      ],
+      "tables": [
+        "2B"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 6,
+      "label": "Largan polygonal-aperture second embodiment example 3",
+      "paragraph_range": [
+        95,
+        97
+      ],
+      "figures": [
+        "2O"
+      ],
+      "tables": [
+        "2C"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 7,
+      "label": "Largan polygonal-aperture third embodiment example 1",
+      "paragraph_range": [
+        98,
+        103
+      ],
+      "figures": [
+        "3A",
+        "3B",
+        "3C",
+        "3D",
+        "3E",
+        "3F",
+        "3G",
+        "3H"
+      ],
+      "tables": [
+        "3A"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 8,
+      "label": "Largan polygonal-aperture third embodiment example 2",
+      "paragraph_range": [
+        104,
+        109
+      ],
+      "figures": [
+        "3I",
+        "3J",
+        "3K",
+        "3L",
+        "3M",
+        "3N"
+      ],
+      "tables": [
+        "3B"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 9,
+      "label": "Largan polygonal-aperture third embodiment example 3",
+      "paragraph_range": [
+        110,
+        114
+      ],
+      "figures": [
+        "3O"
+      ],
+      "tables": [
+        "3C"
+      ],
+      "reason_code": "confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 10,
+      "label": "Largan camera-module wrapper",
+      "paragraphs": [
+        5,
+        65,
+        18
+      ],
+      "paragraph_sections": [
+        "background_summary",
+        "description",
+        "claims"
+      ],
+      "figures": [],
+      "tables": [],
+      "reason_code": "confirmed_no_prescription.camera_module_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 11,
+      "label": "Largan fourth-embodiment electronic-device wrapper",
+      "paragraph_range": [
+        115,
+        119
+      ],
+      "figures": [
+        "4A",
+        "4B",
+        "4C",
+        "4D"
+      ],
+      "tables": [],
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    }
+  ],
+  "optical_interpretation": {
+    "source_items": 11,
+    "mechanical_architecture_items": 9,
+    "camera_module_wrapper_items": 1,
+    "electronic_device_wrapper_items": 1,
+    "published_numerical_prescriptions": 0,
+    "machine_readable_numerical_prescriptions": 0,
+    "machine_readable_prescription_rows": 0,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "absolute_image_height_published": false,
+    "ocr_or_raster_numeric_transcription_authorized": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 11,
+    "nonterminal_items": 0,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "numeric_inference_or_repair_performed": false,
+  "lineage_or_layout_value_borrowing_performed": false
+}

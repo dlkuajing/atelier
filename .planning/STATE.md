@@ -937,6 +937,32 @@ compile, diff, JSON/evidence/output/protected-path/primary-repository/process au
 pass. Stable ordering selects Family `83802036`, root/publication `US-12631845` /
 `US-12631845-B2`, next. Parent saturation remains active and incomplete.
 
+Family `83802036`, root/publication `US-12631845` / `US-12631845-B2`, is the active
+exact-source GSD quick opened from committed state `4aa1f676`. The frozen pre-change
+residual contains 10 roots/items at result set
+`60cf6e21bbeaa9413d38c6dcdba3bc09878108768b90af0ddae170581f543e62` and census
+SHA-256 `15ce76c63de622171473555ad1d71e0f5f79b80129c14de2d9b4169ded7493a8`.
+No outcome is established until the exact B2 lineage, sections, claims, figures,
+tables and complete source-item denominator are reconciled. Parent saturation remains
+active and incomplete.
+
+Family `83802036`, root/publication `US-12631845` / `US-12631845-B2`, is complete at
+eleven exact source items: nine polygonal light-passing-hole/lens-holding-member
+mechanical examples, one camera-module wrapper and one electronic-device wrapper. All
+close as precise `confirmed_no_prescription` terminals; the ten tables publish only
+polygonal aperture/light-blocking geometry and no ordered optical prescription. The
+literal paragraph 81 `angle being ea` and malformed TABLE 3C theta heading remain
+unrepaired. No OCR, enhancement, raster numeric transcription, measurement, inference,
+worker, request/receipt, fingerprint, ZMX, formal intake or CODE V activity exists.
+Attempts 2/3 preserve attempt 1 and are semantic-equal at `ed732418...bae066`; strict
+replay is 619/619 with zero missing/corrupt. Generic residual is 9 at result set
+`69498bbd...f1e1e` and repeat census `0ff765a6...d7b13`. Focused 11/11, broad
+1092/1092, historical evidence/live-pointer assertions 22/22 and replay/census/
+saturation/no-real-CODEV guards 56/56 pass; Ruff, compile, diff, JSON/evidence/output/
+protected-path/primary-repository/process audits pass. Stable ordering selects Family
+`83151794`, root/publication `US-12379524` / `US-12379524-B2`, next. Parent saturation
+remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

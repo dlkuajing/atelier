@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-83802036/generic-residual-after-1.json",
+  "affected_roots": 9,
+  "affected_items": 9,
+  "result_set_sha256": "69498bbd5cad2fc324ee85775e3456d81a741c724e40e6bd10e5b8cfeb0f1e1e",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "ee5bcce46d3f7f6a572b83fec10dcb52bd1165a5609f666fc6fa2b49d00b4490",
+    "layout_signature_count": 1,
+    "family_id": "83151794",
+    "root_ids": [
+      "US-12379524"
+    ],
+    "publication_ids": [
+      "US-12379524-B2"
+    ],
+    "application_numbers": [
+      "17/820604"
+    ],
+    "title": "Optical imaging lens assembly comprising a gradient refractive coating having a plurality of holes, imaging apparatus and electronic device",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/2e42d8b48be61955/US-12379524-B2.html",
+      "sha256": "2e42d8b48be61955ceaa15326ca571f7d27abd52b431c19a06619dd9fa0151e1",
+      "bytes": 163447
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 149,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 21,
+      "half_field": 0
+    },
+    "table_count": 19
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}
