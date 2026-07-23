@@ -1,0 +1,151 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "50942169",
+  "root_id": "US-9274312",
+  "publication_id": "US-9274312-B2",
+  "sections": {
+    "background_summary_paragraphs": 15,
+    "description_paragraphs": 47,
+    "claims": 15,
+    "independent_claims": 1,
+    "machine_readable_tables": 0,
+    "raster_optical_parameter_tables": 4,
+    "raster_asphere_parameter_tables": 4,
+    "inline_formula_pairs": 31,
+    "mathml_objects": 1,
+    "figref_tags": 41,
+    "declared_figures": 24,
+    "drawing_sheets": 20,
+    "native_html_tables": 0,
+    "native_html_rows": 0,
+    "native_html_cells": 0,
+    "embedded_images": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Ability four-lens imaging lens assembly first preferred embodiment",
+      "paragraph_range": [
+        35,
+        36
+      ],
+      "figures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "optical_table_figure": 5,
+      "asphere_table_figure": 6,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "html_system_summary_published": true,
+      "complete_ordered_prescription_machine_readable": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 2,
+      "label": "Ability four-lens imaging lens assembly second preferred embodiment",
+      "paragraph_range": [
+        37,
+        38
+      ],
+      "figures": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "optical_table_figure": 11,
+      "asphere_table_figure": 12,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "html_system_summary_published": true,
+      "complete_ordered_prescription_machine_readable": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 3,
+      "label": "Ability four-lens imaging lens assembly third preferred embodiment",
+      "paragraph_range": [
+        39,
+        40
+      ],
+      "figures": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "optical_table_figure": 17,
+      "asphere_table_figure": 18,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "html_system_summary_published": true,
+      "complete_ordered_prescription_machine_readable": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 4,
+      "label": "Ability four-lens imaging lens assembly fourth preferred embodiment",
+      "paragraph_range": [
+        41,
+        42
+      ],
+      "figures": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "optical_table_figure": 23,
+      "asphere_table_figure": 24,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "html_system_summary_published": true,
+      "complete_ordered_prescription_machine_readable": false,
+      "numeric_inference_or_repair_performed": false
+    }
+  ],
+  "optical_interpretation": {
+    "source_items": 4,
+    "published_numerical_prescriptions": 4,
+    "machine_readable_numerical_prescriptions": 0,
+    "raster_only_numerical_prescriptions": 4,
+    "machine_readable_prescription_rows": 0,
+    "prescription_specific_f_number_machine_readable": false,
+    "prescription_specific_angular_field_machine_readable": false,
+    "absolute_image_height_machine_readable": false,
+    "ocr_or_raster_numeric_transcription_authorized": false
+  },
+  "terminal_outcome": {
+    "metadata_unpublished_items": 4,
+    "nonterminal_items": 0,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "numeric_inference_or_repair_performed": false,
+  "lineage_or_layout_value_borrowing_performed": false
+}

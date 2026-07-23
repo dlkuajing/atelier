@@ -921,6 +921,22 @@ path/primary-repository/process audits pass. Stable ordering selects Family
 `50942169`, root/publication `US-9274312` / `US-9274312-B2`, next. Parent saturation
 remains active and incomplete.
 
+Family `50942169`, root/publication `US-9274312` / `US-9274312-B2`, is complete at
+four exact preferred imaging-lens embodiments. Each printed prescription is bound to
+its own six-figure group, but the ordered optical and aspheric tables exist only as
+one-bit PDF rasters and required system fields are absent from machine-readable text.
+All four therefore close as precise `metadata_unpublished.machine_readable_prescription_and_system_tables_absent`
+terminals without denying the printed prescription. No OCR, raster numeric
+transcription, worker, request/receipt, fingerprint, ZMX, formal intake or CODE V
+activity exists. Attempts 2/3 preserve attempt 1 and are semantic-equal at
+`ea4aeaef...54f96`; strict replay is 619/619 with zero missing/corrupt. Generic
+residual is 10 at result set `60cf6e21...43e62` and repeat census
+`15ce76c6...493a8`. Focused 11/11, broad 1083/1083, refreshed historical pointer
+assertions 10/10 and replay/census/saturation/no-real-CODEV guards 58/58 pass; Ruff,
+compile, diff, JSON/evidence/output/protected-path/primary-repository/process audits
+pass. Stable ordering selects Family `83802036`, root/publication `US-12631845` /
+`US-12631845-B2`, next. Parent saturation remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

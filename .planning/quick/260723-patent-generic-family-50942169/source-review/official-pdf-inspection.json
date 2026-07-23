@@ -1,0 +1,609 @@
+{
+  "decoded_raster_sets_identical": true,
+  "wrappers": [
+    {
+      "bytes": 876169,
+      "decoded_raster_set_sha256": "dbdd204817453092915829cc11451a554de55e44acf19f7ac166418a2cc445b0",
+      "metadata": {
+        "/CreationDate": "Jul 23, 2026, 5:48:58\u00e2\u2022\u00afAM",
+        "/Creator": "USPTO PDF Builder",
+        "/Producer": "USPTO",
+        "/Title": "9274312"
+      },
+      "name": "US-9274312-B2-official-1.pdf",
+      "page_count": 26,
+      "pages": [
+        {
+          "decoded_sha256": "6b49d80742b86fb1283b221b1b27458f0c93a5435f0389c6e823b43dfe994659",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 1,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "e64bb3270b4d7e1523adeb6e9ef061016b4952a8e2c940205f0ef8b1123a80cc",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 2,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "0692da9d68a4b38137df7f743f9f30ba97407825411f5d0b28e2334c167a1595",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 3,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "371d5946f3a4b3c1e080044e6cc07cb40d019f7994d3b37799767e1bb9e348c2",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 4,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "bf4dd211cda7de4c57e270f98037f234b5eb18240824a2a0a9fe74793b43c5e6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 5,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "ffbcf3fa273d864cea0a8fbd0adf3403fbbcee5e560c35fa29452943dec0c6a3",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 6,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "93dee9b3a2bc4e3034831b6f1354b73c1f0f643c4a69c0e63e605d72cddea7e1",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 7,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "05e19f50151b95254d1b2964fc20a81a0aed78c2f90231d59e0243a0a3926445",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 8,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "89917ffca3191a27f9368dcbd046e5671482997d6d5cfaccb6e70a35c8058e55",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 9,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "2a6ffab643bc892664e28870b63f81968a9fbecc10de60f0a080ec08f846bc38",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 10,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "00161537b0b980f7efe0454d8f2328e0b0b1cc1c5a727bb06e3386e0c3ffb5c3",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 11,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "6c547b307ee515ec4003d239e49c7db2c700ea3ebce613dd93332f46b8c9877e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 12,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "3810589c0d95682a150d4c115d56d8c510f6df421a13da70551cf1765070439e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 13,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "90fb4c27a6da46284df81e86eabbd3c016034c278bbde6c9a16b3cca4ac8bdb6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 14,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "86d3bb45215cbc9cfdfee698ae4edf72aa6bc7dc5561409e0ead62372465217f",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 15,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "c07b06dc9225af2e13e24ec12cb65b0a9f675f4b7ef742de2a5ead11e24f8755",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 16,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "9a778abf384e2c349477fcc2fee4df8dc20142a882eb1c8f42ed43bded430401",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 17,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "16d91cfaa3ce3c894217abbc2aa4a8df6737f3317135e9b2f2c172551c28a504",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 18,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "b7af45d94ec857ff10309b8a51ce40a16391c90d4ab4b35d89b7d2513bf459e3",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 19,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "dae8d239385922506db894db428827dac88be17fa25eb5895fa9394c485b506e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 20,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "56bc6f0369424da9fb5a1a99e625b1755be7df8ce4403f2efc9e74f30d69e0ec",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 21,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "071ed3106dabae145945c80bc9d9146a0627d2349be96db77fae8ceb20b605f6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 22,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "6ba9883c8de2fb8e20d41a47081c0c4802bd91872c3aca7c6bb81cae26383d26",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 23,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "073d4541048324fd037a2ef6fce416b6d584d9c13d32daaef9506420c84a0b1e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 24,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "7296a713b7e5cc18615e55cca0c75bf71098fd1608d8b5bc8ab4a05d51ed9e51",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 25,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "8f6b751c95540ca70394a5ccc5b7b44d2fa1ce50431b5e55c802acbe6fd5a8dc",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 26,
+          "text_chars": 0
+        }
+      ],
+      "sha256": "400271318ab20a1f158b242adef4425de8ebfef1a58f6902ce0531bc56f537cc",
+      "text_layer_characters": 0
+    },
+    {
+      "bytes": 876169,
+      "decoded_raster_set_sha256": "dbdd204817453092915829cc11451a554de55e44acf19f7ac166418a2cc445b0",
+      "metadata": {
+        "/CreationDate": "Jul 23, 2026, 5:49:00\u00e2\u2022\u00afAM",
+        "/Creator": "USPTO PDF Builder",
+        "/Producer": "USPTO",
+        "/Title": "9274312"
+      },
+      "name": "US-9274312-B2-official-2.pdf",
+      "page_count": 26,
+      "pages": [
+        {
+          "decoded_sha256": "6b49d80742b86fb1283b221b1b27458f0c93a5435f0389c6e823b43dfe994659",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 1,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "e64bb3270b4d7e1523adeb6e9ef061016b4952a8e2c940205f0ef8b1123a80cc",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 2,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "0692da9d68a4b38137df7f743f9f30ba97407825411f5d0b28e2334c167a1595",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 3,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "371d5946f3a4b3c1e080044e6cc07cb40d019f7994d3b37799767e1bb9e348c2",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 4,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "bf4dd211cda7de4c57e270f98037f234b5eb18240824a2a0a9fe74793b43c5e6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 5,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "ffbcf3fa273d864cea0a8fbd0adf3403fbbcee5e560c35fa29452943dec0c6a3",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 6,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "93dee9b3a2bc4e3034831b6f1354b73c1f0f643c4a69c0e63e605d72cddea7e1",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 7,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "05e19f50151b95254d1b2964fc20a81a0aed78c2f90231d59e0243a0a3926445",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 8,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "89917ffca3191a27f9368dcbd046e5671482997d6d5cfaccb6e70a35c8058e55",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 9,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "2a6ffab643bc892664e28870b63f81968a9fbecc10de60f0a080ec08f846bc38",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 10,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "00161537b0b980f7efe0454d8f2328e0b0b1cc1c5a727bb06e3386e0c3ffb5c3",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 11,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "6c547b307ee515ec4003d239e49c7db2c700ea3ebce613dd93332f46b8c9877e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 12,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "3810589c0d95682a150d4c115d56d8c510f6df421a13da70551cf1765070439e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 13,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "90fb4c27a6da46284df81e86eabbd3c016034c278bbde6c9a16b3cca4ac8bdb6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 14,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "86d3bb45215cbc9cfdfee698ae4edf72aa6bc7dc5561409e0ead62372465217f",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 15,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "c07b06dc9225af2e13e24ec12cb65b0a9f675f4b7ef742de2a5ead11e24f8755",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 16,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "9a778abf384e2c349477fcc2fee4df8dc20142a882eb1c8f42ed43bded430401",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 17,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "16d91cfaa3ce3c894217abbc2aa4a8df6737f3317135e9b2f2c172551c28a504",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 18,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "b7af45d94ec857ff10309b8a51ce40a16391c90d4ab4b35d89b7d2513bf459e3",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 19,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "dae8d239385922506db894db428827dac88be17fa25eb5895fa9394c485b506e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 20,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "56bc6f0369424da9fb5a1a99e625b1755be7df8ce4403f2efc9e74f30d69e0ec",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 21,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "071ed3106dabae145945c80bc9d9146a0627d2349be96db77fae8ceb20b605f6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 22,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "6ba9883c8de2fb8e20d41a47081c0c4802bd91872c3aca7c6bb81cae26383d26",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 23,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "073d4541048324fd037a2ef6fce416b6d584d9c13d32daaef9506420c84a0b1e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 24,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "7296a713b7e5cc18615e55cca0c75bf71098fd1608d8b5bc8ab4a05d51ed9e51",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 25,
+          "text_chars": 0
+        },
+        {
+          "decoded_sha256": "8f6b751c95540ca70394a5ccc5b7b44d2fa1ce50431b5e55c802acbe6fd5a8dc",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 26,
+          "text_chars": 0
+        }
+      ],
+      "sha256": "2de0dab767d55de3e769cfdfa25e37632f31a9ce7c28163f2777195226396e75",
+      "text_layer_characters": 0
+    }
+  ]
+}
