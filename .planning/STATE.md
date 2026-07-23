@@ -991,6 +991,28 @@ protected-path/frozen-snapshot/primary-repository/process audits pass. Stable or
 selects Family `73003010`, root/publication `US-12313819` / `US-12313819-B2`, next.
 Parent saturation remains active and incomplete.
 
+Family `73003010`, root/publication `US-12313819` / `US-12313819-B2`, is complete at
+22 exact source items: twenty distinct focus-state prescriptions plus an image-
+capturing-unit wrapper and an electronic-device wrapper. The exact source directly
+publishes eight ordered surface/asphere prescriptions and 3/2/2/3/3/3/2/2 mode
+columns with mode-specific f/Fno/HFOV/TOB/CTt/ft. Surface 1 is an ideal focus-tunable
+component whose published focal length cannot be carried by the current PatentSurface
+or isolated request schema. Omitting its power or deriving radius/material would lose
+or synthesize source truth, so all twenty optical modes remain precise
+`parser_review_required` nonterminals; only the two wrappers close as
+`confirmed_no_prescription` terminals. No OCR, enhancement, repair, raster numeric
+transcription, measurement, inference, lineage borrowing, worker, request/receipt,
+fingerprint, ZMX, formal intake or CODE V activity exists. Two distinct official
+69-page image-only PDF wrappers decode to the same original raster set. Attempts 2/3
+preserve attempt 1 and are semantic-equal at `d831797a...59b97a`; strict replay is
+619/619 with zero missing/corrupt. Generic residual is 7 at result set
+`3fde6811...fc6dd` and repeat census `892541d4...3855f`. Focused 9/9, broad
+1,127/1,127, source-evidence/live-pointer 26/26 and replay/census/saturation/
+no-real-CODEV guards 56/56 pass; Ruff, compile, diff, JSON/evidence/output/
+protected-path/frozen-snapshot/primary-repository/process audits pass. Stable ordering
+selects Family `95073324`, root/publication `US-20260147257` /
+`US-20260147257-A1`, next. Parent saturation remains active and incomplete.
+
 Preserve the cohort-pinned `data/patent-ledger/snapshot.json`; rebuilding that frozen
 input while replay staging is active invalidates strict cohort audit. Never infer
 terminal outcomes from chat or historical free-text reports. Before any test sweep,

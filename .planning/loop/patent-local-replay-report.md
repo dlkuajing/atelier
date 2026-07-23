@@ -6,7 +6,7 @@
 - frozen_roots: 619
 - roots_with_results: 619
 - result_file_count: 619
-- result_set_sha256: `45ec6aed9fb425738c23defad75ed9fc44be8851dbe697cc158074411dcea31b`
+- result_set_sha256: `3fde6811376147492d444e6b2db11d0478d062881fa8a70afc4d326a225fc6dd`
 - missing_roots: 0
 - corrupt_results: 0
 - cohort_replay_complete: `true`
@@ -20,17 +20,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 
 - `converted_pending_intake`: 29
 - `terminal`: 236
-- `parser_review_required`: 199
+- `parser_review_required`: 198
 - `source_retry_required`: 0
 - `source_exhausted_pending_alternates`: 0
 - `conversion_retry_required`: 0
-- `mixed_nonterminal`: 155
+- `mixed_nonterminal`: 156
 
 ## Item states
 
 - `converted_pending_intake`: 609
-- `terminal`: 1975
-- `parser_review_required`: 1312
+- `terminal`: 1977
+- `parser_review_required`: 1331
 - `conversion_retry_required`: 28
 
 ## Terminal statuses proven by replay receipts
@@ -38,7 +38,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `intaken`: 0
 - `duplicate`: 0
 - `quality_rejected`: 0
-- `confirmed_no_prescription`: 800
+- `confirmed_no_prescription`: 802
 - `fulltext_unavailable`: 0
 - `parser_family_missing`: 0
 - `metadata_unpublished`: 429
@@ -49,18 +49,18 @@ does not mean source saturation, formal intake, production usability, or an expe
 ## Root reason codes
 
 - `terminal.all_disclosed_items_terminal`: 236
-- `parser_review_required.all_disclosed_items_rejected`: 199
-- `mixed_nonterminal.multiple_item_states`: 155
+- `parser_review_required.all_disclosed_items_rejected`: 198
+- `mixed_nonterminal.multiple_item_states`: 156
 - `converted_pending_intake.all_disclosed_items_converted`: 29
 
 ## Item reason codes
 
-- `parser_review_required.deterministic_parser_rejected`: 1312
+- `parser_review_required.deterministic_parser_rejected`: 1331
 - `terminal.process_receipt_classified`: 746
 - `converted_pending_intake.process_isolated_zmx_ready`: 609
 - `terminal.metadata_unpublished.system_f_number_absent`: 91
 - `terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent`: 81
-- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 48
+- `terminal.confirmed_no_prescription.electronic_device_wrapper_only`: 49
 - `terminal.metadata_unpublished.high_order_asphere_term_definition_absent`: 30
 - `conversion_retry_required.patent_budget_exhausted`: 28
 - `terminal.confirmed_no_prescription.camera_module_device_architecture_only`: 27
@@ -140,6 +140,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only`: 3
 - `terminal.confirmed_no_prescription.extended_depth_of_focus_phase_element_architecture_only`: 3
 - `terminal.confirmed_no_prescription.folded_telephoto_smartphone_wrapper_only`: 3
+- `terminal.confirmed_no_prescription.image_capturing_unit_wrapper_only`: 3
 - `terminal.confirmed_no_prescription.lens_barrel_lens_element_fitting_and_bearing_architecture_only`: 3
 - `terminal.confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only`: 3
 - `terminal.confirmed_no_prescription.multi_camera_smartphone_wrapper_only`: 3
@@ -160,7 +161,6 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `terminal.confirmed_no_prescription.first_relay_lens_schematic_materials_and_performance_only`: 2
 - `terminal.confirmed_no_prescription.folded_imaging_optical_system_prism_filter_coating_architecture_only`: 2
 - `terminal.confirmed_no_prescription.folded_reflective_refractive_member_and_stray_light_simulation_architecture_only`: 2
-- `terminal.confirmed_no_prescription.image_capturing_unit_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.imaging_lens_system_architecture_only`: 2
 - `terminal.confirmed_no_prescription.in_vehicle_system_wrapper_only`: 2
 - `terminal.confirmed_no_prescription.indicia_reader_operating_method_only`: 2
@@ -464,13 +464,14 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_metadata_label_hfov_has_n_exact_ocr_prefixes_asphere_table_label_token_has_n_exact_ocr_tokens_expected_n`: 11
 - `other_surface_n_thickness_is_not_numeric_flt`: 11
 - `other_folded_macro_tele_system_n_whole_system_focal_token_f_is_not_officially_defined_as_efl`: 9
-- `generic_summary_metadata_missing`: 8
 - `other_asphere_table_label_token_confidence_n_is_below_n`: 8
 - `other_sunny_sto_value_is_not_numeric_surface`: 8
+- `generic_summary_metadata_missing`: 7
 - `ofilm_odd_power_asphere_unsupported`: 7
 - `other_kantatsu_example_n_surface_table_unit_is_nm_not_mm`: 7
 - `other_kantatsu_inline_example_n_object_image_rows_are_incomplete`: 7
 - `other_optical_metadata_label_fno_has_n_exact_ocr_prefixes_asphere_table_label_token_confidence_n_is_below_n`: 7
+- `other_published_focus_tunable_component_focal_length_infinity_at_object_distance_infinity_cannot_be_represented_b_a0ff872bb261`: 7
 - `other_surface_n_material_nd_vd_outside_physical_bounds_nd_n_allowed_n_n_vd_n_allowed_n_n`: 7
 - `other_folded_zoom_system_n_surface_index_break_expected_s8_found_s7`: 6
 - `other_kantatsu_missing_half_field_example_n_published_half_field_value_is_absent_from_the_table_header`: 6
@@ -515,6 +516,7 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_confidence_n_is_below_n`: 2
 - `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_confidence_n_is_below_n_fig_n_pa_dfd8a62af989`: 2
 - `other_optical_table_surface_n_has_n_exact_ocr_label_tokens_asphere_table_surface_n_has_n_exact_ocr_label_tokens_f_8bf2118adcc0`: 2
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_789f3e7dba56`: 2
 - `other_r2_thickness_is_not_numeric_d2`: 2
 - `other_samsung_iris_embodiment_n_ir_state_source_conflict_table_n_labels_asphere_columns_n_n_although_table_n_uses_313dfc7507c7`: 2
 - `other_samsung_iris_embodiment_n_ir_state_source_conflict_table_n_surface_labels_are_inconsistent_and_table_n_publ_06c007102fb7`: 2
@@ -649,6 +651,17 @@ does not mean source saturation, formal intake, production usability, or an expe
 - `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_coefficient_label_a4_con_91e338c1d9f8`: 1
 - `other_optical_table_surface_header_token_token_does_not_equal_token_confidence_n_asphere_table_surface_n_confiden_29ea736dab40`: 1
 - `other_optical_table_surface_n_confidence_n_is_below_n_asphere_table_surface_n_confidence_n_is_below_n`: 1
+- `other_published_focus_tunable_component_focal_length_infinity_at_object_distance_n_mm_cannot_be_represented_by_th_6db90aeb15e3`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_infinity_cannot_be_represented_by_th_da23ff40dcf2`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_3e82ce392742`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_7e98dc125f03`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_8fa1ea13cbe2`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_973d2d4ea922`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_bae2cad9f6fa`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_dfaa24798e5d`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_eea76338c7ce`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_f68540c688b2`: 1
+- `other_published_focus_tunable_component_focal_length_n_mm_at_object_distance_n_mm_cannot_be_represented_by_the_cu_ff376d2cb42f`: 1
 - `other_r6_radius_is_not_numeric_n`: 1
 - `other_samsung_even_order_embodiment_n_asphere_headers_must_be_s1_s8_and_s9_s16`: 1
 - `other_samsung_seven_lens_example_n_source_conflict_all_n_lens_surface_radii_in_table_n_disagree_with_the_r_column_in_table_n`: 1

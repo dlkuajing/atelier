@@ -1,0 +1,1846 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "73003010",
+  "root_id": "US-12313819",
+  "publication_id": "US-12313819-B2",
+  "bibliography": {
+    "application_number": "17/743326",
+    "filed": "2022-05-12",
+    "patent_date": "2025-05-27",
+    "prior_publication": "US-20220269047-A1",
+    "prior_publication_date": "2022-08-25",
+    "parent_application_number": "16/557692",
+    "parent_filing_date": "2019-08-30",
+    "parent_patent": "US-11366294",
+    "relationship": "division",
+    "foreign_priority_application": "TW-108125241",
+    "foreign_priority_date": "2019-07-17",
+    "family_id": "73003010",
+    "title": "Optical imaging lens assembly, image capturing unit and electronic device",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "inventors": [
+      "Po-Lun Hsu",
+      "Tzu-Chieh Kuo"
+    ],
+    "classification_source": "exact retained US-12313819-B2 only"
+  },
+  "retained_source": {
+    "html": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+      "bytes": 216969,
+      "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5",
+      "evidence_type": "uspto_ppubs_parser_input_html"
+    },
+    "raw_characters": 213017,
+    "raw_bytes": 216969,
+    "raw_sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5",
+    "normalized_characters": 173623,
+    "normalized_sha256": "a1c23b1c6fd4532c74938eb877a1881d029f327586ed828307bc6cababe56f86"
+  },
+  "source_denominator": {
+    "background_summary_paragraphs": 12,
+    "description_paragraphs": 248,
+    "claims": 11,
+    "independent_claims": 1,
+    "declared_figures": 38,
+    "figref_occurrences": 100,
+    "mathml_objects": 17,
+    "machine_readable_tables": 24,
+    "prescription_embodiments": 8,
+    "published_optical_modes": 20,
+    "machine_readable_mode_prescriptions": 20,
+    "schema_representable_prescriptions": 0,
+    "image_capturing_unit_wrapper_items": 1,
+    "electronic_device_wrapper_items": 1,
+    "source_items": 22,
+    "terminal_items": 2,
+    "nonterminal_items": 20
+  },
+  "source_boundaries": {
+    "background_summary_range": [
+      1,
+      12
+    ],
+    "description_range": [
+      1,
+      248
+    ],
+    "claim_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "claims": [
+      {
+        "claim": 1,
+        "depends_on": [],
+        "normalized_characters": 1608,
+        "normalized_sha256": "3179a01a596ac7eba4b4c8e17d4f0b82a0843ac65b4f5963725da5ddd477665a"
+      },
+      {
+        "claim": 2,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 289,
+        "normalized_sha256": "4c1ed5c58af3e9753bc40aba47b0ecda7ca370ae39fd8de08da0bdb274c55280"
+      },
+      {
+        "claim": 3,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 560,
+        "normalized_sha256": "635f417f06839d5cdcd0d6b303c3a8b4de73e72bca2273c5248d3c52ed452754"
+      },
+      {
+        "claim": 4,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 355,
+        "normalized_sha256": "07ea6f7f4aa677af7e6316ac05318cd3a27d00b4f6f6a97a3db734e8969d2dd8"
+      },
+      {
+        "claim": 5,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 519,
+        "normalized_sha256": "8e0677b92d1a81d602baa4e8ff0ce87b649740dd8f6d592275c81cc0edbcbc89"
+      },
+      {
+        "claim": 6,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 356,
+        "normalized_sha256": "52e3182cf18477f4a77a2b3d7e82902a14c5d43d2cf619af0352c2ec5c250cd1"
+      },
+      {
+        "claim": 7,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 196,
+        "normalized_sha256": "10e8df98340d49b1cdf4a16d52a1976c38ff6e3a33f3bc8fde3207c61dee3f00"
+      },
+      {
+        "claim": 8,
+        "depends_on": [
+          7
+        ],
+        "normalized_characters": 445,
+        "normalized_sha256": "ce3df402ca7b6076ea51f5efc43aa4a63b1e12300974c7a64a26fbc6ff6b5021"
+      },
+      {
+        "claim": 9,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 270,
+        "normalized_sha256": "7672ab4f57432a33a5842e4c5a33a3f136057c9c8be85533819178bfe41f38c3"
+      },
+      {
+        "claim": 10,
+        "depends_on": [
+          1
+        ],
+        "normalized_characters": 169,
+        "normalized_sha256": "6457402c0b6d0e5b7eed9a8890cf85c7975520b7fad6c3c02bdb231902089b0d"
+      },
+      {
+        "claim": 11,
+        "depends_on": [
+          10
+        ],
+        "normalized_characters": 71,
+        "normalized_sha256": "c2a33bfbc7cdf9dd1490cb91f15da68aad965fc227d65ea977f66dc17f72c258"
+      }
+    ],
+    "declared_figures": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "figure_bindings": {
+      "declared_figures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "brief_declarations": [
+        {
+          "paragraph": 2,
+          "declared_figure": 1,
+          "all_references": [
+            1
+          ],
+          "normalized_sha256": "ec457a31b13c5966e03dabb3fce4e308e301063685c1be014cf10ec3d6fa06be"
+        },
+        {
+          "paragraph": 3,
+          "declared_figure": 2,
+          "all_references": [
+            2
+          ],
+          "normalized_sha256": "7956d4a18ef40309200d8a471c80a3a30d4779ca7184cfb8651b98fb1fe078be"
+        },
+        {
+          "paragraph": 4,
+          "declared_figure": 3,
+          "all_references": [
+            3
+          ],
+          "normalized_sha256": "8f01973ddae396aaa1e6fafb92ce92f2338ff6d6290166e46c2fb8d44103b31c"
+        },
+        {
+          "paragraph": 5,
+          "declared_figure": 4,
+          "all_references": [
+            4
+          ],
+          "normalized_sha256": "b6cf563856a15d191e4782d9b85558afdee2915915372cc69f423afcc17dcd43"
+        },
+        {
+          "paragraph": 6,
+          "declared_figure": 5,
+          "all_references": [
+            5
+          ],
+          "normalized_sha256": "7b1aaf15b705496de157a2e72a0371099c490904bfcd1c948c874b916661b15e"
+        },
+        {
+          "paragraph": 7,
+          "declared_figure": 6,
+          "all_references": [
+            6
+          ],
+          "normalized_sha256": "82d01e4f31e4fb613428466d466ddad19afb07e74f779928bd79625d592932b5"
+        },
+        {
+          "paragraph": 8,
+          "declared_figure": 7,
+          "all_references": [
+            7
+          ],
+          "normalized_sha256": "6e51088f10ce84e0a4c280caed457b56c2196afb4af01056ae93d66879f4b570"
+        },
+        {
+          "paragraph": 9,
+          "declared_figure": 8,
+          "all_references": [
+            8
+          ],
+          "normalized_sha256": "1c63a99665bf57bcfce3cc155e2a3d44c95aa6cb860794644e23965bda856a52"
+        },
+        {
+          "paragraph": 10,
+          "declared_figure": 9,
+          "all_references": [
+            9
+          ],
+          "normalized_sha256": "b7b2629a5ce0c9768cb6f5dbca78dde3a6a1b4ccb158e87e988337041e326822"
+        },
+        {
+          "paragraph": 11,
+          "declared_figure": 10,
+          "all_references": [
+            10
+          ],
+          "normalized_sha256": "06bf0d5fd64f6ecaf798b03388d5587116a615119060b10ef65edb1688c44097"
+        },
+        {
+          "paragraph": 12,
+          "declared_figure": 11,
+          "all_references": [
+            11
+          ],
+          "normalized_sha256": "54bc5173ae0bd9aebf2d0b6c6a8107768746695674d8fceaab7a1119bc42fe4d"
+        },
+        {
+          "paragraph": 13,
+          "declared_figure": 12,
+          "all_references": [
+            12
+          ],
+          "normalized_sha256": "7dc9e6f2e7a741bcc7ad087ce7146d7b17116506e433d49e2fcc1bd7a3d60e23"
+        },
+        {
+          "paragraph": 14,
+          "declared_figure": 13,
+          "all_references": [
+            13
+          ],
+          "normalized_sha256": "d6bdf276fdd3ba592d3347b65b04a1652f5a461754d5765280acc028a38d86c7"
+        },
+        {
+          "paragraph": 15,
+          "declared_figure": 14,
+          "all_references": [
+            14
+          ],
+          "normalized_sha256": "eaecfeff71e04da1ae64386d35d166b1324d8f6e2ce57147d5974461adc7e071"
+        },
+        {
+          "paragraph": 16,
+          "declared_figure": 15,
+          "all_references": [
+            15
+          ],
+          "normalized_sha256": "1f45fba953f6f99ca3452a397d5fdd036159e77c6a0046ce4cba6b1157e4f341"
+        },
+        {
+          "paragraph": 17,
+          "declared_figure": 16,
+          "all_references": [
+            16
+          ],
+          "normalized_sha256": "8fe83950e7d770c0a6d5472eb8be353a6ee91d74f8bc8541154725b4762c3d75"
+        },
+        {
+          "paragraph": 18,
+          "declared_figure": 17,
+          "all_references": [
+            17
+          ],
+          "normalized_sha256": "942256944f8b32f0c387178e7056cfe9d460d7b932c703ec4864dfcafa507fd7"
+        },
+        {
+          "paragraph": 19,
+          "declared_figure": 18,
+          "all_references": [
+            18
+          ],
+          "normalized_sha256": "6a7786d3c92dc5ca7af0c985c4c3ef7c6237c07996d3949f64481dd45322a8da"
+        },
+        {
+          "paragraph": 20,
+          "declared_figure": 19,
+          "all_references": [
+            19
+          ],
+          "normalized_sha256": "acf983f21053ea9685b0498be91274c34f1ab94d3318966096a374e4325aad24"
+        },
+        {
+          "paragraph": 21,
+          "declared_figure": 20,
+          "all_references": [
+            20
+          ],
+          "normalized_sha256": "376cbf018b1ebfafeb7fdfef00cb8879a7a783f43fb8137036f8f11647d8263b"
+        },
+        {
+          "paragraph": 22,
+          "declared_figure": 21,
+          "all_references": [
+            21
+          ],
+          "normalized_sha256": "bd8b1cf643437b387a63343b2400ba2e80b475778764b8bf8daf8edd26d540f5"
+        },
+        {
+          "paragraph": 23,
+          "declared_figure": 22,
+          "all_references": [
+            22
+          ],
+          "normalized_sha256": "897ed99e273214bc4d37370167bba7b0d6d50c2584e06f1f145057cc4903515f"
+        },
+        {
+          "paragraph": 24,
+          "declared_figure": 23,
+          "all_references": [
+            23
+          ],
+          "normalized_sha256": "ee3c97f4ca33039b840fe945efcd66721c0dc4b65690b29c4a90ee868d84e1c4"
+        },
+        {
+          "paragraph": 25,
+          "declared_figure": 24,
+          "all_references": [
+            24
+          ],
+          "normalized_sha256": "88114063e744cbcf214969d1b3439e2cb7f24a0292548f00709a6e07c21d5423"
+        },
+        {
+          "paragraph": 26,
+          "declared_figure": 25,
+          "all_references": [
+            25
+          ],
+          "normalized_sha256": "d46156875167fc4e91ebf2e1578a6da0b32c0922ca34b08adb4c28f5b6c1ce50"
+        },
+        {
+          "paragraph": 27,
+          "declared_figure": 26,
+          "all_references": [
+            26
+          ],
+          "normalized_sha256": "d7d71fa3292cb2536cbd10a8d1464a2c4d5f3fb3dbd1f8e224c8b6050e9975ff"
+        },
+        {
+          "paragraph": 28,
+          "declared_figure": 27,
+          "all_references": [
+            27
+          ],
+          "normalized_sha256": "7ee3f5a6a5507d0b35febd32065e224485c4323f0391dbabb79a04e7ee4dd842"
+        },
+        {
+          "paragraph": 29,
+          "declared_figure": 28,
+          "all_references": [
+            28
+          ],
+          "normalized_sha256": "5d4be8afc23480b770ec112ccd6ee672dd09873d5f5d18c2335edf72efc15577"
+        },
+        {
+          "paragraph": 30,
+          "declared_figure": 29,
+          "all_references": [
+            29
+          ],
+          "normalized_sha256": "93b445e14976e43dff3cf87496a78cf36dee69e83033c9f0933fc7f41279bbec"
+        },
+        {
+          "paragraph": 31,
+          "declared_figure": 30,
+          "all_references": [
+            30
+          ],
+          "normalized_sha256": "de2a847a0e6cad9e00f608aabdde711f123c6e63733fd36957f52d4fcc7fb560"
+        },
+        {
+          "paragraph": 32,
+          "declared_figure": 31,
+          "all_references": [
+            31,
+            30
+          ],
+          "normalized_sha256": "e171dbe29cb169477e45ba80c5fbbbd4dbf1b644134d35aee04974cddc9565b2"
+        },
+        {
+          "paragraph": 33,
+          "declared_figure": 32,
+          "all_references": [
+            32,
+            30
+          ],
+          "normalized_sha256": "e5faef2b0a1b65a88aba2026b2c466cb93219da320d0c2a3b14112866c26a1f6"
+        },
+        {
+          "paragraph": 34,
+          "declared_figure": 33,
+          "all_references": [
+            33
+          ],
+          "normalized_sha256": "e825fd696fda9755723b0d7ea0547a46c3bab84943617153b4a1e9f606b1ada6"
+        },
+        {
+          "paragraph": 35,
+          "declared_figure": 34,
+          "all_references": [
+            34
+          ],
+          "normalized_sha256": "73d3c5047801663113539b7b487e9201a2529b3953262a55e6be00811cacf913"
+        },
+        {
+          "paragraph": 36,
+          "declared_figure": 35,
+          "all_references": [
+            35
+          ],
+          "normalized_sha256": "0825bcb44f58a0caa0c0498b6ca13f150ae6eb6b2653c1da765214f44a2464e1"
+        },
+        {
+          "paragraph": 37,
+          "declared_figure": 36,
+          "all_references": [
+            36
+          ],
+          "normalized_sha256": "e364ee1ac5469f9686d3fee5b5a009518ece28e746063208000232fb42b1a5db"
+        },
+        {
+          "paragraph": 38,
+          "declared_figure": 37,
+          "all_references": [
+            37
+          ],
+          "normalized_sha256": "c2d9ea1983c078e76e3cb392ae87ec5d8fd010b656fac5b7b33b84ff23b0c5b6"
+        },
+        {
+          "paragraph": 39,
+          "declared_figure": 38,
+          "all_references": [
+            38
+          ],
+          "normalized_sha256": "d190549afc861755ff9cd2354268fdfd0569134064bdbb7f60b2f4d6d0c8cd0d"
+        }
+      ],
+      "all_figref_occurrences": 100,
+      "ordered_figref_sha256": "fa4c30e20f46cac4d634cd7c020dc2c61d6cc6ac7a855d36f3db897a02df0bcc",
+      "prescription_and_state_figures": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "image_capturing_unit_wrapper": [
+        29
+      ],
+      "electronic_device_wrapper": [
+        30,
+        31,
+        32
+      ],
+      "lens_geometry_and_parameter_definitions": [
+        33,
+        34,
+        35
+      ],
+      "focus_tunable_component_alternatives": [
+        36,
+        37,
+        38
+      ]
+    },
+    "table_bindings": {
+      "surface_tables": [
+        1,
+        4,
+        7,
+        10,
+        13,
+        16,
+        19,
+        22
+      ],
+      "asphere_tables": [
+        2,
+        5,
+        8,
+        11,
+        14,
+        17,
+        20,
+        23
+      ],
+      "mode_tables": [
+        3,
+        6,
+        9,
+        12,
+        15,
+        18,
+        21,
+        24
+      ],
+      "prescriptions": {
+        "1": {
+          "paragraph_start": 88,
+          "mode_count": 3,
+          "table_numbers": [
+            1,
+            2,
+            3
+          ],
+          "surface_rows_including_object_and_image": 23,
+          "image_surface_index": 22,
+          "lens_count": 7,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              9,
+              10,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "max_even_order_by_surface": {
+              "4": 16,
+              "5": 14,
+              "6": 14,
+              "7": 14,
+              "9": 14,
+              "10": 14,
+              "12": 18,
+              "13": 18,
+              "14": 20,
+              "15": 20,
+              "16": 20,
+              "17": 20,
+              "18": 20,
+              "19": 20
+            },
+            "coefficient_surface_count": 14
+          }
+        },
+        "2": {
+          "paragraph_start": 137,
+          "mode_count": 2,
+          "table_numbers": [
+            4,
+            5,
+            6
+          ],
+          "surface_rows_including_object_and_image": 23,
+          "image_surface_index": 22,
+          "lens_count": 7,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              9,
+              10,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "max_even_order_by_surface": {
+              "4": 12,
+              "5": 10,
+              "6": 12,
+              "7": 14,
+              "9": 14,
+              "10": 12,
+              "12": 16,
+              "13": 14,
+              "14": 20,
+              "15": 18,
+              "16": 20,
+              "17": 20,
+              "18": 20,
+              "19": 20
+            },
+            "coefficient_surface_count": 14
+          }
+        },
+        "3": {
+          "paragraph_start": 152,
+          "mode_count": 2,
+          "table_numbers": [
+            7,
+            8,
+            9
+          ],
+          "surface_rows_including_object_and_image": 22,
+          "image_surface_index": 21,
+          "lens_count": 7,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ],
+            "max_even_order_by_surface": {
+              "4": 14,
+              "5": 14,
+              "6": 14,
+              "7": 14,
+              "9": 14,
+              "10": 14,
+              "11": 14,
+              "12": 14,
+              "13": 16,
+              "14": 16,
+              "15": 20,
+              "16": 20,
+              "17": 20,
+              "18": 20
+            },
+            "coefficient_surface_count": 14
+          }
+        },
+        "4": {
+          "paragraph_start": 167,
+          "mode_count": 3,
+          "table_numbers": [
+            10,
+            11,
+            12
+          ],
+          "surface_rows_including_object_and_image": 24,
+          "image_surface_index": 23,
+          "lens_count": 7,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              9,
+              10,
+              12,
+              13,
+              14,
+              15,
+              17,
+              18,
+              19,
+              20
+            ],
+            "max_even_order_by_surface": {
+              "4": 14,
+              "5": 14,
+              "6": 16,
+              "7": 16,
+              "9": 14,
+              "10": 14,
+              "12": 16,
+              "13": 16,
+              "14": 16,
+              "15": 20,
+              "17": 20,
+              "18": 20,
+              "19": 20,
+              "20": 20
+            },
+            "coefficient_surface_count": 14
+          }
+        },
+        "5": {
+          "paragraph_start": 182,
+          "mode_count": 3,
+          "table_numbers": [
+            13,
+            14,
+            15
+          ],
+          "surface_rows_including_object_and_image": 26,
+          "image_surface_index": 25,
+          "lens_count": 8,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              9,
+              10,
+              12,
+              13,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ],
+            "max_even_order_by_surface": {
+              "4": 16,
+              "5": 16,
+              "6": 16,
+              "7": 14,
+              "9": 16,
+              "10": 18,
+              "12": 18,
+              "13": 20,
+              "15": 20,
+              "16": 20,
+              "17": 20,
+              "18": 20,
+              "19": 20,
+              "20": 20,
+              "21": 20,
+              "22": 20
+            },
+            "coefficient_surface_count": 16
+          }
+        },
+        "6": {
+          "paragraph_start": 198,
+          "mode_count": 3,
+          "table_numbers": [
+            16,
+            17,
+            18
+          ],
+          "surface_rows_including_object_and_image": 19,
+          "image_surface_index": 18,
+          "lens_count": 6,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "max_even_order_by_surface": {
+              "4": 14,
+              "5": 14,
+              "6": 14,
+              "7": 14,
+              "8": 14,
+              "9": 10,
+              "10": 14,
+              "11": 14,
+              "12": 20,
+              "13": 20,
+              "14": 20,
+              "15": 20
+            },
+            "coefficient_surface_count": 12
+          }
+        },
+        "7": {
+          "paragraph_start": 212,
+          "mode_count": 2,
+          "table_numbers": [
+            19,
+            20,
+            21
+          ],
+          "surface_rows_including_object_and_image": 19,
+          "image_surface_index": 18,
+          "lens_count": 6,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "max_even_order_by_surface": {
+              "4": 14,
+              "5": 14,
+              "6": 14,
+              "7": 14,
+              "8": 14,
+              "9": 10,
+              "10": 14,
+              "11": 14,
+              "12": 20,
+              "13": 20,
+              "14": 20,
+              "15": 20
+            },
+            "coefficient_surface_count": 12
+          }
+        },
+        "8": {
+          "paragraph_start": 226,
+          "mode_count": 2,
+          "table_numbers": [
+            22,
+            23,
+            24
+          ],
+          "surface_rows_including_object_and_image": 20,
+          "image_surface_index": 19,
+          "lens_count": 6,
+          "asphere_inventory": {
+            "surface_ids": [
+              4,
+              5,
+              6,
+              7,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ],
+            "max_even_order_by_surface": {
+              "4": 16,
+              "5": 14,
+              "6": 12,
+              "7": 12,
+              "9": 12,
+              "10": 14,
+              "11": 16,
+              "12": 16,
+              "13": 20,
+              "14": 20,
+              "15": 18,
+              "16": 20
+            },
+            "coefficient_surface_count": 12
+          }
+        }
+      }
+    },
+    "focus_component_table_topology": "Surface 1 publishes the focus-tunable component with per-mode CTt and ft; Surface 2 publishes the following axial spacing. Official PDF wrapper page 48 corroborates column occupancy only.",
+    "conversion_boundary": "PatentSurface and PatentConversionRequest have no per-surface focal-length/ideal-power field. Omitting the component or deriving radius/material would lose or synthesize source truth, so all 20 optical modes remain precise nonterminal parser-review items.",
+    "classification_source_only": "Exact retained US-12313819-B2 HTML; official page 48 corroborates topology only."
+  },
+  "source_items": [
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length -1000 mm at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 1 mode 1",
+      "embodiment_number": 1,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e1",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance 1000 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 1 mode 2",
+      "embodiment_number": 2,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e2",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 176.67 mm at object distance 150 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 1 mode 3",
+      "embodiment_number": 3,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e3",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 2 mode 1",
+      "embodiment_number": 4,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e4",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 100.89 mm at object distance 100 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 2 mode 2",
+      "embodiment_number": 5,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e5",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 3 mode 1",
+      "embodiment_number": 6,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e6",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 120.68 mm at object distance 120 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 3 mode 2",
+      "embodiment_number": 7,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e7",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 4 mode 1",
+      "embodiment_number": 8,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e8",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 500 mm at object distance 500 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 4 mode 2",
+      "embodiment_number": 9,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e9",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 250 mm at object distance 250 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 4 mode 3",
+      "embodiment_number": 10,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e10",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 5 mode 1",
+      "embodiment_number": 11,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e11",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 401.07 mm at object distance 400 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 5 mode 2",
+      "embodiment_number": 12,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e12",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 200.54 mm at object distance 200 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 5 mode 3",
+      "embodiment_number": 13,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e13",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 6 mode 1",
+      "embodiment_number": 14,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e14",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 493.33 mm at object distance 450 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 6 mode 2",
+      "embodiment_number": 15,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e15",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 246.67 mm at object distance 230 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 6 mode 3",
+      "embodiment_number": 16,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e16",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 7 mode 1",
+      "embodiment_number": 17,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e17",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 493.33 mm at object distance 450 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 7 mode 2",
+      "embodiment_number": 18,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e18",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length Infinity at object distance Infinity cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 8 mode 1",
+      "embodiment_number": 19,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e19",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentParseError: published focus-tunable component focal length 141.4 mm at object distance 140 mm cannot be represented by the current PatentSurface/conversion-request schema without omitting or synthesizing optical power",
+      "embodiment_label": "Largan focus-tunable embodiment 8 mode 2",
+      "embodiment_number": 20,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e20",
+      "prescription_fingerprint": null,
+      "reason_code": "parser_review_required.deterministic_parser_rejected",
+      "state": "parser_review_required",
+      "terminal_status": null
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentTerminalParseError: 9th embodiment publishes a camera-module wrapper around the optical imaging lens assembly disclosed in the 1st embodiment and adds no optical surface prescription",
+      "embodiment_label": "Largan focus-tunable embodiment 9 image capturing unit",
+      "embodiment_number": 21,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e21",
+      "prescription_fingerprint": null,
+      "reason_code": "terminal.confirmed_no_prescription.image_capturing_unit_wrapper_only",
+      "state": "terminal",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "conversion_attempt_id": null,
+      "conversion_request_sha256": null,
+      "coverage": {},
+      "detail": "PatentTerminalParseError: 10th embodiment publishes a smartphone arrangement around image-capturing units and adds no optical surface prescription",
+      "embodiment_label": "Largan focus-tunable embodiment 10 electronic device",
+      "embodiment_number": 22,
+      "evidence": [
+        {
+          "evidence_type": "uspto_ppubs_parser_input_html",
+          "path": "data/patent-lake/uspto-ppubs-html/USPAT/c3c965bf367ebea3/US-12313819-B2.html",
+          "sha256": "c3c965bf367ebea3641063db7a054100260daa9a3fe286b146f8bdd6f42c68c5"
+        }
+      ],
+      "item_id": "US-12313819-B2:e22",
+      "prescription_fingerprint": null,
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_wrapper_only",
+      "state": "terminal",
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "official_pdf": {
+    "official_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12313819",
+    "captures": [
+      {
+        "path": ".planning/quick/260723-patent-generic-family-73003010/official/US-12313819-B2-official-capture-1.pdf",
+        "bytes": 3565909,
+        "sha256": "97cc080f6ee6e0c9c8553046ac0e041ea9cf366af50b502bfea7e455df318e57",
+        "page_count": 69,
+        "images_per_page": 1,
+        "extractable_text_characters": 0,
+        "page_raster_sha256": [
+          "ee531c285c3fc738b42058843bac08a17ace759877a98359eadd83210ddef999",
+          "c5bc4b547132ecdac48565228f96f76ccfbbfb7bce736d54b0ab33719fb20c46",
+          "7536bb0d11380850d48c1deb7120e09192e6f3b41c8741f73b18db71f8ebc04e",
+          "6388a9247f2b5732df020f277cdc9e4286a66f9e7c332ec33e611033e635f01d",
+          "507f40090466705149e221f62efb3f4037a617c8720186f491d8e50538f19641",
+          "05a6b712c8ff3e53a0331cd7b19e96cf5812c1f202efbfd7b1e5237af8316aa2",
+          "755c18a2936876642e653331b7467ff6c2a344cf032d2f801680c138e8a436fa",
+          "9b4608469291d2fbecaead13b56c809dafcde580feb21e62dd43ca91d1fc8b85",
+          "c34d7665980cdb539f682b21e5be2ec96927fa69bff4c084431cbe32ed104587",
+          "335291f9320bd7da6fa5a6ceba517afb5f812d38f96c33ff612783b209ff4108",
+          "e8963be14acd91a4d0eea3a5ffa561e6f9d5fd9303d83521a687a3f6ce25b610",
+          "ba57e15f2773daa42f849349d2b50c52c8b8d2b92e91c9375ae3f2aa532f8016",
+          "96b18b78e2b7763e86b58bef350f4928a26868f07007f17de8d1300cd86383a0",
+          "02db641979c1c6293304fd17323b7b8109c7939da9e930987fceb303a725328f",
+          "8e5ec476c318e557056c6c3958d0087ae51c6c7fd5d9a6d636fd63cae29f1b08",
+          "ea9df6c35011ab4945bfcb6cd37ad91041aa29164267a0c29d1ca25ea19d28fc",
+          "b46113cf4c4ed3e0d1cbbb6a5996ccec31e2f5718186671dd1cba0aea5498011",
+          "c478eb9c8da7aa3297a1972c48a59659088a1e0b6de7aef058fa91d8b9b2294e",
+          "a8874f6d6ea38bb58eb9120585a03ed22f6d208a7f018a2c786309219254a0d4",
+          "b763dd47ccefcc63a6554bc72084969fca7814cc6e408c3aa65aef1c44b65926",
+          "d8aaacbd22f3357a8f6a8dcd7bc549679b6ef15514a0f1916f57bcc9e3e5f7d3",
+          "5000136c4d586034aa9538bd0b21d4d2769128ec55c2956014b0fbbafbf9b3e6",
+          "807717f9514562e04392039953a75190110ffefb9514745e8907f7f238220a62",
+          "aea96bd83fe6d14ce855b8e6e0a050a6cfcfb14be72165d96bf3beae5bdfd63d",
+          "68a001b8cfa6fa977fdc8f434256869b10c0c3fadef653d6f7f83cc068983921",
+          "817c0c1bd4d7e56f16c0022eb617f1f0e21e34a47e16a8a1401f5fec796ae9df",
+          "30fb59c4192995a3f833abcd32793b13c1deccf4cf2f9cfc63dcdced85f2fe83",
+          "92e6670ac840936ab57830b37af453dcf48b9f33c06ce7186f2074644f2b1692",
+          "c478ee21233d9a590a408a044bb5c5fdb0a4443f6384806ed157569ab57f2244",
+          "76218c0a3273349111a37cd22f56c6f9fca9b59a60ea2f0f41f1347474f1cf6f",
+          "31191df1aa2bc835fbf0f2871b9a058f11e02cb2223c18a518d7fbf079152c07",
+          "f7fa6ad5d8102022597b0a2430cd640368908197f5168fc44d571e9f287091c8",
+          "7575202bd19cbabee93b5882cd58a59c2a6c09b68f25ca751aa2abed976599cb",
+          "663ab9f9d8801dd465a3b3f66e2148988393053b5b39c571e095315d6b2c50f6",
+          "4ab53001c3a0781ec051336d892edb33018816c38335300e0400531c3c4fa7d9",
+          "376ad5bf1d70f403deb5324d5f432d558b723764900be5adf0370c207cc80bd5",
+          "9ff7d68edadbc60bca43cd7010e407c3259f8ce69611e352752c85d6dbec3713",
+          "5b1c1c09cb2a405c982e250da45a928f7a0b189376cc331e51bc5e4a95839543",
+          "72034f062f23870d64ad69b1ab13a69d9c55fff90f53d1b8ff536a51360ee190",
+          "2d68b6807d90a611419e877534239b44e4ff7eb14bb35582ccef649efdc75b7d",
+          "e703c8cf69cbea7e3fafa992320f8dc62cf5bbbea68513ab87a43d57a3f0a8b5",
+          "525ddc5a97b4fe4ca909acbc6e26ccf3d675aed3e1ad4e8ebbc3c734b52c2bf1",
+          "c50eb79514cda8746173e8ea258045e07498428801e34d0a216902568273c810",
+          "1b896f6636f3d902437ee591ceba6e2e4e3803f6d48a63c62c672968120f7146",
+          "b70756e7d4ace72cb70bcf4f0ec20c82b2200398da7c9eadc82333c0327b99f1",
+          "0dbcc7ecdd2ba55d49e230ead5335cb9ac997ae5e29b017f4fe61cce1884569f",
+          "6fa186e71af031a468d6f602b2afc67b899bef337971f768ebacd116e7928ba8",
+          "5bd8fc4e03ad1a8d85acc3cc97f611296ae74ed9c597752cf6bebc56134b39e7",
+          "ac368c3aa6051d7d4381cbf3b0d87412c1962379e8e6c75a9782534e2242453d",
+          "23d453440e08ae0701cea875bbf53e5f5b31fb20a1397a8d590a38575a56cc89",
+          "8ab469025ca9ad15aec981522206db6257387c7396a4607fc7ade26209729298",
+          "db7a1bbeb65a16dd24a61a914a4fb36956a099f6c691b4a0f84300df5ec261e8",
+          "9d19e5165918ece86e66885269a085c4b52b7a9abf53e7e3ecea18fc384b3696",
+          "736074c209237f9611a14547a4078b934033ee7bd2774d25abbbe5beefb865af",
+          "d5f49461d5eb9cb0720bdc7cf95b9de9352e059facd16282c41c0d3b92576f4a",
+          "e022b357c86a93b74a84228b56d982c7b6bb3cd4b0119033f18df5a1edcc1a30",
+          "a71868a87cad8f89e974e20cd02579842c93a51a1e3d5c2bc1a2b0cb10e41eb1",
+          "082138432179a2f7d544668616e7b1e903382683d4879b4744e7078a76052ee7",
+          "7a2a931f219db38ba7aa76e5976d2ba5e102a3882b290938b38139376ece83ce",
+          "17cc9d6e59446b3531ddba0a9f501d041e215c0e52e39c9114d25051d0ec8810",
+          "fa7113dd394ca5f68a16a141bdea4643b33d8bbd224823c0f31181af359132f3",
+          "bac771b244d0fb595c0d51b5f8543d9946e18399f50c80a8b8dacf7199d9c42e",
+          "e0b5d2725af44ba39dc7be3eaf6e2d5faac41f29f6ec91b82fcf1ac2b5e95656",
+          "67ab97ecaf94791cae4737dcca71d9abac9129bb9f06a18b713542c3e67a56cf",
+          "5acf444c4b1dc1f0b58b2b24476b25a7f20666c0cb45a47114280fb890da580b",
+          "acfa79d4747a12ff471713af6c7e8d976fd622d13387091c9e2f788f14affc4d",
+          "e610494f1dc7be8835b289318cf1f7d200f1eab324d647e9bf6b7b8c0b219dd1",
+          "fb86558348db8060b587f0fd22d871a9066f905d0c7dabe57d1e3590e5df4bed",
+          "ca1729a81774a73e135b1d0264169ea015166117e9637ea8acc09eaa306d5b51"
+        ],
+        "ordered_decoded_image_sha256": "2dd0d73ff6e9dc338a32909945510867365ef87dee717ec5a350084d8f356111"
+      },
+      {
+        "path": ".planning/quick/260723-patent-generic-family-73003010/official/US-12313819-B2-official-capture-2.pdf",
+        "bytes": 3565909,
+        "sha256": "97d253ae40089aa9025366bd485213846fd0753390d22ae0dc1e8e9ad9c7244a",
+        "page_count": 69,
+        "images_per_page": 1,
+        "extractable_text_characters": 0,
+        "page_raster_sha256": [
+          "ee531c285c3fc738b42058843bac08a17ace759877a98359eadd83210ddef999",
+          "c5bc4b547132ecdac48565228f96f76ccfbbfb7bce736d54b0ab33719fb20c46",
+          "7536bb0d11380850d48c1deb7120e09192e6f3b41c8741f73b18db71f8ebc04e",
+          "6388a9247f2b5732df020f277cdc9e4286a66f9e7c332ec33e611033e635f01d",
+          "507f40090466705149e221f62efb3f4037a617c8720186f491d8e50538f19641",
+          "05a6b712c8ff3e53a0331cd7b19e96cf5812c1f202efbfd7b1e5237af8316aa2",
+          "755c18a2936876642e653331b7467ff6c2a344cf032d2f801680c138e8a436fa",
+          "9b4608469291d2fbecaead13b56c809dafcde580feb21e62dd43ca91d1fc8b85",
+          "c34d7665980cdb539f682b21e5be2ec96927fa69bff4c084431cbe32ed104587",
+          "335291f9320bd7da6fa5a6ceba517afb5f812d38f96c33ff612783b209ff4108",
+          "e8963be14acd91a4d0eea3a5ffa561e6f9d5fd9303d83521a687a3f6ce25b610",
+          "ba57e15f2773daa42f849349d2b50c52c8b8d2b92e91c9375ae3f2aa532f8016",
+          "96b18b78e2b7763e86b58bef350f4928a26868f07007f17de8d1300cd86383a0",
+          "02db641979c1c6293304fd17323b7b8109c7939da9e930987fceb303a725328f",
+          "8e5ec476c318e557056c6c3958d0087ae51c6c7fd5d9a6d636fd63cae29f1b08",
+          "ea9df6c35011ab4945bfcb6cd37ad91041aa29164267a0c29d1ca25ea19d28fc",
+          "b46113cf4c4ed3e0d1cbbb6a5996ccec31e2f5718186671dd1cba0aea5498011",
+          "c478eb9c8da7aa3297a1972c48a59659088a1e0b6de7aef058fa91d8b9b2294e",
+          "a8874f6d6ea38bb58eb9120585a03ed22f6d208a7f018a2c786309219254a0d4",
+          "b763dd47ccefcc63a6554bc72084969fca7814cc6e408c3aa65aef1c44b65926",
+          "d8aaacbd22f3357a8f6a8dcd7bc549679b6ef15514a0f1916f57bcc9e3e5f7d3",
+          "5000136c4d586034aa9538bd0b21d4d2769128ec55c2956014b0fbbafbf9b3e6",
+          "807717f9514562e04392039953a75190110ffefb9514745e8907f7f238220a62",
+          "aea96bd83fe6d14ce855b8e6e0a050a6cfcfb14be72165d96bf3beae5bdfd63d",
+          "68a001b8cfa6fa977fdc8f434256869b10c0c3fadef653d6f7f83cc068983921",
+          "817c0c1bd4d7e56f16c0022eb617f1f0e21e34a47e16a8a1401f5fec796ae9df",
+          "30fb59c4192995a3f833abcd32793b13c1deccf4cf2f9cfc63dcdced85f2fe83",
+          "92e6670ac840936ab57830b37af453dcf48b9f33c06ce7186f2074644f2b1692",
+          "c478ee21233d9a590a408a044bb5c5fdb0a4443f6384806ed157569ab57f2244",
+          "76218c0a3273349111a37cd22f56c6f9fca9b59a60ea2f0f41f1347474f1cf6f",
+          "31191df1aa2bc835fbf0f2871b9a058f11e02cb2223c18a518d7fbf079152c07",
+          "f7fa6ad5d8102022597b0a2430cd640368908197f5168fc44d571e9f287091c8",
+          "7575202bd19cbabee93b5882cd58a59c2a6c09b68f25ca751aa2abed976599cb",
+          "663ab9f9d8801dd465a3b3f66e2148988393053b5b39c571e095315d6b2c50f6",
+          "4ab53001c3a0781ec051336d892edb33018816c38335300e0400531c3c4fa7d9",
+          "376ad5bf1d70f403deb5324d5f432d558b723764900be5adf0370c207cc80bd5",
+          "9ff7d68edadbc60bca43cd7010e407c3259f8ce69611e352752c85d6dbec3713",
+          "5b1c1c09cb2a405c982e250da45a928f7a0b189376cc331e51bc5e4a95839543",
+          "72034f062f23870d64ad69b1ab13a69d9c55fff90f53d1b8ff536a51360ee190",
+          "2d68b6807d90a611419e877534239b44e4ff7eb14bb35582ccef649efdc75b7d",
+          "e703c8cf69cbea7e3fafa992320f8dc62cf5bbbea68513ab87a43d57a3f0a8b5",
+          "525ddc5a97b4fe4ca909acbc6e26ccf3d675aed3e1ad4e8ebbc3c734b52c2bf1",
+          "c50eb79514cda8746173e8ea258045e07498428801e34d0a216902568273c810",
+          "1b896f6636f3d902437ee591ceba6e2e4e3803f6d48a63c62c672968120f7146",
+          "b70756e7d4ace72cb70bcf4f0ec20c82b2200398da7c9eadc82333c0327b99f1",
+          "0dbcc7ecdd2ba55d49e230ead5335cb9ac997ae5e29b017f4fe61cce1884569f",
+          "6fa186e71af031a468d6f602b2afc67b899bef337971f768ebacd116e7928ba8",
+          "5bd8fc4e03ad1a8d85acc3cc97f611296ae74ed9c597752cf6bebc56134b39e7",
+          "ac368c3aa6051d7d4381cbf3b0d87412c1962379e8e6c75a9782534e2242453d",
+          "23d453440e08ae0701cea875bbf53e5f5b31fb20a1397a8d590a38575a56cc89",
+          "8ab469025ca9ad15aec981522206db6257387c7396a4607fc7ade26209729298",
+          "db7a1bbeb65a16dd24a61a914a4fb36956a099f6c691b4a0f84300df5ec261e8",
+          "9d19e5165918ece86e66885269a085c4b52b7a9abf53e7e3ecea18fc384b3696",
+          "736074c209237f9611a14547a4078b934033ee7bd2774d25abbbe5beefb865af",
+          "d5f49461d5eb9cb0720bdc7cf95b9de9352e059facd16282c41c0d3b92576f4a",
+          "e022b357c86a93b74a84228b56d982c7b6bb3cd4b0119033f18df5a1edcc1a30",
+          "a71868a87cad8f89e974e20cd02579842c93a51a1e3d5c2bc1a2b0cb10e41eb1",
+          "082138432179a2f7d544668616e7b1e903382683d4879b4744e7078a76052ee7",
+          "7a2a931f219db38ba7aa76e5976d2ba5e102a3882b290938b38139376ece83ce",
+          "17cc9d6e59446b3531ddba0a9f501d041e215c0e52e39c9114d25051d0ec8810",
+          "fa7113dd394ca5f68a16a141bdea4643b33d8bbd224823c0f31181af359132f3",
+          "bac771b244d0fb595c0d51b5f8543d9946e18399f50c80a8b8dacf7199d9c42e",
+          "e0b5d2725af44ba39dc7be3eaf6e2d5faac41f29f6ec91b82fcf1ac2b5e95656",
+          "67ab97ecaf94791cae4737dcca71d9abac9129bb9f06a18b713542c3e67a56cf",
+          "5acf444c4b1dc1f0b58b2b24476b25a7f20666c0cb45a47114280fb890da580b",
+          "acfa79d4747a12ff471713af6c7e8d976fd622d13387091c9e2f788f14affc4d",
+          "e610494f1dc7be8835b289318cf1f7d200f1eab324d647e9bf6b7b8c0b219dd1",
+          "fb86558348db8060b587f0fd22d871a9066f905d0c7dabe57d1e3590e5df4bed",
+          "ca1729a81774a73e135b1d0264169ea015166117e9637ea8acc09eaa306d5b51"
+        ],
+        "ordered_decoded_image_sha256": "2dd0d73ff6e9dc338a32909945510867365ef87dee717ec5a350084d8f356111"
+      }
+    ],
+    "canonical_hash_contract": "decoded-page-raster-v1: OpenCV unchanged decode, shape, dtype and contiguous pixel bytes; excludes nondeterministic TIFF container padding",
+    "decoded_image_sequences_equal": true,
+    "page_count": 69,
+    "drawing_sheets": 38,
+    "canonical_raster_set_sha256": "2dd0d73ff6e9dc338a32909945510867365ef87dee717ec5a350084d8f356111",
+    "contact_sheet": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/official/all-pages-contact.png",
+      "bytes": 2131265,
+      "sha256": "7a21a18c03e464a868b1108fffa7ed88cb301ce17f34879dc2db6135060db854"
+    },
+    "page_image_manifest": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/official/page-images.json",
+      "bytes": 21376,
+      "sha256": "f52173d34dfb7f984cd6944f6f1a90d4233637c853b9a1274b50eb2c56ba374e",
+      "evidence_type": "exact_original_page_export_manifest"
+    },
+    "inspected_original_page": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/official/original-pages/page-048.tiff",
+      "bytes": 70098,
+      "sha256": "db2c989bc5a68d76a9f9929c6a1c99beb2d7dc1538e8532d4c2faa54fd0405ec",
+      "evidence_type": "official_original_page_topology_review"
+    },
+    "review_policy": {
+      "official_originals_only": true,
+      "contact_sheet_navigation_only": true,
+      "ocr_used": false,
+      "enhancement_used": false,
+      "repair_used": false,
+      "measurement_used": false,
+      "raster_numeric_transcription_used": false,
+      "numeric_inference_used": false
+    }
+  },
+  "source_artifacts": {
+    "denominator": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/family-73003010-denominator.json",
+      "bytes": 64679,
+      "sha256": "0628bc2f4f40ccc1628d08e231c09af8fafe022f4ca00b033dbfd8726c1d091c",
+      "evidence_type": "exact_source_denominator"
+    },
+    "source_audit": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/family-73003010-source-audit.md",
+      "bytes": 5940,
+      "sha256": "523ceb58b4debabb7580c70208017ef44ae7c1e3296f0497692def8259187108",
+      "evidence_type": "source_boundary_audit"
+    },
+    "official_pdf_audit": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/official/pdf-raster-audit.json",
+      "bytes": 12986,
+      "sha256": "d7cbd419b65936dd09d27b50de45618178b21d7fd704018343039c2161ca618c",
+      "evidence_type": "official_pdf_raster_audit"
+    },
+    "page_image_manifest": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/official/page-images.json",
+      "bytes": 21376,
+      "sha256": "f52173d34dfb7f984cd6944f6f1a90d4233637c853b9a1274b50eb2c56ba374e",
+      "evidence_type": "exact_original_page_export_manifest"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/family-73003010-replay-determinism.json",
+      "bytes": 3450,
+      "sha256": "23ca810d8aa2a55224facd8e00a4f45b278a668b56eadb4ce7294c87a9e5bf0e",
+      "evidence_type": "append_only_replay_determinism"
+    },
+    "live_pointer_refresh_audit": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/family-73003010-live-pointer-refresh-audit.json",
+      "bytes": 68373,
+      "sha256": "8f4fc44a1beb512e4a11d5578eceaba7c3b4e09a8309ba58081246859c9ef33d",
+      "evidence_type": "live_pointer_refresh_audit"
+    }
+  },
+  "replay": {
+    "preserved_attempt_1": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12313819/attempt-0001/result.json",
+      "bytes": 1272,
+      "sha256": "9877d68013aace7bbb1a8fc03974cb3d06113f99254cff2f724d044ae3eb1426",
+      "result_attempt": 1,
+      "root_state": "parser_review_required",
+      "semantic_sha256": "5666fd72eb1cfab2563d16ffbed038fdc0b3ae84a80d9236e95e2e473d8d4f4c"
+    },
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12313819/attempt-0002/result.json",
+      "bytes": 18451,
+      "sha256": "02660891a77805321dd63b089dfc680cd31d0ccca4801b4f1a59843f95e905a0",
+      "result_attempt": 2,
+      "root_state": "mixed_nonterminal",
+      "semantic_sha256": "d831797a07115a8ad8eab9db2ec8dff669caeb17e88066667af759b3c159b97a"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12313819/attempt-0003/result.json",
+      "bytes": 18451,
+      "sha256": "2cafcd2813f09c78aa093fbe651b9bd9a7e0747d2c7791482988170266548041",
+      "result_attempt": 3,
+      "root_state": "mixed_nonterminal",
+      "semantic_sha256": "d831797a07115a8ad8eab9db2ec8dff669caeb17e88066667af759b3c159b97a"
+    },
+    "semantic_equal": true,
+    "semantic_sha256": "d831797a07115a8ad8eab9db2ec8dff669caeb17e88066667af759b3c159b97a",
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    },
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 58896,
+      "sha256": "b71e9b7e267ee06e8455dd19310c1bf04eca9521676d05c940b238ea575f0856",
+      "evidence_type": "live_replay_summary"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 61027,
+      "sha256": "615f84d25995f8bc147f34185495867e124630dd4a7727553329aee57bfa6669",
+      "evidence_type": "live_replay_report"
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/generic-residual-before-8.json",
+      "bytes": 5374,
+      "sha256": "046225ba9ce361e0135167c6a930b7bb6c0f6f81932a09f6f87dee163c4e1eeb",
+      "evidence_type": "frozen_generic_census_before"
+    },
+    "after_1": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/generic-residual-after-1.json",
+      "bytes": 4745,
+      "sha256": "892541d47678fbaebcad8c234176ec9be5820500274b14572a48770399c3855f",
+      "evidence_type": "generic_census_after"
+    },
+    "after_2": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/generic-residual-after-2.json",
+      "bytes": 4745,
+      "sha256": "892541d47678fbaebcad8c234176ec9be5820500274b14572a48770399c3855f",
+      "evidence_type": "generic_census_after_repeat"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260723-patent-generic-family-73003010/queue-after.json",
+      "bytes": 1499,
+      "sha256": "bee19e0aadc69619c22e738feb723014add4057c22f163bfa97c7aa456fbc235",
+      "evidence_type": "next_exact_group_queue"
+    },
+    "before_roots": 8,
+    "after_roots": 7,
+    "before_result_set_sha256": "45ec6aed9fb425738c23defad75ed9fc44be8851dbe697cc158074411dcea31b",
+    "after_result_set_sha256": "3fde6811376147492d444e6b2db11d0478d062881fa8a70afc4d326a225fc6dd"
+  },
+  "classification": {
+    "status": "mixed_nonterminal",
+    "source_items": 22,
+    "optical_mode_items": 20,
+    "parser_review_required_items": 20,
+    "confirmed_no_prescription_items": 2,
+    "image_capturing_unit_wrapper_items": 1,
+    "electronic_device_wrapper_items": 1,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "live_shared_outputs": {
+    "result_set_sha256": "3fde6811376147492d444e6b2db11d0478d062881fa8a70afc4d326a225fc6dd",
+    "replay_summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 58896,
+      "sha256": "b71e9b7e267ee06e8455dd19310c1bf04eca9521676d05c940b238ea575f0856",
+      "evidence_type": "live_replay_summary"
+    },
+    "replay_report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 61027,
+      "sha256": "615f84d25995f8bc147f34185495867e124630dd4a7727553329aee57bfa6669",
+      "evidence_type": "live_replay_report"
+    }
+  },
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "f049d4d2ee7a5e46a0656e442156cafbb11facf47e3209535e08a4087f614c3e",
+    "layout_signature_count": 1,
+    "family_id": "95073324",
+    "root_ids": [
+      "US-20260147257"
+    ],
+    "publication_ids": [
+      "US-20260147257-A1"
+    ],
+    "application_numbers": [
+      "19/450317"
+    ],
+    "title": "IMAGING LENS ASSEMBLY, CAMERA MODULE, AND IMAGING DEVICE",
+    "applicant": "GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP., LTD.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/32fba3c3e5d4aeb7/US-20260147257-A1.html",
+      "sha256": "32fba3c3e5d4aeb736896604e6feddee077b8cc13b4d7f52fcff31fea9fe5026",
+      "bytes": 117393
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 7,
+      "full_field": 0,
+      "half_field": 4
+    },
+    "table_count": 25
+  },
+  "invariants": {
+    "exact_publication_only": true,
+    "complete_source_item_denominator": true,
+    "twenty_focus_modes_kept_distinct": true,
+    "focus_component_power_not_omitted_or_synthesized": true,
+    "no_ocr_or_raster_numeric_transcription": true,
+    "no_drawing_measurement_or_inference": true,
+    "no_source_repair": true,
+    "no_lineage_or_layout_borrowing": true,
+    "no_worker_or_formal_output": true,
+    "no_codev_use": true,
+    "strict_replay_complete": true,
+    "saturation_complete": false
+  }
+}
