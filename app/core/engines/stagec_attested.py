@@ -76,6 +76,16 @@ _TRUSTED_CODEV_SHA256 = TRUSTED_CODEV_SHA256
 _TRUSTED_CODEV_SIZE_BYTES = TRUSTED_CODEV_SIZE_BYTES
 _TRUSTED_ZEMAX_MACRO_SHA256 = TRUSTED_MACRO_SHA256
 _SUCCESSFUL_CODEV_RETURNCODES = frozenset({0, 1})
+# CODE V stores field definitions in single precision: we write
+# `YFLN 0 2.3143779176266652 ...` into the reconstructed ZMX, and `(YRI F^f Z1)`
+# reads back `2.3143779000000e+00` -- roughly 8 significant digits.  Comparing that
+# readout against a full-precision Python product therefore cannot succeed at the
+# default rel_tol=1e-9 unless the target image height happens to be exactly
+# representable, which is why only the control arm (whose target is the ZMX's own
+# short literal, e.g. 2.91297) ever landed.  Measured relative error across the
+# archived 2026-07-13 matrix peaks at 3.6e-8; float32 eps is 1.19e-7.  This bound
+# tracks the instrument's actual precision -- it is not a relaxation of the gate.
+_CODEV_FIELD_READOUT_REL_TOL = 2e-7
 _REAL_MATRIX_PLAN_SCHEMA = "atelier-stagec-real-matrix-plan-v1"
 _PRODUCTION_PLAN_SCHEMA = "atelier-stagec-production-execution-plan-v1"
 _REAL_MATRIX_ARMS = frozenset({"native-imh-reconstructed-control", "target-low", "target-high"})
@@ -537,11 +547,18 @@ class StageCAttestedEvidence(BaseModel):
             and tuple(field.normalized_fraction for field in self.fields)
             == self.normalized_fractions
         )
+        # Only the Python-computed target crosses the precision boundary, so only it
+        # gets the instrument-matched tolerance.  The other three comparisons stay
+        # strict: they are CODE V readout against CODE V readout (same precision, and
+        # empirically bit-identical) or against exact zero, where a relative tolerance
+        # would be meaningless anyway.  abs_tol is retained for the on-axis field,
+        # whose expected value is exactly 0 and thus outside rel_tol's reach.
         landing = all(
             math.isclose(field.definition_x_ri_mm, 0.0, abs_tol=5e-12)
             and math.isclose(
                 field.definition_y_ri_mm,
                 self.target_image_height_mm * field.normalized_fraction,
+                rel_tol=_CODEV_FIELD_READOUT_REL_TOL,
                 abs_tol=5e-12,
             )
             and math.isclose(field.definition_x_ri_mm, field.rsi_actual_x_mm, abs_tol=5e-12)
