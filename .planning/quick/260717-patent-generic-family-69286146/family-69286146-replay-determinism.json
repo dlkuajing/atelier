@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "family_id": "69286146",
+  "root_id": "US-12663606",
+  "publication_id": "US-12663606-B2",
+  "item_count": 8,
+  "terminal_status": "confirmed_no_prescription",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.autofocus_lens_carrier_and_electromagnetic_drive_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_camera_module_placement_architecture_only"
+  ],
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12663606/attempt-0002/result.json",
+      "bytes": 7569,
+      "file_sha256": "8dc4a04788c92cbf027c1cb371ed128fd536c48c576287d092ce06f7820f31ad",
+      "semantic_sha256": "f9d79dd3d96f5eb823caaeed2f0ea553eca57743441162d29af506a3c293bfda"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12663606/attempt-0003/result.json",
+      "bytes": 7569,
+      "file_sha256": "a1223f649e4ea5281b4e4fa4a918e3dc77b2d7a7befdfd15aa4907e63a6a7fcd",
+      "semantic_sha256": "f9d79dd3d96f5eb823caaeed2f0ea553eca57743441162d29af506a3c293bfda"
+    }
+  ],
+  "semantic_equal": true,
+  "semantic_sha256": "f9d79dd3d96f5eb823caaeed2f0ea553eca57743441162d29af506a3c293bfda",
+  "conversion_attempts": 0,
+  "candidate_zmx_count": 0,
+  "matching_staging_zmx_count": 0
+}

@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "family_id": "59500840",
+  "current_frozen_cohort_roots": [
+    "US-11118059"
+  ],
+  "same_application_publications": [
+    {
+      "publication_id": "US-20180340070-A1",
+      "application_number": "16/052051",
+      "disposition": "audited_same_root_cross_check_only"
+    },
+    {
+      "publication_id": "US-11118059-B2",
+      "application_number": "16/052051",
+      "disposition": "current_frozen_cohort_root_publication"
+    }
+  ],
+  "provider_grouping_note": "The retained PPUBS B2 source and the Google A1 family page both report Family ID 59500840. Same-application A1/B2 evidence remains publication-specific despite the shared provider family identifier.",
+  "external_family_members": [
+    {
+      "publication_id": "WO2017135300A1",
+      "application_number": "PCT/JP2017/003587",
+      "relationship": "related parent PCT publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JPWO2017135300A1",
+      "application_number": "JP2017565585A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP6751726B2",
+      "application_number": "JP2017565585A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN108603959A",
+      "application_number": "CN201780009346.XA",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN108603959B",
+      "application_number": "CN201780009346.XA",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "TW201739804A",
+      "application_number": "TW106101830A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "TWI781917B",
+      "application_number": "TW106101830A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "cross_check_source": {
+    "url": "https://patents.google.com/patent/US20180340070A1/en",
+    "observed_fields": [
+      "Family ID 59500840",
+      "US application 16/052051 with publications US20180340070A1 and US11118059B2",
+      "JP priority application JP2016-019130",
+      "PCT/JP2017/003587 with WO2017135300A1",
+      "JP2017565585A with JPWO2017135300A1 and JP6751726B2",
+      "CN201780009346.XA with CN108603959A and CN108603959B",
+      "TW106101830A with TW201739804A and TWI781917B"
+    ]
+  }
+}

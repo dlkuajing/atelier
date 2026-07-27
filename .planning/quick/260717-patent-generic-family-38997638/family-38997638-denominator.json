@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "family_id": "38997638",
+  "root_id": "US-7551370",
+  "publication_id": "US-7551370-B2",
+  "identity": {
+    "application_number": "11/496335",
+    "assignee": "Symbol Technologies",
+    "inventors": ["Igor Vinogradov", "Vladimir Gurevich", "David Tsi-Shi"],
+    "filed": "July 31, 2006",
+    "grant_date": "June 23, 2009",
+    "same_application_prior_publication": "US-20080030874-A1"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/99dc69471bf1e1a1/US-7551370-B2.html",
+    "bytes": 31634,
+    "raw_characters": 31634,
+    "raw_sha256": "99dc69471bf1e1a14492e5df58524cfd68197312c8e79f8393e45687fac6a1eb",
+    "normalized_characters": 26607,
+    "normalized_sha256": "2566c3732354e179b0828d55d7a702fb5366e3a50486405f6967f9154cb050eb"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_raster_publications": 1,
+    "numbered_heading_markers": 4,
+    "background_numbered_paragraphs": 6,
+    "summary_numbered_paragraphs": 8,
+    "brief_numbered_paragraphs": 5,
+    "detailed_numbered_paragraphs": 15,
+    "claims": 20,
+    "declared_textual_figures": 5,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 4,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 4,
+    "replayed_ledger_items": 4,
+    "official_b2_pdf_pages": 8,
+    "official_b2_drawing_sheets": 3,
+    "same_application_a1_pdf_pages": 8,
+    "same_application_a1_drawing_sheets": 3,
+    "source_label_discrepancies": 1
+  },
+  "sections": {
+    "abstract": {"position": 300, "characters": 962, "sha256": "0cd30d003aa01b667cff855fcbe566fd4e0979d75d85313c51872d6737ef32d5"},
+    "background": {"position": 1262, "characters": 4672, "paragraphs": [2, 7], "heading_marker": 1, "sha256": "9f7fbd7168a082418813d74feeeb11d8095c3d34333d87e83123993df3304ccb"},
+    "summary": {"position": 5934, "characters": 5750, "paragraphs": [9, 16], "heading_marker": 8, "sha256": "7a67b239c3a59bcf97105e42617f11ac91ce00aa7144eedbde523ef81e5ae7d4"},
+    "brief": {"position": 11684, "characters": 842, "paragraphs": [2, 6], "heading_marker": 1, "sha256": "3c46dc00c119a56f96e69d904e6328d2bf90141054c237fb6c929345711d8753"},
+    "detailed": {"position": 12526, "characters": 9565, "paragraphs": [8, 22], "heading_marker": 7, "sha256": "bf73793b531a6c94d4e77c8c250bea38804450ba5dde40cb82a896fe4c3ee5f0"},
+    "claims": {"position": 22091, "characters": 4516, "claims": [1, 20], "sha256": "f5a7ace1b47129a5a8c74222d2ea67cd57d9ba2049aaaf16b4a3da32da42ac1b"}
+  },
+  "figures": ["1", "2", "3", "4", "5"],
+  "summary_span": {
+    "paragraphs": [9, 16],
+    "characters": 5720,
+    "sha256": "fedb6de45a26e6744e62d4b5963f228df7212d5dc9b1ca51acc88a5cd2091abc",
+    "scope": "reader, imager, illumination and negative-spherical-aberration lens architecture"
+  },
+  "detailed_spans": [
+    {"paragraphs": [8, 13], "characters": 3502, "sha256": "ce5b0c4c5cead699aa3d44dd277dae17f4505374b5e08831b040f7644902214e", "scope": "reader form factors, imager, controller and generic plurality of lenses"},
+    {"paragraphs": [14, 18], "characters": 4626, "sha256": "60631a751b4bd7bf40723d5afaf0c13a7e61212cf92ffb4bf884c4ac853dff62", "scope": "negative-spherical-aberration component, stop, lens placement and prototype working range"},
+    {"paragraphs": [19, 22], "characters": 1380, "sha256": "cf745deb266b7e8bae28afb68fa99e89d80f819fcffe3b5e953aad43a014fd12", "scope": "implementation and claim boilerplate"}
+  ],
+  "claim_families": [
+    {"claims": [1, 9], "characters": 1838, "sha256": "16d66b43fa3a7873fd31c1f8af3b68fd299b16d533b8af89c14fd2edb3804a11", "scope": "indicia reader apparatus"},
+    {"claims": [10, 10], "characters": 577, "sha256": "27692e63ff453b649665de3afa5ed965411a8bb7f691a4b76276c2b475fa7bc7", "scope": "indicia reader means apparatus"},
+    {"claims": [11, 19], "characters": 1713, "sha256": "5f2bde28b75a9b9f83582460bab258fbdee0bba6cebe7ed8b70b976910a2ce1e", "scope": "indicia reader operating method"},
+    {"claims": [20, 20], "characters": 378, "sha256": "26243298818670bc8006688ab719327803a5ebd92347deedb56dfc6343653a32", "scope": "negative-spherical-aberration imaging lens assembly"}
+  ],
+  "prescription_marker_census": {
+    "focal length": 0,
+    "effective focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "FNO": 0,
+    "F/#": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "aspheric": 2,
+    "aspherical": 0,
+    "surface prescription": 0,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "surface no": 0,
+    "radius of curvature": 0,
+    "curvature radius": 0,
+    "thickness": 0,
+    "lens element": 0,
+    "field of view": 7,
+    "working range": 20,
+    "negative spherical aberration": 52,
+    "aperture stop": 36,
+    "imaging lens assembly": 11,
+    "plurality of lenses": 3,
+    "concave surface": 4,
+    "flat surface": 4,
+    "optical powers": 1,
+    "WD1": 3,
+    "WD2": 5,
+    "phase plate": 3,
+    "context": "aspheric and surface language describes an unparameterized replica, substrate or component shape; field and working-range values are reader performance, never an ordered prescription"
+  },
+  "items": [
+    {"embodiment_number": 1, "claims": [1, 9], "source_category": "indicia_reader_apparatus", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.indicia_reader_negative_spherical_aberration_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 2, "claims": [10, 10], "source_category": "indicia_reader_means_apparatus", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.indicia_reader_means_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 3, "claims": [11, 19], "source_category": "indicia_reader_operating_method", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.indicia_reader_operating_method_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 4, "claims": [20, 20], "source_category": "negative_spherical_aberration_lens_assembly", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.negative_spherical_aberration_lens_assembly_architecture_only", "ordered_surface_prescription_rows": 0}
+  ],
+  "raster_label_discrepancy": {
+    "same_application_a1": "US-20080030874-A1 drawing sheet 3 labels the lower on-axis panel FIG. 6",
+    "classification_b2": "US-7551370-B2 drawing sheet 3 labels the identical lower panel FIG. 4, matching the five textual declarations",
+    "numeric_effect": "none; no drawing coordinate or surface value is transcribed or derived"
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "reason": "The source publishes only reader hardware, generic lens placement, an unparameterized negative-spherical-aberration component and stop, and working-range performance; no ordered optical radius, spacing, material, conic, asphere-coefficient or required numeric system prescription exists.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  }
+}

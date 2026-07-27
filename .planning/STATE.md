@@ -38,8 +38,9 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   污染的 job-0020/0021 attempt-1 永久排除。
 - **Stage B**：8/8 unique accepted，30 outcomes，6 pre-run-bound + 2 retrospective，no incomplete。
   manifest SHA256 `29384d5d9a10356c8b9bd908c48ab6970977fcafe77ac59a100aaf268350d969`。
-- **Stage C**：48/48 receipts，**2 delivered / 46 blocked**；6/48 run metrics usable；3/24 cells complete。
-  ← 这是 v2 判据 ① 的当前真实基线：产能不是放大，是堵塞。
+- **Stage C**：48/48 receipts，**6 delivered / 42 blocked**；6/48 run metrics usable；3/24 cells complete。
+  ← PR #89 按 CODE V 单精度回读修正不可满足的 landing 比较后重放全包所得；v2 判据 ①
+  的当前真实基线仍是产能堵塞，不是放大。
 - **Production**：仅 `US9304295B2` 一个 exact target 完成 fresh Stage B → Stage C receipt →
   candidate → exports-v2 同源闭环；外层 C1 CLI exit=1。
 - **Convergence**：`TARGET_CONVERGED` capability ceiling 为 `efl + conditional fnum`；
@@ -47,6 +48,57 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
 - **Case library**：442 = smartphone-wide 227 / telephoto 137 / ultrawide 78；442/442 `image_height_mm` 非空。
   ← v2 下这 442 颗的角色从"说服力素材"升级为**统计对照组**。
 - **旗舰候选**：RMS 2.80µm（片数/规格与外部参考的可比性**未核**，不得直接对外比较）。
+
+### Patent saturation import and transport
+
+这些数字是专利数据资产与离线重放状态，不自动证明 v2 北极星距离：
+
+- 714 个 USPTO 元数据根；正式库 442 个设计，其中 425 个为专利设计。
+- 冻结重放 619/619，missing=0、corrupt=0；generic metadata residual 已降为 0，
+  但外部家族队列、正式 family closure、source exhaustion 与更广义专利饱和仍未闭合。
+- 完整 229-commit 逻辑历史保留在本地 source archive
+  `codex/patent-saturation-ledger@6dad8ab8`；发布分支
+  `codex/patent-saturation-slim` 只改变传输/证据闭包。
+- 最终 LFS 清单为 4,269 路径、4,226 个唯一 SHA-256 对象、
+  2,043,282,327 logical bytes / 1,942,561,003 unique bytes。
+- `20572753` 的发布前传输审计：普通 Git delta 为 22,510 blobs /
+  1,015,117,510 uncompressed bytes，最大 blob 4,557,660 bytes，独立 pack
+  30,010,009 bytes，远低于 GitHub 2 GiB 单次 push 限制。
+- fresh-checkout 修复补入此前被忽略、但被测试/账本引用的 865 个 patent-lake 文件与
+  8,675 个 conversion-attempt/staging 文件；两个无引用 OCR ONNX 模型继续忽略。
+- 首轮传输/证据闭包门禁为 4,133 passed、1 skipped、10 deselected；合入
+  `origin/main@42e05fbb` 后的本地完整离线门禁为 4,133 passed、1 skipped，
+  31 条定向并行回归全绿；Ruff、CI YAML、diff、LFS fsck 与 hydrated manifest
+  rehash 均通过。
+- 合入主线后首次照搬 `uv run pytest -q -n 4` 时，因上游命令未排除 marker 且本机
+  安装了 CODE V，意外启动了一条 `real_machine` round-trip；该用例以 wavelength
+  24 vs 3 失败并退出，未重跑。CI 已改为显式
+  `uv run pytest -q -n 4 -m "not real_machine"`，后续全量验证未再触发 CODE V。
+- `origin/main` 在最终全量门禁后通过 PR #89 前移的两提交已由 `17d71802` 合入；
+  四个受影响 Stage C/orchestration 测试文件 193/193 通过。
+- Draft PR #92 已完整上传 4,226/4,226 LFS 对象；首轮 CI `30253145666` 的 LFS
+  hydration/fsck 成功，但旧 `-n 4` 路径出现七个失败标记并在 45 分钟、76% 时取消，
+  不构成 merge pass。
+- 主线已实测私有 runner 为 2 cores / 7 GB 并证伪 xdist；当前合入
+  `origin/main@a5d3eb07`，保留主线串行 `--durations=25`，叠加
+  `-m "not real_machine"` 与 LFS hydration，扩展套件 timeout 有界提高到 75 分钟。
+  新增 acceptance/wavelength/material 受影响套件 122/122 通过、3 条真实机 deselected；
+  替换 CI `30280348106` 在 56m54s 内跑完，结果为 4 failed / 4,128 passed /
+  7 skipped / 10 deselected。四项均为历史 Windows 路径在 Linux checkout 中的解析失败：
+  两项反斜杠相对路径、一项回执绝对 worktree 路径、一项离线 CODE V 守卫按宿主
+  `Path` 解析 Windows 命令。修复仅在测试读取层用 `PureWindowsPath` 映射当前 checkout，
+  保留 1,616 份含绝对路径的原始回执及其哈希不变；精确失败集与守卫参数 8/8 通过，
+  Ruff/diff 通过。run `30285724536` 在 `f96270b0` 全绿：4,132 passed / 7 skipped /
+  10 deselected，pytest 54m47s、job 56m55s，LFS fsck 成功。
+- 该 run 期间 `origin/main` 经 PR #93/#94 前移 8 提交至 `4449d7c9`，包含多波长
+  导入接缝、指标 fail-closed、测试与可追迹率普查；已无冲突合入
+  `ec5f02e5`。因上游触及生产 engine 与测试，`f96270b0` 的绿不能覆盖新 HEAD；
+  又因下述本机进程红线继续暂停本地 Python/pytest，须由下一轮 hydrated PR CI
+  完成最终集成验证。
+- 2026-07-28 00:38 +08:00 的测试后只读库存两次发现短时 `codev`/`codevm`：
+  PIDs 22288/21752（00:38:03）及 3516/5288（00:38:38）；均在 CIM 父进程查询前自行
+  退出，来源未能证明。未终止或控制进程；发现后停止本地 Python/pytest，余下只做
+  Git/GitHub 发布操作。测试前库存为 0。
 
 ## Blockers / Concerns
 

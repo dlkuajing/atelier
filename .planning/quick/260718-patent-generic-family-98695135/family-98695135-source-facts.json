@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "family_id": "98695135",
+  "root_id": "US-20260086429",
+  "publication_id": "US-20260086429-A1",
+  "application_number": "19/333463",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2d0745df79927e89/US-20260086429-A1.html",
+    "bytes": 128780,
+    "raw_sha256": "2d0745df79927e892aab44144dcff53fd384f2f7fb1d290ec9ad81dabb6cfece",
+    "normalized_characters": 110034,
+    "normalized_sha256": "ec0442b7f2ce2cb4b21a6f9bc27ac04e96c95d155d24dd4ac04d0f8511d1853c"
+  },
+  "section_sha256": {
+    "preamble": "bacdb83b9428cf574076d70ee656242af2ae7f611631022fdc3c1e42405fac7d",
+    "abstract": "852b15cef0ed81eca770eac1abeba03440ada29892285fde1846f2019c6e75f9",
+    "related_metadata": "e600f747c065548ba48095c33dd0c57917c026d23b0767d8582f58934d3d74f3",
+    "related_applications": "f1dde325180ebd4c58be480ac3a4b2ce7024c2e285063db868ce4c6de1e22b95",
+    "background": "c8c1c6f785a1e7b7dc5c98ab571ce47bdb5873d27b1fc8ae21fc76cbcc73b52d",
+    "summary": "c92a5f4123e93f97fa402a032cebffe11772a7a8c8b57355a6fbbdc4565717bb",
+    "figures": "7d21e0ad606b757e22ac60f7710e158ec1d739be2a05d982b184ab94bf0b76f2",
+    "detailed": "7119a6e6c50c9eecae60723fa0beb9ea81858761002bf63b2f5cc216075a8171",
+    "claims": "673b6ecd2b245229fd52e53294873b4fc7d53b2e6b9a939429f549b218c5948b"
+  },
+  "paragraph_span_sha256": [
+    {"range": [1, 1], "sha256": "f9342815f9164346e871a8fa23a7a8bb328ef50c8999d24908e87751b5c999c9"},
+    {"range": [2, 4], "sha256": "d497d305b3d777fafbd05e2249480be267f215603a5cc35bc3c995cab4b4ab6e"},
+    {"range": [5, 9], "sha256": "d5ccd8514b7e80d33502292261a15f285ab5c2fe907d1e2564e978b5ff63979d"},
+    {"range": [10, 42], "sha256": "bfd29f2dfc208390bc204f7a58f292593f54e981a7c00ae82ed85529d47f722c"},
+    {"range": [43, 79], "sha256": "d4b94d6f188d44b1ed0f77916ebaf567e476d6528d99fd648f4e798c2120f10f"},
+    {"range": [80, 94], "sha256": "377ea9a7cecf3a75a06315629ed39eec7b86e31c47a92edcb49518e79a2e4a27"},
+    {"range": [95, 98], "sha256": "95bd18f84dc07e7caa6d2c406cd661cacb6df2863fc3447a3e409a67ddc9e5f0"},
+    {"range": [99, 104], "sha256": "cddb96233ee23259f855b306954d9d1bbe4cc79ef60ac7cbf62f64f311820610"},
+    {"range": [105, 112], "sha256": "14bc6230f3d83176dcf7c1b3a7db443dcfa80e00de86f81de2c1fec02590bd93"},
+    {"range": [113, 120], "sha256": "0715ac89254486fca214bb722a1a2363716cae9988ab621440f8a091a8bfe972"},
+    {"range": [121, 130], "sha256": "91c0521dacf7d675137209ad4dbf46cc935874be7b357380a806274ba468958c"},
+    {"range": [131, 134], "sha256": "8c9660d0348bd27eab12a6b2e171fe0b7110e69198fa19f1513fa626d59d28fe"},
+    {"range": [135, 138], "sha256": "2575e1fe0c8fb46c2443ba30bce885e6811c7e481940fb5dbb25ea76c871b240"},
+    {"range": [139, 139], "sha256": "e6266674449ce00a9d6538a127af47664954505983d71522630c1c0594babc4e"}
+  ],
+  "figure_labels": [
+    "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "1J", "1K", "1L", "1M", "1N", "1O",
+    "2A", "2B", "2C", "2D", "2E", "3A", "3B", "4A", "4B", "5A", "5B", "5C", "5D", "5E", "6", "7A", "7B", "7C"
+  ],
+  "table_prefix_sha256": [
+    "0d81049c6eb06a86496b0d1e8751b6e9b8b4f479987454688dea98fa426ffa50",
+    "944ef88e2017d96c5bb6a2c2823d7b61a67ca5e444e0af6308624a19a36e42cb",
+    "34019f4cc2ccb1764da39f741579200df4b8a2466cad21eee58438d8398b2a6a",
+    "8df41b95b62e4fe624befd155572b67df5b07d7eb44c2449d591f20e94c722e9"
+  ],
+  "mathml_sha256": [
+    "9ae224bdc3d1e898bc1fd4009a3b8dc1bcd0bc1f01020621e0a7cb23b74cebc2",
+    "160f258975269309449f6a5cc9de955f5d6fd8868becb0c8cb5b55c2074eaf14",
+    "9e32c20658ab0813565ad52cc1e948234e815f7df598d09fab7df80a3f3e863b",
+    "8962f195d2edd7db5eb2fc127d287a2e0ea39b9bb02699d3596cf59802d66147",
+    "b6cca81b1d3a37809b20e5ec1033e763b6066dd084df316db6dd2175495ab57f",
+    "0ee10e328b5b06fcb29c5963cd4a6f92f77d2a7f66b0b199263e570e86161625",
+    "20775349383d4cc1b1761d556b5be3f98ba81308ccc3058b33113b61fbc614e2",
+    "54b9e9cee5647450b57fc7e93349e0f99cb3a53ad99e5fae563f971fb1578423",
+    "11cd378d289330e09cd7c51d0fa91240533f61ad0091e6d9d0f3749378f8174b",
+    "33de0b444278e71eeb865c0559d647c846c980fc9aeeaa6bc23e8816829ee7aa",
+    "8690b3b468e8992b3a0d2fd5be718410e1e975e618ddaecd2ab3fed9dc8e8ddf",
+    "b5e2583d0185009eb2d557dab6e8f51d270a5806fc0b69fcd24c9c90d891b7d5"
+  ],
+  "claim_families": [
+    {"claims": [1, 12], "sha256": "9d46c289bba70840b5ba8977e0cdc78dd532d884f874dc12b9357b9c67af8d86"},
+    {"claims": [13, 23], "sha256": "c97723524a55c2f8c9bcd79827bdd05950a6eb66608086aea41272a34e48d538"},
+    {"claims": [24, 35], "sha256": "b87db5dad90ee7e132fddf45083abf641a5e7e6a3094e8547831c7d163c3266c"}
+  ],
+  "item_bindings": [
+    {"item": 1, "paragraphs": [80, 94], "marker": "FIG. 1 A is a schematic view of a camera module 100"},
+    {"item": 2, "paragraphs": [95, 98], "marker": "FIG. 1 L is a three dimensional view of a flexible wire plate 150 a"},
+    {"item": 3, "paragraphs": [99, 104], "marker": "FIG. 2 A is a plan view of a flexible wire plate 250"},
+    {"item": 4, "paragraphs": [105, 112], "marker": "FIG. 3 A is an exploded view of a variable aperture element 330"},
+    {"item": 5, "paragraphs": [113, 120], "marker": "FIG. 4 A is an exploded view of a variable aperture element 430"},
+    {"item": 6, "paragraphs": [121, 130], "marker": "FIG. 5 A is a schematic view of an electronic device 10"},
+    {"item": 7, "paragraphs": [131, 134], "marker": "FIG. 6 is a schematic view of an electronic device 20"},
+    {"item": 8, "paragraphs": [135, 138], "marker": "FIG. 7 A is a schematic view of a vehicle instrument 30"}
+  ],
+  "phrase_counts": {
+    "imaging lens assembly": 53,
+    "lens carrier": 83,
+    "flexible wire plate": 131,
+    "optical axis": 45,
+    "image sensor": 15,
+    "image surface": 7,
+    "focal length": 1,
+    "zoom function": 1,
+    "visual angle": 3,
+    "material": 5,
+    "radius": 0,
+    "curvature": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "asphere": 0,
+    "conic": 0,
+    "coefficient": 0,
+    "image height": 0,
+    "F-number": 0,
+    "aperture stop": 0,
+    "stop": 0,
+    "entrance pupil": 0,
+    "optical prescription": 0
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/182bb637cd1da4e5/US-20260086429-A1.pdf",
+    "bytes": 3153508,
+    "sha256": "182bb637cd1da4e53e2466fc6518e2c08ab61f7c19ca5e94a36bb6e19bf6158c",
+    "pages": 51,
+    "drawing_page_range": [2, 34],
+    "table_pages": [42, 43, 44, 45],
+    "text_layer_characters": 0,
+    "canonical_raster_set_sha256": "d35564935421e27a99bb30780c7e21f9f3e0de68f2f00d6affa9264d796bca2a"
+  },
+  "classification": {
+    "source_items": 8,
+    "ordered_optical_prescriptions": 0,
+    "confirmed_no_prescription": 8,
+    "worker_runs": 0,
+    "formal_outputs": 0
+  }
+}

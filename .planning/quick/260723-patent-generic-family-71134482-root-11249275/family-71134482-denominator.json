@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "family_id": "71134482",
+  "application_number": "16/655485",
+  "root_ids": [
+    "US-11249275"
+  ],
+  "publication_ids": [
+    "US-11249275-B2"
+  ],
+  "lineage": {
+    "prior_publication": "US-20200233175-A1",
+    "prior_publication_date": "2020-07-23",
+    "taiwan_priority": "108102307",
+    "priority_date": "2019-01-21",
+    "related_publication_values_borrowed": false
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 9,
+    "description_numbered_paragraphs": 101,
+    "claims": 18,
+    "independent_claims": 1,
+    "declared_drawing_panels": 24,
+    "ordered_figure_references": 121,
+    "html_native_tables": 0,
+    "flattened_table_blocks": 5,
+    "html_images": 0,
+    "mathml_objects": 0,
+    "math_objects": 0,
+    "inline_formula_pairs": 5,
+    "source_declared_embodiments": 9,
+    "source_items": 9,
+    "plastic_lens_barrel_and_imaging_module_architecture_items": 5,
+    "electronic_device_wrapper_items": 4,
+    "ordered_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 9,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "background_summary": [
+      1,
+      9
+    ],
+    "brief_description_of_drawings": [
+      1,
+      25
+    ],
+    "common_detailed_architecture": [
+      26,
+      44
+    ],
+    "source_items": [
+      45,
+      100
+    ],
+    "closing": [
+      101,
+      101
+    ]
+  },
+  "claim_dependency_graph": [
+    [],
+    [1],
+    [2],
+    [2],
+    [2],
+    [2],
+    [6],
+    [7],
+    [2],
+    [2],
+    [2],
+    [2],
+    [4],
+    [1],
+    [14],
+    [15],
+    [14],
+    [14]
+  ],
+  "claim_scope": {
+    "plastic_lens_barrel_architecture": [
+      1,
+      13
+    ],
+    "imaging_lens_module_wrapper_architecture": [
+      14,
+      17
+    ],
+    "electronic_device_wrapper_architecture": [
+      18,
+      18
+    ],
+    "claims_create_additional_source_items": false
+  },
+  "items": [
+    {
+      "item_number": 1,
+      "embodiment_number": 1,
+      "label": "Largan first plastic lens barrel and imaging lens module architecture",
+      "description_paragraphs": [45, 54],
+      "figures": ["1A", "1B", "1C", "1D", "1E", "1F"],
+      "tables": [1],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only"
+    },
+    {
+      "item_number": 2,
+      "embodiment_number": 2,
+      "label": "Largan second plastic lens barrel and imaging lens module architecture",
+      "description_paragraphs": [55, 63],
+      "figures": ["2A", "2B", "2C"],
+      "tables": [2],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only"
+    },
+    {
+      "item_number": 3,
+      "embodiment_number": 3,
+      "label": "Largan third plastic lens barrel and imaging lens module architecture",
+      "description_paragraphs": [64, 72],
+      "figures": ["3A", "3B", "3C"],
+      "tables": [3],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only"
+    },
+    {
+      "item_number": 4,
+      "embodiment_number": 4,
+      "label": "Largan fourth plastic lens barrel and imaging lens module architecture",
+      "description_paragraphs": [73, 81],
+      "figures": ["4A", "4B"],
+      "tables": [4],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only"
+    },
+    {
+      "item_number": 5,
+      "embodiment_number": 5,
+      "label": "Largan fifth plastic lens barrel and imaging lens module architecture",
+      "description_paragraphs": [82, 90],
+      "figures": ["5A", "5B"],
+      "tables": [5],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_lens_barrel_annular_light_trap_architecture_only"
+    },
+    {
+      "item_number": 6,
+      "embodiment_number": 6,
+      "label": "Largan smartphone camera-module electronic-device wrapper",
+      "description_paragraphs": [91, 95],
+      "figures": ["6A", "6B", "6C", "6D"],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_camera_module_wrapper_only"
+    },
+    {
+      "item_number": 7,
+      "embodiment_number": 7,
+      "label": "Largan multi-camera smartphone electronic-device wrapper",
+      "description_paragraphs": [96, 98],
+      "figures": ["7"],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_camera_module_wrapper_only"
+    },
+    {
+      "item_number": 8,
+      "embodiment_number": 8,
+      "label": "Largan tablet electronic-device wrapper",
+      "description_paragraphs": [99, 99],
+      "figures": ["8"],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_camera_module_wrapper_only"
+    },
+    {
+      "item_number": 9,
+      "embodiment_number": 9,
+      "label": "Largan wearable electronic-device wrapper",
+      "description_paragraphs": [100, 100],
+      "figures": ["9"],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_camera_module_wrapper_only"
+    }
+  ],
+  "table_boundary": {
+    "table_paragraphs": [[1, 53], [2, 63], [3, 72], [4, 81], [5, 90]],
+    "fields": ["DG1", "DG2", "D", "d", "DG1/DG2", "EDR", "HG"],
+    "mechanical_geometry_only": true,
+    "ordered_table_set_sha256": "a142154249ca77e306f3c91b929e7560e97b8e1400d5ad2d8140da3fc890aee5"
+  },
+  "prescription_boundary": {
+    "ordered_lens_surface_radius_rows_published": 0,
+    "ordered_axial_spacing_rows_published": 0,
+    "numerical_optical_material_or_index_dispersion_rows_published": 0,
+    "surface_specific_conic_or_asphere_rows_published": 0,
+    "identified_aperture_stop_published": false,
+    "source_bound_numeric_focal_length_published": false,
+    "source_bound_f_number_published": false,
+    "numeric_prescription_bound_angular_field_published": false,
+    "absolute_image_height_published": false
+  },
+  "binding_policy": {
+    "annular_light_trap_geometry_promoted_to_prescription": false,
+    "generic_lens_element_order_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "pdf_or_raster_review_used": false,
+    "ocr_used": false,
+    "raster_numeric_transcription_used": false,
+    "printed_token_repair_used": false,
+    "priority_or_prior_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

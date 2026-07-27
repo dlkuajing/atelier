@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "family_id": "89620713",
+  "application_number": "18/642955",
+  "root_ids": [
+    "US-20240272406"
+  ],
+  "publication_ids": [
+    "US-20240272406-A1"
+  ],
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b299af6070ba4f93/US-20240272406-A1.html",
+    "bytes": 97011,
+    "sha256": "b299af6070ba4f9342cf8a79e5f5cf806cd5d93695b6f2f867b0307239e546f9"
+  },
+  "official_pdfs": {
+    "US-20240272406-A1": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/source-review/US-20240272406-A1-official.pdf",
+      "bytes": 2790189,
+      "sha256": "683bc327121bcc9148705e4600f5484ff4d92774abc94457968cef2bff7b7c2b"
+    },
+    "US-20240241352-A1": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/source-review/US-20240241352-A1-official.pdf",
+      "bytes": 2841907,
+      "sha256": "c0e34129475c17558f6be6b529e529827cbb887d260cefd798a6f7a60421e34c"
+    }
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "parent_application_raster_publications": 1,
+    "numbered_heading_markers": 0,
+    "background_summary_numbered_paragraphs": 7,
+    "brief_numbered_paragraphs": 31,
+    "detailed_numbered_paragraphs": 74,
+    "claims": 16,
+    "parent_application_claims": 30,
+    "declared_textual_figure_statements": 30,
+    "declared_textual_figure_panels": 30,
+    "tagged_html_tables": 0,
+    "mathml_objects": 2,
+    "source_declared_architecture_items": 10,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 10,
+    "replayed_ledger_items": 10,
+    "official_continuation_pdf_pages": 40,
+    "official_continuation_drawing_sheets": 27,
+    "parent_application_pdf_pages": 40,
+    "parent_application_drawing_sheets": 27,
+    "parent_application_claim_count_differences": 1,
+    "source_label_discrepancies": 0
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "reason": "The continuation publishes folded-module, light-blocking membrane, nanostructure, camera-placement and device architecture. Its seven BS/RS values are coating microstructure sizes; no ordered radii, spacings, materials, conics, asphere coefficients, stop or required F-number metadata is published.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  },
+  "semantic_replay_sha256": "d98edb65ef802d540bfcec962f3d8bc9446b09755d30685ddb677f1eb61c3682",
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/generic-residual-before-113.json",
+      "bytes": 69807,
+      "sha256": "22a26ac2209fe6e840ec448a99325e48d2a82ef5c68913f88fd00e525139bfac"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/generic-residual-after-1.json",
+      "bytes": 69238,
+      "sha256": "8017562b071428c164ab90d1e6f5e55c984ca0137d01ec58c41174bd7b6ecd2f"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/generic-residual-after-2.json",
+      "bytes": 69238,
+      "sha256": "8017562b071428c164ab90d1e6f5e55c984ca0137d01ec58c41174bd7b6ecd2f"
+    }
+  },
+  "replay_state": {
+    "cohort_roots": 619,
+    "roots_with_results": 619,
+    "missing_roots": 0,
+    "corrupt_results": 0,
+    "result_set_sha256": "40fb3df65d25a15fb24a7a474d8cc3964111ee5c1209ed5873b417b94d5dcecc",
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 148,
+      "parser_review_required": 302,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 144
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 561,
+      "parser_review_required": 1396,
+      "terminal": 1216
+    },
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    }
+  },
+  "artifacts": {
+    "denominator": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/family-89620713-denominator.json",
+      "bytes": 17183,
+      "sha256": "a5f5701b8f821073954d066a2b74e28c3f90072f62c5ec888af9767f5dae2d16"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/family-89620713-raster-audit.json",
+      "bytes": 27652,
+      "sha256": "78c137c6cb2e7c67ae41e68f4ff402e5d07c64957dcc2167c873d104bade27b6"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/family-89620713-replay-determinism.json",
+      "bytes": 1541,
+      "sha256": "6424104c1d0ff2cba3f7e46ec5e579e7ecc81ab397e1254a49ad8cf88b8885ec"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/queue-after.json",
+      "bytes": 1659,
+      "sha256": "44a3c53e06af67d8e655ae45fa36d66822d438d7df7fdd8826be5efde735873d"
+    },
+    "source_audit": {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/family-89620713-source-audit.md",
+      "bytes": 7241,
+      "sha256": "a7ebaa118db43e4e283612970a7b5995632056c0871c24d4e5294614dbd5cb64"
+    }
+  },
+  "next_exact_group": {
+    "family_id": "95155833",
+    "root_ids": [
+      "US-12671891"
+    ],
+    "publication_ids": [
+      "US-12671891-B2"
+    ]
+  },
+  "saturation_complete": false
+}

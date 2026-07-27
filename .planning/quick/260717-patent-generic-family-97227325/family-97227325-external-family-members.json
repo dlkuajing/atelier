@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "family_id": "97227325",
+  "current_frozen_cohort_roots": [
+    "US-20260072233"
+  ],
+  "discovery_evidence": {
+    "google_us_page": "https://patents.google.com/patent/US20260072233A1/en",
+    "google_tw_page": "https://patents.google.com/patent/TWI886040B/en",
+    "observed_on": "2026-07-17",
+    "scope": "exact-title/application family cross-check only; each queued publication requires its own official-source verification"
+  },
+  "priority_document": {
+    "application_id": "TW113133800A",
+    "filing_date": "2024-09-06",
+    "official_us_source_marker": "Taiwan Application Serial Number 113133800, filed Sep. 6, 2024"
+  },
+  "external_family_members": [
+    {
+      "publication_id": "TWI886040B",
+      "application_id": "TW113133800A",
+      "filing_date": "2024-09-06",
+      "relationship": "priority application representative publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "TW202611585A",
+      "application_id": "TW113133800A",
+      "relationship": "other version listed on the exact Taiwan application page",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN121634443A",
+      "application_id": "CN202411642942.XA",
+      "filing_date": "2024-11-18",
+      "relationship": "Google exact-family application table",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN223551938U",
+      "application_id": "CN202422809150.9U",
+      "filing_date": "2024-11-18",
+      "relationship": "Google exact-family application table",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "DE202025105273U1",
+      "application_id": "DE202025105273.3U",
+      "filing_date": "2025-09-04",
+      "relationship": "Google exact-family application table",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "GB2701229A",
+      "application_id": "GB2514688.7A",
+      "filing_date": "2025-09-05",
+      "relationship": "Google exact-family application table",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ]
+}

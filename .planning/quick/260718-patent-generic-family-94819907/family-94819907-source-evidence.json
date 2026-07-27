@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "family_id": "94819907",
+  "application_number": "19/549670",
+  "root_ids": [
+    "US-20260189780"
+  ],
+  "publication_ids": [
+    "US-20260189780-A1"
+  ],
+  "title": "METHOD FOR CAPTURING IMAGE INCLUDING ANIMAL, AND ELECTRONIC DEVICE THEREFOR",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f09d347b82b7f263/US-20260189780-A1.html",
+    "bytes": 122259,
+    "sha256": "f09d347b82b7f26364e8230bef44350cfd2e62d202468e7b85d6183b94ed87b2"
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/101064164dcfe94c/US-20260189780-A1.pdf",
+    "bytes": 2039812,
+    "sha256": "101064164dcfe94c4608bd837140594176a54a2a46a757b6da64b3b640822181",
+    "publication_id": "US-20260189780-A1"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 7,
+    "description_numbered_paragraphs": 127,
+    "total_numbered_paragraphs": 134,
+    "claims": 20,
+    "declared_textual_figures": 8,
+    "located_raster_figures": 8,
+    "tagged_html_tables": 0,
+    "optical_prescription_tables": 0,
+    "mathml_objects": 1,
+    "html_image_tags": 0,
+    "source_disclosed_items": 3,
+    "electronic_device_architectures": 1,
+    "operating_methods": 1,
+    "computer_readable_medium_wrappers": 1,
+    "ordered_optical_surface_rows": 0,
+    "confirmed_no_prescription_items": 3,
+    "replayed_ledger_items": 3,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 25,
+    "retained_page_rasters": 25,
+    "retained_drawing_sheets": 8,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "semantic_replay_sha256": "1e26b36d83a82a3d52990ebf7c6ed8286ea2640ab7ae333cef0a8b7d516e46e4",
+  "census": {
+    "before": {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/generic-residual-before-94.json",
+      "bytes": 58650,
+      "sha256": "12eea380eb5c4838dd7412afe25697a1369f295d3c749c8e34c21aff6f21e797",
+      "affected_roots": 94,
+      "affected_items": 94
+    },
+    "after_1": {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/generic-residual-after-1.json",
+      "bytes": 58012,
+      "sha256": "29d277277c5cab495cb3270b4b230ff15128c92088ac69e72a96f32b9fe423ba",
+      "affected_roots": 93,
+      "affected_items": 93
+    },
+    "after_2": {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/generic-residual-after-2.json",
+      "bytes": 58012,
+      "sha256": "29d277277c5cab495cb3270b4b230ff15128c92088ac69e72a96f32b9fe423ba",
+      "affected_roots": 93,
+      "affected_items": 93
+    }
+  },
+  "replay_attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260189780/attempt-0002/result.json",
+      "bytes": 5131,
+      "sha256": "02d8b9a123d15b133df7ba99f08ebdcb16dae3b737c13a2d1e595e60eba358e1"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260189780/attempt-0003/result.json",
+      "bytes": 5131,
+      "sha256": "f31226a31085858d99e0bf43b8ebfa9fd5473d6a74f68cfb32aa79752b3fde2d"
+    }
+  ],
+  "ledger": {
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    },
+    "result_set_sha256": "42f5ac5e6fdda75c04fcd1489a927c8ce46359d7e08aa252c2138d0470934768",
+    "strict_roots_with_results": 619,
+    "strict_roots_total": 619,
+    "missing": 0,
+    "corrupt": 0
+  },
+  "artifacts": [
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/family-94819907-denominator.json",
+      "bytes": 4616,
+      "sha256": "a01cb008df17c68c96e3d43ae2bd0a517ce8ef1595401d6396c7a965a66fe934"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/family-94819907-raster-audit.json",
+      "bytes": 7869,
+      "sha256": "e85ef4026f0df53566b8b47d545d8fc4c8337a2a8f6c5490cb9ddb985735f2a4"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/family-94819907-replay-determinism.json",
+      "bytes": 1781,
+      "sha256": "2549660d69d880e3cf5b1a2bd46f14b0d41d0f1cf1de7a0a6f09fbdecd0c3a76"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/family-94819907-source-audit.md",
+      "bytes": 3237,
+      "sha256": "0d3c26c8c2a56080f6dfde68f75f18cfd20f83fbf780a57157e98612bfbd6d35"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/family-94819907-source-availability.json",
+      "bytes": 2035,
+      "sha256": "59abba8f5e00ade07daf128f320f3187548fa4d3d0166f61592c71020f22137d"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/family-94819907-source-facts.json",
+      "bytes": 7601,
+      "sha256": "963e6fdb6e6195921363ecc5a894d92771eec577ae6c81ba1ea7f43a77c0265a"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/queue-after.json",
+      "bytes": 1762,
+      "sha256": "7b521f73617639e642dbb41710c0763800ccb368d8c3faa804455e228907844c"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/contact-sheet-pages-01-25.png",
+      "bytes": 3096996,
+      "sha256": "a19aa7c880531056e7ad202deb28807206ded7fd300c46b05db1624976b0cdaa"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-02.png",
+      "bytes": 167877,
+      "sha256": "7281e0fe7dc9e9ccd16ae1a7241fc6e603a48d5c7e5fe3f4e54f889d4bdfa8a6"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-03.png",
+      "bytes": 65738,
+      "sha256": "06479b03fa7a264569c368765d727db61a91a18356408ca52634e84d19e5a73e"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-04.png",
+      "bytes": 50532,
+      "sha256": "1585605812ea3d4d57315834aa7f81753741e592dc39bd167b76662c42bf30f1"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-05.png",
+      "bytes": 91952,
+      "sha256": "ad0bee3bbaa02559d4798b4af57558c514eed8ea1c8a75ab977f6f17487340cb"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-06.png",
+      "bytes": 60987,
+      "sha256": "a8e851815a41ce7bbe57ed36a7c0d420c58c580317422036c7a3b24e04a73615"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-07.png",
+      "bytes": 110090,
+      "sha256": "eed526a9b6f4d20ddde5829d6ab56cf4439123e83f9528c1f5d8313f09178c2d"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-08.png",
+      "bytes": 109367,
+      "sha256": "ca475996b84dc6bb78c0abc327cb705fef108b58436b00813c0324a5037d682b"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/pdf-review/page-09.png",
+      "bytes": 77683,
+      "sha256": "e020887d15514abff6d2208410b4061c9d93979b3c13673610222a511784856b"
+    }
+  ],
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  },
+  "next_exact_group": {
+    "family_id": "44259669",
+    "root_ids": [
+      "US-8504328"
+    ],
+    "publication_ids": [
+      "US-8504328-B2"
+    ],
+    "application_number": "12/784521",
+    "title": "Designing lenses using stress birefringence performance criterion",
+    "applicant": "Bietry; Joseph R.",
+    "assignee": "Eastman Kodak Company",
+    "layout_signature": "47e7cc4e752d976ce84eb570f2ad8f451a7ead80846f9db627cd1be1f6a5aa35",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 4,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/3ffa3ae9c30d2e8e/US-8504328-B2.html",
+      "sha256": "3ffa3ae9c30d2e8e2e3a6a39a2242a3a756bf6b56efe73a56598292bc4f37b26"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

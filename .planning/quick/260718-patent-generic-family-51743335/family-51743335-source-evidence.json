@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "family_id": "51743335",
+  "application_number": "14/520589",
+  "root_ids": [
+    "US-9360657"
+  ],
+  "publication_ids": [
+    "US-9360657-B2"
+  ],
+  "title": "Imaging lens module",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/b74d7e8a6f9f2982/US-9360657-B2.html",
+    "bytes": 38717,
+    "sha256": "b74d7e8a6f9f29825e44ec488e48a164e0807fbf0c2070e4f6529a06b50c2491"
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/f47484c8a3548f6f/US-9360657-B2.pdf",
+    "bytes": 655673,
+    "sha256": "f47484c8a3548f6f6f0d7cb524b8b73d744a5019698200d3f3b180ffb9e2d9ad",
+    "page_count": 21,
+    "drawing_sheets": 16,
+    "raster_set_sha256": "1876cabda170446490b897f726323f5891e1616b0515247b7525ceb51685b7aa"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_out_of_cohort_publications": 1,
+    "background_summary_numbered_paragraphs": 9,
+    "description_numbered_paragraphs": 41,
+    "total_numbered_paragraphs": 50,
+    "claims": 7,
+    "declared_textual_figures": 16,
+    "located_raster_figures": 16,
+    "tagged_html_tables": 0,
+    "image_only_tables": 7,
+    "mathml_objects": 1,
+    "source_declared_optical_prescriptions": 3,
+    "surface_prescription_tables": 3,
+    "asphere_coefficient_tables": 3,
+    "system_comparison_tables": 1,
+    "ordered_surface_rows": 32,
+    "published_aspheric_surfaces": 24,
+    "published_asphere_values": 192,
+    "published_system_parameter_values": 48,
+    "metadata_unpublished_items": 3,
+    "replayed_ledger_items": 3,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 21,
+    "retained_page_rasters": 21,
+    "retained_drawing_sheets": 16,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_image_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "semantic_replay_sha256": "7c8d31db94e42b39371ef25ec2bb8c649905ee214f0099f46ba83a1cfb8ff199",
+  "census": {
+    "before": {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/generic-residual-before-99.json",
+      "bytes": 61722,
+      "sha256": "020ba75d1f464c1dcbef80bffab67914776f156f9d911518d39818f502ed7d97",
+      "affected_roots": 99,
+      "affected_items": 99
+    },
+    "after_1": {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/generic-residual-after-1.json",
+      "bytes": 61103,
+      "sha256": "e922d2d8b004d070b57fb1b22b44f3fbd689d324d48b75dee429eba91661987f",
+      "affected_roots": 98,
+      "affected_items": 98
+    },
+    "after_2": {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/generic-residual-after-2.json",
+      "bytes": 61103,
+      "sha256": "e922d2d8b004d070b57fb1b22b44f3fbd689d324d48b75dee429eba91661987f",
+      "affected_roots": 98,
+      "affected_items": 98
+    }
+  },
+  "replay_attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-9360657/attempt-0002/result.json",
+      "bytes": 3628,
+      "sha256": "b50a92f89ccce8fa37954f5bf6e8d52b3225c6e604e25cbcdd56b1f8478092f9"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-9360657/attempt-0003/result.json",
+      "bytes": 3628,
+      "sha256": "e3b39d063df76749d6a50c0a6eff76b3178a2ec48a902cc7df79ab99652a9ba6"
+    }
+  ],
+  "ledger": {
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    },
+    "result_set_sha256": "ea8fc0b5206bd7667a0b52b784cddde69f22b59d453f2cfd984e0fe6fca1e840",
+    "strict_roots_with_results": 619,
+    "strict_roots_total": 619,
+    "missing": 0,
+    "corrupt": 0
+  },
+  "artifacts": [
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/family-51743335-denominator.json",
+      "bytes": 5962,
+      "sha256": "ba9e72996889690e847299ec77196e435967b56354289c626c90b7187e0a45c6"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/family-51743335-source-availability.json",
+      "bytes": 3509,
+      "sha256": "9698038ad59a284a5debf071b70398f509dbfbf05b53e7e33f36ec4e9cf2a647"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/family-51743335-raster-audit.json",
+      "bytes": 5163,
+      "sha256": "7a80e90fac30d6a76965cfe789488d3a0ad3168d046f3c12926d9b8b562657af"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/family-51743335-ocr-audit.json",
+      "bytes": 7202,
+      "sha256": "2b601c0fac82fb1646f82c2821c3fb2a01df760d5d0a95c3ab58a9d38f3feb54"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/family-51743335-replay-determinism.json",
+      "bytes": 1561,
+      "sha256": "0f45cc7c6046fa3e299f92173f7bdea619a1f4fdceed19911ba26d2f3f2c8a55"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/queue-after.json",
+      "bytes": 1526,
+      "sha256": "17d2f43dbb4c24aead587ffd3a67c8ff3caec609ca7c56361ee75b44a1143c5b"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/family-51743335-source-audit.md",
+      "bytes": 5613,
+      "sha256": "bac324c4decb039fdf18a92d171cb6e51d9a2c433473e000a402669d0e1fd6d3"
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/us9360657-official-pages-contact.png",
+      "bytes": 1391673,
+      "sha256": "b7d82209d6fe17d408a327f95b2852c77570a7673c0b00342b17abe532c02cf9"
+    }
+  ],
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  },
+  "next_exact_group": {
+    "family_id": "89620688",
+    "root_ids": [
+      "US-20240272407"
+    ],
+    "publication_ids": [
+      "US-20240272407-A1"
+    ]
+  },
+  "saturation_complete": false
+}

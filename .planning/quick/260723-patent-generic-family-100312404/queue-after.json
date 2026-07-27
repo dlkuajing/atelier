@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-100312404/generic-residual-after-1.json",
+  "affected_roots": 15,
+  "affected_items": 15,
+  "result_set_sha256": "34c3f3c7f9af6a695e8b406583ae5637b529ffac0d0760fb3b9332c7a11dd69c",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "d5d1cbe7beb72b13b59e94114c208a7174dc35fed082f0d5e8ccbe4b54256492",
+    "layout_signature_count": 1,
+    "family_id": "81112283",
+    "root_ids": [
+      "US-12625341"
+    ],
+    "publication_ids": [
+      "US-12625341-B2"
+    ],
+    "application_numbers": [
+      "17/745922"
+    ],
+    "title": "Light blocking sheet, imaging lens assembly and electronic device",
+    "applicant_and_assignee": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/7c3fe3dfbff42ee3/US-12625341-B2.html",
+      "sha256": "7c3fe3dfbff42ee3433b0ca0df17b878b8a1918866cfa370a47954e42a75a29d",
+      "bytes": 94450
+    },
+    "marker_counts": {
+      "effective_focal_length": 30,
+      "embodiment_anchor": 88,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 56,
+      "half_field": 0
+    },
+    "table_count": 7
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

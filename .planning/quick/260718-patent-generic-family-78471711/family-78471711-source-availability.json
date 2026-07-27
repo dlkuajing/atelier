@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "family_id": "78471711",
+  "application_number": "17/405071",
+  "primary_publication_id": "US-12169351-B2",
+  "prior_publication_id": "US-20220100057-A1",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/86c15343d390d69d/US-12169351-B2.html",
+    "bytes": 82117,
+    "characters": 82103,
+    "sha256": "86c15343d390d69dbb9fef7209d6b0852ea0b89ec4d1eac71a67e06d44e2b5f4",
+    "normalized_characters": 58575,
+    "normalized_sha256": "66b6a725ff77dad6684caf9ac4170ec0309392c836d7ce831d996e71448361a9"
+  },
+  "endpoint_checks": [
+    {
+      "authority": "USPTO Patent Public Search image service",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12169351",
+      "publication_id": "US-12169351-B2",
+      "role": "classification_primary",
+      "request_authentication": "anonymous",
+      "http_status": 200,
+      "content_type": "application/pdf",
+      "path": "data/patent-lake/uspto-ppubs-pdf/d50dff1009a33c0a/US-12169351-B2.pdf",
+      "bytes": 2244167,
+      "container_sha256": "d50dff1009a33c0a6a093145b36cbf82c0cd752db58acb19c33eec3f4e780ef7",
+      "page_count": 36,
+      "single_raster_pages": 36,
+      "text_layer_characters": 0,
+      "decoded_raster_set_sha256": "4fd9f14d0794a5bb9df8ba2c72e96a5870913daccc13c8915ac34921c4648a7b",
+      "retained": true
+    },
+    {
+      "authority": "USPTO Patent Public Search image service",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20220100057",
+      "publication_id": "US-20220100057-A1",
+      "role": "lineage_only",
+      "request_authentication": "anonymous",
+      "http_status": 200,
+      "content_type": "application/pdf",
+      "path": "data/patent-lake/uspto-ppubs-pdf/209fe0fc098b23fb/US-20220100057-A1.pdf",
+      "bytes": 2220649,
+      "container_sha256": "209fe0fc098b23fb3d0ae09c8e772f0cf8bfbf6d11c47ee808ed7a7a4fe98c6b",
+      "page_count": 35,
+      "single_raster_pages": 35,
+      "text_layer_characters": 0,
+      "decoded_raster_set_sha256": "69425fbfc61efcc5adc5f4e246282d458f80ce2c5eea49cf1f36da95d98534e2",
+      "retained": true
+    }
+  ],
+  "publication_reconciliation": {
+    "classification_source_count": 1,
+    "lineage_source_count": 1,
+    "same_position_equal_pages": 0,
+    "shared_rasters_anywhere": 0,
+    "prior_publication_used_for_numeric_classification": false,
+    "family_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO B2 HTML plus retained official B2 36-page decoded-raster set",
+    "prior_publication_role": "bibliographic and lineage confirmation only",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "mechanical_dimensions_promoted_to_prescription": false,
+    "label_discrepancy_repaired_by_inference": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

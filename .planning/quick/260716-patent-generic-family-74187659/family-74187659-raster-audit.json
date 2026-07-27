@@ -1,0 +1,790 @@
+{
+  "application_number": "16/883126",
+  "declared_figures": [
+    "FIG. 1",
+    "FIG. 2",
+    "FIG. 3",
+    "FIG. 4A",
+    "FIG. 4B",
+    "FIG. 5A",
+    "FIG. 5B",
+    "FIG. 6A",
+    "FIG. 6B",
+    "FIG. 7"
+  ],
+  "drawing_sheet_denominator": 7,
+  "family_id": "74187659",
+  "publications": {
+    "US-11719909-B2": {
+      "contact_sheets": [
+        {
+          "byte_size": 604496,
+          "file_sha256": "07c013c1be6e1cc7eb6a0deac271b8544438db80ecfb9bb8b027bd94c078e955",
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-contact-all-13.png"
+        }
+      ],
+      "decoded_raster_set_sha256": "b780c765204249baf1e3e8be8463b12507b96cf0dea5e22eaae154db076d96c7",
+      "drawing_page_numbers_1_based": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "drawing_sheet_denominator": 7,
+      "figure_denominator": 10,
+      "pdf_denominator_pages": 13,
+      "pdf_wrappers": [
+        {
+          "byte_size": 644665,
+          "decoded_image_count_by_page": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "decoded_page_dtype_by_page": [
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8"
+          ],
+          "decoded_page_raster_sha256": [
+            "6ce17af05bcb10833f82327e7fcc15993652daad569928ea65a7a5fb43ec7d40",
+            "68719a082f41eb68aaaef42690f7b931ad73cc25845c247e8e66f1665d23287b",
+            "42710a6e86ccd32178768109e1122284481136c588df4bf1a1cdc9bac7eb28e1",
+            "055d03af44b5645747398e2a8909828d0d8daa9eb5ad450435c005ddfaafd318",
+            "d228c17cc75a9ee07221c983939fe84a2c52227b946d4973a8b4b9a76c7f1fbc",
+            "07969a02deff4c2b837b465d7218e1ef992b4f0e4b34578efbb1a90b0070ea28",
+            "71d564b5a924d610faf1434749a7798fb097923815b32960fb94cf5f6874354d",
+            "f9d78791e50b3bb8f6aeb5b913f8e7727f6c58d566d3b334fe8dcf33fc4f7206",
+            "8f4495e97a5fefd284b21f2d42852f2be99f5455aa01aa103bfea012398828fb",
+            "58b3d6cac78c6ec13eb3f2901749a8ca0a066f161703a4c53d5adc7640b1aa19",
+            "c556278d8db31888f2c024eaed389cb3a7b00b35bde1568b038f5195878e140d",
+            "149e068f56da88775fa69646af80ee8b2a510f9380fbdd804aa96022a48549c5",
+            "352d79924a39529657d9af653e0875c8330ff05adf369f7d89a512f648f1a8cb"
+          ],
+          "decoded_page_shape_by_page": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "decoded_raster_set_sha256": "b780c765204249baf1e3e8be8463b12507b96cf0dea5e22eaae154db076d96c7",
+          "file_sha256": "182e6397d3f59d138cbfa9a55c85013313c5e190d01d494e79b9083e069d7a60",
+          "page_count": 13,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-live-1.pdf",
+          "text_layer_character_count": 0
+        },
+        {
+          "byte_size": 644665,
+          "decoded_image_count_by_page": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "decoded_page_dtype_by_page": [
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8"
+          ],
+          "decoded_page_raster_sha256": [
+            "6ce17af05bcb10833f82327e7fcc15993652daad569928ea65a7a5fb43ec7d40",
+            "68719a082f41eb68aaaef42690f7b931ad73cc25845c247e8e66f1665d23287b",
+            "42710a6e86ccd32178768109e1122284481136c588df4bf1a1cdc9bac7eb28e1",
+            "055d03af44b5645747398e2a8909828d0d8daa9eb5ad450435c005ddfaafd318",
+            "d228c17cc75a9ee07221c983939fe84a2c52227b946d4973a8b4b9a76c7f1fbc",
+            "07969a02deff4c2b837b465d7218e1ef992b4f0e4b34578efbb1a90b0070ea28",
+            "71d564b5a924d610faf1434749a7798fb097923815b32960fb94cf5f6874354d",
+            "f9d78791e50b3bb8f6aeb5b913f8e7727f6c58d566d3b334fe8dcf33fc4f7206",
+            "8f4495e97a5fefd284b21f2d42852f2be99f5455aa01aa103bfea012398828fb",
+            "58b3d6cac78c6ec13eb3f2901749a8ca0a066f161703a4c53d5adc7640b1aa19",
+            "c556278d8db31888f2c024eaed389cb3a7b00b35bde1568b038f5195878e140d",
+            "149e068f56da88775fa69646af80ee8b2a510f9380fbdd804aa96022a48549c5",
+            "352d79924a39529657d9af653e0875c8330ff05adf369f7d89a512f648f1a8cb"
+          ],
+          "decoded_page_shape_by_page": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "decoded_raster_set_sha256": "b780c765204249baf1e3e8be8463b12507b96cf0dea5e22eaae154db076d96c7",
+          "file_sha256": "df0da9618d73ebc16ebf761d3365d7b4cad1018747e9b789098adbc1a4298364",
+          "page_count": 13,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-live-2.pdf",
+          "text_layer_character_count": 0
+        },
+        {
+          "byte_size": 645025,
+          "decoded_image_count_by_page": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "decoded_page_dtype_by_page": [
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8"
+          ],
+          "decoded_page_raster_sha256": [
+            "6ce17af05bcb10833f82327e7fcc15993652daad569928ea65a7a5fb43ec7d40",
+            "68719a082f41eb68aaaef42690f7b931ad73cc25845c247e8e66f1665d23287b",
+            "42710a6e86ccd32178768109e1122284481136c588df4bf1a1cdc9bac7eb28e1",
+            "055d03af44b5645747398e2a8909828d0d8daa9eb5ad450435c005ddfaafd318",
+            "d228c17cc75a9ee07221c983939fe84a2c52227b946d4973a8b4b9a76c7f1fbc",
+            "07969a02deff4c2b837b465d7218e1ef992b4f0e4b34578efbb1a90b0070ea28",
+            "71d564b5a924d610faf1434749a7798fb097923815b32960fb94cf5f6874354d",
+            "f9d78791e50b3bb8f6aeb5b913f8e7727f6c58d566d3b334fe8dcf33fc4f7206",
+            "8f4495e97a5fefd284b21f2d42852f2be99f5455aa01aa103bfea012398828fb",
+            "58b3d6cac78c6ec13eb3f2901749a8ca0a066f161703a4c53d5adc7640b1aa19",
+            "c556278d8db31888f2c024eaed389cb3a7b00b35bde1568b038f5195878e140d",
+            "149e068f56da88775fa69646af80ee8b2a510f9380fbdd804aa96022a48549c5",
+            "352d79924a39529657d9af653e0875c8330ff05adf369f7d89a512f648f1a8cb"
+          ],
+          "decoded_page_shape_by_page": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "decoded_raster_set_sha256": "b780c765204249baf1e3e8be8463b12507b96cf0dea5e22eaae154db076d96c7",
+          "file_sha256": "9034aaac2376b69a232a0312f2297aed7239a3a279029cb42f08b695937931dd",
+          "page_count": 13,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-google.pdf",
+          "text_layer_character_count": 0
+        }
+      ],
+      "prescription_review_page_numbers_1_based": [
+        5,
+        6,
+        7
+      ],
+      "retained_full_resolution_pages": [
+        {
+          "byte_size": 60239,
+          "canonical_page_raster_sha256": "d228c17cc75a9ee07221c983939fe84a2c52227b946d4973a8b4b9a76c7f1fbc",
+          "file_sha256": "89345d40382726f3240e7d458ab7df5bb6e053ebc499ead508b49e792709d741",
+          "page_number": 5,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-page-5.png"
+        },
+        {
+          "byte_size": 60716,
+          "canonical_page_raster_sha256": "07969a02deff4c2b837b465d7218e1ef992b4f0e4b34578efbb1a90b0070ea28",
+          "file_sha256": "0041a8015dde643bf931fb65cdf65882f257eab9d92c642b7912e0e39f4c6159",
+          "page_number": 6,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-page-6.png"
+        },
+        {
+          "byte_size": 61528,
+          "canonical_page_raster_sha256": "71d564b5a924d610faf1434749a7798fb097923815b32960fb94cf5f6874354d",
+          "file_sha256": "47015912deaeb5859b5eeb7dd89f9fbfc8ae7cbb9695eb59ea1a1d1d48f22d0f",
+          "page_number": 7,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-page-7.png"
+        },
+        {
+          "byte_size": 44636,
+          "canonical_page_raster_sha256": "f9d78791e50b3bb8f6aeb5b913f8e7727f6c58d566d3b334fe8dcf33fc4f7206",
+          "file_sha256": "ed0d76b6a52b3e16d2b6bf3b924fd40aaf9f2c57d92b638145b329a7565f05c8",
+          "page_number": 8,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-11719909-B2-page-8.png"
+        }
+      ],
+      "system_metadata_review_page_numbers_1_based": [
+        8
+      ],
+      "wrapper_decoded_rasters_all_equal": true
+    },
+    "US-20210026108-A1": {
+      "contact_sheets": [
+        {
+          "byte_size": 625205,
+          "file_sha256": "2bbb838b48b2e6ecd3f01beeadbdd9cb571cb08701fd268f4ef7dc904308294b",
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-contact-all-13.png"
+        }
+      ],
+      "decoded_raster_set_sha256": "cea2f9aac47720284dcbcec39ffaf1855f62b58654caacd4c0dee9e711cb8375",
+      "drawing_page_numbers_1_based": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "drawing_sheet_denominator": 7,
+      "figure_denominator": 10,
+      "pdf_denominator_pages": 13,
+      "pdf_wrappers": [
+        {
+          "byte_size": 641302,
+          "decoded_image_count_by_page": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "decoded_page_dtype_by_page": [
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8"
+          ],
+          "decoded_page_raster_sha256": [
+            "667562164dc4ad02135f661fc336d574ffd2b8e2362465ecaa06acd72b7bd968",
+            "085e01c20df7f66bdc7f90b1d7935c2c4505511787cc83385d2d300b267260a3",
+            "02f2c8c7e283316db6f2324345fadf4440f824ded7815e867fbea280b2e5c390",
+            "d20d9ff892f922c5ad176338e64c05d02a966b30f0bf6e359b9db89c4e4c1add",
+            "95742709b43e371b5f6c8bae4765cf46bea3609c5046d15de40742113c189c9b",
+            "d4e2eb07042851f8025ea6037d2b654a1f2941c248ad64dfba28683b4448abda",
+            "bd904a31f239fb583b2183d901dbeb37a9a30769938a548b728a4f11d9da51d9",
+            "c2cf657990d7773f275578e988a59797a43803bcb086ac335eb0ee1fc805b23c",
+            "71cfb7959d7a019816dc2b363a8cfcaf681895eaaa6fc7316fc1d20cbe9745ca",
+            "19fee2dd2903b2b4cc1c5a5bee9ea801846dd46fcea34a82578dbc86b42a674d",
+            "f8dac69f7cfa9c1bce6931d56739b4757ed3ea81e72572e86636973453536766",
+            "ee681be1a5f9c92b5728bff9dececa0eecf9fd5c9050a8ea3bd452006409b4b7",
+            "c2acca3b6f1d89bf8f79a8f7925d6ce5c65473351b7ca8f000ee8c627b10c19c"
+          ],
+          "decoded_page_shape_by_page": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "decoded_raster_set_sha256": "cea2f9aac47720284dcbcec39ffaf1855f62b58654caacd4c0dee9e711cb8375",
+          "file_sha256": "2ef770a82c70d625189f1fc27a68cf6f4fb50e9ce1da7a5e37bbc91f01629b63",
+          "page_count": 13,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-live-1.pdf",
+          "text_layer_character_count": 0
+        },
+        {
+          "byte_size": 641302,
+          "decoded_image_count_by_page": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "decoded_page_dtype_by_page": [
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8"
+          ],
+          "decoded_page_raster_sha256": [
+            "667562164dc4ad02135f661fc336d574ffd2b8e2362465ecaa06acd72b7bd968",
+            "085e01c20df7f66bdc7f90b1d7935c2c4505511787cc83385d2d300b267260a3",
+            "02f2c8c7e283316db6f2324345fadf4440f824ded7815e867fbea280b2e5c390",
+            "d20d9ff892f922c5ad176338e64c05d02a966b30f0bf6e359b9db89c4e4c1add",
+            "95742709b43e371b5f6c8bae4765cf46bea3609c5046d15de40742113c189c9b",
+            "d4e2eb07042851f8025ea6037d2b654a1f2941c248ad64dfba28683b4448abda",
+            "bd904a31f239fb583b2183d901dbeb37a9a30769938a548b728a4f11d9da51d9",
+            "c2cf657990d7773f275578e988a59797a43803bcb086ac335eb0ee1fc805b23c",
+            "71cfb7959d7a019816dc2b363a8cfcaf681895eaaa6fc7316fc1d20cbe9745ca",
+            "19fee2dd2903b2b4cc1c5a5bee9ea801846dd46fcea34a82578dbc86b42a674d",
+            "f8dac69f7cfa9c1bce6931d56739b4757ed3ea81e72572e86636973453536766",
+            "ee681be1a5f9c92b5728bff9dececa0eecf9fd5c9050a8ea3bd452006409b4b7",
+            "c2acca3b6f1d89bf8f79a8f7925d6ce5c65473351b7ca8f000ee8c627b10c19c"
+          ],
+          "decoded_page_shape_by_page": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "decoded_raster_set_sha256": "cea2f9aac47720284dcbcec39ffaf1855f62b58654caacd4c0dee9e711cb8375",
+          "file_sha256": "801e86480db1cd374020673068b12b1f2ced2f8db6055f2fd4f5820e6228f9f0",
+          "page_count": 13,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-live-2.pdf",
+          "text_layer_character_count": 0
+        },
+        {
+          "byte_size": 967293,
+          "decoded_image_count_by_page": [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          "decoded_page_dtype_by_page": [
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8",
+            "uint8"
+          ],
+          "decoded_page_raster_sha256": [
+            "667562164dc4ad02135f661fc336d574ffd2b8e2362465ecaa06acd72b7bd968",
+            "085e01c20df7f66bdc7f90b1d7935c2c4505511787cc83385d2d300b267260a3",
+            "02f2c8c7e283316db6f2324345fadf4440f824ded7815e867fbea280b2e5c390",
+            "d20d9ff892f922c5ad176338e64c05d02a966b30f0bf6e359b9db89c4e4c1add",
+            "95742709b43e371b5f6c8bae4765cf46bea3609c5046d15de40742113c189c9b",
+            "d4e2eb07042851f8025ea6037d2b654a1f2941c248ad64dfba28683b4448abda",
+            "bd904a31f239fb583b2183d901dbeb37a9a30769938a548b728a4f11d9da51d9",
+            "c2cf657990d7773f275578e988a59797a43803bcb086ac335eb0ee1fc805b23c",
+            "71cfb7959d7a019816dc2b363a8cfcaf681895eaaa6fc7316fc1d20cbe9745ca",
+            "19fee2dd2903b2b4cc1c5a5bee9ea801846dd46fcea34a82578dbc86b42a674d",
+            "f8dac69f7cfa9c1bce6931d56739b4757ed3ea81e72572e86636973453536766",
+            "ee681be1a5f9c92b5728bff9dececa0eecf9fd5c9050a8ea3bd452006409b4b7",
+            "c2acca3b6f1d89bf8f79a8f7925d6ce5c65473351b7ca8f000ee8c627b10c19c"
+          ],
+          "decoded_page_shape_by_page": [
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ],
+            [
+              3300,
+              2560
+            ]
+          ],
+          "decoded_raster_set_sha256": "cea2f9aac47720284dcbcec39ffaf1855f62b58654caacd4c0dee9e711cb8375",
+          "file_sha256": "3452382a5d324934ba4470064ee5813cc4064015c9964b6386d11c52d0b03e58",
+          "page_count": 13,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-google.pdf",
+          "text_layer_character_count": 36396
+        }
+      ],
+      "prescription_review_page_numbers_1_based": [
+        5,
+        6,
+        7
+      ],
+      "retained_full_resolution_pages": [
+        {
+          "byte_size": 59956,
+          "canonical_page_raster_sha256": "95742709b43e371b5f6c8bae4765cf46bea3609c5046d15de40742113c189c9b",
+          "file_sha256": "bda7e38bb2de614f1bd1136e36f5d37cff02837b101ed7d3825fc368e0b728a5",
+          "page_number": 5,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-page-5.png"
+        },
+        {
+          "byte_size": 60428,
+          "canonical_page_raster_sha256": "d4e2eb07042851f8025ea6037d2b654a1f2941c248ad64dfba28683b4448abda",
+          "file_sha256": "6cc13af699120fabe0c77c7a792c11c94bff3b199c44ee756d584c598b588dc9",
+          "page_number": 6,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-page-6.png"
+        },
+        {
+          "byte_size": 61245,
+          "canonical_page_raster_sha256": "bd904a31f239fb583b2183d901dbeb37a9a30769938a548b728a4f11d9da51d9",
+          "file_sha256": "b65719bf7d6106d2cdf55edb4b10d1210ed2d324e5d4d5a43bcdad62c741bc02",
+          "page_number": 7,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-page-7.png"
+        },
+        {
+          "byte_size": 44356,
+          "canonical_page_raster_sha256": "c2cf657990d7773f275578e988a59797a43803bcb086ac335eb0ee1fc805b23c",
+          "file_sha256": "5ff8677b0a2bc1663a2830d12c0f86b2282f2fc17f3c3697f59e9f5821f28747",
+          "page_number": 8,
+          "path": ".planning/quick/260716-patent-generic-family-74187659/source-review/US-20210026108-A1-page-8.png"
+        }
+      ],
+      "system_metadata_review_page_numbers_1_based": [
+        8
+      ],
+      "wrapper_decoded_rasters_all_equal": true
+    }
+  },
+  "raster_hash_algorithm": "sha256(decoded-page-raster-v1 + NUL + ASCII shape + NUL + ASCII dtype + NUL + decoded pixel bytes)",
+  "raster_set_hash_algorithm": "sha256(canonical compact JSON array of ordered decoded-page raster hashes)",
+  "schema_version": 1
+}

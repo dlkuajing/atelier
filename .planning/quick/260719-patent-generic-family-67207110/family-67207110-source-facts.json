@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "family_id": "67207110",
+  "root_id": "US-12013514",
+  "publication_id": "US-12013514-B2",
+  "source_integrity": {
+    "section_sha256": {
+      "background": "081b3d4bf86a8a222f6185d07da12b7ef22c1b071d38919f9940c0cc4a584d4b",
+      "description": "0a1d4db599f7169d5a7c5a8107ba693fb37132969412455d995a4d3581f242c2",
+      "claims": "5128077b912c759556754cfd8a6eea65004c3069c1e9fa8507e6bbabe2dd7388"
+    },
+    "background_number_sequence": [1, 1, 2, 3, 4, 5, 6],
+    "description_number_sequence": [1, 80],
+    "paragraph_span_sha256": {
+      "1-17": "41feab3f13f2d03049af6fd31bb8681423c192107f4b95053a1c2006ebb80608",
+      "18-34": "98c264c3c94a83c1d533c07efab20b5af341e27147c03d7305a613eda5bb9ff7",
+      "35-43": "fc5f8701309407640c3fd0d5d6039c97fbc3214377895e6b0d92f80b6e6340d6",
+      "44-52": "ef634175e9b87e8c55ebcb9daa8ba754ca412cb3b49c43816ecfbc91e1146090",
+      "53-62": "764f6511b3093422f2771b8961e481475add921fae65ea1b6cc082e9f34036cc",
+      "63-72": "31f2251989693e7da0f0ac28df679aa6d59fa3d8e93c23f82acbb98476c3d49d",
+      "73-77": "8bfd6aaf1ee7ceaf8ce61a47c81a871a7a730e7bdddbae1b5c3407fe26ebc2d8",
+      "78-78": "6748aaa9791629e132eadf8b5e71fae29744b907c1a0fb1229eb36dceef6cd84",
+      "79-79": "62a6a95b1c0bd2d74c1f7694c5c7029328adc7af014198fbaf2ec4b903689cfc",
+      "80-80": "7bac98c316b9a76994ab59069a366acc5996d3c09d1b7db508a8c21f659067ec"
+    },
+    "table_fragments": [
+      {"table": "1", "raw_characters": 100, "raw_sha256": "73c1af1a40281216a93c485753060c3728f18fbdfcf14201800a9f82ea53e97c", "normalized_characters": 93, "normalized_sha256": "2405ef9b5e6620ee021f154a917661729acdff3bc373795d9b38b81966c5203c"},
+      {"table": "2", "raw_characters": 101, "raw_sha256": "b6870f5425884d45ab9de01bb45cf7f35e1c6cf136c821aa0bd03e7984b377c0", "normalized_characters": 94, "normalized_sha256": "d1be58c8fad3e9821c6654a94b54163e5a4f987695e3e84479f7ff2a85768507"},
+      {"table": "3", "raw_characters": 101, "raw_sha256": "77238b91a939c799380a2955d204b0fc38e35aa8c2fd7e2b0a36ed0e1ddce0be", "normalized_characters": 94, "normalized_sha256": "4275e7220beae58e152389cbd842314ce9ceb9921bdb8d780e07fce2d8ef2284"},
+      {"table": "4", "raw_characters": 101, "raw_sha256": "c54c5e573c638fd797bac7e9e949ea7fb987d01d8d070cee0b6f945555c3484b", "normalized_characters": 94, "normalized_sha256": "42b0c8ba23e93f374162887de453f3accb1377804989ce8161a12f4646922541"}
+    ],
+    "maths_objects": 0
+  },
+  "items": [
+    {"embodiment_number": 1, "label": "First embodiment five-lens imaging lens assembly 100", "paragraphs": [35, 43], "figures": ["1A", "1B", "1C"], "tables": ["1"], "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_spacing_ring_and_blocking_sheet_geometry_only"},
+    {"embodiment_number": 2, "label": "Second embodiment five-lens imaging lens assembly 200", "paragraphs": [44, 52], "figures": ["2A", "2B", "2C"], "tables": ["2"], "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_spacing_ring_and_blocking_sheet_geometry_only"},
+    {"embodiment_number": 3, "label": "Third embodiment five-lens imaging lens assembly 300", "paragraphs": [53, 62], "figures": ["3A", "3B", "3C"], "tables": ["3"], "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_spacing_ring_and_blocking_sheet_geometry_only"},
+    {"embodiment_number": 4, "label": "Fourth embodiment five-lens imaging lens assembly 400", "paragraphs": [63, 72], "figures": ["4A", "4B"], "tables": ["4"], "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_lens_spacing_ring_and_blocking_sheet_geometry_only"},
+    {"embodiment_number": 5, "label": "Fifth embodiment smartphone electronic device 500", "paragraphs": [73, 77], "figures": ["5A", "5B", "5C"], "tables": [], "reuses_items": [1, 2, 3, 4], "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_camera_module_integration_wrapper_only"},
+    {"embodiment_number": 6, "label": "Sixth embodiment tablet electronic device 600", "paragraphs": [78, 78], "figures": ["6"], "tables": [], "reuses_items": [1, 2, 3, 4], "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_camera_module_integration_wrapper_only"},
+    {"embodiment_number": 7, "label": "Seventh embodiment wearable electronic device 700", "paragraphs": [79, 79], "figures": ["7"], "tables": [], "reuses_items": [1, 2, 3, 4], "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_camera_module_integration_wrapper_only"}
+  ],
+  "shared_context": [
+    {"role": "related application, background and summary", "number_sequence": [1, 1, 2, 3, 4, 5, 6]},
+    {"role": "brief description of sixteen drawing sheets", "paragraphs": [1, 17]},
+    {"role": "shared spacing-ring, blocking-sheet and mechanical-ratio description", "paragraphs": [18, 34]},
+    {"role": "closing boilerplate", "paragraphs": [80, 80]}
+  ],
+  "figures": {
+    "brief_description_source_tokens": ["1A", "1B", "10", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "5A", "5B", "5C", "6", "7"],
+    "official_drawing_sheet_labels": ["1A", "1B", "1C", "2A", "2B", "2C", "3A", "3B", "3C", "4A", "4B", "5A", "5B", "5C", "6", "7"],
+    "source_discrepancies": [
+      {"brief_paragraph": 4, "first_embodiment_paragraph": 35, "text_token": "FIG. 10", "detailed_parameter_paragraph": 42, "official_drawing_page": 5, "drawing_token": "FIG. 1C", "silently_repaired": false}
+    ]
+  },
+  "claims": {
+    "count": 13,
+    "independent_claims": [1],
+    "camera_module_claim": 12,
+    "electronic_device_claim": 13,
+    "ordered_optical_prescription_claims": 0,
+    "maths_objects": 0,
+    "maths_scope": "none"
+  },
+  "prescription_boundary": {
+    "ordered_optical_surface_rows": 0,
+    "published_curvature_radii": 0,
+    "published_axial_thickness_or_air_space_rows": 0,
+    "published_optical_material_rows": 0,
+    "published_refractive_index_or_abbe_rows": 0,
+    "published_asphere_coefficients": 0,
+    "published_stop_locations": 0,
+    "published_efl_values": 0,
+    "published_f_number_values": 0,
+    "published_optical_field_values": 0,
+    "published_image_height_values": 0,
+    "mechanical_table_values_reclassified_as_optical": false,
+    "drawing_geometry_measured": false,
+    "related_application_values_borrowed": false,
+    "raster_values_transcribed": false,
+    "figure_label_discrepancy_silently_repaired": false
+  }
+}

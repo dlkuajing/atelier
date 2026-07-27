@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "family_id": "99480653",
+  "root_id": "US-20260113525",
+  "publication_id": "US-20260113525-A1",
+  "identity": {
+    "application_number": "19/317450",
+    "title": "ANTENNA MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant": "WNC Corporation",
+    "filed": "2025-09-03",
+    "publication_date": "2026-04-23",
+    "kind_code": "A1",
+    "priority_applications": [
+      {"application": "US 63/691,498", "date": "2024-09-06"},
+      {"application": "TW 114121816", "date": "2025-06-11"}
+    ]
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/870114a2e77a7d43/US-20260113525-A1.html",
+    "bytes": 48021,
+    "raw_characters": 47984,
+    "raw_sha256": "870114a2e77a7d438bf07372a4d1cc73f576082bf2139507bb04abdb66e2e58e",
+    "normalized_characters": 39759,
+    "normalized_sha256": "899513a4673f100d23d544f55ec03c19375c0008bd170b3e8ee35f732663fa35"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_application_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 4,
+    "summary_numbered_paragraphs": 4,
+    "brief_drawing_numbered_paragraphs": 11,
+    "detailed_numbered_paragraphs": 32,
+    "total_numbered_paragraphs": 52,
+    "claims": 20,
+    "claim_families": 3,
+    "declared_textual_figures": 10,
+    "tagged_html_tables": 1,
+    "antenna_performance_table_rows": 9,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 4,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 4,
+    "replayed_ledger_items": 4,
+    "official_pdf_files": 0,
+    "retained_drawing_images": 0,
+    "unmapped_source_items": 0
+  },
+  "paragraph_spans": [
+    {"range": [1, 1], "role": "related applications"},
+    {"range": [2, 5], "role": "background"},
+    {"range": [6, 9], "role": "summary and three independent claim aspects"},
+    {"range": [10, 20], "role": "brief description and ten figure declarations"},
+    {"range": [21, 22], "role": "shared detailed-description boilerplate"},
+    {"range": [23, 35], "role": "first camera-unit antenna embodiment and TABLE 1"},
+    {"range": [36, 44], "role": "second coupled-trace antenna embodiment"},
+    {"range": [45, 47], "role": "third composite camera-module embodiment"},
+    {"range": [48, 50], "role": "fourth notebook electronic-device embodiment"},
+    {"range": [51, 52], "role": "closing boilerplate"}
+  ],
+  "figures": ["1A", "1B", "1C", "1D", "1E", "2A", "2B", "2C", "3", "4"],
+  "antenna_performance_table": {
+    "table": 1,
+    "columns": ["Marked Point", "Frequency (GHz)", "VSWR"],
+    "rows": [
+      ["m1", 2.4, 1.43],
+      ["m2", 2.5, 1.68],
+      ["m3", 5.15, 1.68],
+      ["m4", 5.47, 1.20],
+      ["m5", 5.85, 1.11],
+      ["m6", 5.925, 1.30],
+      ["m7", 6.085, 1.21],
+      ["m8", 6.565, 1.47],
+      ["m9", 7.125, 1.39]
+    ],
+    "meaning": "antenna voltage-standing-wave-ratio performance, not optical prescription data"
+  },
+  "items": [
+    {"embodiment_number": 1, "label": "WNC first camera-unit antenna-module embodiment", "paragraphs": [23, 35], "claim_context": [1, 16], "table": 1, "status": "confirmed_no_prescription", "reason_code": "camera_unit_antenna_radiator_architecture_only"},
+    {"embodiment_number": 2, "label": "WNC second coupled-trace antenna-module embodiment", "paragraphs": [36, 44], "claim_context": [1, 16], "table": null, "status": "confirmed_no_prescription", "reason_code": "coupled_trace_camera_antenna_architecture_only"},
+    {"embodiment_number": 3, "label": "WNC third composite camera-module embodiment", "paragraphs": [45, 47], "claim_context": [17, 18], "table": null, "status": "confirmed_no_prescription", "reason_code": "imaging_lens_assembly_antenna_trace_architecture_only"},
+    {"embodiment_number": 4, "label": "WNC fourth notebook electronic-device embodiment", "paragraphs": [48, 50], "claim_context": [19, 20], "table": null, "status": "confirmed_no_prescription", "reason_code": "notebook_camera_antenna_module_wrapper_only"}
+  ],
+  "optical_scope": {
+    "camera_module_occurrences": 15,
+    "camera_unit_occurrences": 25,
+    "imaging_lens_assembly_occurrences": 15,
+    "lens_set_occurrences": 9,
+    "electronic_photosensitive_element_occurrences": 11,
+    "image_sensor_occurrences": 5,
+    "interpretation": "generic camera function integrated with antenna circuit boards only",
+    "ordered_surface_prescriptions": 0
+  },
+  "non_prescription_numeric_contexts": [
+    {"values": "2.4-7.125 GHz and VSWR 1.11-1.68", "location": "TABLE 1", "meaning": "antenna frequency response"},
+    {"value": "40 mm", "location": "paragraph 33", "meaning": "second circuit-board length"},
+    {"values": ["0.1 mm", "0.3 mm"], "meaning": "antenna trace/ground coupling spacings"},
+    {"value": "quarter wavelength", "location": "paragraph 39 and claim 11", "meaning": "antenna operating-frequency overlap length"}
+  ],
+  "forbidden_substitutions": [
+    "antenna frequency or wavelength for optical wavelength or focal length",
+    "circuit-board length or coupling spacing for optical surface spacing",
+    "generic lens set for an ordered optical prescription",
+    "VSWR table rows for optical performance or prescription rows",
+    "drawing coordinates for numeric prescription values"
+  ]
+}

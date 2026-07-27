@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "family_id": "76444624",
+  "application_number": "17/017662",
+  "root_ids": [
+    "US-11783729"
+  ],
+  "publication_ids": [
+    "US-11783729-B2"
+  ],
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/7a5a9cc3ba92de76/US-11783729-B2.html",
+    "bytes": 115299,
+    "sha256": "7a5a9cc3ba92de76af68d8cf0e51d06e5f1c77c0b45feceaf50a5382f7b632ad"
+  },
+  "official_pdfs": {
+    "US-11783729-B2": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/source-review/US-11783729-B2-official.pdf",
+      "bytes": 2273291,
+      "sha256": "48a2221caf3f70fa22fba4f2ecbd545c1eae08bffaa12a956fd3441366400aa1"
+    },
+    "US-20220076590-A1": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/source-review/US-20220076590-A1-official.pdf",
+      "bytes": 2296074,
+      "sha256": "e77577da7953152531a426b98c53fddd01f31408bda8330f5662b5891de63c37"
+    }
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_raster_publications": 1,
+    "numbered_heading_markers": 0,
+    "background_numbered_paragraphs": 3,
+    "summary_numbered_paragraphs": 4,
+    "brief_numbered_paragraphs": 10,
+    "detailed_numbered_paragraphs": 79,
+    "claims": 16,
+    "same_application_a1_claims": 20,
+    "declared_textual_figure_statements": 10,
+    "declared_textual_figure_panel_occurrences": 19,
+    "unique_declared_figure_panels": 17,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "pseudocode_listings": 11,
+    "source_declared_architecture_items": 4,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 4,
+    "replayed_ledger_items": 4,
+    "official_b2_pdf_pages": 31,
+    "official_b2_drawing_sheets": 15,
+    "same_application_a1_pdf_pages": 32,
+    "same_application_a1_drawing_sheets": 15,
+    "same_application_claim_count_differences": 1,
+    "source_label_discrepancies": 0
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_pseudocode_listings": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "reason": "The source publishes CVD color simulation, color-distance selection, lookup tables, RGB pseudocode, camera/display/UI and generic computing architecture. Its single camera optical-lens reference is functional; no ordered radii, spacings, materials, conics, asphere coefficients or required numeric optical system metadata is published.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  },
+  "semantic_replay_sha256": "029e9f19f2052e8f8e6791d970c6e5ddf1f937f418fdb0566325e6e4433e3a4c",
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/generic-residual-before-114.json",
+      "bytes": 70361,
+      "sha256": "2f8d86f208fae5d4601f58a571e44c396451e339ccba9b26587e0eec45626da7"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/generic-residual-after-1.json",
+      "bytes": 69807,
+      "sha256": "22a26ac2209fe6e840ec448a99325e48d2a82ef5c68913f88fd00e525139bfac"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/generic-residual-after-2.json",
+      "bytes": 69807,
+      "sha256": "22a26ac2209fe6e840ec448a99325e48d2a82ef5c68913f88fd00e525139bfac"
+    }
+  },
+  "replay_state": {
+    "cohort_roots": 619,
+    "roots_with_results": 619,
+    "missing_roots": 0,
+    "corrupt_results": 0,
+    "result_set_sha256": "70f401d6eed9d416e81a098e179b9a764c9244589f9d089d337b24a88c4dea80",
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 148,
+      "parser_review_required": 303,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 143
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 561,
+      "parser_review_required": 1397,
+      "terminal": 1206
+    },
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    }
+  },
+  "artifacts": {
+    "denominator": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/family-76444624-denominator.json",
+      "bytes": 11238,
+      "sha256": "43ca509cced5d2ec90c93bde2d01bbbe0412a250f1d9d8f0eea3355409ab24f2"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/family-76444624-raster-audit.json",
+      "bytes": 23487,
+      "sha256": "e3cc77be65055625265a6945f1716497dd215a49f289ee7fe9378714d8a529fb"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/family-76444624-replay-determinism.json",
+      "bytes": 1531,
+      "sha256": "551a31394087c60d68f3bacf4bece244b21f2873384f043922076185eb440ca8"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/queue-after.json",
+      "bytes": 1495,
+      "sha256": "9bc06f7431d80091d185e3d4ee45e7c4b4b3669321ee7ad716f0f0fe5d09d6db"
+    },
+    "source_audit": {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/family-76444624-source-audit.md",
+      "bytes": 5415,
+      "sha256": "8575312765c50bf90889051fd6960648553b19cdc1d02499d2f77fa0e16a316f"
+    }
+  },
+  "next_exact_group": {
+    "family_id": "89620713",
+    "root_ids": [
+      "US-20240272406"
+    ],
+    "publication_ids": [
+      "US-20240272406-A1"
+    ]
+  },
+  "saturation_complete": false
+}

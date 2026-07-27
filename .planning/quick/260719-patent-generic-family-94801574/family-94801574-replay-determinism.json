@@ -1,0 +1,64 @@
+{
+    "schema_version":  1,
+    "family_id":  "94801574",
+    "root_id":  "US-20260169265",
+    "publication_id":  "US-20260169265-A1",
+    "budgets":  {
+                    "conversion_timeout_seconds":  180,
+                    "patent_budget_seconds":  1500
+                },
+    "attempts":  [
+                     {
+                         "path":  "data/patent-ledger/replay/local-uncovered/results/US-20260169265/attempt-0002/result.json",
+                         "bytes":  10386,
+                         "file_sha256":  "86d4d74d22d1795bd38ab0c5978ca193efaff0b1c44e7dd48474c6b5e92e5b9a",
+                         "result_attempt":  2,
+                         "semantic_sha256":  "1f21d93fec12dcddd1cf7b865fbd6972be6fafa60822cd7859eed8bdf96f5a19"
+                     },
+                     {
+                         "path":  "data/patent-ledger/replay/local-uncovered/results/US-20260169265/attempt-0003/result.json",
+                         "bytes":  10386,
+                         "file_sha256":  "782c886c48eb30432467b14c23b89dad7de2392a1381466b2a5d634dbe68cc00",
+                         "result_attempt":  3,
+                         "semantic_sha256":  "1f21d93fec12dcddd1cf7b865fbd6972be6fafa60822cd7859eed8bdf96f5a19"
+                     }
+                 ],
+    "semantic_sha256":  "1f21d93fec12dcddd1cf7b865fbd6972be6fafa60822cd7859eed8bdf96f5a19",
+    "semantic_equal":  true,
+    "normalization":  {
+                          "removed_fields":  [
+                                                 "result_attempt"
+                                             ],
+                          "outcome_fields_removed":  [
+
+                                                     ],
+                          "request_fields_removed":  [
+
+                                                     ],
+                          "runtime_paths_normalized":  false
+                      },
+    "final_state":  {
+                        "result_attempt":  3,
+                        "root_state":  "parser_review_required",
+                        "root_reason_code":  "parser_review_required.all_disclosed_items_rejected",
+                        "item_state_counts":  {
+                                                  "parser_review_required":  8
+                                              },
+                        "terminal_status_counts":  {
+
+                                                   },
+                        "conversion_requests":  0,
+                        "conversion_receipts":  0,
+                        "prescription_fingerprints":  0,
+                        "staging_zmx":  0,
+                        "formal_intake_items":  0
+                    },
+    "strict_replay":  {
+                          "cohort_roots":  619,
+                          "roots_with_results":  619,
+                          "missing_results":  0,
+                          "corrupt_results":  0,
+                          "result_set_sha256":  "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b"
+                      },
+    "codev_calls":  0
+}

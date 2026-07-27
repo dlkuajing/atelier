@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "dd7ba998f2c7ff438dcb77f40201cc35c51091e921dd0efb3bfe7b4469785768",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 105, "affected_items": 105},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "74036960",
+    "root_ids": ["US-12345877"],
+    "publication_ids": ["US-12345877-B2"],
+    "application_number": "17/619967",
+    "title": "Optical device and use thereof",
+    "applicant": "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.",
+    "layout_signature": "398622f52ff511311c349f40626f79b6e19bad3e73c2c0586750234eb69b3715",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 0, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/be795020aa39b3b6/US-12345877-B2.html",
+      "sha256": "be795020aa39b3b691a170b6d367bfc2d926397372c3c5ddcae865570237bfe6"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

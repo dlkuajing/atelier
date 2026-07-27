@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "family_id": "92714478",
+  "root_id": "US-12670673",
+  "publication_id": "US-12670673-B2",
+  "title": "Apparatus and methods for augmenting vision with region-of-interest based processing",
+  "raw_document": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/b3c5d9bc53fd030f/US-12670673-B2.html",
+    "bytes": 171945,
+    "sha256": "b3c5d9bc53fd030fdf9e0dd09f3d31c6e637599149a1f59d037925e078dc6d98"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "source_declared_architecture_items": 1,
+    "source_declared_optical_prescriptions": 0,
+    "replayed_ledger_items": 1,
+    "confirmed_no_prescription_items": 1,
+    "background_numbered_paragraphs": 6,
+    "description_numbered_paragraphs": 207,
+    "declared_figures": 9,
+    "source_table_markers": 1,
+    "commodity_camera_rows": 4,
+    "mathml_objects": 0,
+    "claims": 25,
+    "official_pdf_pages": 31,
+    "drawing_sheets": 9
+  },
+  "denominator_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-92714478/family-92714478-denominator.json",
+    "sha256": "568b2d1d9fb0cd594fa9f4b634dffc56d4643134763b09cb68c42a94e97ec076"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-92714478/family-92714478-raster-audit.json",
+    "sha256": "734c990b73391d1f7e4426ab10313c9c7ab998e80d215a9e3bacca6a3250b1d8"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-92714478/family-92714478-external-family-members.json",
+    "sha256": "57457323995a8b102ba6edb9740cc59e08546c51afe3049bc5e89cf04629b1ad"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-92714478/family-92714478-replay-determinism.json",
+    "sha256": "28a5d54398ae7ad3c7aafabb131f166b52c86c5ef187029d6a6879a5680845f6"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-92714478/family-92714478-source-audit.md",
+    "sha256": "94b445d6d249b2349cc4cf38343e7eafcf6276b23592e72b531df29b830459f5"
+  },
+  "replay_summary": {
+    "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+    "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52",
+    "bytes": 60514
+  },
+  "replay_report": {
+    "path": ".planning/loop/patent-local-replay-report.md",
+    "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900",
+    "bytes": 62687
+  },
+  "replay_result_set_sha256": "99331d16a122487191dc8c17ef597fa17f2a33794474ced3c5b954163e009fa8",
+  "replay_audit": {
+    "roots": 619,
+    "roots_with_results": 619,
+    "missing": 0,
+    "corrupt": 0
+  },
+  "semantic_replay_sha256": "f1e97307827e16d4bc806588885f66701590ea95c124afb577c0cc7ff5d36b5b",
+  "generic_bucket_transition": {
+    "before_roots": 122,
+    "before_items": 122,
+    "after_roots": 121,
+    "after_items": 121
+  },
+  "formal_intake": 0,
+  "code_v_used": false,
+  "saturation_complete": false
+}

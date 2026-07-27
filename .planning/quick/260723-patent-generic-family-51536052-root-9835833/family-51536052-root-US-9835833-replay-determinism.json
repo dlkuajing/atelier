@@ -1,0 +1,59 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "51536052",
+  "root_id": "US-9835833",
+  "publication_id": "US-9835833-B2",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-9835833/attempt-0001/result.json",
+    "bytes": 1266,
+    "sha256": "b62ab6b0d0fa678532789651d085578aee0da3a5886edc096c364c57aaaae99f",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "7c2a160577cbf109588762493ac893d6e79093aac17e2e6ffdcefa3fe08fd3aa"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-9835833/attempt-0002/result.json",
+      "bytes": 4013,
+      "sha256": "13cdc06c3ca2c558b95018aa95903b84a0dabe784e8ca29c40e25c0e71810a8c",
+      "result_attempt": 2,
+      "root_state": "mixed_nonterminal",
+      "semantic_sha256": "94c74710ad3c87cf7a0ddb80a7d95db0ffd97f939e0193ec26380bf32950bfc3"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-9835833/attempt-0003/result.json",
+      "bytes": 4013,
+      "sha256": "287f13752e7ef5a5600cb6ca776002b17fac039908ecaf7061211d793728b2b0",
+      "result_attempt": 3,
+      "root_state": "mixed_nonterminal",
+      "semantic_sha256": "94c74710ad3c87cf7a0ddb80a7d95db0ffd97f939e0193ec26380bf32950bfc3"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "94c74710ad3c87cf7a0ddb80a7d95db0ffd97f939e0193ec26380bf32950bfc3",
+  "item_reason_codes": [
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "terminal.confirmed_no_prescription.imaging_apparatus_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "prescription_fingerprints_absent": true,
+  "candidate_zmx": 0,
+  "formal_intake_items": 0,
+  "codev_calls": 0
+}

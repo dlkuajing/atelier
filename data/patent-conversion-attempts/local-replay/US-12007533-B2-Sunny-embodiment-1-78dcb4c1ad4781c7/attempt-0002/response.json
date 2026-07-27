@@ -1,0 +1,1 @@
+{"detail":"PatentTraceError: PatentParseError: full-field real rays did not reach image surface","efl_mm":null,"reason_code":"trace_failed.optical_trace_exception","request_sha256":"78dcb4c1ad4781c74fbcb0a5d12e963ae83cab60d5e57150f22192d4b6340481","schema_version":1,"status":"trace_failed","trace_audit":null}

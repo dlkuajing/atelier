@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "family_id": "62052738",
+  "current_frozen_cohort_roots": [
+    "US-10739565",
+    "US-20190154990"
+  ],
+  "same_application_publications": [
+    {
+      "publication_id": "US-20190154990-A1",
+      "application_number": "US16/101656",
+      "disposition": "current_frozen_cohort_root_publication"
+    },
+    {
+      "publication_id": "US-10739565-B2",
+      "application_number": "US16/101656",
+      "disposition": "current_frozen_cohort_root_publication"
+    }
+  ],
+  "provider_grouping_note": "Official PPUBS HTML and the Google family page report Family ID 62052738. Both US publications are frozen cohort roots and remain independently source-locked.",
+  "external_family_members": [
+    {
+      "publication_id": "CN108008524A",
+      "application_number": "CN201711143573.XA",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN108008524B",
+      "application_number": "CN201711143573.XA",
+      "relationship": "priority application grant",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP2019095768A",
+      "application_number": "JP2018141460A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP6522839B1",
+      "application_number": "JP2018141460A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "cross_check_source": {
+    "url": "https://patents.google.com/patent/US10739565B2/en",
+    "observed_fields": [
+      "Family ID 62052738",
+      "US application 16/101656 with publications US20190154990A1 and US10739565B2",
+      "Chinese priority application CN201711143573.XA with CN108008524A and CN108008524B",
+      "Japanese application JP2018141460A with JP2019095768A and JP6522839B1"
+    ]
+  }
+}

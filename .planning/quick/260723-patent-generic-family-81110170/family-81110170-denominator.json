@@ -1,0 +1,371 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "81110170",
+  "root_id": "US-20260169260",
+  "publication_id": "US-20260169260-A1",
+  "sections": {
+    "background_summary_paragraphs": 14,
+    "description_paragraphs": 154,
+    "claims": 20,
+    "independent_claims": 3,
+    "machine_readable_tables": 0,
+    "raster_optical_data_tables": 9,
+    "raster_asphere_data_tables": 9,
+    "raster_common_comparison_system_table_panels": 2,
+    "inline_formula_pairs": 0,
+    "mathml_objects": 22,
+    "figref_tags": 153,
+    "declared_figure_panels": 70,
+    "drawing_sheets": 31
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Genius nine-lens optical imaging lens 1st embodiment",
+      "paragraph_range": [
+        104,
+        122
+      ],
+      "figures": [
+        "6",
+        "7A",
+        "7B",
+        "7C",
+        "7D",
+        "24",
+        "25"
+      ],
+      "optical_table_figure": "24",
+      "asphere_table_figure": "25",
+      "direct_system_metadata_paragraph": 122,
+      "direct_system_metadata": {
+        "EFL": "6.883",
+        "HFOV": "42.147",
+        "TTL": "8.745",
+        "Fno": "1.610",
+        "ImgH": "6.940"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 2,
+      "label": "Genius nine-lens optical imaging lens 2nd embodiment",
+      "paragraph_range": [
+        123,
+        124
+      ],
+      "figures": [
+        "8",
+        "9A",
+        "9B",
+        "9C",
+        "9D",
+        "26",
+        "27"
+      ],
+      "optical_table_figure": "26",
+      "asphere_table_figure": "27",
+      "direct_system_metadata_paragraph": 124,
+      "direct_system_metadata": {
+        "EFL": "7.036",
+        "HFOV": "43.016",
+        "TTL": "8.809",
+        "Fno": "1.610",
+        "ImgH": "6.977"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 3,
+      "label": "Genius nine-lens optical imaging lens 3rd embodiment",
+      "paragraph_range": [
+        125,
+        126
+      ],
+      "figures": [
+        "10",
+        "11A",
+        "11B",
+        "11C",
+        "11D",
+        "28",
+        "29"
+      ],
+      "optical_table_figure": "28",
+      "asphere_table_figure": "29",
+      "direct_system_metadata_paragraph": 126,
+      "direct_system_metadata": {
+        "EFL": "6.071",
+        "HFOV": "42.147",
+        "TTL": "8.220",
+        "Fno": "1.610",
+        "ImgH": "6.755"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 4,
+      "label": "Genius nine-lens optical imaging lens 4th embodiment",
+      "paragraph_range": [
+        127,
+        128
+      ],
+      "figures": [
+        "12",
+        "13A",
+        "13B",
+        "13C",
+        "13D",
+        "30",
+        "31"
+      ],
+      "optical_table_figure": "30",
+      "asphere_table_figure": "31",
+      "direct_system_metadata_paragraph": 128,
+      "direct_system_metadata": {
+        "EFL": "7.003",
+        "HFOV": "42.155",
+        "TTL": "8.899",
+        "Fno": "1.610",
+        "ImgH": "6.667"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 5,
+      "label": "Genius nine-lens optical imaging lens 5th embodiment",
+      "paragraph_range": [
+        129,
+        130
+      ],
+      "figures": [
+        "14",
+        "15A",
+        "15B",
+        "15C",
+        "15D",
+        "32",
+        "33"
+      ],
+      "optical_table_figure": "32",
+      "asphere_table_figure": "33",
+      "direct_system_metadata_paragraph": 130,
+      "direct_system_metadata": {
+        "EFL": "6.490",
+        "HFOV": "41.940",
+        "TTL": "8.718",
+        "Fno": "1.610",
+        "ImgH": "6.500"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 6,
+      "label": "Genius nine-lens optical imaging lens 6th embodiment",
+      "paragraph_range": [
+        131,
+        132
+      ],
+      "figures": [
+        "16",
+        "17A",
+        "17B",
+        "17C",
+        "17D",
+        "34",
+        "35"
+      ],
+      "optical_table_figure": "34",
+      "asphere_table_figure": "35",
+      "direct_system_metadata_paragraph": 132,
+      "direct_system_metadata": {
+        "EFL": "5.918",
+        "HFOV": "41.907",
+        "TTL": "8.549",
+        "Fno": "1.610",
+        "ImgH": "6.500"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 7,
+      "label": "Genius nine-lens optical imaging lens 7th embodiment",
+      "paragraph_range": [
+        133,
+        134
+      ],
+      "figures": [
+        "18",
+        "19A",
+        "19B",
+        "19C",
+        "19D",
+        "36",
+        "37"
+      ],
+      "optical_table_figure": "36",
+      "asphere_table_figure": "37",
+      "direct_system_metadata_paragraph": 134,
+      "direct_system_metadata": {
+        "EFL": "5.837",
+        "HFOV": "42.240",
+        "TTL": "9.015",
+        "Fno": "1.610",
+        "ImgH": "6.500"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 8,
+      "label": "Genius nine-lens optical imaging lens 8th embodiment",
+      "paragraph_range": [
+        135,
+        136
+      ],
+      "figures": [
+        "20",
+        "21A",
+        "21B",
+        "21C",
+        "21D",
+        "38",
+        "39"
+      ],
+      "optical_table_figure": "38",
+      "asphere_table_figure": "39",
+      "direct_system_metadata_paragraph": 136,
+      "direct_system_metadata": {
+        "EFL": "6.531",
+        "HFOV": "42.147",
+        "TTL": "8.855",
+        "Fno": "1.610",
+        "ImgH": "6.732"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 9,
+      "label": "Genius nine-lens optical imaging lens 9th embodiment",
+      "paragraph_range": [
+        137,
+        138
+      ],
+      "figures": [
+        "22",
+        "23A",
+        "23B",
+        "23C",
+        "23D",
+        "40",
+        "41"
+      ],
+      "optical_table_figure": "40",
+      "asphere_table_figure": "41",
+      "direct_system_metadata_paragraph": 138,
+      "direct_system_metadata": {
+        "EFL": "6.098",
+        "HFOV": "44.136",
+        "TTL": "8.288",
+        "Fno": "1.390",
+        "ImgH": "6.901"
+      },
+      "common_table_figures": [
+        "42",
+        "43"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    }
+  ],
+  "common_figures": {
+    "baseline_definition_figures": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "comparison_system_table_figures": [
+      "42",
+      "43"
+    ]
+  },
+  "optical_interpretation": {
+    "published_numerical_prescriptions": 9,
+    "machine_readable_numerical_prescriptions": 0,
+    "html_item_specific_efl_f_number_hfov_ttl_image_height": true,
+    "ordered_surface_asphere_rows_location": "official PDF one-bit raster optical/aspheric table figures only",
+    "pdf_text_layer_characters": 0,
+    "raster_numeric_transcription_authorized": false,
+    "worker_authorized": false
+  },
+  "terminal_outcome": {
+    "metadata_unpublished_items": 9,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}

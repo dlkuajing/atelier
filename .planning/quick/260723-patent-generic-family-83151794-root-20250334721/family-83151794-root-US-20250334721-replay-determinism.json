@@ -1,0 +1,60 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "83151794",
+  "root_id": "US-20250334721",
+  "publication_id": "US-20250334721-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20250334721/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "977993b5cb8901cfafc3438caa92e186a101e2ba75ebb2b528e90e5119e3f00a",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "c72d6bb8e5fe29c05f7ed9ef2d367f1760dfdecfebe29acb8c4e288ae069bbca"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250334721/attempt-0002/result.json",
+      "bytes": 28714,
+      "sha256": "500e022e73d1f43d90eda222807250c415d24d73ab06b5ad57d61459f41b871d",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "604c85d75ecdd0c3988ff7f4ec5ae612f6093e5523b5da442e73eeb596cb36ac"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250334721/attempt-0003/result.json",
+      "bytes": 28714,
+      "sha256": "9561f02538bfc5eb2ec7ba01471d49094244f09e1f16894462a913ec50d3f627",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "604c85d75ecdd0c3988ff7f4ec5ae612f6093e5523b5da442e73eeb596cb36ac"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "604c85d75ecdd0c3988ff7f4ec5ae612f6093e5523b5da442e73eeb596cb36ac",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+    "terminal.confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+    "terminal.confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "prescription_fingerprints_absent": true,
+  "candidate_zmx": 0,
+  "formal_intake_items": 0,
+  "codev_calls": 0
+}

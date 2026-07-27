@@ -1,0 +1,791 @@
+{
+  "schema_version": 1,
+  "publication_id": "US-20260169265-A1",
+  "family_id": "94801574",
+  "application_number": "19/034574",
+  "title": "OPTICAL IMAGING LENS",
+  "inventors": [
+    "Lin; Hai",
+    "Yang; Song Lin",
+    "Huang; Songchao",
+    "Hsieh; Hung-Chien"
+  ],
+  "applicant": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+  "assignee": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+  "filed": "January 23, 2025",
+  "publication_date": "June 18, 2026",
+  "foreign_priority": {
+    "country": "CN",
+    "application": "202411871179.8",
+    "date": "Dec. 18, 2024"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0ec8d06ad327d41b/US-20260169265-A1.html",
+    "bytes": 98300,
+    "characters": 97799,
+    "sha256": "0ec8d06ad327d41be5573d8b69fa6597d94c9f239eda657c5a050f3c121e61a3",
+    "normalized_characters": 76905,
+    "normalized_sha256": "236225514d4ae4f8c39602a177210b96d4f9da01fce6b58c18f78d90823677ce"
+  },
+  "sections": {
+    "preamble": {
+      "marker": "US-20260169265-A1 - Patent Public Search | USPTO US Patent & Trademark Office Patent Public Search | Text View United St",
+      "characters": 260,
+      "sha256": "ee0833f2b5f94b0797506a69de1e034f061d18a5fa825401042cac5b8589b9c2"
+    },
+    "abstract": {
+      "marker": "Abstract An optical imaging lens includes a first lens element, a second lens element, a third lens element and a fourth",
+      "characters": 1273,
+      "sha256": "754c605b1663ddee2cd306c3697a0bff10c8193f995c5217641bdb219c8cbd3d"
+    },
+    "background_summary": {
+      "marker": "Background/Summary BACKGROUND OF THE INVENTION 1. Field of the Invention [0001] The present invention relates generally ",
+      "characters": 6768,
+      "sha256": "304c59f2d2c0a1b764570c87ce5d543719458f88e8f0dc15854ad8611eb4788d"
+    },
+    "description": {
+      "marker": "Description BRIEF DESCRIPTION OF THE DRAWINGS [0011] FIGS. 1 - 5 illustrate the methods for determining the surface shap",
+      "characters": 57447,
+      "sha256": "08ed9774f445c64ede5d3b11a80a3b580975050b669c69987e2de373536743b4"
+    },
+    "claims": {
+      "marker": "Claims 1 . An optical imaging lens, from an object side to an image side in order along an optical axis comprising: a fi",
+      "characters": 11153,
+      "sha256": "81b64a7071f476be5dcf4901e3ec5e45b4cc5c5d9cedd995bda5dec70206ba6a"
+    }
+  },
+  "paragraph_denominator": {
+    "count": 142,
+    "continuous": true,
+    "background_summary": [
+      1,
+      10
+    ],
+    "description": [
+      11,
+      142
+    ],
+    "span_sha256": {
+      "1-10": "171084725e445ac167c43ec34a300a582f2ccdca2c52d61d2d44c1bf0b628910",
+      "11-69": "d29d13dff18c7430da79c87047367b81b0cacb5be18fdc23a0760dcbfc1ec5d3",
+      "70-83": "7136808f90af97ada787159b34888ee695d82af033dce08ee91b6a5808254085",
+      "84-94": "d95ad25a856d1218b714647d26539cb38f28773e64f53d19b827564ab3a6919c",
+      "95-108": "cf3cc3774305cc54f8fbfd5182dc9199e5e5d53fe885d827d9c9aa55d6c2ba10",
+      "109-110": "c52254e0d19e7c75a24a609a0aa670c1ec7198fdf3724ebb19ba1058e95a354e",
+      "111-112": "5dec170d832f2745ecf6f89463398178f2eb3daf47e30da65d709526684f9c7b",
+      "113-114": "bed67c29cf010f0ab6357d0c468d77290e0e90dc4b73db3117d6ff53efdb9299",
+      "115-116": "5f76873ff1bfeaa8e649024eb038bf6faa2da4163b7ec61c1a9fa81e43c0696c",
+      "117-118": "8d1d460bd685a821653720dfee9c7effdacabcb99c7f9b22391808a9d53714ee",
+      "119-120": "fb34f35e86c37db8d749b9e807219422e71acef8449b411bf7f399dd74f11196",
+      "121-122": "e912c85e0a9682789311e31eadc54d1dd55a6f377b1c44c13bc72d2f1707328a",
+      "123-123": "16c2197f5631d8766024b8e910d05afd37919ffb6c1e2b2c7d50ba53737e199a",
+      "124-142": "1a1be816b67fc82317e1043a4f4035057f4dbe1dc6f0bd21509a22264da04abe"
+    }
+  },
+  "claims": {
+    "count": 20,
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "independent_claim_numbers": [
+      1,
+      8,
+      15
+    ],
+    "joined_sha256": "f21fb1008545c1e59a8ad93112d9df78dd083f2b89790be1a499dbc26e09d918",
+    "records": [
+      {
+        "claim": 1,
+        "characters": 1267,
+        "sha256": "7fefc5ec6d41b2e9daadb38fb5d931e7d97936697d5661d1bbeea2750eb4cf60"
+      },
+      {
+        "claim": 2,
+        "characters": 534,
+        "sha256": "358ef3673cc7e4d71882a48dcf5dcf35fb2a724ce71b17948a47c5377c44f0d9"
+      },
+      {
+        "claim": 3,
+        "characters": 564,
+        "sha256": "50ca4a55b05865a95bac210646664407f88f53986acac6c12dda755821664b8e"
+      },
+      {
+        "claim": 4,
+        "characters": 400,
+        "sha256": "986f71a9fe0bdac96645831ff2c8b81a0315d6feeeb39c1e1bb6c9057ab3a7ae"
+      },
+      {
+        "claim": 5,
+        "characters": 324,
+        "sha256": "ec1ad719b5582a37f891a09bc35652bed42d4c8f312fa1ef3c676c981da1d666"
+      },
+      {
+        "claim": 6,
+        "characters": 500,
+        "sha256": "b174856692b286e7a9dc9c2090697657bc8e2862d701d0dd94aaaabaf68133b1"
+      },
+      {
+        "claim": 7,
+        "characters": 320,
+        "sha256": "9c93916efc681349735874ccb2262b4facabfee72afdbb7ffe7fb16462288532"
+      },
+      {
+        "claim": 8,
+        "characters": 1484,
+        "sha256": "5f98a5ea7f8ca6b2db487102f951a6da04d678d3d5c625dc7fa1006f1a58cd1c"
+      },
+      {
+        "claim": 9,
+        "characters": 323,
+        "sha256": "55aaea39a69761a697d3f4c68526032af9a1988cf40f6ede532f7c78438385df"
+      },
+      {
+        "claim": 10,
+        "characters": 255,
+        "sha256": "6e525dfc7c7fe5d7089977d555fdbd4a2c74d54fe5e38913602890d71c9200d1"
+      },
+      {
+        "claim": 11,
+        "characters": 325,
+        "sha256": "3ae0ba30358781659ab5977e40312ad9beb7e2c26df15d9cd0c97e317c8173ee"
+      },
+      {
+        "claim": 12,
+        "characters": 402,
+        "sha256": "81370c37226c2b5209f09c9cbae3540e8a7c63cf06ce45fc61024095ec2a862e"
+      },
+      {
+        "claim": 13,
+        "characters": 339,
+        "sha256": "1112056e2737a3ae39e9e97c30c3cc0c86f9bab75b2f7a7b647b319defcdae9d"
+      },
+      {
+        "claim": 14,
+        "characters": 351,
+        "sha256": "5a788e366c92653bef2cd321e87665a808e77878a40c610690530f1377b95f22"
+      },
+      {
+        "claim": 15,
+        "characters": 1568,
+        "sha256": "4459f6e4cd03d0d2de93f51c65d53197a6a1de1cdd90308fc7fde98b6ec3cf79"
+      },
+      {
+        "claim": 16,
+        "characters": 464,
+        "sha256": "a3ed2d0e73b8122227bd2b666ed327b64d18bbbe66063f42ed2f98bc51c2ec93"
+      },
+      {
+        "claim": 17,
+        "characters": 426,
+        "sha256": "913b13ddd4281b97fa1e0a9bd068b030e561bcf69c61ade0ab28c0b84ae9b63d"
+      },
+      {
+        "claim": 18,
+        "characters": 321,
+        "sha256": "6f966e2c76d2724a7193d6b8229365089024575432f0bf85073767a62a18aede"
+      },
+      {
+        "claim": 19,
+        "characters": 385,
+        "sha256": "505535078f7a4d16d654101b00ef7ec6632b4eaf4798274d1bc85c00ffbf26e3"
+      },
+      {
+        "claim": 20,
+        "characters": 401,
+        "sha256": "5130713e1eb0e8fa3901044c5b6be6cc050f54a57f05c42126136111bef6b2eb"
+      }
+    ]
+  },
+  "figures": {
+    "numbered_figure_range": [
+      1,
+      38
+    ],
+    "declared_panel_count": 63,
+    "declared_panels": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6A",
+      "6B",
+      "7A",
+      "7B",
+      "7C",
+      "7D",
+      "8",
+      "9A",
+      "9B",
+      "9C",
+      "9D",
+      "10",
+      "11A",
+      "11B",
+      "11C",
+      "11D",
+      "12",
+      "13A",
+      "13B",
+      "13C",
+      "13D",
+      "14",
+      "15A",
+      "15B",
+      "15C",
+      "15D",
+      "16",
+      "17A",
+      "17B",
+      "17C",
+      "17D",
+      "18",
+      "19A",
+      "19B",
+      "19C",
+      "19D",
+      "20",
+      "21A",
+      "21B",
+      "21C",
+      "21D",
+      "22",
+      "23",
+      "24",
+      "25",
+      "26",
+      "27",
+      "28",
+      "29",
+      "30",
+      "31",
+      "32",
+      "33",
+      "34",
+      "35",
+      "36",
+      "37",
+      "38"
+    ],
+    "declaration_records": [
+      {
+        "paragraph": 11,
+        "token": "1-5",
+        "text_sha256": "eafc6be7b17395c5951b1834b45f2b2526f7f81326237a90edf3ec4924cc6d2e"
+      },
+      {
+        "paragraph": 12,
+        "token": "6A",
+        "text_sha256": "7608ec0e4820cfcd9fd7e6bd4c0644b64448358884d8b7bf2e542092f078cb65"
+      },
+      {
+        "paragraph": 13,
+        "token": "6B",
+        "text_sha256": "1e4c93733e9234251490fcc86fb161d936afd81a1ccc633f1fb72d803f0ac22f"
+      },
+      {
+        "paragraph": 14,
+        "token": "7A",
+        "text_sha256": "0163c1b9bc9619ed1a150e03ae81358ded8887f6605d981765013a13fde441bc"
+      },
+      {
+        "paragraph": 15,
+        "token": "7B",
+        "text_sha256": "9d3493aa0746700df4a651f57a3b29256bfc495bf5b3bf50da30d11875238a94"
+      },
+      {
+        "paragraph": 16,
+        "token": "7C",
+        "text_sha256": "99d3dcac0bd894a64aaf021b0d9276544fc07e2db2a7ae56c9365bbcb62c338e"
+      },
+      {
+        "paragraph": 17,
+        "token": "7D",
+        "text_sha256": "fac1953cebe1e430d60887dfe8f7d9bea1b9d3b0ad0a2627b03e98285c680064"
+      },
+      {
+        "paragraph": 18,
+        "token": "8",
+        "text_sha256": "012a002f187c45ea144ec3c2d34f43dee75aa2f08e585e4cf8b1e6253ceedc1c"
+      },
+      {
+        "paragraph": 19,
+        "token": "9A",
+        "text_sha256": "0d244ab28f7131f486f1c89747beeaa80b4fd2777ff32c4d779eac204538cc00"
+      },
+      {
+        "paragraph": 20,
+        "token": "9B",
+        "text_sha256": "b2fe873949ff9bd2eefee8e00e3c09de7602f63fb96cba07401edb839be70710"
+      },
+      {
+        "paragraph": 21,
+        "token": "9C",
+        "text_sha256": "308611986fa5bd2073dbf38fd4922a313f81304731405505052583593e855927"
+      },
+      {
+        "paragraph": 22,
+        "token": "9D",
+        "text_sha256": "007a5f21830390ca9c1604f2b3f579120fab440c61c30b0cec29bc76328e08da"
+      },
+      {
+        "paragraph": 23,
+        "token": "10",
+        "text_sha256": "b924fbcee15e065cbf27976e579a240866b696096d9c31aac569cf7cf340ec56"
+      },
+      {
+        "paragraph": 24,
+        "token": "11A",
+        "text_sha256": "304d0d1df35c93d9cda1566c3f66056003287dd2bfef437d541d4f4a31469b4e"
+      },
+      {
+        "paragraph": 25,
+        "token": "11B",
+        "text_sha256": "f6c4d5d7fc963cc05d484fc1d751ce13c47c998e3c648615d99a0810ea212409"
+      },
+      {
+        "paragraph": 26,
+        "token": "11C",
+        "text_sha256": "8e1e299d7553eeaf119f90199d5d9a5d4358884c3018f75f88616106cf2ad6fa"
+      },
+      {
+        "paragraph": 27,
+        "token": "11D",
+        "text_sha256": "72876be49025ebab0716af8ab154fd6783213b87dc269a8118ab5f50a4ee2d9a"
+      },
+      {
+        "paragraph": 28,
+        "token": "12",
+        "text_sha256": "fae329fb8f7b371aebf8f3c1a4ef6464272af81636285e2638a517fccaf9ceb8"
+      },
+      {
+        "paragraph": 29,
+        "token": "13A",
+        "text_sha256": "9ef4e9755892ebba8f30f4f5c8f028c5d26c4f4120fdd66241db17015ce6b473"
+      },
+      {
+        "paragraph": 30,
+        "token": "13B",
+        "text_sha256": "e054ab65afa4ed64d857f7ff6ca1dd81262b45ec6a469902a5170839375f7435"
+      },
+      {
+        "paragraph": 31,
+        "token": "13C",
+        "text_sha256": "045369b3b9ef8e429cabbd64ff2985b58f6ab75ced7658dae61964aefe635362"
+      },
+      {
+        "paragraph": 32,
+        "token": "13D",
+        "text_sha256": "bb0f7bc858c4c2d68babc931b0a401bc50fe00c1bab5744f14a458f3df417f74"
+      },
+      {
+        "paragraph": 33,
+        "token": "14",
+        "text_sha256": "d2b343582ae19c5c95fae81f1e3a1fada7878852220cb6f4317baa6bfd728fdb"
+      },
+      {
+        "paragraph": 34,
+        "token": "15A",
+        "text_sha256": "c4cc855e8398158b29cc51f2e18a6cff4d59ab3d47fd2ba1a4fd341b7a28045a"
+      },
+      {
+        "paragraph": 35,
+        "token": "15B",
+        "text_sha256": "7e7df73fce933dc3072f5a23192fe04368e71a7754f63e404558198a7674bd36"
+      },
+      {
+        "paragraph": 36,
+        "token": "15C",
+        "text_sha256": "40e17f2129ff99436daed57da650917192686c17e406294fdf04f2a6e7825fc7"
+      },
+      {
+        "paragraph": 37,
+        "token": "15D",
+        "text_sha256": "8cbe5b013fdd58d212e7d3cea151515bb903ce685a7e0d1480e2137978e06f55"
+      },
+      {
+        "paragraph": 38,
+        "token": "16",
+        "text_sha256": "fc3bd25e9bbace60671c5585bbe92147c8ee1d74943e8b3f88bdaa83a173cd9c"
+      },
+      {
+        "paragraph": 39,
+        "token": "17A",
+        "text_sha256": "737a61e054ccf7876915c3df4505fd37e10ae8dc0ee9da5cc521241f7e3625a0"
+      },
+      {
+        "paragraph": 40,
+        "token": "17B",
+        "text_sha256": "c564518eb2b0e75f4cef01e35a1038b42e915f5e9967f5493d07bbfe263cbb39"
+      },
+      {
+        "paragraph": 41,
+        "token": "17C",
+        "text_sha256": "03d05e02d33cee31527cf9bd63eb32c70aa1b8458b1c58913b199bdaf374e149"
+      },
+      {
+        "paragraph": 42,
+        "token": "17D",
+        "text_sha256": "19f34ad6ed8fb08de6e02b5a0591a13c1cfa23b814a78cfb256ed6a4d521baad"
+      },
+      {
+        "paragraph": 43,
+        "token": "18",
+        "text_sha256": "785d521f59b14fc458d08b27e2d8cab9db8892e8c72388a95b7800ee69b0420b"
+      },
+      {
+        "paragraph": 44,
+        "token": "19A",
+        "text_sha256": "48c6841485c23fd20931d698b5005d66fd11130df3d06f39350254b51958c617"
+      },
+      {
+        "paragraph": 45,
+        "token": "19B",
+        "text_sha256": "309eefe4bf60b8cea9195f83fef9ea2d1485a93e5fcc3e3e1e4e7015b6e22f50"
+      },
+      {
+        "paragraph": 46,
+        "token": "19C",
+        "text_sha256": "38500e8b4645671f0ecf1d769355b2f1c1c3844e97a1696d6094b2c8029db582"
+      },
+      {
+        "paragraph": 47,
+        "token": "19D",
+        "text_sha256": "b2336739af3c1ee3a1df0ae19c9eb02009d6a5c03c23e9124a014c412c394d0c"
+      },
+      {
+        "paragraph": 48,
+        "token": "20",
+        "text_sha256": "df9f13828bc164324824d938991391a6b210616ebdd36e7147958ce2fdee64e1"
+      },
+      {
+        "paragraph": 49,
+        "token": "21A",
+        "text_sha256": "3945772503cb57e27f45bf97724099f42dc5000b68508853b9cdf7e9adccd6fb"
+      },
+      {
+        "paragraph": 50,
+        "token": "21B",
+        "text_sha256": "0d8cec77b4be979f2bb2f737f9c1481b71954ca7b721e40ab4b9cca149cebd91"
+      },
+      {
+        "paragraph": 51,
+        "token": "21C",
+        "text_sha256": "59448a3df8c7ac6988bda04a3ef7887fdc646f2010ba0eda447299581f1e8cf0"
+      },
+      {
+        "paragraph": 52,
+        "token": "21D",
+        "text_sha256": "de26a40f422ef4105b53b53555fcf34fdfb4e71832400ee545256aa8ab6abedc"
+      },
+      {
+        "paragraph": 53,
+        "token": "22",
+        "text_sha256": "6254cd9dff150f78883c778dcc0139807c70cbf03d3ee4d5a1eec4ad53a704b4"
+      },
+      {
+        "paragraph": 54,
+        "token": "23",
+        "text_sha256": "40368e3ecb54f7810999984028959422eb68cc79b0767cec016b1d188535fbd0"
+      },
+      {
+        "paragraph": 55,
+        "token": "24",
+        "text_sha256": "15d06133a17da9916fc1ee3d5c21efcddbbe1bac0480d4435603ccb108cbb1d7"
+      },
+      {
+        "paragraph": 56,
+        "token": "25",
+        "text_sha256": "04d9a809dfd367b18f9e88ca3b188bf52165c2024f1c4358de9ec1391516a5e4"
+      },
+      {
+        "paragraph": 57,
+        "token": "26",
+        "text_sha256": "a816c4b1845a402e28138041fb9657a2487c62ec20388de8a723acf91c59cb62"
+      },
+      {
+        "paragraph": 58,
+        "token": "27",
+        "text_sha256": "7ba3b14ed3a04ec2ee106de00ab2ac57e478ee550b7680b876de3344c46d6009"
+      },
+      {
+        "paragraph": 59,
+        "token": "28",
+        "text_sha256": "df096f61b76472b849945dc7ed67af525cc452ceb3bba5337297099abf09378f"
+      },
+      {
+        "paragraph": 60,
+        "token": "29",
+        "text_sha256": "1188229dcf7369b935b59cf9b8b8acbcc307188a559573e6ef31c3c214fea5be"
+      },
+      {
+        "paragraph": 61,
+        "token": "30",
+        "text_sha256": "cdf40f49210b936746136861ca2ce7c83fb73857ab136928db22add9ee37ea81"
+      },
+      {
+        "paragraph": 62,
+        "token": "31",
+        "text_sha256": "fb9acb5201e2848437eb34f97e7405e4f5bacb7ad6c108026dc71dcd6076f66d"
+      },
+      {
+        "paragraph": 63,
+        "token": "32",
+        "text_sha256": "be49c1b9b83e814dbe9416813f429ed0a1bfe21b0ba72d615d50da0ed9fcb6d6"
+      },
+      {
+        "paragraph": 64,
+        "token": "33",
+        "text_sha256": "41caafcf1334fc8f461726fed516c4be2174ed6cf08696d9061ed212c36ba540"
+      },
+      {
+        "paragraph": 65,
+        "token": "34",
+        "text_sha256": "52e00cafea580944aa6dd5c695fe3979f189650a9dfc0ce974e8a29969ac81ac"
+      },
+      {
+        "paragraph": 66,
+        "token": "35",
+        "text_sha256": "3b0ea69e97efc668bb625c78fc281239837a551d629c5a8eaa23cd09868f6b96"
+      },
+      {
+        "paragraph": 67,
+        "token": "36",
+        "text_sha256": "a993a63a239b9b7c25c9abadd18719fa62797edcf0cf1b9585b20149a062fd98"
+      },
+      {
+        "paragraph": 68,
+        "token": "37",
+        "text_sha256": "33fd80a5efd7d1a594a26f85f6b14a4568efe13c7ca95469c907c99f95138160"
+      },
+      {
+        "paragraph": 69,
+        "token": "38",
+        "text_sha256": "45130749dcb3aa4268bcf8c16cc370529a843f5bb09f6bef135226ae44468679"
+      }
+    ],
+    "declaration_span_sha256": "d29d13dff18c7430da79c87047367b81b0cacb5be18fdc23a0760dcbfc1ec5d3",
+    "html_image_tag_count": 0
+  },
+  "tables": {
+    "count": 2,
+    "ids": [
+      "TABLE-US-00001",
+      "TABLE-US-00002"
+    ],
+    "paragraphs": [
+      131,
+      132
+    ],
+    "paragraph_sha256": [
+      "397eaf771a5229c22eff75feeaeedff7a5560ac1107c711c2d752caff21c2b10",
+      "651e6594a4378ea7c0548b683785ccb8e76dac6798d6b02ce8930bd375f06493"
+    ],
+    "classification": [
+      "lens-material-condition-ranges",
+      "optical-ratio-condition-ranges"
+    ],
+    "prescription_tables": 0
+  },
+  "mathml": {
+    "count": 18,
+    "ids": [
+      "MATH-US-00001",
+      "MATH-US-00001-2",
+      "MATH-US-00001-3",
+      "MATH-US-00001-4",
+      "MATH-US-00001-5",
+      "MATH-US-00001-6",
+      "MATH-US-00001-7",
+      "MATH-US-00001-8",
+      "MATH-US-00001-9",
+      "MATH-US-00001-10",
+      "MATH-US-00001-11",
+      "MATH-US-00001-12",
+      "MATH-US-00001-13",
+      "MATH-US-00001-14",
+      "MATH-US-00001-15",
+      "MATH-US-00001-16",
+      "MATH-US-00001-17",
+      "MATH-US-00002"
+    ],
+    "ids_sha256": "0390868a030f216968dbc92d2be3e397f1449e501bcb90bda61025ceccadbdde"
+  },
+  "optical_disclosure": {
+    "lens_count": 4,
+    "embodiment_count": 8,
+    "prescription_item_count": 8,
+    "primary_wavelength_nm": 555,
+    "nd_reference_wavelength_nm": 587.56,
+    "first_lens_surfaces": "spherical",
+    "remaining_six_lens_surfaces": "aspheric",
+    "a2_coefficients": "zero and omitted from each aspheric table",
+    "stop_location": "between object side and first lens element",
+    "fold_element_location": "between fourth lens element and filter or image plane",
+    "filter": "optional",
+    "items": [
+      {
+        "embodiment_number": 1,
+        "ordinal": "first",
+        "paragraph_range": [
+          95,
+          108
+        ],
+        "metadata_paragraph": 108,
+        "metadata_text": "[0108] The optical data of the optical imaging lens of the first embodiment is shown in FIG. 22. FIG. 23 shows the detailed aspheric data of the first embodiment. It is worth noting that the aspheric data includes six curved surfaces of the object-side surfaces 21/31/41 and the image-side surfaces 22/32/42 in the second lens element 20 to the fourth lens element 40, since both the object-side surface 11 and the image-side surface of the first lens element 10 are spherical, so they are not recorded in FIG. 23, and the same applies to the following embodiments. In the present embodiments of the optical imaging lens, a f-number of the entire optical imaging lens element is Fno, EFL is an effective focal length, HFOV stands for the half field of view which is half of the field of view of the entire optical imaging lens, and the unit for the radius of curvature, the thickness and the focal length is in millimeters (mm). In this embodiment, EFL=17.619 mm; HFOV=11.161 degrees; TTL=21.995 mm; Fno=2.800; ImgH=3.528 mm.Second Embodiment",
+        "metadata_sha256": "9691538e18b8a7c36526c7b69eefa4d3a5751592338197024edc6b20af1aaf6c",
+        "optical_figure": 22,
+        "asphere_figure": 23,
+        "official_pdf_pages": [
+          13,
+          14
+        ]
+      },
+      {
+        "embodiment_number": 2,
+        "ordinal": "second",
+        "paragraph_range": [
+          109,
+          110
+        ],
+        "metadata_paragraph": 110,
+        "metadata_text": "[0110] The optical data of the second embodiment of the optical imaging lens are shown in FIG. 24 while the aspheric surface data are shown in FIG. 25. In this embodiment, EFL=14.929 mm; HFOV=13.283 degrees; TTL=19.055 mm; Fno=2.800; ImgH=3.528 mm. In particular: 1. The system length TTL of this embodiment is shorter than that of the first embodiment; 2. The distortion aberration of this embodiment is smaller than that of the first embodiment.Third Embodiment",
+        "metadata_sha256": "f6a1ee030bbbb2cb406b1dad9d8f9e81a61657cbd053357fd31fb03e51d28471",
+        "optical_figure": 24,
+        "asphere_figure": 25,
+        "official_pdf_pages": [
+          15,
+          16
+        ]
+      },
+      {
+        "embodiment_number": 3,
+        "ordinal": "third",
+        "paragraph_range": [
+          111,
+          112
+        ],
+        "metadata_paragraph": 112,
+        "metadata_text": "[0112] The optical data of the third embodiment of the optical imaging lens are shown in FIG. 26 while the aspheric surface data are shown in FIG. 27. In this embodiment, EFL=14.625 mm; HFOV=13.486 degrees; TTL=19.966 mm; Fno=2.800; ImgH=3.528 mm. In particular: 1. The system length TTL of this embodiment is shorter than that of the first embodiment; 2. The longitudinal spherical aberration of this embodiment is smaller than that of the first embodiment; 3. The distortion aberration of this embodiment is better than that of the first embodiment.Fourth Embodiment",
+        "metadata_sha256": "29c165b62e9b16dbfd0deba396dd0f7d1b38bae07f174101379e237ea85ccd79",
+        "optical_figure": 26,
+        "asphere_figure": 27,
+        "official_pdf_pages": [
+          17,
+          18
+        ]
+      },
+      {
+        "embodiment_number": 4,
+        "ordinal": "fourth",
+        "paragraph_range": [
+          113,
+          114
+        ],
+        "metadata_paragraph": 114,
+        "metadata_text": "[0114] The optical data of the fourth embodiment of the optical imaging lens are shown in FIG. 28 while the aspheric surface data are shown in FIG. 29. In this embodiment, EFL=13.689 mm; HFOV=14.303 degrees; TTL=18.709 mm; Fno=2.800; ImgH=3.528 mm. In particular: 1. The system length TTL of this embodiment is shorter than that of the first embodiment; 2. The longitudinal spherical aberration of this embodiment is smaller than that of the first embodiment.Fifth Embodiment",
+        "metadata_sha256": "73b94d4430aee56b1cecb7c2e71987a421a683e2e5595b94f3f54c82c79951de",
+        "optical_figure": 28,
+        "asphere_figure": 29,
+        "official_pdf_pages": [
+          19,
+          20
+        ]
+      },
+      {
+        "embodiment_number": 5,
+        "ordinal": "fifth",
+        "paragraph_range": [
+          115,
+          116
+        ],
+        "metadata_paragraph": 116,
+        "metadata_text": "[0116] The optical data of the fifth embodiment of the optical imaging lens are shown in FIG. 30 while the aspheric surface data are shown in FIG. 31 In this embodiment, EFL=14.238 mm; HFOV=13.708 degrees; TTL=19.025 mm; Fno=2.800; ImgH=3.525 mm. In particular: 1. The system length TTL of this embodiment is shorter than that of the first embodiment; 2. The longitudinal spherical aberration of this embodiment is smaller than that of the first embodiment; 3. The field curvature aberration on the sagittal direction of this embodiment is smaller than that on the sagittal direction of the first embodiment; 4. The field curvature aberration on the tangential direction of this embodiment is smaller than that on the tangential direction of the first embodiment; 5. The distortion aberration of this embodiment is better than that of the first embodiment.Sixth Embodiment",
+        "metadata_sha256": "a5e78405af67cd8c97a3776dc7b509837a33a07389de563d889e146f178abf4a",
+        "optical_figure": 30,
+        "asphere_figure": 31,
+        "official_pdf_pages": [
+          21,
+          22
+        ]
+      },
+      {
+        "embodiment_number": 6,
+        "ordinal": "sixth",
+        "paragraph_range": [
+          117,
+          118
+        ],
+        "metadata_paragraph": 118,
+        "metadata_text": "[0118] The optical data of the sixth embodiment of the optical imaging lens are shown in FIG. 32 while the aspheric surface data are shown in FIG. 33. In this embodiment, EFL=17.619 mm; HFOV=13.552 degrees; TTL=18.948 mm; Fno=2.800; ImgH-3.528 mm. In particular: 1. The system length TTL of this embodiment is shorter than that of the first embodiment; 2. The longitudinal spherical aberration of this embodiment is smaller than that of the first embodiment.Seventh Embodiment",
+        "metadata_sha256": "c5e297fe39ae8bb6765aff7db2392911f4aa0a4c6653b1e3095f205e45d9831f",
+        "optical_figure": 32,
+        "asphere_figure": 33,
+        "official_pdf_pages": [
+          23,
+          24
+        ]
+      },
+      {
+        "embodiment_number": 7,
+        "ordinal": "seventh",
+        "paragraph_range": [
+          119,
+          120
+        ],
+        "metadata_paragraph": 120,
+        "metadata_text": "[0120] The optical data of the seventh embodiment of the optical imaging lens are shown in FIG. 34 while the aspheric surface data are shown in FIG. 35. In this embodiment, EFL=11.763 mm; HFOV=16.199 degrees; TTL=14.935 mm; Fno=2.800; ImgH=3.528 mm. In particular: 1. The system length TTL of this embodiment is shorter than that of the first embodiment; 2. The longitudinal spherical aberration of this embodiment is smaller than that of the first embodiment; 3. The field curvature aberration on the sagittal direction of this embodiment is smaller than that on the sagittal direction of the first embodiment; 4. The field curvature aberration on the tangential direction of this embodiment is smaller than that on the tangential direction of the first embodiment; 5. The distortion aberration of this embodiment is better than that of the first embodiment.Eighth Embodiment",
+        "metadata_sha256": "215b055cecea423080fd1b784f32fa84caab819b24038220c6550d6fabbe8c64",
+        "optical_figure": 34,
+        "asphere_figure": 35,
+        "official_pdf_pages": [
+          25,
+          26
+        ]
+      },
+      {
+        "embodiment_number": 8,
+        "ordinal": "eighth",
+        "paragraph_range": [
+          121,
+          122
+        ],
+        "metadata_paragraph": 122,
+        "metadata_text": "[0122] The optical data of the eighth embodiment of the optical imaging lens are shown in FIG. 36 while the aspheric surface data are shown in FIG. 37. In this embodiment, EFL=13.975 mm; HFOV=14.009 degrees; TTL=17.792 mm; Fno=2.800; ImgH=3.528 mm. In particular: 1. The system length TTL of this embodiment is shorter than that of the first embodiment; 2. The longitudinal spherical aberration of this embodiment is smaller than that of the first embodiment; 3. The field curvature aberration on the sagittal direction of this embodiment is smaller than that on the sagittal direction of the first embodiment; 4. The field curvature aberration on the tangential direction of this embodiment is smaller than that on the tangential direction of the first embodiment; 5. The distortion aberration of this embodiment is better than that of the first embodiment.",
+        "metadata_sha256": "a7459b0865a7d67217b170b3ce728520b423dba541eb37c9dd83f4df6ffb0c95",
+        "optical_figure": 36,
+        "asphere_figure": 37,
+        "official_pdf_pages": [
+          27,
+          28
+        ]
+      }
+    ],
+    "comparison_figure": 38,
+    "comparison_pdf_page": 29,
+    "source_typography_anomaly": {
+      "paragraph": 118,
+      "verbatim": "ImgH-3.528 mm",
+      "repair_applied": false
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-97232688/generic-residual-after-2.json",
+  "result_set_sha256": "2840befbc0e97793f60021cd4dd61f96e1c5703d083a2f3ff9498fb53d16b44b",
+  "generic_residual_roots": 58,
+  "generic_residual_items": 58,
+  "next_exact_group": {
+    "family_id": "93648264",
+    "root_ids": [
+      "US-20250231379"
+    ],
+    "publication_ids": [
+      "US-20250231379-A1"
+    ],
+    "application_number": "18/651427",
+    "title": "IMAGING OPTICAL LENS SYSTEM, IMAGE CAPTURING UNIT AND ELECTRONIC DEVICE",
+    "first_inventor": "YEH; Kuan-Ting",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": "LARGAN PRECISION CO., LTD.",
+    "related_us_parent_marker": "us-provisional-application US 63620296 20240112",
+    "layout_signature": "8f5363bba85daea774ca188d8b5308ed964445717c7cd1214c95ee8ea1fd25be",
+    "layout_signature_count": 1,
+    "table_count": 43,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 208,
+      "example_anchor": 0,
+      "f_number": 14,
+      "full_field": 10,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/828212012a1d69a5/US-20250231379-A1.html",
+      "sha256": "828212012a1d69a52bc19c066023460def0268ac62b3f5f36c2b358bb3eb3984"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

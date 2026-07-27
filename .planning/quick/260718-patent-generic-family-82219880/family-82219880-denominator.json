@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "family_id": "82219880",
+  "application_number": "17/567768",
+  "root_ids": ["US-20220214515"],
+  "publication_ids": ["US-20220214515-A1"],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "cross_reference_numbered_paragraphs": 1,
+    "field_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 12,
+    "summary_numbered_paragraphs": 11,
+    "brief_drawing_numbered_paragraphs": 6,
+    "detailed_numbered_paragraphs": 40,
+    "total_numbered_paragraphs": 71,
+    "claims": 10,
+    "claim_families": 1,
+    "declared_textual_figures": 10,
+    "located_raster_figures": 10,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 5,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 5,
+    "replayed_ledger_items": 5,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 11,
+    "retained_page_rasters": 11,
+    "retained_drawing_sheets": 5,
+    "unmapped_source_items": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_claims": 0
+  },
+  "section_ranges": {
+    "cross_reference": [1, 1],
+    "field": [2, 2],
+    "background": [3, 14],
+    "summary": [15, 25],
+    "brief_drawings": [26, 31],
+    "detailed_description": [32, 71]
+  },
+  "figure_groups": {
+    "related_art_context": [1],
+    "primary_pair_alignment": [2, 3],
+    "cascaded_lens_couplings": [4, 5, 6, 7],
+    "annular_coupling": [8],
+    "discrete_couplings": [9, 10]
+  },
+  "claim_mapping": {
+    "primary_pair_point_contact_alignment": [1, 2, 3, 7, 10],
+    "cascaded_multi_lens_coupling": [4],
+    "annular_coupling_shape": [5],
+    "discrete_coupling_positions": [6],
+    "barrel_fit_and_blocking_film": [8, 9]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Sekonix primary pair point-contact alignment architecture",
+      "description_paragraphs": [32, 54],
+      "claims": [1, 2, 3, 7, 10],
+      "figures": [2, 3],
+      "status": "confirmed_no_prescription",
+      "reason_code": "primary_pair_point_contact_alignment_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Sekonix cascaded multi-lens coupling architecture",
+      "description_paragraphs": [55, 60],
+      "claims": [4],
+      "figures": [4, 5, 6, 7],
+      "status": "confirmed_no_prescription",
+      "reason_code": "cascaded_multi_lens_coupling_architecture_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Sekonix annular coupling-shape variant",
+      "description_paragraphs": [61, 63],
+      "claims": [5],
+      "figures": [8],
+      "status": "confirmed_no_prescription",
+      "reason_code": "annular_coupling_shape_variant_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Sekonix discrete coupling-position variant",
+      "description_paragraphs": [64, 66],
+      "claims": [6],
+      "figures": [9, 10],
+      "status": "confirmed_no_prescription",
+      "reason_code": "discrete_coupling_position_variant_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Sekonix barrel-fit and blocking-film integration",
+      "description_paragraphs": [67, 71],
+      "claims": [8, 9],
+      "figures": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "barrel_fit_blocking_film_integration_only"
+    }
+  ],
+  "prescription_marker_census": {
+    "focal length": 0,
+    "F-number": 0,
+    "field of view": 0,
+    "image height": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "asphere": 0,
+    "aspheric": 0,
+    "conic": 0,
+    "coefficient": 0,
+    "aperture stop": 0,
+    "radius": 10,
+    "curvature": 10,
+    "thickness": 1,
+    "0.05 mm": 10,
+    "effective diameter": 34,
+    "coupling portion": 74,
+    "coupling groove": 57,
+    "point contact": 11
+  },
+  "optical_scope": {
+    "ordered_surface_prescriptions": 0,
+    "numeric_optical_surface_rows": 0,
+    "published_mechanical_constraints": [
+      "coupling-portion curvature radius R > 0.05 mm",
+      "coupling-groove apex angle 60 degrees < V < 120 degrees"
+    ],
+    "mechanical_constraint_location": "outside the effective diameter",
+    "non_spherical_lens_statement_without_coefficients": true,
+    "drawing_numeric_derivation_used": false,
+    "related_family_borrowing_used": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "dbbdf20c8ab4beb1c30abd1aeb8ea6b4752e32ce7f740404fad21f6aa16f834d",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 130,
+      "affected_items": 130
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "94050343",
+    "root_ids": ["US-20260072245"],
+    "publication_ids": ["US-20260072245-A1"],
+    "title": "OPTICAL LENS, CAMERA MODULE, AND TERMINAL DEVICE",
+    "layout_signature": "1f8509be666f2bf76131498c82f238b36c2abfff90fa7633b2f4eb1b528d390c",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0af7d9d9554ea041/US-20260072245-A1.html",
+      "sha256": "0af7d9d9554ea04184d35858fe9f4134a0a9be1d166a1c3a6a47587aca65e257"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

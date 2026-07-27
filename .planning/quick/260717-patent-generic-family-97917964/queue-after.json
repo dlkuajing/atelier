@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "9043abe67b562809797b4c1f73ab16ba8858763598f03d0881abe07cbeb2c019",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 109,
+      "affected_items": 109
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "98774980",
+    "root_ids": ["US-20260086434"],
+    "publication_ids": ["US-20260086434-A1"],
+    "application_number": "19/331023",
+    "title": "IMAGING LENS DRIVING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "layout_signature": "35a52b3fc89204560d4e375bf0b8e532b2d138eb84d5a3e59289f9cc7f115770",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 161,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 3,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/9f1b2ec29ec7d488/US-20260086434-A1.html",
+      "sha256": "9f1b2ec29ec7d488f0b76361d3e00bfbd92dda6d9e5264f0ac808a440c619510"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "family_id": "96807780",
+  "root_id": "US-20250389925",
+  "publication_id": "US-20250389925-A1",
+  "budgets": {
+    "conversion_timeout_seconds": 180.0,
+    "patent_budget_seconds": 1500.0
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250389925/attempt-0002/result.json",
+      "bytes": 9588,
+      "file_sha256": "3f82fdddda64202f169130b43569d9d478d137188c515fc48008498053e995a0",
+      "result_attempt": 2,
+      "semantic_sha256": "1005aad9b5d10bb4d7c7b4d9822bdbf690f150f413e87c2adf196e738ba2d4e9"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20250389925/attempt-0003/result.json",
+      "bytes": 9588,
+      "file_sha256": "316c90ef27af6adc904b524eb50941137db09482618efdfb3b191158f9d954f0",
+      "result_attempt": 3,
+      "semantic_sha256": "1005aad9b5d10bb4d7c7b4d9822bdbf690f150f413e87c2adf196e738ba2d4e9"
+    }
+  ],
+  "semantic_sha256": "1005aad9b5d10bb4d7c7b4d9822bdbf690f150f413e87c2adf196e738ba2d4e9",
+  "semantic_equal": true,
+  "normalization": {
+    "removed_fields": ["result_attempt"],
+    "outcome_fields_removed": [],
+    "request_fields_removed": [],
+    "runtime_paths_normalized": false
+  },
+  "final_state": {
+    "result_attempt": 3,
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "item_state_counts": {"terminal": 10},
+    "terminal_status_counts": {"confirmed_no_prescription": 10},
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0
+  },
+  "strict_replay": {
+    "cohort_roots": 619,
+    "roots_with_results": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "codev_calls": 0
+}

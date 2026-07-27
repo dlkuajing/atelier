@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "family_id": "82818949",
+  "application_number": "18/154079",
+  "root_ids": ["US-20230296863"],
+  "publication_ids": ["US-20230296863-A1"],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_application_numbered_paragraphs": 1,
+    "technical_field_numbered_paragraphs": 1,
+    "related_art_numbered_paragraphs": 1,
+    "summary_numbered_paragraphs": 8,
+    "brief_drawing_numbered_paragraphs": 23,
+    "detailed_numbered_paragraphs": 98,
+    "total_numbered_paragraphs": 132,
+    "claims": 25,
+    "claim_families": 2,
+    "declared_textual_figure_panels": 23,
+    "located_raster_figure_panels": 23,
+    "tagged_html_tables": 0,
+    "flattened_text_tables": 5,
+    "mathml_objects": 11,
+    "source_declared_architecture_items": 8,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 8,
+    "replayed_ledger_items": 8,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 35,
+    "retained_page_rasters": 35,
+    "retained_drawing_sheets": 23,
+    "unmapped_source_items": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_flattened_text_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_claims": 0
+  },
+  "section_ranges": {
+    "related_applications": [1, 1],
+    "technical_field": [2, 2],
+    "related_art": [3, 3],
+    "summary": [4, 11],
+    "brief_drawings": [12, 34],
+    "common_detailed_architecture": [35, 58],
+    "examples": [59, 131],
+    "closing": [132, 132]
+  },
+  "figure_groups": {
+    "first_spiral_protrusion_lens_element": ["1A", "1B", "1C", "1D"],
+    "second_spiral_protrusion_lens_element": ["2A", "2B", "2C"],
+    "third_spiral_protrusion_lens_element": ["3A", "3B", "3C"],
+    "fourth_spiral_protrusion_lens_element": ["4A", "4B"],
+    "fifth_spiral_protrusion_lens_element": ["5A", "5B"],
+    "multi_camera_smartphone_wrapper": ["6A", "6B", "6C", "6D", "6E"],
+    "folded_telephoto_smartphone_wrapper": ["7"],
+    "vehicle_camera_placement_wrapper": ["8A", "8B", "8C"]
+  },
+  "table_mapping": {
+    "first_spiral_protrusion_lens_element": [1],
+    "second_spiral_protrusion_lens_element": [2],
+    "third_spiral_protrusion_lens_element": [3],
+    "fourth_spiral_protrusion_lens_element": [4],
+    "fifth_spiral_protrusion_lens_element": [5],
+    "multi_camera_smartphone_wrapper": [],
+    "folded_telephoto_smartphone_wrapper": [],
+    "vehicle_camera_placement_wrapper": []
+  },
+  "claim_mapping": {
+    "first_spiral_protrusion_lens_element": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+    "second_spiral_protrusion_lens_element": [1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21],
+    "third_spiral_protrusion_lens_element": [1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21],
+    "fourth_spiral_protrusion_lens_element": [1, 2, 3, 4, 5, 6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21],
+    "fifth_spiral_protrusion_lens_element": [1, 2, 3, 4, 5, 6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21],
+    "multi_camera_smartphone_wrapper": [10, 12, 13, 22, 24, 25],
+    "folded_telephoto_smartphone_wrapper": [10, 12, 13, 22, 24, 25],
+    "vehicle_camera_placement_wrapper": [10, 12, 13, 22, 24, 25]
+  },
+  "flattened_tables": [
+    {
+      "number": 1,
+      "description_paragraph": 71,
+      "payload_sha256": "53f6ea3b980fa26ac541eeb8b6f30f10d6e778da1658e42617ae19efeb5bff43",
+      "values": {"DS_mm": 3.01, "S2_mm": 0.31, "DE_mm": 2.843, "alpha_degree": 60, "t_mm": 0.639, "DS_minus_DE_mm": 0.167, "CT_mm": 0.335, "t_over_CT": 1.907, "psi_mm": 3.094, "DS_over_psi": 0.97, "S1_mm": 0.42, "S1_over_S2": 1.35}
+    },
+    {
+      "number": 2,
+      "description_paragraph": 80,
+      "payload_sha256": "cb6437f61760005c46666bf3e659364c65fb35760494872d0e564c0a10509bac",
+      "values": {"DS_mm": 3.015, "S2_mm": 0.48, "DE_mm": 2.815, "alpha_degree": 70, "t_mm": 0.639, "DS_minus_DE_mm": 0.2, "CT_mm": 0.335, "t_over_CT": 1.907, "psi_mm": 3.094, "DS_over_psi": 0.97, "S1_mm": 0.26, "S1_over_S2": 0.54}
+    },
+    {
+      "number": 3,
+      "description_paragraph": 90,
+      "payload_sha256": "a01bac43cc72aaf6be6653e70b2a7af495c22f7510ebe77a44c15465c3132045",
+      "values": {"DS_mm": 3.01, "S2_mm": 0.31, "DE_mm": 2.948, "alpha_degree": 87, "t_mm": 0.639, "DS_minus_DE_mm": 0.062, "CT_mm": 0.335, "t_over_CT": 1.907, "psi_mm": 3.094, "DS_over_psi": 0.97, "S1_mm": 1.0, "S1_over_S2": 3.23}
+    },
+    {
+      "number": 4,
+      "description_paragraph": 100,
+      "payload_sha256": "381a86e56f68c6e80aedfffbd0a255485b4694d64d99334ec8644d55b6a6cb3f",
+      "values": {"DS_mm": 4.422, "S2_mm": 0.94, "DE_mm": 4.35, "alpha_degree": 70, "t_mm": 0.69, "DS_minus_DE_mm": 0.072, "CT_mm": 0.516, "t_over_CT": 1.337, "psi_mm": 4.5, "DS_over_psi": 0.98, "S1_mm": 0.54, "S1_over_S2": 0.57}
+    },
+    {
+      "number": 5,
+      "description_paragraph": 110,
+      "payload_sha256": "ec6f2d6aced427782f83c8cb9f986c41388a7a01a22eff0fb32cb8dd00b9ec39",
+      "values": {"DS_mm": 5.129, "S2_mm": 0.92, "DE_mm": 5.079, "alpha_degree": 78, "t_mm": 1.715, "DS_minus_DE_mm": 0.05, "CT_mm": 0.54, "t_over_CT": 3.176, "psi_mm": 5.245, "DS_over_psi": 0.98, "S1_mm": 1.58, "S1_over_S2": 1.72}
+    }
+  ],
+  "mathml_scope": {
+    "objects": 11,
+    "claim_conditions": ["0.005 mm < DS-DE < 1 mm", "0.8 < t/CT < 5.5", "1.0 < t/CT < 5.0", "0.7 < DS/psi < 1", "0.2 < S1/S2 < 5", "0.015 mm <= DS-DE <= 0.8 mm", "60 degrees <= alpha <= 90 degrees", "0.8 < t/CT < 5.5", "1.0 < t/CT < 5.0", "0.7 < DS/psi < 1", "0.2 < S1/S2 < 5"],
+    "optical_prescription_equations": 0
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Largan first spiral-protrusion lens-element example",
+      "description_paragraphs": [59, 71],
+      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+      "figures": ["1A", "1B", "1C", "1D"],
+      "tables": [1],
+      "status": "confirmed_no_prescription",
+      "reason_code": "first_spiral_protrusion_lens_element_example_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Largan second spiral-protrusion lens-element example",
+      "description_paragraphs": [72, 81],
+      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21],
+      "figures": ["2A", "2B", "2C"],
+      "tables": [2],
+      "status": "confirmed_no_prescription",
+      "reason_code": "second_spiral_protrusion_lens_element_example_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Largan third spiral-protrusion lens-element example",
+      "description_paragraphs": [82, 91],
+      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 14, 15, 16, 17, 18, 19, 20, 21],
+      "figures": ["3A", "3B", "3C"],
+      "tables": [3],
+      "status": "confirmed_no_prescription",
+      "reason_code": "third_spiral_protrusion_lens_element_example_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Largan fourth spiral-protrusion lens-element example",
+      "description_paragraphs": [92, 101],
+      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21],
+      "figures": ["4A", "4B"],
+      "tables": [4],
+      "status": "confirmed_no_prescription",
+      "reason_code": "fourth_spiral_protrusion_lens_element_example_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Largan fifth spiral-protrusion lens-element example",
+      "description_paragraphs": [102, 111],
+      "claims": [1, 2, 3, 4, 5, 6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21],
+      "figures": ["5A", "5B"],
+      "tables": [5],
+      "status": "confirmed_no_prescription",
+      "reason_code": "fifth_spiral_protrusion_lens_element_example_only"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Largan multi-camera smartphone electronic-device example",
+      "description_paragraphs": [112, 121],
+      "claims": [10, 12, 13, 22, 24, 25],
+      "figures": ["6A", "6B", "6C", "6D", "6E"],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "multi_camera_smartphone_wrapper_only"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Largan folded-telephoto smartphone electronic-device example",
+      "description_paragraphs": [122, 126],
+      "claims": [10, 12, 13, 22, 24, 25],
+      "figures": ["7"],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "folded_telephoto_smartphone_wrapper_only"
+    },
+    {
+      "embodiment_number": 8,
+      "label": "Largan vehicle camera-placement electronic-device example",
+      "description_paragraphs": [127, 131],
+      "claims": [10, 12, 13, 22, 24, 25],
+      "figures": ["8A", "8B", "8C"],
+      "tables": [],
+      "status": "confirmed_no_prescription",
+      "reason_code": "vehicle_camera_placement_wrapper_only"
+    }
+  ],
+  "prescription_marker_census": {
+    "effective focal length": 0,
+    "focal length": 1,
+    "F-number": 0,
+    "F number": 0,
+    "Fno": 0,
+    "field of view": 0,
+    "angle of view": 0,
+    "image height": 0,
+    "Abbe": 0,
+    "asphere": 0,
+    "aspheric": 5,
+    "conic": 0,
+    "coefficient": 0,
+    "aperture stop": 0,
+    "optical prescription": 0,
+    "radius": 0,
+    "curvature": 0,
+    "refractive index": 0,
+    "thickness": 0,
+    "optical surface": 110,
+    "protruding structure": 180,
+    "spiral path": 80,
+    "visual angle": 3
+  },
+  "optical_scope": {
+    "ordered_surface_prescriptions": 0,
+    "numeric_optical_surface_rows": 0,
+    "flattened_mechanical_table_rows": 5,
+    "published_non_prescription_quantities": [
+      "five examples of DS, DE, S1, S2, alpha, t, CT and psi lens-element molding/peripheral geometry",
+      "different-focal-length multi-camera zooming without constituent values",
+      "40-to-90-degree vehicle camera coverage visual angle"
+    ],
+    "aspheric_context": "only a qualitative statement that one or both named lens-element surfaces may be aspheric; no radius, conic or asphere coefficient is published",
+    "figures_are_schematic": true,
+    "drawing_numeric_derivation_used": false,
+    "related_family_borrowing_used": false
+  }
+}

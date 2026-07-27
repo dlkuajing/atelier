@@ -1,0 +1,262 @@
+{
+  "family_id": "59199108",
+  "figure_declarations": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "33",
+    "34",
+    "35"
+  ],
+  "numbered_figure_count": 35,
+  "publications": {
+    "US-12298484-B2": {
+      "contact_sheet_path": ".planning/quick/260716-patent-generic-family-59199108/source-review/US-12298484-B2-contact-all-36.png",
+      "contact_sheet_sha256": "557055c9a721ae7dbf81b30e7e6731a2e20e096d77b381c29e5699ffcc98b72f",
+      "drawing_page_numbers": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "drawing_sheet_count": 25,
+      "fulltext_recovery_manifest_path": "data/patent-lake/uspto-ppubs-html/fulltext-recovery/35340ee3b97d93a0/US-12298484-B2--official-pdf-ocr.json",
+      "fulltext_recovery_manifest_sha256": "35340ee3b97d93a0c272ed42d83e0dc798637ee5599f9c32dc5d7013380dffa2",
+      "images_per_page": 1,
+      "key_page_numbers": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "live_pdf_wrappers": [
+        {
+          "path": ".planning/quick/260716-patent-generic-family-59199108/source-review/US-12298484-B2-live-1.pdf",
+          "sha256": "c2f50c56fb27e803e99d7f8cbfbbf06946aa47cd0f5358354ade9ce1e9c70202"
+        },
+        {
+          "path": ".planning/quick/260716-patent-generic-family-59199108/source-review/US-12298484-B2-live-2.pdf",
+          "sha256": "6e1bd37109900a7902c6b1d34547129d6e03c6c131d44f6e1e94f4a99cdd29b9"
+        }
+      ],
+      "live_wrappers_decoded_raster_set_equal": true,
+      "ocr_overlay_pdf_path": "data/patent-lake/uspto-ppubs-html/GOOGLE-OCR-PDF/4798314c5c5894b9/US-12298484-B2.pdf",
+      "ocr_overlay_pdf_sha256": "4798314c5c5894b9312188f701d67307284eb531323f6ef9e0b4aebb19f0ff08",
+      "official_and_ocr_overlay_all_decoded_page_rasters_equal": true,
+      "official_pdf_path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/5c7eaf5c6585f304/US-12298484-B2.pdf",
+      "official_pdf_sha256": "5c7eaf5c6585f30451a1c16931351ca3bd030c9ce780b5c6592733ad5b69a65b",
+      "page_count": 36,
+      "page_raster_hash_count": 36,
+      "parser_input_path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-JSON/2500fcf1d9f6cb59/US-12298484-B2.json",
+      "parser_input_sha256": "2500fcf1d9f6cb597701a1a3f6a42b118528543b9a84100e73d44b9ddc4dffc8",
+      "raster_set_sha256": "e411c4db38841d25930e3cbcc8b418cac6e01e0d70b5f1ceb14da54f4906acab",
+      "source_pin_path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-SOURCE-PIN/US-12298484-B2.json",
+      "source_pin_sha256": "2937f1629d6623f3ab68b38f73da4c4182eae3221a9356fa32956e3a5e8de6fa",
+      "source_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12298484",
+      "text_layer_char_count": 0
+    },
+    "US-20240411113-A1": {
+      "contact_sheet_path": ".planning/quick/260716-patent-generic-family-59199108/source-review/US-20240411113-A1-contact-all-36.png",
+      "contact_sheet_sha256": "b2105824b8c4093822cfdc53b66f6b8c8d04d44e9461adf73b8ebde687ff0ea9",
+      "drawing_page_numbers": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "drawing_sheet_count": 25,
+      "fulltext_recovery_manifest_path": "data/patent-lake/uspto-ppubs-html/fulltext-recovery/d7faab923be9399f/US-20240411113-A1--official-pdf-ocr.json",
+      "fulltext_recovery_manifest_sha256": "d7faab923be9399f0fe68e685a3620a54cc90562e55a0a264619fbe302b6f112",
+      "images_per_page": 1,
+      "key_page_numbers": [
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "live_pdf_wrappers": [
+        {
+          "path": ".planning/quick/260716-patent-generic-family-59199108/source-review/US-20240411113-A1-live-1.pdf",
+          "sha256": "879a5f20723b34160a3187e23c75d945b2424662fa5b193e920930df436e5be4"
+        },
+        {
+          "path": ".planning/quick/260716-patent-generic-family-59199108/source-review/US-20240411113-A1-live-2.pdf",
+          "sha256": "5f7ae605ea78190bcbb1269aa198124087cc16533b9d4913aeac42de6f642d4d"
+        }
+      ],
+      "live_wrappers_decoded_raster_set_equal": true,
+      "ocr_overlay_pdf_path": "data/patent-lake/uspto-ppubs-html/GOOGLE-OCR-PDF/2eab2cb7d67639bb/US-20240411113-A1.pdf",
+      "ocr_overlay_pdf_sha256": "2eab2cb7d67639bb26ecd2576f9b6674b783c15fda29f4cd9d08de16b2e754df",
+      "official_and_ocr_overlay_all_decoded_page_rasters_equal": true,
+      "official_pdf_path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/9f16309e6ce54106/US-20240411113-A1.pdf",
+      "official_pdf_sha256": "9f16309e6ce541068e0b53496f28706ac0a638c250b3a6a36c3601d2d02b7a88",
+      "page_count": 36,
+      "page_raster_hash_count": 36,
+      "parser_input_path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-JSON/cd328c67dc93d96e/US-20240411113-A1.json",
+      "parser_input_sha256": "cd328c67dc93d96e72a4fd3aa4b58d889c4c184d4bcb55b315dcd4a752228f1d",
+      "raster_set_sha256": "d5a61859795c5e931576977d4bef1de397665e9582cd5d6b4e2b45dfab7d8a6f",
+      "source_pin_path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-SOURCE-PIN/US-20240411113-A1.json",
+      "source_pin_sha256": "23b2c8517e2fac3c091c2f0103edb3769190374bb80ae6c5ffa8259fc3e03f18",
+      "source_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20240411113",
+      "text_layer_char_count": 0
+    }
+  },
+  "raster_set_algorithm": "sha256(compact_json(ordered official_page_image_sha256 values))",
+  "schema_version": 1,
+  "table_figure_bindings": [
+    {
+      "asphere_figure": 21,
+      "asphere_page": 12,
+      "example": 1,
+      "optical_figure": 20,
+      "optical_page": 11
+    },
+    {
+      "asphere_figure": 23,
+      "asphere_page": 14,
+      "example": 2,
+      "optical_figure": 22,
+      "optical_page": 13
+    },
+    {
+      "asphere_figure": 25,
+      "asphere_page": 16,
+      "example": 3,
+      "optical_figure": 24,
+      "optical_page": 15
+    },
+    {
+      "asphere_figure": 27,
+      "asphere_page": 18,
+      "example": 4,
+      "optical_figure": 26,
+      "optical_page": 17
+    },
+    {
+      "asphere_figure": 29,
+      "asphere_page": 20,
+      "example": 5,
+      "optical_figure": 28,
+      "optical_page": 19
+    },
+    {
+      "asphere_figure": 31,
+      "asphere_page": 22,
+      "example": 6,
+      "optical_figure": 30,
+      "optical_page": 21
+    },
+    {
+      "asphere_figure": 33,
+      "asphere_page": 24,
+      "example": 7,
+      "optical_figure": 32,
+      "optical_page": 23
+    }
+  ],
+  "comparison_figure_bindings": [
+    {
+      "figure": 34,
+      "page": 25
+    },
+    {
+      "figure": 35,
+      "page": 26
+    }
+  ]
+}

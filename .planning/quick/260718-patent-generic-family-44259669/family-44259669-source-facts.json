@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "family_id": "44259669",
+  "root_id": "US-8504328",
+  "publication_id": "US-8504328-B2",
+  "identity": {
+    "application_number": "12/784521",
+    "title": "Designing lenses using stress birefringence performance criterion",
+    "inventors": [
+      "Bietry; Joseph R.",
+      "Kurtz; Andrew F.",
+      "Silverstein; Barry D.",
+      "Mazzarella; James"
+    ],
+    "assignee": "Eastman Kodak Company",
+    "filed": "May 21, 2010",
+    "grant_date": "August 06, 2013",
+    "same_application_prior_publication": "US-20110288824-A1",
+    "cross_referenced_sibling_applications": [
+      "12/784520",
+      "12/784523"
+    ]
+  },
+  "source_counts": {
+    "background_summary_paragraphs": 43,
+    "description_paragraphs": 164,
+    "claims": 29,
+    "independent_claim_families": 3,
+    "declared_figure_panels": 42,
+    "drawing_sheets": 39,
+    "tabular_figure_panels": 12,
+    "prescription_tables": 2,
+    "equation_placeholders": 5,
+    "tagged_html_tables": 0,
+    "html_image_tags": 0,
+    "mathml_objects": 0,
+    "source_items": 9
+  },
+  "lens_examples": [
+    {
+      "embodiment_number": 1,
+      "name": "first exemplary projection lens",
+      "design_figure": "6A",
+      "performance_figure": "6B",
+      "stress_table": "9A",
+      "published": "six-element schematic, glasses, MTF and stress metrics",
+      "missing": "ordered surface radii and spacings",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 2,
+      "name": "first exemplary relay lens",
+      "design_figure": "6C",
+      "performance_figure": "6D",
+      "stress_table": "9B",
+      "published": "seven-element schematic including field lens, glasses, MTF, stress and projector performance",
+      "missing": "ordered surface radii and spacings",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 3,
+      "name": "second exemplary projection lens",
+      "design_figure": "10A",
+      "performance_figure": "10B",
+      "stress_table": "11A",
+      "published": "eight-element schematic, glasses, MTF and stress metrics",
+      "missing": "ordered surface radii and spacings",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 4,
+      "name": "second exemplary relay lens",
+      "design_figure": "10C",
+      "performance_figure": "10D",
+      "stress_table": "11B",
+      "published": "seven-element schematic including field lens, glasses, MTF and stress metrics",
+      "missing": "ordered surface radii and spacings",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 5,
+      "name": "third exemplary projection lens",
+      "design_figure": "12A",
+      "performance_figure": "12B",
+      "stress_table": "13A",
+      "prescription_table": "14A",
+      "published": "complete spherical Surface/Radius/Thickness/Aperture/Glass table",
+      "missing": "prescription-specific effective focal length, exact system F-number and angular field",
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "embodiment_number": 6,
+      "name": "third exemplary relay lens",
+      "design_figure": "12C",
+      "performance_figure": "12D",
+      "stress_table": "13B",
+      "prescription_table": "14B",
+      "published": "complete spherical Surface/Radius/Thickness/Aperture/Glass table",
+      "missing": "prescription-specific effective focal length, exact system F-number and angular field",
+      "terminal_status": "metadata_unpublished"
+    }
+  ],
+  "method_items": [
+    {
+      "embodiment_number": 7,
+      "claims": [
+        1,
+        18
+      ],
+      "figures": [
+        "16",
+        "17"
+      ],
+      "scope": "two-group imaging-lens design method and dependent metric, glass, asphere, DOE, compensator and coated-mirror variants",
+      "independent_numerical_prescription": false,
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 8,
+      "claims": [
+        19,
+        28
+      ],
+      "figures": [],
+      "scope": "generalized one-or-more-group lens-system design method and thermal-modeling, F-theta and zoom variants",
+      "independent_numerical_prescription": false,
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 9,
+      "claims": [
+        29,
+        29
+      ],
+      "figures": [
+        "15"
+      ],
+      "scope": "merit-function lens-design optimization method",
+      "independent_numerical_prescription": false,
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "metadata_boundary": {
+    "numeric_system_assignments": {
+      "F": 0,
+      "FNO": 0,
+      "FOV": 0,
+      "HFOV": 0,
+      "EFL": 0
+    },
+    "effective_focal_length_occurrences": 0,
+    "generic_focal_length_occurrences": 4,
+    "generic_field_of_view_occurrences": 1,
+    "prescription_occurrences": 2,
+    "f_number_contexts": [
+      "general relay lens collects and images F/6 light",
+      "projection lens is preferably about F/3 and faster than the relay",
+      "possible improvement operates projection lens at F/2.5 or faster"
+    ],
+    "f_number_contexts_substituted": false,
+    "drawing_coordinates_transcribed": false,
+    "numeric_values_derived_from_rasters": false,
+    "sibling_application_values_borrowed": false
+  },
+  "result": {
+    "ledger_items": 9,
+    "confirmed_no_prescription": 7,
+    "metadata_unpublished": 2,
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

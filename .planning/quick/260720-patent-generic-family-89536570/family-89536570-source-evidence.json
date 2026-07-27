@@ -1,0 +1,484 @@
+{
+  "schema_version": 1,
+  "family_id": "89536570",
+  "root_ids": [
+    "US-20260029620"
+  ],
+  "publication_id": "US-20260029620-A1",
+  "application_number": "18/993007",
+  "pct_application_number": "PCT/JP2023/021110",
+  "title": "IMAGING LENS SYSTEM, CAMERA MODULE, IN-VEHICLE SYSTEM, AND VEHICLE",
+  "first_inventor": "SHIMOEDA; Yukihiro",
+  "applicant_assignee": "Maxell, Ltd.",
+  "priority_applications": [
+    {
+      "application": "JP 2022-113781",
+      "date": "2022-07-15"
+    }
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "queue_only_external_family_publications": 3,
+    "official_pdf_pages": 34,
+    "drawing_sheets": 22,
+    "declared_figure_panels": 22,
+    "figref_tags": 78,
+    "numbered_paragraphs": 126,
+    "claims": 14,
+    "independent_claims": 4,
+    "mathml_objects": 18,
+    "tagged_table_blocks": 10,
+    "exact_optical_examples": 4,
+    "wrapper_items": 3,
+    "distinct_source_items": 7,
+    "published_surface_rows_per_example": 18,
+    "published_surface_rows_total": 72,
+    "modeled_surfaces_per_example": 19,
+    "modeled_surfaces_total": 76,
+    "material_rows_per_example": 8,
+    "material_rows_total": 32,
+    "adhesive_rows_per_example": 1,
+    "adhesive_rows_total": 4,
+    "asphere_surfaces_per_example": 8,
+    "asphere_surfaces_total": 32,
+    "asphere_coefficient_cells_per_example": 64,
+    "asphere_coefficient_cells_total": 256,
+    "replayed_ledger_items": 7,
+    "terminal_items": 7,
+    "metadata_unpublished_items": 4,
+    "confirmed_no_prescription_items": 3,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/5bfe5e9cc6c4dee6/US-20260029620-A1.html",
+    "bytes": 69537,
+    "sha256": "5bfe5e9cc6c4dee627a45e3bfcfd3c5f61725e3fe00155c487b6cc56b47196da",
+    "raw_characters": 68724,
+    "raw_document_sha256": "5bfe5e9cc6c4dee627a45e3bfcfd3c5f61725e3fe00155c487b6cc56b47196da",
+    "normalized_characters": 51173,
+    "normalized_text_sha256": "2906db731f51b2f3b4d7284d9d41bf9afb50869af0fad4ace34bc6bed60c1f81",
+    "layout_signature": "925ec854f290ca2fe8603f5fe7a2a96962c85ad3ef408f36773d3b185d660840",
+    "section_markers": {
+      "background": "Background/Summary TECHNICAL FIELD",
+      "brief": "Description BRIEF DESCRIPTION OF DRAWINGS",
+      "detailed": "DESCRIPTION OF EMBODIMENTS",
+      "claims": "Claims 1 ."
+    },
+    "section_sha256": {
+      "background": "f58b29268702c54e37deb577d71a6de1e17c550191daa0db408b25b960766042",
+      "brief": "ea8e9687607fbe71cc5ff5fef626f931fc7a3b746c982125658e1b713d75f08d",
+      "detailed": "6bdce7549965fe546657a85ce4b8ee81afe80e1295f9d8f2146d4310a80dc95e",
+      "claims": "80c9075dd8f50eeca82e00afb53b296b0fab14b49f05d25b00ea23e1d2d26e2d"
+    },
+    "paragraph_ranges": {
+      "background": [
+        1,
+        8
+      ],
+      "brief": [
+        9,
+        30
+      ],
+      "detailed": [
+        31,
+        126
+      ]
+    },
+    "paragraph_span_sha256": {
+      "1-8": "e6a734bca75650936aeee298b55f549a3c29c741d2a619e412e4de5425e5da94",
+      "9-30": "ff28869d6166ecde2d3c2a6dd5e5eb7b78841cef46ec9a7a7c4c6bfb13768812",
+      "31-51": "d9231716deb247643436594ee26548411a002c96e949f7f713d760bf71f07e26",
+      "52-96": "ad0d2c79b8463a28f9103dc413a91aba8bff9e2acc161cbe24f2a3be8eba05cf",
+      "97-104": "2e5175ac34fc19801d6226176c651036b541f0fd6c337dd4e023502243b5da95",
+      "105-126": "b12381c0375da7371ba6a2d43d29dcd7e03394149e56ebff37f4f17a20e80957",
+      "53-75": "0abbb25c4ce204d4c2695985447345e76e8b0a01749893343e552c02a0c0ce05",
+      "76-79": "8c8b36be98be177143f5da46d3fd7289a7dc60eaeb6d9b695837f825e2015b4b",
+      "80-83": "fa709fe288c4e002f50265f66c3670044402a0541cd93d2f695d46beb8e9d0ab",
+      "84-95": "23c16cfe495048fb7728104d0f43923129eb5de7db278c206258c9ba08a3ce26"
+    },
+    "table_block_sha256": [
+      "c73a61253c92286ac54bed33288234ea26376d25cca8acdc872637de6a477298",
+      "ff4aac396e9f662380d058ab299baf3409eaedc7a44d450645cb2c2a969bc3fc",
+      "018883dcc727512b9ed8bb9cca9b181aaed04bb96e8d80b309b9b478020db9d3",
+      "5112d3caff626f0615d154dffb5558f94000a66ffd8499c7228a140cd284a98d",
+      "6d3940c3bc9ac95429a453281327d8aa6492bd16976e8562886254b5f1d34c75",
+      "60a1001de3d5aa9db462b39867af895bad96ae26d9442eb21bccbb73f18f21ce",
+      "54a60c019f542b34ba08fec1470c1f9e8137dd83e38ba449230d33f50f386a9c",
+      "73b37a99c42039b771776fde00259ea609bc8b5d78ce29075b903a3b8ad21aad",
+      "893900524d9f60a49a59532b63482e759e3e151e22305803560f3cb0cc276f45",
+      "c52d24714353e1aac8fe6ef415f7691cf7fd5eb293f3939d0e75d1f4655fc167"
+    ],
+    "formal_table_sha256": [
+      "bcdcc2438cfbd3297519dffcce54b6d43cc91bfd61cfa6674324613a9061b039",
+      "c11933597f83fb5819ae5a970a49750c496bc2f80f8d20f68c34ffe64a1e9655",
+      "97682461226a5d6378ba4712887cff01e34de113f12dd3411662ebf14ac5b3b3",
+      "76e46ba5e357b77aea5025ec3bffb97003b62e53a5a663264937489f4881c4d9",
+      "28c6796b76ff860937947008dcff4dba7d1304769c5f4906314fe7479328c164",
+      "8d5fe7ff2ea5951362c801f41ee2b36c66758272e04626d5b1d1cc33b633b3f6",
+      "be07be5a07f63cc39c8ca8866a38f21ef41cdee8996f06bbd65073ff88714424",
+      "9bf78f23ca41d56e9fe57d18d42c06202d4b9d040bd135a13ef1d25391649d92",
+      "186f31f7ed4ae59f8dc6f9a721f0d8a71f02e10be302c4304a5035d78d055e14",
+      "7221e432e41200cc17d85b30ecacdab726a08845b5905890fd9079fda64a54a2"
+    ],
+    "math_object_sha256": [
+      "6c7d4817d68e236df59c3b54f8a502163ace022ac18f2e2e0009b904667c58af",
+      "0161aa25407882002433ea65bdcc4ead5dd347193f2f5558f2b483f1c27cc582",
+      "6c7d4817d68e236df59c3b54f8a502163ace022ac18f2e2e0009b904667c58af",
+      "0161aa25407882002433ea65bdcc4ead5dd347193f2f5558f2b483f1c27cc582",
+      "e20edf4a95a2acf1a378d04f933f1ca58d2c38985bf19df77bdf121e88f65512",
+      "fc04785a987c9c6aff13cc88061a0bb082b5f6be2960d2bc13b23e6e73227137",
+      "acd75da39fc9242aeac1e68a2f909f312337d677c01fc30add5e33c67ec70636",
+      "217445d426e5044f07a55b2b3439ebe365e36dd64b4c8f320718c6226e8bf42c",
+      "7fda91a50f8209a1af26aeccd577bb01a31a6474d5489924667c55a9ca81495b",
+      "af61c304471445571ee8b8f11df590aa7bf2e41e33ba856c5c37eeeab11291e0",
+      "e9bee0194d789014ffa156ee37ce352d8b1c4e485036a4ee9f3ea7a065cd461e",
+      "8028edd3001e6d63a8695728acef337310d372aadc69e82674d5e9d72c518920",
+      "8028edd3001e6d63a8695728acef337310d372aadc69e82674d5e9d72c518920",
+      "8028edd3001e6d63a8695728acef337310d372aadc69e82674d5e9d72c518920",
+      "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91",
+      "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91",
+      "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91",
+      "c24ebbd43719cdec2c9988d1214ff93dc7f8cec84c6756a9b8d2edb1ffc89c91"
+    ]
+  },
+  "source_items": [
+    {
+      "item_id": "US-20260029620-A1:e1",
+      "label": "Maxell cemented six-lens Example 1",
+      "paragraph_range": [
+        53,
+        75
+      ],
+      "figures": [
+        "1",
+        "2A",
+        "2B",
+        "2C",
+        "2D"
+      ],
+      "tables": [
+        1,
+        2
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "item_id": "US-20260029620-A1:e2",
+      "label": "Maxell cemented six-lens Example 2",
+      "paragraph_range": [
+        76,
+        79
+      ],
+      "figures": [
+        "3",
+        "4A",
+        "4B",
+        "4C",
+        "4D"
+      ],
+      "tables": [
+        3,
+        4
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "item_id": "US-20260029620-A1:e3",
+      "label": "Maxell cemented six-lens Example 3",
+      "paragraph_range": [
+        80,
+        83
+      ],
+      "figures": [
+        "5",
+        "6A",
+        "6B",
+        "6C",
+        "6D"
+      ],
+      "tables": [
+        5,
+        6
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "item_id": "US-20260029620-A1:e4",
+      "label": "Maxell cemented six-lens Example 4",
+      "paragraph_range": [
+        84,
+        95
+      ],
+      "figures": [
+        "7",
+        "8A",
+        "8B",
+        "8C",
+        "8D"
+      ],
+      "tables": [
+        7,
+        8
+      ],
+      "claims": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "item_id": "US-20260029620-A1:e5",
+      "label": "Maxell camera-module wrapper",
+      "paragraphs": [
+        52,
+        96
+      ],
+      "claims": [
+        12
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "item_id": "US-20260029620-A1:e6",
+      "label": "Maxell in-vehicle-system wrapper",
+      "paragraph_range": [
+        97,
+        104
+      ],
+      "figures": [
+        "9",
+        "10"
+      ],
+      "claims": [
+        13
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "item_id": "US-20260029620-A1:e7",
+      "label": "Maxell vehicle wrapper",
+      "paragraph_range": [
+        97,
+        98
+      ],
+      "figures": [
+        "9"
+      ],
+      "claims": [
+        14
+      ],
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "direct_system_metadata": {
+    "reference_wavelength_nm": 550,
+    "f_number": [
+      2.0,
+      2.05,
+      2.05,
+      2.03
+    ],
+    "whole_angle_of_view_deg": [
+      214.2,
+      216.4,
+      217.6,
+      216.6
+    ],
+    "focal_length_mm": [
+      0.919,
+      0.966,
+      0.944,
+      0.85
+    ]
+  },
+  "prescription_boundary": {
+    "source_surface_numbers": "S1-S18",
+    "model_only_image_surface": "S19",
+    "stop_surface": "S7",
+    "asphere_surface_numbers": [
+      3,
+      4,
+      5,
+      6,
+      11,
+      12,
+      13,
+      14
+    ],
+    "asphere_orders": [
+      "K",
+      "A4",
+      "A6",
+      "A8",
+      "A10",
+      "A12",
+      "A14",
+      "A16"
+    ],
+    "material_surface_numbers": [
+      1,
+      3,
+      5,
+      9,
+      11,
+      13,
+      15,
+      17
+    ],
+    "cemented_elements": [
+      "L5",
+      "L6"
+    ],
+    "cement_contact_surfaces": [
+      12,
+      13
+    ],
+    "cement_thickness_mm": 0.02,
+    "cement_refractive_index_published": false,
+    "cement_dispersion_published": false,
+    "absolute_image_height_published": false,
+    "cement_replaced_by_air": false,
+    "image_height_derived_from_field": false,
+    "external_family_numeric_values_imported": false,
+    "source_anomaly_repaired": false
+  },
+  "terminal_outcome": {
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "metadata_unpublished_reason_code": "terminal.metadata_unpublished.adhesive_layer_refractive_index_and_dispersion_and_absolute_image_height_absent",
+    "camera_wrapper_reason_code": "terminal.confirmed_no_prescription.camera_module_wrapper_only",
+    "in_vehicle_wrapper_reason_code": "terminal.confirmed_no_prescription.in_vehicle_system_wrapper_only",
+    "vehicle_wrapper_reason_code": "terminal.confirmed_no_prescription.vehicle_wrapper_only",
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260720-patent-generic-family-89536570/family-89536570-external-family-members.json",
+    "bytes": 1099,
+    "sha256": "39da189f677a89a243a3544bd37460cbf325e00daf9ec01d355b2eb87e215029"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260720-patent-generic-family-89536570/family-89536570-raster-audit.json",
+    "bytes": 5714,
+    "sha256": "4f489e9175d0d86bca47a1be6779047b48087f626389c70853fab21851261ab2"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260720-patent-generic-family-89536570/family-89536570-replay-determinism.json",
+    "bytes": 2790,
+    "sha256": "30c9c63d92c97ad9fc9f7765e922e57c20d4cbd0c2e8c83e8d4c7f88a8f1f5ba"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260720-patent-generic-family-89536570/family-89536570-source-audit.md",
+    "bytes": 3480,
+    "sha256": "2703a99ab6825957df034b177b25d319f349907a60fc1312a0f8b1d225f52a12"
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260720-patent-generic-family-89536570/generic-residual-before-54.json",
+      "bytes": 33585,
+      "sha256": "4f7a3c89816933a2dd19723e414f467cbe8f23f02d5c06f5a35843243a0dfdf1"
+    },
+    "after_1": {
+      "path": ".planning/quick/260720-patent-generic-family-89536570/generic-residual-after-1.json",
+      "bytes": 32944,
+      "sha256": "2cb348318948f18d2bb4b24c9e91785b35e2549bebcf6281104ac6f30ad57eb5"
+    },
+    "after_2": {
+      "path": ".planning/quick/260720-patent-generic-family-89536570/generic-residual-after-2.json",
+      "bytes": 32944,
+      "sha256": "2cb348318948f18d2bb4b24c9e91785b35e2549bebcf6281104ac6f30ad57eb5"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260720-patent-generic-family-89536570/queue-after.json",
+      "bytes": 1481,
+      "sha256": "6915eb680fe963436a18cf7eed8069da877c0fd6615a50fc853bf6f98ac117e6"
+    }
+  },
+  "ledger": {
+    "strict_roots_total": 619,
+    "strict_roots_with_results": 619,
+    "missing": 0,
+    "corrupt": 0,
+    "result_set_sha256": "feeb0e16f34a49567a8a24b552b45e14a430bea2c4e54fda921eb3282f04b337",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    }
+  },
+  "semantic_replay_sha256": "26a53a80faa621cfb03e7f889e3363f69f500409dd3e0d8817ad9101ccc95bee",
+  "next_exact_group": {
+    "family_id": "59685373",
+    "root_ids": [
+      "US-11236215"
+    ],
+    "publication_ids": [
+      "US-11236215-B2"
+    ]
+  },
+  "saturation_boundary": "This frozen root is an exact seven-item terminal result, but the 53-root generic bucket, all other parser buckets, formal intake, external-family queue and global patent/source exhaustion remain open.",
+  "saturation_complete": false
+}

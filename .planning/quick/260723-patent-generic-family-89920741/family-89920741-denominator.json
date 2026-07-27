@@ -1,0 +1,467 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "89920741",
+  "root_id": "US-20260003166",
+  "publication_id": "US-20260003166-A1",
+  "sections": {
+    "background_summary_paragraphs": 25,
+    "description_paragraphs": 591,
+    "total_numbered_paragraphs": 616,
+    "brief_drawing_paragraphs": 39,
+    "electronic_device_wrapper_paragraphs": 12,
+    "camera_module_wrapper_paragraphs": 13,
+    "common_lens_architecture_paragraphs": 50,
+    "numerical_item_paragraphs": 439,
+    "common_closing_paragraphs": 3,
+    "claims": 20,
+    "independent_claims": 3,
+    "figref_tags": 151,
+    "declared_figure_panels": 39,
+    "drawing_sheets": 26,
+    "flattened_table_us_blocks": 48,
+    "mathml_objects": 12,
+    "native_html_tables": 0,
+    "embedded_figure_images": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 1",
+      "paragraph_range": [
+        175,
+        213
+      ],
+      "figures": [
+        "4",
+        "5",
+        "6A",
+        "6B"
+      ],
+      "tables": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "table_paragraphs": [
+        198,
+        204,
+        207,
+        210
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 2,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 2",
+      "paragraph_range": [
+        214,
+        250
+      ],
+      "figures": [
+        "7",
+        "8",
+        "9A",
+        "9B"
+      ],
+      "tables": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "table_paragraphs": [
+        237,
+        241,
+        244,
+        247
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 3,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 3",
+      "paragraph_range": [
+        251,
+        287
+      ],
+      "figures": [
+        "10",
+        "11",
+        "12A",
+        "12B"
+      ],
+      "tables": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "table_paragraphs": [
+        274,
+        278,
+        281,
+        284
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 4,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 4",
+      "paragraph_range": [
+        288,
+        325
+      ],
+      "figures": [
+        "13",
+        "14",
+        "15A",
+        "15B"
+      ],
+      "tables": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "table_paragraphs": [
+        311,
+        315,
+        318,
+        321
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 5,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 5",
+      "paragraph_range": [
+        326,
+        360
+      ],
+      "figures": [
+        "16",
+        "17"
+      ],
+      "tables": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "table_paragraphs": [
+        349,
+        353,
+        356,
+        359
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 6,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 6",
+      "paragraph_range": [
+        361,
+        397
+      ],
+      "figures": [
+        "18",
+        "19",
+        "20"
+      ],
+      "tables": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "table_paragraphs": [
+        384,
+        388,
+        391,
+        394
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 7,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 7",
+      "paragraph_range": [
+        398,
+        434
+      ],
+      "figures": [
+        "21",
+        "22",
+        "23"
+      ],
+      "tables": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "table_paragraphs": [
+        421,
+        425,
+        428,
+        431
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 8,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 8",
+      "paragraph_range": [
+        435,
+        469
+      ],
+      "figures": [
+        "24",
+        "25"
+      ],
+      "tables": [
+        29,
+        30,
+        31,
+        32
+      ],
+      "table_paragraphs": [
+        458,
+        462,
+        465,
+        468
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 9,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 9",
+      "paragraph_range": [
+        470,
+        506
+      ],
+      "figures": [
+        "26",
+        "27",
+        "28"
+      ],
+      "tables": [
+        33,
+        34,
+        35,
+        36
+      ],
+      "table_paragraphs": [
+        493,
+        497,
+        500,
+        503
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 10,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 10",
+      "paragraph_range": [
+        507,
+        543
+      ],
+      "figures": [
+        "29",
+        "30",
+        "31"
+      ],
+      "tables": [
+        37,
+        38,
+        39,
+        40
+      ],
+      "table_paragraphs": [
+        530,
+        534,
+        537,
+        540
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 11,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 11",
+      "paragraph_range": [
+        544,
+        578
+      ],
+      "figures": [
+        "32",
+        "33"
+      ],
+      "tables": [
+        41,
+        42,
+        43,
+        44
+      ],
+      "table_paragraphs": [
+        567,
+        571,
+        574,
+        577
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 12,
+      "label": "Huawei dual-group macro lens-assembly Embodiment 12",
+      "paragraph_range": [
+        579,
+        613
+      ],
+      "figures": [
+        "34",
+        "35"
+      ],
+      "tables": [
+        45,
+        46,
+        47,
+        48
+      ],
+      "table_paragraphs": [
+        602,
+        606,
+        609,
+        612
+      ],
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent_and_surface_radius_conflict_table_12_1_12_2",
+      "ordered_optical_prescription_published": true,
+      "prescription_specific_angular_field_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 13,
+      "label": "Huawei camera-module and image-sensor wrapper",
+      "paragraph_range": [
+        112,
+        124
+      ],
+      "figures": [
+        "2"
+      ],
+      "tables": [],
+      "table_paragraphs": [],
+      "claims": [
+        13,
+        14,
+        15,
+        16,
+        17
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_wrapper_only",
+      "ordered_optical_prescription_published": false,
+      "prescription_specific_angular_field_published": null,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 14,
+      "label": "Huawei electronic-device wrapper",
+      "paragraph_range": [
+        100,
+        111
+      ],
+      "figures": [
+        "1"
+      ],
+      "tables": [],
+      "table_paragraphs": [],
+      "claims": [
+        18,
+        19,
+        20
+      ],
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "ordered_optical_prescription_published": false,
+      "prescription_specific_angular_field_published": null,
+      "numeric_inference_or_repair_performed": false
+    }
+  ],
+  "counts": {
+    "source_items": 14,
+    "numerical_prescription_items": 12,
+    "camera_module_wrapper_items": 1,
+    "electronic_device_wrapper_items": 1,
+    "published_ordered_optical_prescriptions": 12,
+    "prescription_specific_angular_fields_published": 0,
+    "metadata_unpublished_items": 12,
+    "confirmed_no_prescription_items": 2,
+    "terminal_items": 14,
+    "nonterminal_items": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "worker_outputs_authorized": false,
+  "conversion_requests_authorized": false,
+  "formal_zmx_authorized": false,
+  "formal_case_intake_authorized": false,
+  "codev_calls_authorized": false,
+  "numeric_inference_or_repair_performed": false,
+  "lineage_value_borrowing_performed": false
+}

@@ -1,0 +1,147 @@
+{
+  "schema_version": "patent-family-source-denominator/v1",
+  "family_id": "69060231",
+  "root_id": "US-20260089289",
+  "publication_id": "US-20260089289-A1",
+  "application_number": "19/207416",
+  "source_bound_lineage": {
+    "family_id_printed": "69060231",
+    "application_number_printed": "19/207416",
+    "filing_date_printed": "May 14, 2025",
+    "relationships": [
+      {
+        "relationship": "continuation_of",
+        "application_number": "16/978690",
+        "grant_publication": "US-12328523-B2",
+        "direct_sources": ["Related U.S. Application Data", "paragraph [0001]"]
+      },
+      {
+        "relationship": "parent_371_from",
+        "application_number": "PCT/IB2019/055734",
+        "filing_date": "2019-07-04",
+        "direct_sources": ["Related U.S. Application Data", "paragraph [0001]"]
+      },
+      {
+        "relationship": "claims_priority_to",
+        "application_number": "62/693951",
+        "filing_date": "2018-07-04",
+        "direct_sources": ["Related U.S. Application Data", "paragraph [0001]"]
+      }
+    ],
+    "related_publication_numeric_borrowing_used": false
+  },
+  "denominator": {
+    "background_summary_paragraphs": 33,
+    "brief_drawing_paragraphs": 19,
+    "detailed_description_paragraphs": 24,
+    "description_paragraphs_total": 43,
+    "numbered_paragraphs_total": 76,
+    "claims": 20,
+    "independent_claims": 2,
+    "source_tables": 0,
+    "mathml_objects": 0,
+    "figref_tags": 55,
+    "declared_figure_panels": 18,
+    "drawing_sheets": 9,
+    "source_items": 6,
+    "ordered_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 6
+  },
+  "claims": {
+    "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
+    "independent_numbers": [1, 20],
+    "claim_only_source_items": 0,
+    "source_note": "Independent claims 1 and 20 abstract the disclosed scanning/fusion systems and add no separate lens prescription."
+  },
+  "figures": {
+    "panels": ["1A", "1B", "2", "3", "4A", "4B", "5", "6A", "6B", "6C", "7A", "7B", "8", "9A", "9B", "10A", "10B", "10C"],
+    "official_drawing_sheets": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "official_pdf_pages_with_drawings": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "vehicle dual-camera scanning system 100",
+      "paragraph_range": [53, 66],
+      "figures": ["1A", "1B", "2", "3"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_dual_camera_scanning_opfe_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "single-Tele steering scanning system 400",
+      "paragraph_range": [67, 68],
+      "figures": ["4A", "5", "6A", "6B", "6C"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.single_tele_steering_scanning_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "dual-camera steering scanning system 400-prime",
+      "paragraph_range": [68, 68],
+      "figures": ["4B", "5", "6A", "6B", "6C"],
+      "tables": [],
+      "shared_operation_text": "Paragraph [0068] expressly states that the following description refers to systems 400 and 400-prime.",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.dual_camera_steering_scanning_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "cabin single-Tele scanning system 700",
+      "paragraph_range": [69, 72],
+      "figures": ["7A", "8", "9A"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.cabin_single_tele_scanning_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "cabin dual-camera scanning system 700-prime",
+      "paragraph_range": [70, 72],
+      "figures": ["7B", "8", "9B"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.cabin_dual_camera_scanning_architecture_only"
+    },
+    {
+      "number": 6,
+      "label": "surveillance scanning system 1000",
+      "paragraph_range": [73, 75],
+      "figures": ["10A", "10B", "10C"],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.surveillance_scanning_and_fusion_architecture_only"
+    }
+  ],
+  "published_only": {
+    "system_100_wide_fov_range_degrees": [50, 100],
+    "system_100_tele_fov_range_degrees": [10, 30],
+    "opfe_126_rest_reflection_angle_degrees": 45,
+    "opfe_126_example_max_tilt_values_degrees": [10, 20, 40, 70],
+    "roles": ["Wide camera", "Tele camera", "processing unit", "scanning OPFE", "vehicle", "surveillance camera"],
+    "use_cases": ["vehicle object identification", "steering and road-curve tracking", "cabin monitoring", "surveillance", "image stitching and fusion"]
+  },
+  "not_published": [
+    "ordered optical surface sequence",
+    "surface radii",
+    "axial optical spacings",
+    "numerical refractive indices or Abbe numbers",
+    "asphere coefficients",
+    "aperture-stop surface or coordinate",
+    "numeric Wide or Tele focal length",
+    "image height",
+    "F-number"
+  ],
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}

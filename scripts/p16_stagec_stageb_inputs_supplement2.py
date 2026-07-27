@@ -19,8 +19,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import p16_stagec_stageb_inputs as base  # noqa: E402
 from scripts import p16_stagec_stageb_inputs_supplement as first  # noqa: E402
 
-_TRUSTED_BASE_SHA256 = "4f94a0cbc01405a7b3025f6c2ebadf9403282d83d566fe46bad0390b2f79d080"
-_TRUSTED_BASE_SIZE = 73242
+_TRUSTED_BASE_SHA256 = "969eb6ecba3515f7d26d9364376414719b26d2ab4235f434b798c4ebf2da3eb5"
+_TRUSTED_BASE_SIZE = 73219
 _TRUSTED_FIRST_SHA256 = "9ffcbd381ccb62d8caefd01bd28e3dc7fed57a856d3b8c7a26d92cb7d40cae30"
 _TRUSTED_FIRST_SIZE = 9864
 

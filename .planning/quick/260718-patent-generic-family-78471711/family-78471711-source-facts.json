@@ -1,0 +1,161 @@
+{
+  "schema_version": "patent-family-source-facts/v1",
+  "family_id": "78471711",
+  "root_id": "US-12169351",
+  "publication_id": "US-12169351-B2",
+  "prior_publication_id": "US-20220100057-A1",
+  "application_number": "17/405071",
+  "layout_signature": "669c74453c256b9c8b70aacf6e499b3b25f467446459a157baa5754adea100cb",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/86c15343d390d69d/US-12169351-B2.html",
+    "bytes": 82117,
+    "characters": 82103,
+    "sha256": "86c15343d390d69dbb9fef7209d6b0852ea0b89ec4d1eac71a67e06d44e2b5f4",
+    "normalized_characters": 58575,
+    "normalized_sha256": "66b6a725ff77dad6684caf9ac4170ec0309392c836d7ce831d996e71448361a9"
+  },
+  "identity_counts": {
+    "United States Patent 12169351 Kind Code B2": 1,
+    "Date of Patent December 17, 2024": 1,
+    "Inventor(s) Su; Heng-Yi et al.": 1,
+    "Imaging lens assembly, image capturing apparatus and electronic device Abstract": 1,
+    "Family ID: 78471711": 1,
+    "Assignee: LARGAN PRECISION CO., LTD.": 1,
+    "Appl. No.: 17/405071": 1,
+    "Filed: August 18, 2021": 1,
+    "US 20220100057 A1 Mar. 31, 2022": 1,
+    "US 63083228 20200925": 1
+  },
+  "section_offsets": {
+    "preamble": 0,
+    "abstract": 286,
+    "related": 4632,
+    "background": 4826,
+    "summary": 5692,
+    "description": 7469,
+    "detailed": 10791,
+    "claims": 55166
+  },
+  "section_sha256": {
+    "preamble": "d6af2f1a99801b2fa206420f119edfb5c5d0a8f02496eda7b7f535a5789ccf02",
+    "abstract": "200e21996d195e3b6a99f54432c049d18d4b280cc0fbf9430f1ded9e6f878d90",
+    "related": "eacde799a4d8513523111b3efa29202fa926b3fcc21f60ec33e19b21adcc3216",
+    "background": "5c2241611bb3f6b1cf1b354108025b1ec3d35669b93ef6ef4bc9381ce9150a55",
+    "summary": "80c79d37ef25581432723755646ae36741123ff3de79868894ad764244ea61f1",
+    "description": "9d66bf6610884cc780c172803cd0150ccf995ce3583835792dd631a7fa1ddf46",
+    "detailed": "f55b4a0d456d248cd7ec5bec680ca45306aee63af6d9c22612dd9e0a19353608",
+    "claims": "6daf289769f7f90d22aa8da0aacf77f82000efd6607c654b3bfe28ab23f00c97"
+  },
+  "paragraphs": {
+    "related_numbers": [1],
+    "background_numbers": [1, 2],
+    "summary_numbers": [3, 4, 5],
+    "brief_description_numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
+    "detailed_numbers": [28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88],
+    "span_sha256": {
+      "description-1-8": "544b22ebb0b2ef02ec1fba50efdd1d7427058b707759ae641808f5ade50be704",
+      "description-9-15": "07810c56a3bd7f3fcdac9d6d8e208098b64bf9d31739f4d42864b161d0faf6f9",
+      "description-16-23": "9578e12ae1ceed8be403a7ea057973088a31852cecc5fb5d1a7b2f0a46908811",
+      "description-24-27": "0c7cc6f858ea0a18722b4def6006d6b757b1ce0716e6d15a30320ea802729fac",
+      "detailed-28-43": "781036b95707481ccf7b773bfd0e35e6bca25c9529bc5c40d94fc4f5148ffeeb",
+      "detailed-44-56": "5577757d2759faa8b6729e77c2ca097e13e5eaf29f801ad6a15ecc390a1b3977",
+      "detailed-57-69": "e7ac0a0e81bd6a10afd2f7ba740f3418578c62fbc1523eae275dc2b0c5a52d94",
+      "detailed-70-82": "26a261ccdcf0a8d44c0cb28912c52b791a986c476f934e703dab28096a54e54b",
+      "detailed-83-88": "fb8bec767dc77d52dbacd56452f8f744dd19df0e472bd26b980e697913e2362a"
+    }
+  },
+  "drawings": {
+    "brief_intro_paragraph": 1,
+    "declared_figure_paragraphs": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27],
+    "html_labels": ["1A", "1B", "10", "1D", "1E", "1F", "1G", "2A", "2B", "2C", "2D", "2E", "2F", "2G", "3A", "3B", "3C", "3D", "3E", "3F", "3G", "3H", "4A", "4B", "4C", "4D"],
+    "official_raster_labels": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "2A", "2B", "2C", "2D", "2E", "2F", "2G", "3A", "3B", "3C", "3D", "3E", "3F", "3G", "3H", "4A", "4B", "4C", "4D"],
+    "official_page_mapping": {
+      "1A-1G": [3, 4, 5, 6, 7, 8, 9],
+      "2A-2G": [10, 11, 12, 13, 14, 15, 16],
+      "3A-3H": [17, 18, 19, 20, 21, 22, 23, 24],
+      "4A-4D": [25, 26, 27, 28]
+    },
+    "source_label_discrepancy": {
+      "html_brief_label": "FIG. 10",
+      "official_b2_page": 5,
+      "official_raster_label": "Fig. 1C",
+      "numeric_effect": false,
+      "repair_or_inference_used": false
+    },
+    "drawing_measurement_used": false
+  },
+  "html_structure": {
+    "tagged_tables": 0,
+    "flattened_mechanical_tables": 3,
+    "flattened_optical_tables": 0,
+    "mathml_objects": 0,
+    "image_tags": 0
+  },
+  "table_paragraphs": [
+    {"table": 1, "detailed_paragraph": 56, "official_pdf_page": 32, "sha256": "9f7f1b997f44b67ad8b96eafa939c89286070431112fa9960642b2aab7554bbe", "d_um": 20.0, "phi_i_mm": 5.35, "phi_1_mm": 4.82, "ratio": 1.11, "optical_prescription": false},
+    {"table": 2, "detailed_paragraph": 69, "official_pdf_page": 33, "sha256": "ad97534148ec82f80f021c4186ff8c292d2c07360fc64ffff086b6fcba45ff35", "d_um": 20.0, "phi_i_mm": 4.95, "phi_1_mm": 4.3, "ratio": 1.15, "optical_prescription": false},
+    {"table": 3, "detailed_paragraph": 82, "official_pdf_page": 35, "sha256": "db9081eaee252c81efa34ebf5af0d023601bbd2fa6a87ee2399a6d8dab9e7d16", "d_um": 20.0, "phi_i_mm": 4.95, "phi_1_mm": 4.3, "ratio": 1.15, "optical_prescription": false}
+  ],
+  "claims": {
+    "numbers": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "independent_numbers": [1, 9, 10],
+    "sha256": [
+      "947f95d6041ecc7636f15951711d70b29f3e85800fb951012290a5ed771cde75",
+      "3721245aa1f1ebc37e36d27296be9384ff4d6ed5a29456d5a4ab8f2f9bfb1c58",
+      "224a1deddf0d7635517fbc35417d504faef9200beed6cdab830c9168af193a67",
+      "fe7b01616a2aebe6f2d2a8576ae48e57585fb536e6c704b31777616929616ae7",
+      "aecbe806226c3a3f4e84586cad6e01f17aa59874a93e709d6625edf0289db0d9",
+      "186ed9a75ca04e8bcfc843f1855170c244c779f81450196babc5f1174a7359fc",
+      "3615a6cd4ddd8ab9aebacd5913490cbc1914794693f35b1ce045a09c83402de2",
+      "a5ee224aaef43ae0bbf301c5d295cc34e175a3b4a07d0f0804366745f6c982c8",
+      "001a56d67f111c1e1b32889a85c6fc526973defe741e71ed51af920dd5735fd5",
+      "424a73ab5a012ff3581d4a8b13652176e23c7933b61e19110a843dbd584c5bf3"
+    ]
+  },
+  "source_phrase_counts": {
+    "radius of curvature": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "aspheric": 0,
+    "aperture stop": 0,
+    "focal length": 4,
+    "effective focal length": 0,
+    "F-number": 0,
+    "field of view": 0,
+    "image height": 0,
+    "surface shapes": 3,
+    "other optical elements according to demand": 3
+  },
+  "source_items": [
+    {"embodiment_number": 1, "label": "Largan first imaging-lens-assembly barrel/glue/void embodiment", "detailed_paragraphs": [44, 56], "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G"], "table": 1, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only"},
+    {"embodiment_number": 2, "label": "Largan second imaging-lens-assembly barrel/glue/void embodiment", "detailed_paragraphs": [57, 69], "figures": ["2A", "2B", "2C", "2D", "2E", "2F", "2G"], "table": 2, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only"},
+    {"embodiment_number": 3, "label": "Largan third imaging-lens-assembly barrel/glue/void embodiment", "detailed_paragraphs": [70, 82], "figures": ["3A", "3B", "3C", "3D", "3E", "3F", "3G", "3H"], "table": 3, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.lens_barrel_retaining_glue_void_architecture_only"},
+    {"embodiment_number": 4, "label": "Largan image-capturing-apparatus wrapper", "summary_paragraph": 4, "detailed_paragraph": 41, "independent_claim": 9, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.image_capturing_apparatus_wrapper_only"},
+    {"embodiment_number": 5, "label": "Largan electronic-device wrapper", "summary_paragraph": 5, "detailed_paragraphs": [42, 83, 84, 85, 86, 87], "figures": ["4A", "4B", "4C", "4D"], "independent_claim": 10, "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"}
+  ],
+  "representability_boundary": {
+    "ordered_surface_radii_published": false,
+    "numeric_axial_spacings_published": false,
+    "refractive_index_and_abbe_data_published": false,
+    "conics_or_aspheres_published": false,
+    "aperture_stop_published": false,
+    "effective_focal_length_published": false,
+    "f_number_published": false,
+    "field_published": false,
+    "absolute_image_height_published": false,
+    "mechanical_air_gap_and_outer_diameters_are_optical_prescription": false,
+    "formal_output_permitted": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "prior_publication_numeric_borrowing_used": false
+  },
+  "formal_outputs": {
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

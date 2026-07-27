@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "e78d0ddce883b7de5b6abd760c4933c1f739317dd7929155a84bc45bad690ea4",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 104, "affected_items": 104},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "92715390",
+    "root_ids": ["US-12663695"],
+    "publication_ids": ["US-12663695-B2"],
+    "application_number": "18/587176",
+    "title": "Camera module",
+    "applicant": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "layout_signature": "398622f52ff511311c349f40626f79b6e19bad3e73c2c0586750234eb69b3715",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 0, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/344973b24234452b/US-12663695-B2.html",
+      "sha256": "344973b24234452b0a0178358d493bac58dfa26f48b5b7281f52d296782fd19e"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

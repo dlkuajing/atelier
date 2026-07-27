@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "family_id": "85177416",
+  "root_id": "US-20230048740",
+  "publication_id": "US-20230048740-A1",
+  "application_number": "17/813265",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/048729a45c619311/US-20230048740-A1.html",
+    "bytes": 84154,
+    "characters": 80500,
+    "sha256": "048729a45c61931128bc183893d588fc871cf608c69fb2ea08e98fced1e84f6b",
+    "normalized_characters": 67902,
+    "normalized_sha256": "ba5ebe24a3f30d5e27f0507039ab3e1e62db574a6c39761383095c33eee3e5ee"
+  },
+  "official_pdf_fetches": [
+    {
+      "authority": "USPTO Patent Public Search image service",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20230048740",
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/source-review/US-20230048740-A1-official-1.pdf",
+      "bytes": 1282773,
+      "container_sha256": "d10e7023fb9879d9b9b82eea29ac820aaf412ba81fba13683d0854bd127114a9",
+      "page_count": 25,
+      "single_raster_pages": 25,
+      "text_layer_characters": 0,
+      "decoded_raster_set_sha256": "e02da3ffe0d97ec412e9f0b09c25a4f3ef450678ba441cee2be9c42f420bb59a"
+    },
+    {
+      "authority": "USPTO Patent Public Search image service",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20230048740",
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/source-review/US-20230048740-A1-official-2.pdf",
+      "bytes": 1282773,
+      "container_sha256": "c5c2f0135b94e358f25ad51d4e41414738a0f985cbf2233c78e2b11effaede4d",
+      "page_count": 25,
+      "single_raster_pages": 25,
+      "text_layer_characters": 0,
+      "decoded_raster_set_sha256": "e02da3ffe0d97ec412e9f0b09c25a4f3ef450678ba441cee2be9c42f420bb59a"
+    }
+  ],
+  "source_policy": {
+    "classification_truth": "exact retained USPTO A1 HTML plus two independently fetched official A1 PDF containers and their decoded original rasters",
+    "historical_same_family_root_used": false,
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "source_conflict_repaired_by_inference": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

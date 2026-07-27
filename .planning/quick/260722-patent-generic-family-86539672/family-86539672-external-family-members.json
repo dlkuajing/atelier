@@ -1,0 +1,27 @@
+{
+  "schema_version": "patent-family-external-members/v1",
+  "family_id": "86539672",
+  "retained_publication": {
+    "publication_id": "US-20240352227-A1",
+    "application_number": "18/686481",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/38c41444a022cbd1/US-20240352227-A1.html",
+    "sha256": "38c41444a022cbd1ec7e325020142031db4e1372e5339a8bc05b2c9f20f3541a"
+  },
+  "source_disclosed_lineage": [
+    {
+      "record_type": "pct_application",
+      "identifier": "PCT/JP2022/043700",
+      "filed": "2022-11-28",
+      "evidence": "official A1 bibliography"
+    },
+    {
+      "record_type": "japanese_priority_application",
+      "identifier": "2021-193298",
+      "filed": "2021-11-29",
+      "evidence": "official A1 bibliography and paragraph [0232]"
+    }
+  ],
+  "classification_source": "US-20240352227-A1 only",
+  "numeric_borrowing_from_family_members": false,
+  "note": "No external publication number is promoted or inferred from the PCT application number."
+}

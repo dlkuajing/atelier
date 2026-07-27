@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "family_id": "97303742",
+  "frozen_cohort_root_ids": ["US-20260063876"],
+  "retained_classification_publications": ["US-20260063876-A1"],
+  "retained_application_status": {
+    "application_number": "US18/932225",
+    "representative_publication": "US20260063876A1",
+    "status_in_exact_google_wrapper": "Pending",
+    "us_grant_identified_in_exact_google_wrapper": false
+  },
+  "priority_records": [
+    {
+      "application_number": "TW113133435A",
+      "representative_publication": "TW202611589A",
+      "filing_date": "2024-09-04",
+      "relationship": "external priority claimed by the retained US application",
+      "in_frozen_cohort": false
+    }
+  ],
+  "queue_only_docdb_records": [
+    {
+      "application_number": "CN202411370115.XA",
+      "publication_id": "CN121634457A",
+      "filing_date": "2024-09-29",
+      "publication_date": "2026-03-10",
+      "evidence": "exact Google country-status and Also Published As records",
+      "in_frozen_cohort": false
+    },
+    {
+      "application_number": "GB2512384.5A",
+      "publication_id": "GB2701042A",
+      "filing_date": "2025-07-30",
+      "publication_date": "2026-04-08",
+      "evidence": "exact Google country-status and Also Published As records",
+      "in_frozen_cohort": false
+    },
+    {
+      "application_number": "DE202025105037.4U",
+      "publication_id": "DE202025105037U1",
+      "filing_date": "2025-08-26",
+      "publication_date": "2025-09-22",
+      "evidence": "exact Google country-status and Also Published As records",
+      "in_frozen_cohort": false
+    }
+  ],
+  "numeric_truth_imported_from_queue_only_records": false,
+  "queue_only": true,
+  "saturation_complete": false
+}

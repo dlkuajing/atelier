@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-51536052-root-9835833/generic-residual-after-1.json",
+  "affected_roots": 4,
+  "affected_items": 4,
+  "result_set_sha256": "689525e59b648050ec1bbf0d6748b3f9ffcdd16d12ac34442b9fc79943d42c0b",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "f3d265df4f6350e32d01b105e13e74b9a40f65fc410138d8a04e36c902ba134e",
+    "layout_signature_count": 1,
+    "family_id": "83598290",
+    "root_ids": [
+      "US-12270974"
+    ],
+    "publication_ids": [
+      "US-12270974-B1"
+    ],
+    "application_numbers": [
+      "18/839730"
+    ],
+    "title": "Image forming lens",
+    "applicant": "MEJIRO 67 INC.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/21f07ee5067d0e9f/US-12270974-B1.html",
+      "sha256": "21f07ee5067d0e9f834193a54dfc436f508f79ac97b9f460afea9836c957993a",
+      "bytes": 82194
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 144,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 2,
+      "half_field": 1
+    },
+    "table_count": 0
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

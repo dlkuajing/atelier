@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "family_id": "90040110",
+  "root_ids": ["US-12386154", "US-20250327997"],
+  "publication_ids": ["US-12386154-B2", "US-20250327997-A1"],
+  "family_identity": {
+    "title": "IMAGING LENS SYSTEM",
+    "applicant_assignee": "Samsung Electro-Mechanics Co., Ltd.",
+    "priority_applications": [
+      "KR 10-2022-0156668",
+      "KR 10-2022-0156741",
+      "KR 10-2023-0039586"
+    ],
+    "parent_application": "US 18/362008",
+    "continuation_application": "US 19/259670",
+    "parent_grant": "US-12386154-B2",
+    "parent_prior_publication_outside_frozen_cohort": "US-20240168265-A1",
+    "continuation_publication": "US-20250327997-A1"
+  },
+  "publication_denominators": {
+    "US-20250327997-A1": {
+      "paragraph_ranges": {
+        "background_and_summary": [1, 22],
+        "brief_description_of_drawings": [23, 41],
+        "detailed_description": [42, 175]
+      },
+      "numbered_paragraphs": 175,
+      "claim_range": [1, 9],
+      "declared_figure_range": [1, 20],
+      "declared_figure_panels": 24,
+      "tagged_html_table_blocks": 15,
+      "mathml_objects": 4,
+      "official_pdf_pages": 33,
+      "drawing_pdf_pages": [2, 19],
+      "drawing_sheets": 18,
+      "specification_pdf_pages": [20, 33]
+    },
+    "US-12386154-B2": {
+      "paragraph_ranges": {
+        "background_and_summary": [1, 22],
+        "brief_description_of_drawings": [1, 19],
+        "detailed_description": [20, 169]
+      },
+      "numbered_paragraphs_including_grant_section_resets": 191,
+      "claim_range": [1, 9],
+      "declared_figure_range": [1, 20],
+      "declared_figure_panels": 24,
+      "tagged_html_table_blocks": 15,
+      "mathml_objects": 1,
+      "official_pdf_pages": 33,
+      "reference_pdf_pages": [2, 2],
+      "drawing_pdf_pages": [3, 20],
+      "drawing_sheets": 18,
+      "specification_pdf_pages": [21, 33]
+    }
+  },
+  "source_tables": {
+    "prescription_surface_tables": [1, 3, 5, 7, 9, 11],
+    "asphere_coefficient_tables": [2, 4, 6, 8, 10, 12],
+    "cross_embodiment_optical_summary": 13,
+    "cross_embodiment_condition_tables": [14, 15],
+    "surface_sequences": {
+      "1": [1, 19],
+      "3": [1, 17],
+      "5": [1, 17],
+      "7": [1, 15],
+      "9": [1, 19],
+      "11": [1, 19]
+    },
+    "asphere_surface_headers": {
+      "2": [[1, 2, 3, 4], [5, 6, 7, 8]],
+      "4": [[1, 2, 3, 4], [5, 6, 7, 8]],
+      "6": [[1, 2, 3], [4, 5, 6]],
+      "8": [[1, 2, 3], [4, 5, 6]],
+      "10": [[1, 2, 3, 4], [5, 6, 7, 8]],
+      "12": [[1, 2, 3, 4], [5, 6, 7, 8]]
+    },
+    "asphere_row_labels_per_header": ["K", "A", "B", "C", "D", "E", "F", "G", "H", "J"],
+    "asphere_power_mapping": {
+      "A": 4,
+      "B": 6,
+      "C": 8,
+      "D": 10,
+      "E": 12,
+      "F": 14,
+      "G": 16,
+      "H": 18,
+      "J": 20
+    },
+    "common_numeric_payload_sha256_tables_1_through_13": [
+      "96bbed08bc520b7ec8aa50ff39f85064b7ca2eae4fc93ce3e1dfd4a0494c5bb1",
+      "8dc7198964fa8df2badc89b4c27d5db92bfdaddcebef6635b5ccc55c37e7b0d7",
+      "40358955e26f0c7a884f5541ca96164157a085544962411008a09708d3369f49",
+      "78bc6ae7a0c3c0bf4580230bb3c7e370be15bcdb7610de25d79fc5c6bdb3f6a4",
+      "412392e7feaf42d67cf2b18ef6a8ed2b3e7fe7701fd258318bd35fcde2c78046",
+      "5ae10fb42d9d49947766f95a537e568c8bf12b0437642565445026addc9f0695",
+      "74bccfb6889de6c9fd56e0ca573b8c3db50bd153aa0f8acba41397cef006f154",
+      "7ed3c32ca92f70c4788c1cb045cb2fc3357a4b160916e87d4157b5b84a1785b3",
+      "fc7a1c5ac113c84cba57ca32e437c17ba7b42bb851b3ff13369a1b75d693389a",
+      "61fbea05d9c4ea4fa41881b23d033a510a1e92ed34f8a8cb8ddf14c3350782ac",
+      "dfa94ea3d5ebdc149ee1d2f26ebf2eaee3ae82d2432a25c3b8253b5a2913267a",
+      "dbade82a5634f2a1b51a6ae703172617263856ec7a7bc1efaf9b896c124f29ee",
+      "51ba7f98b6f0888b4d93b94256d5f0ab010c79ee31ce628129843deba0ca0c15"
+    ]
+  },
+  "table_13_direct_values": {
+    "f_mm": [18.0, 18.0, 16.0, 16.0, 18.0, 18.0],
+    "f1_mm": [12.161, 11.395, 20.818, 19.717, 13.225, 13.282],
+    "f2_mm": [-92.715, 446.972, 14.629, 15.554, 160.555, 519.879],
+    "f3_mm": [32.012, 25.419, -14.06, -14.322, 51.259, 46.267],
+    "f4_mm": [-14.761, -9.741, null, null, -17.025, -17.311],
+    "ttl_mm": [21.794, 21.465, 19.906, 20.26, 23.41, 23.011],
+    "bfl_mm": [18.044, 17.715, 16.956, 17.31, 19.66, 19.261],
+    "image_height_mm": [2.1, 2.1, 2.1, 2.1, 2.4, 2.4]
+  },
+  "ledger_item_denominator": {
+    "distinct_family_items": 7,
+    "per_root_items": 7,
+    "frozen_cohort_roots": 2,
+    "replayed_items": 14,
+    "optical_prescriptions_per_root": 6,
+    "electronic_device_wrappers_per_root": 1,
+    "item_bindings": [
+      {"item_number": 1, "label": "Samsung folded four-lens first embodiment", "figures": [1, 9], "tables": [1, 2]},
+      {"item_number": 2, "label": "Samsung folded four-lens second embodiment", "figures": [10, 11], "tables": [3, 4]},
+      {"item_number": 3, "label": "Samsung folded four-lens third embodiment", "figures": [12, 13], "tables": [5, 6]},
+      {"item_number": 4, "label": "Samsung folded four-lens fourth embodiment", "figures": [14, 15], "tables": [7, 8]},
+      {"item_number": 5, "label": "Samsung folded four-lens fifth embodiment", "figures": [16, 17], "tables": [9, 10]},
+      {"item_number": 6, "label": "Samsung folded four-lens sixth embodiment", "figures": [18, 19], "tables": [11, 12]},
+      {"item_number": 7, "label": "Samsung electronic-device wrapper", "figures": [20], "tables": []}
+    ]
+  },
+  "paragraph_item_maps": {
+    "US-20250327997-A1": {
+      "common_detailed": [42, 73],
+      "items_1_through_6": [[74, 100], [101, 113], [114, 126], [127, 139], [140, 152], [153, 165]],
+      "summary_tables": [166, 166],
+      "electronic_device_wrapper": [167, 175]
+    },
+    "US-12386154-B2": {
+      "common_detailed": [20, 52],
+      "items_1_through_6": [[53, 81], [82, 96], [97, 111], [112, 126], [127, 141], [142, 156]],
+      "summary_tables": [157, 160],
+      "electronic_device_wrapper": [161, 169]
+    }
+  },
+  "required_metadata_boundary": {
+    "published_prescription_specific_f_number_values": 0,
+    "published_prescription_specific_angular_field_values": 0,
+    "forbidden_derived_values": ["f/entrance-pupil-diameter", "image-height/focal-length angle"],
+    "external_family_numeric_values_imported": 0,
+    "coordinate_values_synthesized": 0,
+    "metadata_terminal_reason": "metadata_unpublished.prescription_specific_f_number_and_angular_field_absent",
+    "wrapper_terminal_reason": "confirmed_no_prescription.electronic_device_wrapper_only"
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tagged_table_blocks": 0,
+    "unmapped_disclosed_items": 0,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "cross_publication_numeric_borrowing": false
+  }
+}

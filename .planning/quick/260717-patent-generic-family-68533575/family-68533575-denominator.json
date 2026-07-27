@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "family_id": "68533575",
+  "root_ids": [
+    "US-20230418018"
+  ],
+  "classification_publication": "US-20230418018-A1",
+  "application_number": "18/139799",
+  "paragraph_ranges": {
+    "background_and_summary": [1, 10],
+    "brief_description_of_drawings": [11, 25],
+    "detailed_description": [26, 77]
+  },
+  "claims": {
+    "cancelled_range": [1, 20],
+    "active_numbers": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33],
+    "total_claim_denominator": 33
+  },
+  "figure_panels": [
+    "1", "2", "3A", "3B", "3C", "4", "5", "6", "7", "8", "9",
+    "10A", "10B", "11", "12", "13A", "13B", "13C", "14A", "14B"
+  ],
+  "html_tables": 0,
+  "math_ids": [
+    "MATH-US-00001",
+    "MATH-US-00001-2",
+    "MATH-US-00001-3"
+  ],
+  "ledger_items": [
+    {
+      "item_number": 1,
+      "label": "FOC transmitter/receiver controller and imaging-lens architecture",
+      "paragraph_range": [26, 52],
+      "figure_panels": ["1", "2", "3A", "3B", "3C", "4", "5", "6", "7"],
+      "claim_numbers": [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.free_space_optical_communications_architecture_only"
+    },
+    {
+      "item_number": 2,
+      "label": "OLED monocentric imaging-transmitter performance model",
+      "paragraph_range": [54, 55],
+      "figure_panels": ["8", "9"],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.monocentric_transmitter_performance_model_only"
+    },
+    {
+      "item_number": 3,
+      "label": "FOC pixel-clustering electronics example",
+      "paragraph_range": [56, 59],
+      "figure_panels": ["10A", "10B"],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.pixel_clustering_electronics_only"
+    },
+    {
+      "item_number": 4,
+      "label": "Commercial camera-lens beam-steering laboratory demonstration",
+      "paragraph_range": [60, 61],
+      "figure_panels": ["11", "12"],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.commercial_camera_lens_lab_results_only"
+    },
+    {
+      "item_number": 5,
+      "label": "Externally sourced 30-degree rectilinear-lens ray-trace model",
+      "paragraph_range": [62, 67],
+      "figure_panels": ["13A", "13B", "13C"],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.externally_sourced_rectilinear_lens_model_only"
+    },
+    {
+      "item_number": 6,
+      "label": "Unidentified ZEMAX-database 100-degree fish-eye performance model",
+      "paragraph_range": [68, 75],
+      "figure_panels": ["14A", "14B"],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.unidentified_zemax_fisheye_performance_model_only"
+    }
+  ],
+  "non_item_paragraphs": {
+    "53": "specific-examples introduction",
+    "76": "embodiment boilerplate",
+    "77": "embodiment boilerplate"
+  },
+  "reconciliation": {
+    "paragraphs_1_through_77_contiguous": true,
+    "substantive_detailed_paragraphs_mapped": 49,
+    "non_item_detailed_paragraphs": 3,
+    "unmapped_substantive_paragraphs": 0,
+    "figure_panels_mapped": 20,
+    "unmapped_figure_panels": 0,
+    "ledger_items": 6,
+    "ordered_surface_prescriptions_published": 0,
+    "coordinate_values_synthesized": 0,
+    "external_coordinate_values_imported": 0
+  },
+  "source_anomalies_retained_without_repair": [
+    "Paragraph 69 prints 'an example 1000 FOV fish-eye lens from the ZEMAX database'; the source token is preserved and not silently normalized to 100 degrees.",
+    "Paragraph 69 prints 'EFL=0.732-50 mm'; the source range is preserved and not interpreted as a surface prescription."
+  ]
+}

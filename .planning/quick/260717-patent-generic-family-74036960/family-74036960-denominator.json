@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "family_id": "74036960",
+  "root_id": "US-12345877",
+  "publication_id": "US-12345877-B2",
+  "identity": {
+    "application_number": "17/619967",
+    "title": "Optical device and use thereof",
+    "applicant": "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.",
+    "assignee": "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.",
+    "filed": "2020-06-04",
+    "patent_date": "2025-07-01",
+    "kind_code": "B2",
+    "prior_publication": {"publication": "US 20220357572 A1", "date": "2022-11-10"},
+    "pct_application": {"application": "PCT/CN2020/094311", "date": "2020-06-04", "publication": "WO2020/253541", "publication_date": "2020-12-24"},
+    "priority_applications": [
+      {"application": "CN 201910520733.0", "date": "2019-06-17"},
+      {"application": "CN 201910699837.2", "date": "2019-07-31"}
+    ]
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/be795020aa39b3b6/US-12345877-B2.html",
+    "bytes": 172601,
+    "raw_characters": 172432,
+    "raw_sha256": "be795020aa39b3b691a170b6d367bfc2d926397372c3c5ddcae865570237bfe6",
+    "normalized_characters": 148325,
+    "normalized_sha256": "7f015070a42891a56bcda4e2f783e0e7a9e2e39e5d61cfc992cabd0626b0b21f"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_application_numbered_paragraphs": 1,
+    "technical_field_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 8,
+    "summary_numbered_paragraphs": 92,
+    "brief_drawing_numbered_paragraphs": 40,
+    "detailed_numbered_paragraphs": 105,
+    "total_numbered_paragraphs": 247,
+    "claims": 19,
+    "claim_families": 4,
+    "declared_textual_figures": 40,
+    "located_raster_figures": 40,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 15,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 15,
+    "replayed_ledger_items": 15,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 38,
+    "retained_page_rasters": 38,
+    "retained_drawing_sheets": 16,
+    "unmapped_source_items": 0,
+    "unmapped_declared_figures": 0
+  },
+  "paragraph_spans": {
+    "background_summary": [
+      {"range": [1, 1], "role": "PCT national-stage and priority binding"},
+      {"range": [2, 2], "role": "technical field"},
+      {"range": [3, 10], "role": "background"},
+      {"range": [11, 21], "role": "first-configuration objectives"},
+      {"range": [22, 44], "role": "first-configuration architecture"},
+      {"range": [45, 50], "role": "first-configuration manufacturing method"},
+      {"range": [51, 61], "role": "second-configuration objectives"},
+      {"range": [62, 88], "role": "second-configuration architecture"},
+      {"range": [89, 100], "role": "second-configuration manufacturing method"},
+      {"range": [101, 102], "role": "summary closing"}
+    ],
+    "description": [
+      {"range": [1, 40], "role": "40 figure declarations"},
+      {"range": [41, 45], "role": "shared detailed-description preamble"},
+      {"range": [46, 69], "role": "first-configuration preferred architecture"},
+      {"range": [70, 70], "role": "first modified dot-pin implementation"},
+      {"range": [71, 80], "role": "second modified clear-region and wavy-ring implementation"},
+      {"range": [81, 82], "role": "third modified parallel multi-ring implementation"},
+      {"range": [83, 84], "role": "fourth modified series multi-ring implementation"},
+      {"range": [85, 85], "role": "fifth modified open-arc implementation"},
+      {"range": [86, 87], "role": "sixth modified variable-width ring implementation"},
+      {"range": [88, 90], "role": "seventh modified side-region implementation"},
+      {"range": [91, 96], "role": "first-configuration manufacturing method"},
+      {"range": [97, 97], "role": "second-configuration transition"},
+      {"range": [98, 116], "role": "second-configuration preferred architecture"},
+      {"range": [117, 118], "role": "first modified split-conductor implementation"},
+      {"range": [119, 128], "role": "second modified thermal-insulator implementation"},
+      {"range": [129, 136], "role": "third modified L-shaped conductor implementation"},
+      {"range": [137, 140], "role": "second-configuration manufacturing method"},
+      {"range": [141, 144], "role": "injected conductive-paste implementation"},
+      {"range": [145, 145], "role": "closing boilerplate"}
+    ]
+  },
+  "figures": ["1", "2A", "2B", "2C", "2D", "2E", "2F", "3", "4", "5A", "5B", "5C", "6A", "6B", "7A", "7B", "8", "9", "10", "11", "12", "13", "14A", "14B", "14C", "14D", "15A", "15B", "15C", "15D", "16A", "16B", "17", "18A", "18B", "18C", "18D", "19", "20", "21"],
+  "claim_families": [
+    {"range": [1, 8], "role": "first-configuration heating architecture and dependent variants"},
+    {"range": [9, 17], "role": "second-configuration conductive-contact architecture and dependent variants"},
+    {"range": [18, 18], "role": "second-configuration manufacturing method"},
+    {"range": [19, 19], "role": "single variable-width annular heating-wire architecture"}
+  ],
+  "items": [
+    {"embodiment_number": 1, "label": "Sunny Automotive first-configuration preferred heating architecture", "description_paragraphs": [46, 69], "claim_context": [[1, 8]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_preferred_heating_architecture_only"},
+    {"embodiment_number": 2, "label": "Sunny Automotive first-configuration dot-pin variant", "description_paragraphs": [70, 70], "claim_context": [[1, 8]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_dot_pin_variant_only"},
+    {"embodiment_number": 3, "label": "Sunny Automotive first-configuration clear-region wavy-ring variant", "description_paragraphs": [71, 80], "claim_context": [[1, 8]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_clear_region_wavy_ring_variant_only"},
+    {"embodiment_number": 4, "label": "Sunny Automotive first-configuration parallel multi-ring variant", "description_paragraphs": [81, 82], "claim_context": [[1, 8]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_parallel_multi_ring_variant_only"},
+    {"embodiment_number": 5, "label": "Sunny Automotive first-configuration series multi-ring variant", "description_paragraphs": [83, 84], "claim_context": [[1, 8]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_series_multi_ring_variant_only"},
+    {"embodiment_number": 6, "label": "Sunny Automotive first-configuration open-arc variant", "description_paragraphs": [85, 85], "claim_context": [[1, 8]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_open_arc_variant_only"},
+    {"embodiment_number": 7, "label": "Sunny Automotive first-configuration variable-width ring variant", "description_paragraphs": [86, 87], "claim_context": [[1, 8], [19, 19]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_variable_width_ring_variant_only"},
+    {"embodiment_number": 8, "label": "Sunny Automotive first-configuration side-region heating variant", "description_paragraphs": [88, 90], "claim_context": [[1, 8]], "status": "confirmed_no_prescription", "reason_code": "first_configuration_side_region_heating_variant_only"},
+    {"embodiment_number": 9, "label": "Sunny Automotive first-configuration manufacturing method", "description_paragraphs": [91, 96], "claim_context": [], "status": "confirmed_no_prescription", "reason_code": "first_configuration_manufacturing_method_only"},
+    {"embodiment_number": 10, "label": "Sunny Automotive second-configuration preferred conductive-contact architecture", "description_paragraphs": [98, 116], "claim_context": [[9, 17]], "status": "confirmed_no_prescription", "reason_code": "second_configuration_preferred_conductive_contact_architecture_only"},
+    {"embodiment_number": 11, "label": "Sunny Automotive second-configuration split conductive-element variant", "description_paragraphs": [117, 118], "claim_context": [[9, 17]], "status": "confirmed_no_prescription", "reason_code": "second_configuration_split_conductive_element_variant_only"},
+    {"embodiment_number": 12, "label": "Sunny Automotive second-configuration thermal-insulator variant", "description_paragraphs": [119, 128], "claim_context": [[9, 17]], "status": "confirmed_no_prescription", "reason_code": "second_configuration_thermal_insulator_variant_only"},
+    {"embodiment_number": 13, "label": "Sunny Automotive second-configuration L-shaped conductive-element variant", "description_paragraphs": [129, 136], "claim_context": [[9, 17]], "status": "confirmed_no_prescription", "reason_code": "second_configuration_l_shaped_conductive_element_variant_only"},
+    {"embodiment_number": 14, "label": "Sunny Automotive second-configuration manufacturing method", "description_paragraphs": [137, 140], "claim_context": [[18, 18]], "status": "confirmed_no_prescription", "reason_code": "second_configuration_manufacturing_method_only"},
+    {"embodiment_number": 15, "label": "Sunny Automotive second-configuration injected conductive-paste variant", "description_paragraphs": [141, 144], "claim_context": [[9, 17]], "status": "confirmed_no_prescription", "reason_code": "second_configuration_injected_conductive_paste_variant_only"}
+  ],
+  "optical_scope": {
+    "lens_element_occurrences": 367,
+    "lens_barrel_occurrences": 75,
+    "heating_element_occurrences": 499,
+    "conductive_element_occurrences": 269,
+    "optical_device_occurrences": 156,
+    "material_occurrences": 34,
+    "interpretation": "defogging heater, lens-barrel, electrical-contact and manufacturing architecture only",
+    "ordered_surface_prescriptions": 0
+  },
+  "non_prescription_numeric_contexts": [
+    {"values": ["D1", "D2", "D3"], "location": "description paragraph 80", "meaning": "symbolic spacing choices between heater protrusions with no published numeric value"},
+    {"values": ["two", "three", "four", "five", "seven"], "location": "summary paragraphs 37-40 and description paragraphs 81-84", "meaning": "counts of parallel or series heating rings, not optical surfaces"},
+    {"values": ["glass", "resin", "PC", "plastic", "crystal", "ITO film", "conductive adhesive"], "location": "background, summary and detailed description", "meaning": "generic structural or electrical material choices without refractive index, Abbe number or dispersion"}
+  ],
+  "forbidden_substitutions": [
+    "heater-ring counts for optical surface counts",
+    "D1/D2/D3 symbolic heater spacing for axial lens spacing",
+    "generic lens, barrel or material wording for a surface prescription",
+    "drawing coordinates or component shapes for missing optical radii",
+    "PCT, prior-publication or related-family values for absent source data"
+  ]
+}

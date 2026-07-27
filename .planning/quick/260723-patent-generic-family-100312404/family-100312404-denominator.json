@@ -1,0 +1,303 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "100312404",
+  "root_id": "US-20260186252",
+  "publication_id": "US-20260186252-A1",
+  "sections": {
+    "technical_field_paragraphs": 1,
+    "background_paragraphs": 2,
+    "summary_paragraphs": 36,
+    "brief_drawing_paragraphs": 29,
+    "detailed_description_paragraphs": 133,
+    "total_numbered_paragraphs": 201,
+    "claims": 10,
+    "independent_claims": 1,
+    "figref_tags": 90,
+    "declared_figure_panels": 28,
+    "drawing_sheets": 15,
+    "mathml_objects": 52,
+    "flattened_table_us_blocks": 15,
+    "native_html_tables": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "AAC six-lens first embodiment",
+      "paragraph_range": [
+        109,
+        164
+      ],
+      "tables": [
+        1,
+        2
+      ],
+      "figures": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "lens_reference": 10,
+      "metadata_paragraph": 164,
+      "paragraph_metadata": {
+        "ENPD": "0.873",
+        "IH": "3.201",
+        "FOV": "119.85"
+      },
+      "table15_metadata": {
+        "f": "1.965",
+        "FNO": "2.251",
+        "TTL": "6.087",
+        "IH": "3.201",
+        "FOV": "119.85"
+      },
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent",
+      "terminal_status": "metadata_unpublished",
+      "stop_position_directly_published": false,
+      "repair_or_value_selection_performed": false
+    },
+    {
+      "number": 2,
+      "label": "AAC six-lens second embodiment",
+      "paragraph_range": [
+        165,
+        170
+      ],
+      "tables": [
+        3,
+        4
+      ],
+      "figures": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "lens_reference": 20,
+      "metadata_paragraph": 170,
+      "paragraph_metadata": {
+        "ENPD": "0.928",
+        "IH": "3.184",
+        "FOV": "115.67"
+      },
+      "table15_metadata": {
+        "f": "2.088",
+        "FNO": "2.250",
+        "TTL": "5.567",
+        "IH": "3.184",
+        "FOV": "115.67"
+      },
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent_and_asphere_a24_malformed",
+      "terminal_status": "metadata_unpublished",
+      "stop_position_directly_published": false,
+      "repair_or_value_selection_performed": false
+    },
+    {
+      "number": 3,
+      "label": "AAC six-lens third embodiment",
+      "paragraph_range": [
+        171,
+        176
+      ],
+      "tables": [
+        5,
+        6
+      ],
+      "figures": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "lens_reference": 30,
+      "metadata_paragraph": 176,
+      "paragraph_metadata": {
+        "ENPD": "0.716",
+        "IH": "3.100",
+        "FOV": "129.20"
+      },
+      "table15_metadata": {
+        "f": "1.610",
+        "FNO": "2.249",
+        "TTL": "5.903",
+        "IH": "3.100",
+        "FOV": "129.20"
+      },
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent",
+      "terminal_status": "metadata_unpublished",
+      "stop_position_directly_published": false,
+      "repair_or_value_selection_performed": false
+    },
+    {
+      "number": 4,
+      "label": "AAC six-lens fourth embodiment",
+      "paragraph_range": [
+        177,
+        182
+      ],
+      "tables": [
+        7,
+        8
+      ],
+      "figures": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "lens_reference": 40,
+      "metadata_paragraph": 182,
+      "paragraph_metadata": {
+        "ENPD": "1.060",
+        "IH": "3.269",
+        "FOV": "109.77"
+      },
+      "table15_metadata": {
+        "f": "2.386",
+        "FNO": "2.251",
+        "TTL": "5.323",
+        "IH": "3.269",
+        "FOV": "109.77"
+      },
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent",
+      "terminal_status": "metadata_unpublished",
+      "stop_position_directly_published": false,
+      "repair_or_value_selection_performed": false
+    },
+    {
+      "number": 5,
+      "label": "AAC six-lens fifth embodiment",
+      "paragraph_range": [
+        183,
+        188
+      ],
+      "tables": [
+        9,
+        10
+      ],
+      "figures": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "lens_reference": 50,
+      "metadata_paragraph": 188,
+      "paragraph_metadata": {
+        "ENPD": "0.796",
+        "IH": "3.268",
+        "FOV": "124.37"
+      },
+      "table15_metadata": {
+        "f": "1.791",
+        "FNO": "2.250",
+        "TTL": "5.968",
+        "IH": "3.135",
+        "FOV": "124.37"
+      },
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent_and_image_height_conflicting",
+      "terminal_status": "metadata_unpublished",
+      "stop_position_directly_published": false,
+      "repair_or_value_selection_performed": false
+    },
+    {
+      "number": 6,
+      "label": "AAC six-lens sixth embodiment",
+      "paragraph_range": [
+        189,
+        194
+      ],
+      "tables": [
+        11,
+        12
+      ],
+      "figures": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "lens_reference": 60,
+      "metadata_paragraph": 194,
+      "paragraph_metadata": {
+        "ENPD": "0.918",
+        "IH": "3.131",
+        "FOV": "117.33"
+      },
+      "table15_metadata": {
+        "f": "2.066",
+        "FNO": "2.251",
+        "TTL": "6.058",
+        "IH": "3.131",
+        "FOV": "117.33"
+      },
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent",
+      "terminal_status": "metadata_unpublished",
+      "stop_position_directly_published": false,
+      "repair_or_value_selection_performed": false
+    },
+    {
+      "number": 7,
+      "label": "AAC six-lens comparative embodiment",
+      "paragraph_range": [
+        195,
+        200
+      ],
+      "tables": [
+        13,
+        14
+      ],
+      "figures": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "lens_reference": 70,
+      "metadata_paragraph": 200,
+      "paragraph_metadata": {
+        "ENPD": "0.852",
+        "IH": "3.072",
+        "FOV": "121.06"
+      },
+      "table15_metadata": {
+        "f": "1.917",
+        "FNO": "2.250",
+        "TTL": "5.958",
+        "IH": "3.072",
+        "FOV": "121.06"
+      },
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent",
+      "terminal_status": "metadata_unpublished",
+      "stop_position_directly_published": false,
+      "repair_or_value_selection_performed": false
+    }
+  ],
+  "counts": {
+    "source_items": 7,
+    "published_ordered_surface_sets": 7,
+    "published_conic_asphere_sets": 7,
+    "complete_source_bound_prescriptions": 0,
+    "metadata_unpublished_items": 7,
+    "terminal_items": 7,
+    "nonterminal_items": 0
+  },
+  "common_table": {
+    "number": 15,
+    "system_columns": 7,
+    "not_an_additional_prescription": true
+  },
+  "classification": {
+    "base_reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent",
+    "item_2_reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent_and_asphere_a24_malformed",
+    "item_5_reason_code": "metadata_unpublished.prescription_specific_stop_surface_position_absent_and_image_height_conflicting",
+    "stop_coordinate_derived_or_inferred": false,
+    "malformed_token_repaired": false,
+    "conflicting_image_height_selected": false
+  },
+  "worker_outputs_authorized": false,
+  "conversion_requests_authorized": false,
+  "formal_zmx_authorized": false,
+  "formal_case_intake_authorized": false,
+  "codev_calls_authorized": false
+}

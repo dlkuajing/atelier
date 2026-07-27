@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "family_id": "53214261",
+  "current_frozen_cohort_roots": [
+    "US-9618727"
+  ],
+  "same_application_publications": [
+    {
+      "publication_id": "US-20160161708-A1",
+      "application_number": "14/832479",
+      "disposition": "audited_same_root_cross_check_only"
+    },
+    {
+      "publication_id": "US-9618727-B2",
+      "application_number": "14/832479",
+      "disposition": "current_frozen_cohort_root_publication"
+    }
+  ],
+  "provider_grouping_note": "The retained official B2 source reports Family ID 53214261. Same-application and external-family evidence remains publication-specific, and no numeric value is borrowed from any related publication.",
+  "external_family_members": [
+    {
+      "publication_id": "KR20160069088A",
+      "application_number": "KR1020140174423A",
+      "relationship": "priority-family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "KR101717208B1",
+      "application_number": "KR1020140174423A",
+      "relationship": "priority-family grant",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN104635320A",
+      "application_number": "CN201510074704.8A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN104635320B",
+      "application_number": "CN201510074704.8A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP2016110073A",
+      "application_number": "JP2015181824A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "cross_check_source": {
+    "url": "https://patents.google.com/patent/US9618727B2/en",
+    "observed_fields": [
+      "US application 14/832479 with publications US20160161708A1 and US9618727B2",
+      "KR priority application KR1020140174423A with KR20160069088A and KR101717208B1",
+      "CN201510074704.8A with CN104635320A and CN104635320B",
+      "JP2015181824A with JP2016110073A"
+    ]
+  }
+}

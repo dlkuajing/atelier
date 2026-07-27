@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "family_id": "90040108",
+  "root_id": "US-12669685",
+  "publication_id": "US-12669685-B2",
+  "source_integrity": {
+    "raw_document_sha256": "397f9b112f230f49f57a45eef135a3af102b2b0dec1779b1863ce9f592ca28c5",
+    "normalized_text_sha256": "aec72f4e83943a92d6c03ef02770db9e87c6afc591af1e2b0a28c84737d6483c",
+    "section_sha256": {
+      "preamble": "4c2895b7ad74687e03f34342ba1b66b96f1a12f2c19b6187d4ab5181f5e1c3ae",
+      "abstract": "4b3f91914ec9d54977b708a17b25bbb4d2cf97d4ed2ea7453704d06cf602766c",
+      "background": "406a5a1c90333eaeaf76191b879faf0078744e8b12e0501d62f56c02fc59c783",
+      "description": "0d1bcfe31ccb088cc895b864e01f8a5818cdaf4a6d0a018194a832175543a20c",
+      "claims": "1d1d17315a88ad86c38ed2229cbd994684b78e5defe1a786f05dfb29bea8a292"
+    },
+    "content_span_sha256": {
+      "background_summary_without_heading_with_trailing_separator": "2a95942488d649e27797a87780ee7f190d77f3ef96f227f9b205fb867706bd83",
+      "description_trimmed": "855c853cd597bc9d6c3a53be26c5c1a9738942ec1adb00ce4ab750252e278c97"
+    },
+    "background_summary_number_sequence": [1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+    "description_paragraph_range": [1, 169],
+    "description_span_sha256": {
+      "1-12": "b6d0bac77a3acd4a1cca9c3ccfd0c96599e7773ef13c4481be7f3f58c344e951",
+      "13-58": "64c7f851adc4fd2534f1de93c840d573e5ed9a24f725c8f5675d4163409f0c9a",
+      "59-79": "ac40a185f155fd36dff8241eadbff8a35572ab110c1e663bf76a954a8e39e65c",
+      "80-100": "5ef369484eafe6f9b223cc3cb66c16976a9a7d66492ac2b43a2e183a39722577",
+      "101-121": "143e56993304a9041c92fedea85ae3f90e9b686feed04bf889d6fe36596591a2",
+      "122-142": "faed1a957f20ced02102acf702009954bc47ad12935bcca2aef03eb3a550731d",
+      "143-160": "850e8abf0ba4ddda39509d1d6e7eddca37fe21ac94722b6d07a6250bd073ce31",
+      "161-166": "333ed7d6b0cfe132cb729bc0f056ed036ad45e3af37e9ece6cb3cb61bce58e1c",
+      "167-169": "b2b276b21386930ffed9b70861c3743f9f76fb24f53263fa20eb0c1c3a115e46"
+    }
+  },
+  "figures": {
+    "declared": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "description_reference_counts": [3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3],
+    "system_figures": [1, 3, 5, 7, 9],
+    "aberration_figures": [2, 4, 6, 8, 10],
+    "electronic_device_figures": [11]
+  },
+  "tables": [
+    {"table": 1, "paragraph": 78, "payload_characters": 657, "payload_sha256": "ecabc222219ba4672ae0cc275d4ce9f5e9edf687b0fb1d8c3485ac14ccbc3fd4", "surface_sequence": [1, 19]},
+    {"table": 2, "paragraph": 79, "payload_characters": 361, "payload_sha256": "0e551f5ac6efb641502b3dd9eec4784a11f7785159f3b1db8a2b25e5b594724a", "asphere_headers": [[1, 10]], "coefficient_rows_per_header": 10},
+    {"table": 3, "paragraph": 99, "payload_characters": 657, "payload_sha256": "7df6b4e8b448775c2a397a074453ad32eb80fcbd1671d39934fec4caad4ed58e", "surface_sequence": [1, 19]},
+    {"table": 4, "paragraph": 100, "payload_characters": 369, "payload_sha256": "eea8a5f6e542d48a8a8d348d13b8af0aa821af38081c90e0d6e3998af112656b", "asphere_headers": [[1, 10]], "coefficient_rows_per_header": 10},
+    {"table": 5, "paragraph": 120, "payload_characters": 717, "payload_sha256": "c655ffeedde461cfced273334f11905f796160cba79df5f47092e3d4b08b3dbc", "surface_sequence": [1, 21]},
+    {"table": 6, "paragraph": 121, "payload_characters": 370, "payload_sha256": "98f7e813567ffb425dcccfe15d135271d35261c37f9a1569c227920c60f4cbc3", "asphere_headers": [[1, 10]], "coefficient_rows_per_header": 10},
+    {"table": 7, "paragraph": 141, "payload_characters": 719, "payload_sha256": "fae3468a8aa5c033151c823dcb5ef598a1be498366b17006f32fb012cacc78ea", "surface_sequence": [1, 21]},
+    {"table": 8, "paragraph": 142, "payload_characters": 361, "payload_sha256": "4b300d4c5bf744d42d033a3ef20a22cbe47099b841374adc2d6ac4fb8168d2d9", "asphere_headers": [[1, 10]], "coefficient_rows_per_header": 10},
+    {"table": 9, "paragraph": 155, "payload_characters": 538, "payload_sha256": "aeb60b09ba0816d9b1e8cb8da53e54fc6749ebce17e3a10ff06c677500809847", "surface_sequence": [1, 15]},
+    {"table": 10, "paragraph": 156, "payload_characters": 1035, "payload_sha256": "8056d86885edcd89081bc1585d257e77c4754e30357b9dd33d870f4a37f4ba72", "asphere_headers": [[1, 4], [5, 8]], "coefficient_rows_per_header": 10},
+    {"table": 11, "paragraph": 158, "payload_characters": 867, "payload_sha256": "3969108e5666eef6f0142c669a49409a89e8b32030bb123e5c31a83d4f46ad7c"},
+    {"table": 12, "paragraph": 159, "payload_characters": 329, "payload_sha256": "96e3e23bc3daac462d5397f20524f02eb9e6666d4d8396416c09efdefcbe700e"},
+    {"table": 13, "paragraph": 160, "payload_characters": 1193, "payload_sha256": "156c52cea259ecbca3a0f318ee309116175a82089ee3153b6f3f69a4b1746120"}
+  ],
+  "table11_direct_values": {
+    "f": ["15.000", "13.992", "16.420", "23.000", "27.188"],
+    "TTL": ["18.736", "16.878", "20.827", "27.975", "32.283"],
+    "BFL": ["16.034", "13.634", "18.163", "23.429", "27.810"],
+    "PL": ["13.710", "11.234", "16.088", "19.118", "25.500"],
+    "TLG": ["2.703", "3.244", "2.664", "4.546", "4.173"],
+    "ImgHT": ["2.00", "2.00", "2.00", "2.00", "4.20"]
+  },
+  "mathml": {
+    "count": 34,
+    "object_sha256": [
+      "f23c44814642440ac8aa1dff9b1819ff8c80d519a230472f8bd9f9c868d91bbc",
+      "be6fc1e61cc02ee296c6a770d70d2ca7425d5b166fe6e3cb9794ec23bbf01ffd",
+      "93ed90b0ce01bf0979961ce85921ac055b431da373affa4c590f4d7faf516bdd",
+      "7c6c0f9e4ebaef52fcec2f2fe101caa14d684dff4848c90f71e3a8e09a6c033c",
+      "0a6a681ab93397d39489f67dfafeee1a6aa0f1498f283a11eca95be91fdf51fd",
+      "2bfd6b1a103c4a8fea64505fe038f43761f2eda5a35931601f2a647e1c3b41a1",
+      "ed512f41decf771c93ab975694dd984e03f202897f36e1922bbc325e4928e204",
+      "a00b9505a1b33125fb551b58fc6b1bf31a8026ff4160cf0dc0163979bb04b6e0",
+      "4a3f09573abf546388acbff0e1e36b9e8491e38e4cf3986ff7d6adb61617507f",
+      "78a1179b2c2ccd9bfc47be952a875778d1a29c053e0bf533cd5570057f5846ab",
+      "2a50fd9420cf94280fb7e0da456b11d53a6da8a9598ba54b9a386dccdac0fb08",
+      "4c83700066e2468cd3275857da6124f26bb0655ce5487e3f3d5f544ecb573cc2",
+      "d527c39f33ac2bad89e294e050b8990c353ddbca7a4ee2340a50ae866ea7f13f",
+      "ba02c1feaddae0a801da72276eb1b6bd43f013131e1f7775807059fccc6cbf0e",
+      "ee6ae42e50a8b3ae7690dfbaed1f32bef8b8564d5a67f6536ec75d57b0d58a06",
+      "927f4198c9ac21296e2de9bbbc1757c723af5bf5711d8da1e60c01964336813e",
+      "8d5b83f59b4a181cd00a4417ee9888f772917a087258f5294c0665e38a76f9a7",
+      "07a1e7bb6dc37ce264b4448b6b9d9bb8d1c4fef6c7ca4e2f2469ef8d15b18b9f",
+      "d57b89282ff2e24d46ed62708acd01f8b700f2f79fdf7d0ee1957f8ff2e205ee",
+      "5e26ed983872b090b23dbd8599906bcedbf3684e316e80c5a12ca23ed7584890",
+      "7048ccb314713066bb0f7c915e9f25592397cfc52b8cf20c2bbfa905573ae87f",
+      "e6999de149b01a0308da3ea0769f5550cb7c72502a6408db98e31188f86c513b",
+      "0a0a4807d3987cc4ba46f6a83c7f64f5c09556dd36ce4b1b54471f2c037e8b3a",
+      "eebbc2f87de4182e27811dc9508e0b825598e30a8301c8a662e20706444d0c24",
+      "c1c87a241fe5c977cb7dc053dfe210e567f4066f96aa9d15df95a0d987d297cf",
+      "de80e54690209a78ba5b98c921e89c8070cd928c3d735ccb8a42996752c7000f",
+      "75201a67f268767c5d933332448560c3025b3de8f371b92950fee982f63e7d49",
+      "64e35ee18b51a9d72965278db502a296198da395565304a759062f7e84dd7127",
+      "bcd5a28cf2f011207b849d742bc0cb25197b6e415a20035edc0563c091ada5d0",
+      "bceb3eec93c879ca06bf2da0b2136a4e957e6b843b08faad8cdfa49f9192f9d3",
+      "a295703d74d79c2b3d644de2559b0f3afd98c6610884665dddf8f14dc1bf229d",
+      "8d325af9d06e10f3397e9bc88d084c571727b2aaca0f8279aedf1acc4caf36cc",
+      "90a0bbb33e749d7a9b67ea55269ca8092413496482cd19f676ab93b4a71c89a0",
+      "29a4b9abe956ee8301d8afcd129880f2a49934bf50abc5d25148c36d460f5b51"
+    ]
+  },
+  "claims": {
+    "source_number_sequence": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "independent_claim_numbers": [1, 11],
+    "payload_sha256": [
+      "f7687854c061462dbcf3ec5678b00cb9d5f7328dc753e5f97d55f66eb8983f17",
+      "7c6d175470326289e56d90e41bb750eefb4900d1bcd91f108fd6e48a74a6830c",
+      "812c211fe4829e8925f7edd0b2b3ddd5180430e0e609a678c8572110e5ec1b7c",
+      "5e61cf25553e4002dde8c28b1f67d1d6e467a398942ad50079202166a3b6cfa7",
+      "8904bf2d3add0036365f872ae0e7818a2d60e201e1570ffcf213f9ecb0a62acc",
+      "c8c2c077b1094e770b2451fc00a6351b36eb23587936cdf56d4684033bdb5179",
+      "90df9d505d59e798e29ba5be8c1ec53c580b05a52bc6dc013ba17c9267313028",
+      "ef901a58025d62c186ac60a9756613251336830dae4d09f02394cf01b264da45",
+      "b9fdf1117112124877b5795ab8c2805631330c7d994ec64942cefd1316486192",
+      "84b9be7ca327f99a43dbbf8065940245f44f989323036bd46abd55fa70f58a6e",
+      "eb6868dfd34f7aa63c8cfed53c517113b7ad762ab7ed1363c762470cf4512558"
+    ]
+  },
+  "prescription_boundary": {
+    "complete_ordered_optical_prescriptions": 5,
+    "ordered_surface_rows": 95,
+    "lens_surface_rows": 48,
+    "asphere_surface_rows": 48,
+    "published_efl_values": 5,
+    "published_image_height_values": 5,
+    "published_exact_stop_values": 0,
+    "published_exact_f_number_values": 0,
+    "published_prescription_specific_angular_field_values": 0,
+    "derived_f_number_used": false,
+    "derived_angular_field_used": false,
+    "fold_coordinates_synthesized": false,
+    "raster_values_transcribed": false,
+    "drawing_geometry_measured": false,
+    "related_application_values_borrowed": false
+  },
+  "items": [
+    {"item": 1, "paragraphs": [59, 79], "tables": [1, 2, 11, 12, 13], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_f_number_and_angular_field_absent"},
+    {"item": 2, "paragraphs": [80, 100], "tables": [3, 4, 11, 12, 13], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_f_number_and_angular_field_absent"},
+    {"item": 3, "paragraphs": [101, 121], "tables": [5, 6, 11, 12, 13], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_f_number_and_angular_field_absent"},
+    {"item": 4, "paragraphs": [122, 142], "tables": [7, 8, 11, 12, 13], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_f_number_and_angular_field_absent"},
+    {"item": 5, "paragraphs": [143, 160], "tables": [9, 10, 11, 12, 13], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_f_number_and_angular_field_absent"},
+    {"item": 6, "paragraphs": [161, 166], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"}
+  ]
+}

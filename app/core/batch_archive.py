@@ -228,7 +228,7 @@ def _atomic_write_json(path: Path, payload: Mapping[str, object]) -> None:
     final position, so `glob("*.json")` readers never pick up an in-flight
     write."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = path.with_name(path.name + f".tmp-{uuid4().hex}")
+    tmp_path = path.with_name(f".tmp-{uuid4().hex}")
     tmp_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     os.replace(tmp_path, path)
 

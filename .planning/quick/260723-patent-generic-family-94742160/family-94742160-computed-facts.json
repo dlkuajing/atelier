@@ -1,0 +1,1733 @@
+{
+  "schema_version": "patent-family-computed-facts/v1",
+  "family_id": "94742160",
+  "root_id": "US-20260177783",
+  "publication_id": "US-20260177783-A1",
+  "application_number": "19/054915",
+  "title": "OPTICAL IMAGING LENS",
+  "applicant_and_assignee": "Genius Electronic Optical (Xiamen) Co., Ltd.",
+  "filed": "2025-02-17",
+  "published": "2026-06-25",
+  "china_priority_application": "202411918281.9",
+  "china_priority_filed": "2024-12-24",
+  "domestic_related_application_records": [],
+  "raw_document": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2033debe04d6132a/US-20260177783-A1.html",
+    "bytes": 99904,
+    "sha256": "2033debe04d6132a8a686dbd1fc7f07c75d66bc9bb336f29fce4770e54d32fd0"
+  },
+  "normalized_document": {
+    "characters": 77237,
+    "sha256": "e15b0e4047af175fdc859920d5d943c7e287d79d4255e3e1669a7e4b55921775"
+  },
+  "identity_marker_counts": {
+    "United States Patent Application Publication 20260177783": 1,
+    "Kind Code A1": 1,
+    "Publication Date June 25, 2026": 1,
+    "Zhu; Qingzhi": 2,
+    "ZHAO; QIDA": 1,
+    "He; Meiting": 1,
+    "Hsieh; Hung-Chien": 1,
+    "Applicant: Genius Electronic Optical (Xiamen) Co., Ltd. (Xiamen, CN)": 1,
+    "Assignee: Genius Electronic Optical (Xiamen) Co., Ltd. (Xiamen, CN)": 1,
+    "Family ID: 94742160": 1,
+    "Appl. No.: 19/054915": 1,
+    "Filed: February 17, 2025": 1,
+    "CN 202411918281.9 Dec. 24, 2024": 1
+  },
+  "raw_section_body_sha256": {
+    "background_summary": "185efa0c3caa6befb49d7934e7c36b20f032ea109c65a549aa4944ce40e4c047",
+    "description": "48b4d705da6372d228926388a495f17f5342846b913d84762789ff9a70fff9f3",
+    "claims": "a597ef75230db71e69eac5e2d62c6beb625ca17bd09bccbace45c0afc1b7e4cc"
+  },
+  "section_sha256": {
+    "background_summary": "02fb15e3ba5ca99d48efb6061a501c6af148d97d714782c00fee215bfa9d4f0d",
+    "description": "8065c7c0514bf00fb8c01787b79815f2eee6cb2e2acdf48ffcaf6bb481ce73ea",
+    "claims": "3069c41fc2772fe72fa056b8395d74c7efab3c1ef5f09f71183fdcf7c28d84d5"
+  },
+  "raw_paragraph_span_sha256": {
+    "background_summary:1-10": "27e7dd4cb60d3aac36e0eb3e57f8eba542abab0bf76482c91b12e2da7f6d0b8d",
+    "description:11-68": "cb242c86dc5e25fb9d4dd327e4718150ee6ab5cdcf1689c0770929f2dbfb8918",
+    "description:69-90": "dbf062cf05a203f80c69388ee14f1963d4a3655f023a86a06426680018c53ace",
+    "description:91-108": "a8d6832286884a544419c118ef290a27d26425b60d22ab3de659cf115bda9c49",
+    "description:109-110": "e267b99566da7fcf210a687380614c669573279884ade9e9ea612d1369abf05a",
+    "description:111-112": "1cc69eebd2ecfe80e7255646817fb66e5ea2430a32fe6e9571c702624ae74b0d",
+    "description:113-114": "37d103e798d88f86f3c25e05c598350ae794db8292d6e762e2bcd299b6945446",
+    "description:115-116": "bf1c276b2ae907a53af688723db20d6951ca4f9f45b772b984996f1d47367e9e",
+    "description:117-118": "96b0b2b25a39440e7406affe8adca4c405bdf13d4b66d8b4db01751f021e8f91",
+    "description:119-120": "792ecc8c301bf31449bd5462bb339185268fd6754eaebb824b7544d452e926a0",
+    "description:121-122": "0c761d5393881346fb58c4bb35d3776a6135f53ce1ed07a8dc6536fb23e66ddf",
+    "description:123-158": "d1017d8f68b50f6c69d4fd282b8eb9ce1bba061037e4b85a3b11f906b872ed78"
+  },
+  "isolated_paragraph_span_sha256": {
+    "background_summary:1-10": "32fc8f017d674f760a56dc0c1938d3b36843c3e9eb7572d6de183e1d9031eba8",
+    "description:11-68": "e3beec5fb9ab1758172f6561a0bc695f78777874bd0442aeca7b4a3b456e0b9e",
+    "description:69-90": "fcc74ce65b8dae7b6d4d3fc42de495c4e7ee5d659ff379cea7d7a72e70b9906a",
+    "description:91-108": "a5891a9649a7109dcbd493f205c5d09460520f57c6e5202bb89ff2fced4f9816",
+    "description:109-110": "905ddde5a31c36e806c2627a9e5bc9ab3d09546fdea1d72bad9ebb6a410cfb6e",
+    "description:111-112": "2808f2e04d784347e40fa2daff4656f284a5819576ba8577666df9e22c121178",
+    "description:113-114": "bb9016ef0e9cc0ced68f0891d05c3f3f3a9e5631ad3793fcc66a7b750ec97f4f",
+    "description:115-116": "5ab67c2b516c0f38c8987319b85cb6f799f503100e35991aa6849a8a903346f5",
+    "description:117-118": "37f033a5cf1ffc18f78620b0345d6b17d2ca0e52eab6e179ac4969ce406bccfc",
+    "description:119-120": "595402885cbb72a536daacecd4ba1cd48ea49223a2f3b1967f5ed5aaf9403e45",
+    "description:121-122": "0e56e93586418468476c4f1346d8c07e1d521a643c5c62dfef49cdb91be4b0f3",
+    "description:123-158": "4728e260171090b86a57d745750ba475ffac42814d81e59a4e24f2ee1e237a43"
+  },
+  "whole_section_visible_paragraph_numbers": {
+    "background_summary": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "description": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158
+    ]
+  },
+  "raw_paragraph_numbers": {
+    "background_summary": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "description": [
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158
+    ]
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Genius six-lens optical imaging lens 1st embodiment",
+      "paragraph_range": [
+        91,
+        108
+      ],
+      "source_summary_paragraph": 91,
+      "figures": [
+        "6",
+        "7A",
+        "7B",
+        "7C",
+        "7D",
+        "22",
+        "23"
+      ],
+      "optical_table_figure": "22",
+      "asphere_table_figure": "23",
+      "direct_system_metadata_paragraph": 108,
+      "direct_system_metadata": {
+        "EFL": "2.586",
+        "HFOV": "47.489",
+        "TTL": "4.280",
+        "Fno": "1.900",
+        "ImgH": "2.900"
+      },
+      "cross_section_and_aberration_pages": [
+        4
+      ],
+      "optical_table_page": 12,
+      "asphere_table_page": 13,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 2,
+      "label": "Genius six-lens optical imaging lens 2nd embodiment",
+      "paragraph_range": [
+        109,
+        110
+      ],
+      "source_summary_paragraph": 109,
+      "figures": [
+        "8",
+        "9A",
+        "9B",
+        "9C",
+        "9D",
+        "24",
+        "25"
+      ],
+      "optical_table_figure": "24",
+      "asphere_table_figure": "25",
+      "direct_system_metadata_paragraph": 110,
+      "direct_system_metadata": {
+        "EFL": "2.521",
+        "HFOV": "47.484",
+        "TTL": "4.280",
+        "Fno": "1.900",
+        "ImgH": "2.900"
+      },
+      "cross_section_and_aberration_pages": [
+        5
+      ],
+      "optical_table_page": 14,
+      "asphere_table_page": 15,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 3,
+      "label": "Genius six-lens optical imaging lens 3rd embodiment",
+      "paragraph_range": [
+        111,
+        112
+      ],
+      "source_summary_paragraph": 111,
+      "figures": [
+        "10",
+        "11A",
+        "11B",
+        "11C",
+        "11D",
+        "26",
+        "27"
+      ],
+      "optical_table_figure": "26",
+      "asphere_table_figure": "27",
+      "direct_system_metadata_paragraph": 112,
+      "direct_system_metadata": {
+        "EFL": "2.547",
+        "HFOV": "47.508",
+        "TTL": "4.280",
+        "Fno": "1.900",
+        "ImgH": "2.900"
+      },
+      "cross_section_and_aberration_pages": [
+        6
+      ],
+      "optical_table_page": 16,
+      "asphere_table_page": 17,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 4,
+      "label": "Genius six-lens optical imaging lens 4th embodiment",
+      "paragraph_range": [
+        113,
+        114
+      ],
+      "source_summary_paragraph": 113,
+      "figures": [
+        "12",
+        "13A",
+        "13B",
+        "13C",
+        "13D",
+        "28",
+        "29"
+      ],
+      "optical_table_figure": "28",
+      "asphere_table_figure": "29",
+      "direct_system_metadata_paragraph": 114,
+      "direct_system_metadata": {
+        "EFL": "2.259",
+        "HFOV": "47.519",
+        "TTL": "4.234",
+        "Fno": "1.900",
+        "ImgH": "2.900"
+      },
+      "cross_section_and_aberration_pages": [
+        7
+      ],
+      "optical_table_page": 18,
+      "asphere_table_page": 19,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 5,
+      "label": "Genius six-lens optical imaging lens 5th embodiment",
+      "paragraph_range": [
+        115,
+        116
+      ],
+      "source_summary_paragraph": 115,
+      "figures": [
+        "14",
+        "15A",
+        "15B",
+        "15C",
+        "15D",
+        "30",
+        "31"
+      ],
+      "optical_table_figure": "30",
+      "asphere_table_figure": "31",
+      "direct_system_metadata_paragraph": 116,
+      "direct_system_metadata": {
+        "EFL": "2.701",
+        "HFOV": "47.519",
+        "TTL": "4.274",
+        "Fno": "1.900",
+        "ImgH": "2.900"
+      },
+      "cross_section_and_aberration_pages": [
+        8
+      ],
+      "optical_table_page": 20,
+      "asphere_table_page": 21,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 6,
+      "label": "Genius six-lens optical imaging lens 6th embodiment",
+      "paragraph_range": [
+        117,
+        118
+      ],
+      "source_summary_paragraph": 117,
+      "figures": [
+        "16",
+        "17A",
+        "17B",
+        "17C",
+        "17D",
+        "32",
+        "33"
+      ],
+      "optical_table_figure": "32",
+      "asphere_table_figure": "33",
+      "direct_system_metadata_paragraph": 118,
+      "direct_system_metadata": {
+        "EFL": "2.574",
+        "HFOV": "47.515",
+        "TTL": "4.310",
+        "Fno": "1.900",
+        "ImgH": "2.900"
+      },
+      "cross_section_and_aberration_pages": [
+        9
+      ],
+      "optical_table_page": 22,
+      "asphere_table_page": 23,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 7,
+      "label": "Genius six-lens optical imaging lens 7th embodiment",
+      "paragraph_range": [
+        119,
+        120
+      ],
+      "source_summary_paragraph": 119,
+      "figures": [
+        "18",
+        "19A",
+        "19B",
+        "19C",
+        "19D",
+        "34",
+        "35"
+      ],
+      "optical_table_figure": "34",
+      "asphere_table_figure": "35",
+      "direct_system_metadata_paragraph": 120,
+      "direct_system_metadata": {
+        "EFL": "2.585",
+        "HFOV": "47.516",
+        "TTL": "4.280",
+        "Fno": "1.900",
+        "ImgH": "2.898"
+      },
+      "cross_section_and_aberration_pages": [
+        10
+      ],
+      "optical_table_page": 24,
+      "asphere_table_page": 25,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 8,
+      "label": "Genius six-lens optical imaging lens 8th embodiment",
+      "paragraph_range": [
+        121,
+        122
+      ],
+      "source_summary_paragraph": 121,
+      "figures": [
+        "20",
+        "21A",
+        "21B",
+        "21C",
+        "21D",
+        "36",
+        "37"
+      ],
+      "optical_table_figure": "36",
+      "asphere_table_figure": "37",
+      "direct_system_metadata_paragraph": 122,
+      "direct_system_metadata": {
+        "EFL": "2.608",
+        "HFOV": "47.491",
+        "TTL": "4.280",
+        "Fno": "1.900",
+        "ImgH": "2.900"
+      },
+      "cross_section_and_aberration_pages": [
+        11
+      ],
+      "optical_table_page": 26,
+      "asphere_table_page": 27,
+      "common_table_reference_paragraph": 123,
+      "common_table_figures": [
+        "38"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    }
+  ],
+  "baseline_figures": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+  ],
+  "common_figures": [
+    "38"
+  ],
+  "figure_panels": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7A",
+    "7B",
+    "7C",
+    "7D",
+    "22",
+    "23",
+    "8",
+    "9A",
+    "9B",
+    "9C",
+    "9D",
+    "24",
+    "25",
+    "10",
+    "11A",
+    "11B",
+    "11C",
+    "11D",
+    "26",
+    "27",
+    "12",
+    "13A",
+    "13B",
+    "13C",
+    "13D",
+    "28",
+    "29",
+    "14",
+    "15A",
+    "15B",
+    "15C",
+    "15D",
+    "30",
+    "31",
+    "16",
+    "17A",
+    "17B",
+    "17C",
+    "17D",
+    "32",
+    "33",
+    "18",
+    "19A",
+    "19B",
+    "19C",
+    "19D",
+    "34",
+    "35",
+    "20",
+    "21A",
+    "21B",
+    "21C",
+    "21D",
+    "36",
+    "37",
+    "38"
+  ],
+  "figref_count": 137,
+  "figref_ordered_text_sha256": "92df7476a288bf87dac38b173d486855baec943d8f681e81cd49b90f6bb3efd7",
+  "figure_declaration_span_sha256": "e3beec5fb9ab1758172f6561a0bc695f78777874bd0442aeca7b4a3b456e0b9e",
+  "claim_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "independent_claim_numbers": [
+    1,
+    8,
+    15
+  ],
+  "claim_dependencies": [
+    [],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [],
+    [
+      8
+    ],
+    [
+      8
+    ],
+    [
+      8
+    ],
+    [
+      8
+    ],
+    [
+      8
+    ],
+    [
+      8
+    ],
+    [],
+    [
+      15
+    ],
+    [
+      15
+    ],
+    [
+      15
+    ],
+    [
+      15
+    ],
+    [
+      15
+    ]
+  ],
+  "claim_hash_set_sha256": "452863691821b816db92c51f907812341250f56a6b8cd8eb27ba4612761d6404",
+  "raw_counts": {
+    "paragraph_tags": 22,
+    "figref": 137,
+    "table_us": 0,
+    "maths": 20,
+    "mathml": 20,
+    "native_html_table": 0,
+    "inline_formula_leads": 0,
+    "inline_formula_tails": 0,
+    "custom_character_image": 0
+  },
+  "math_ids": [
+    "MATH-US-00001",
+    "MATH-US-00001-2",
+    "MATH-US-00001-3",
+    "MATH-US-00001-4",
+    "MATH-US-00001-5",
+    "MATH-US-00001-6",
+    "MATH-US-00001-7",
+    "MATH-US-00001-8",
+    "MATH-US-00001-9",
+    "MATH-US-00001-10",
+    "MATH-US-00001-11",
+    "MATH-US-00001-12",
+    "MATH-US-00001-13",
+    "MATH-US-00001-14",
+    "MATH-US-00001-15",
+    "MATH-US-00001-16",
+    "MATH-US-00001-17",
+    "MATH-US-00001-18",
+    "MATH-US-00001-19",
+    "MATH-US-00002"
+  ],
+  "maths_raw_hash_set_sha256": "8def3fe4c9c2a681ef8e1d5a2f627df5f22569c590548d5c285405b2b024500e",
+  "phrase_counts": {
+    "focal length": 28,
+    "effective focal length": 8,
+    "F-number": 9,
+    "Fno": 17,
+    "field of view": 8,
+    "HFOV": 12,
+    "image height": 6,
+    "ImgH": 16,
+    "TTL": 14,
+    "aperture stop": 6,
+    "radius": 11,
+    "curvature": 45,
+    "asphere": 0,
+    "aspheric": 37,
+    "surface number": 0,
+    "thickness": 68,
+    "Abbe": 8,
+    "conic": 1,
+    "optical data": 32,
+    "aspherical data": 0,
+    "aspheric surface data": 16,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "refractive index": 11,
+    "lens element": 489
+  },
+  "official_pdfs": [
+    {
+      "path": ".planning/quick/260723-patent-generic-family-94742160/source-review/US-20260177783-A1-official-1.pdf",
+      "bytes": 3052775,
+      "sha256": "961d4618467173452bba94632614dfbee8399bba364d2536cecaaf63212ede13",
+      "page_count": 40,
+      "text_layer_characters": 0,
+      "ordered_raster_set_sha256": "d894e8e141a1b70a9b7591d001e225320ba952cb51e6686565a619afe1c8e167",
+      "pages": [
+        {
+          "page": 1,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b2ffcbd15b4952122ba3fb7f3710d0f50adff86ab41ac99d8b526b84875ae7ff"
+        },
+        {
+          "page": 2,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "37c3881b6b88e39198f8d60998fb01502781b95f1125a9faebc291baad1856ae"
+        },
+        {
+          "page": 3,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b3b2239bc5f93bb720d77d0fbe2c9dfa3562410e10d9db17374603c93007f351"
+        },
+        {
+          "page": 4,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "abf3bb90bfb148e3baf9ad080d778c5bf6bb8db83dede85a43d2b2dfa44c7c32"
+        },
+        {
+          "page": 5,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "0ccd4212712c26f3e7d7414211067ced9331dbe76924bb4de87dc761cde37c2a"
+        },
+        {
+          "page": 6,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "86c8c1340ffc93492afbf3967625b35626781fab49314f77b5498756af886409"
+        },
+        {
+          "page": 7,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "950eab87a99652b9ad9c96978832bb4836d7357e5df76da11edd1df9c28bbf98"
+        },
+        {
+          "page": 8,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "46150ad0b0c26db5a84bb9066803e6f6bd63838cb2d2d89e3c98bf8df1513d0e"
+        },
+        {
+          "page": 9,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f9a609a40697e209df22e6ed9d37f83903bbab8d901d6e0aac5977e71ad5700c"
+        },
+        {
+          "page": 10,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "2fec9a809a4dba23c1da6f21c2795e03e9e8cec118a107ecb3ba0e643fae446f"
+        },
+        {
+          "page": 11,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "e25837624b78ff917cae392e13ea4cd93cabaf9dc65dbce757e0955b41097042"
+        },
+        {
+          "page": 12,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "329dce2099d1b31f02eba997884b4213e3b6aa5c83081a49827a935542bee1f1"
+        },
+        {
+          "page": 13,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "6fbbaa601188a2c42e8b80e732dc68344e9784d80c0d7404f00ff2ab1910344f"
+        },
+        {
+          "page": 14,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "4afd85a7f57e9a99221722a650943043653b8122062795b4187bd0a19957eda8"
+        },
+        {
+          "page": 15,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "12c5af9bc5e36d6fb694d12969099298e141d60c3a5a2b237a054413d149b3c0"
+        },
+        {
+          "page": 16,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b36d20d41579470d0d6fe864c4ff975cb1b3153f9ee0f8a9053f4bc4dc220370"
+        },
+        {
+          "page": 17,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "727c5a10eef6dc7f46251666d877a4a85f3497984134ac4c321692305fe6644e"
+        },
+        {
+          "page": 18,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "ab2241ea67f0d2d692f90b8ec12dfc4458d0c3e9d7a6c155773067be2c66d7f8"
+        },
+        {
+          "page": 19,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d9f6c6bb10b71466a409223f7f144b4b868e9dbe1aad39c45cff67d447d1b3e6"
+        },
+        {
+          "page": 20,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "dac6dbc64b8322c6c5a6da9561b82ebbae00418a1ca3869325f6a84f96e2bd53"
+        },
+        {
+          "page": 21,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "7e42304b0163f1c35fdb8cbab81adbe51131d848b71b94582b3d704d9f5e1e15"
+        },
+        {
+          "page": 22,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "6acd7a7879a70ae408d55488bb75be4dad639e148545491411d54f154d80b3e0"
+        },
+        {
+          "page": 23,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "9d39516c778d346bbd8030cf65a5b15584c266307a0dc0be0f090ecd8bfdaee1"
+        },
+        {
+          "page": 24,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "4f7e94cb219aac9095d86c18acff7a4fdb889867d68b9e2404f6865a2c27bcf5"
+        },
+        {
+          "page": 25,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "95ef4e4dcae8590e09e346e4db78d5e9220c57b7f380fd7f50513d1e15f52077"
+        },
+        {
+          "page": 26,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "87cf2af68a9a07f6b967eb2a8594a1b6234a051666a4d8fcc35559189b11d36c"
+        },
+        {
+          "page": 27,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d6326cca2220f3c0bfcf66621ac1d826420be9bde6f92a0872c5126bb48bba22"
+        },
+        {
+          "page": 28,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "daee882c1b75c63ad3854908c3e2e0ec4feb2f644902b31bdaf0261f49197236"
+        },
+        {
+          "page": 29,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "6776450499cfb915f7bbdd8d2f4412906bd41366c218e91ad886c85a1b1e36c6"
+        },
+        {
+          "page": 30,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "4bf2e4860d597a51274ef0ff47d3cc1fd23e60334583a0977d25689583ef71da"
+        },
+        {
+          "page": 31,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d24602c8b244ab3d55bd20fb38d2e9e09b37006c09b962cb4ee535b7a172db6b"
+        },
+        {
+          "page": 32,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "1b2bdc108c2c956d80fb53393ece8f84689b873f54d63f3e1d27f97ceff54124"
+        },
+        {
+          "page": 33,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "7849e5f71dbd2909d0b5a1850e5632e7041e8c9515cd64731ad5b147e5a0aca6"
+        },
+        {
+          "page": 34,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "df3a9d0ed36ee077b50217353a0e9521305be06165dc04f32836a6efee1c3380"
+        },
+        {
+          "page": 35,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "a8e0b75813edbef8d1ef186000d5bf9ced0deda6c5d41750241f4279fa9d606f"
+        },
+        {
+          "page": 36,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "e06880e4e95d8a6493fff225031a665066f59d38a10515ea099ec7c47a4b6855"
+        },
+        {
+          "page": 37,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "3ae02308ecead16fd6940a270e9ed21e86a346535726b594a175fcf22277de2c"
+        },
+        {
+          "page": 38,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "48b4b7f60f1ce5672c98d04ae132635ef78946eda2a7683a9d66c0985f1bca43"
+        },
+        {
+          "page": 39,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "3af0dab8e205350a602cb094048b5222a9b98b1d05320c70d0046dab50fbb24d"
+        },
+        {
+          "page": 40,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "8e7f25bdc8c659d5fd00e30f46966c4e5eccba4a118c9079179dc4f68041161f"
+        }
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-94742160/source-review/US-20260177783-A1-official-2.pdf",
+      "bytes": 3052775,
+      "sha256": "17f1c900b204f21807a188e3e354429af3f89f7b1e626608c3c4b47f21fe1f05",
+      "page_count": 40,
+      "text_layer_characters": 0,
+      "ordered_raster_set_sha256": "d894e8e141a1b70a9b7591d001e225320ba952cb51e6686565a619afe1c8e167",
+      "pages": [
+        {
+          "page": 1,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b2ffcbd15b4952122ba3fb7f3710d0f50adff86ab41ac99d8b526b84875ae7ff"
+        },
+        {
+          "page": 2,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "37c3881b6b88e39198f8d60998fb01502781b95f1125a9faebc291baad1856ae"
+        },
+        {
+          "page": 3,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b3b2239bc5f93bb720d77d0fbe2c9dfa3562410e10d9db17374603c93007f351"
+        },
+        {
+          "page": 4,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "abf3bb90bfb148e3baf9ad080d778c5bf6bb8db83dede85a43d2b2dfa44c7c32"
+        },
+        {
+          "page": 5,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "0ccd4212712c26f3e7d7414211067ced9331dbe76924bb4de87dc761cde37c2a"
+        },
+        {
+          "page": 6,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "86c8c1340ffc93492afbf3967625b35626781fab49314f77b5498756af886409"
+        },
+        {
+          "page": 7,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "950eab87a99652b9ad9c96978832bb4836d7357e5df76da11edd1df9c28bbf98"
+        },
+        {
+          "page": 8,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "46150ad0b0c26db5a84bb9066803e6f6bd63838cb2d2d89e3c98bf8df1513d0e"
+        },
+        {
+          "page": 9,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "f9a609a40697e209df22e6ed9d37f83903bbab8d901d6e0aac5977e71ad5700c"
+        },
+        {
+          "page": 10,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "2fec9a809a4dba23c1da6f21c2795e03e9e8cec118a107ecb3ba0e643fae446f"
+        },
+        {
+          "page": 11,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "e25837624b78ff917cae392e13ea4cd93cabaf9dc65dbce757e0955b41097042"
+        },
+        {
+          "page": 12,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "329dce2099d1b31f02eba997884b4213e3b6aa5c83081a49827a935542bee1f1"
+        },
+        {
+          "page": 13,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "6fbbaa601188a2c42e8b80e732dc68344e9784d80c0d7404f00ff2ab1910344f"
+        },
+        {
+          "page": 14,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "4afd85a7f57e9a99221722a650943043653b8122062795b4187bd0a19957eda8"
+        },
+        {
+          "page": 15,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "12c5af9bc5e36d6fb694d12969099298e141d60c3a5a2b237a054413d149b3c0"
+        },
+        {
+          "page": 16,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "b36d20d41579470d0d6fe864c4ff975cb1b3153f9ee0f8a9053f4bc4dc220370"
+        },
+        {
+          "page": 17,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "727c5a10eef6dc7f46251666d877a4a85f3497984134ac4c321692305fe6644e"
+        },
+        {
+          "page": 18,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "ab2241ea67f0d2d692f90b8ec12dfc4458d0c3e9d7a6c155773067be2c66d7f8"
+        },
+        {
+          "page": 19,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d9f6c6bb10b71466a409223f7f144b4b868e9dbe1aad39c45cff67d447d1b3e6"
+        },
+        {
+          "page": 20,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "dac6dbc64b8322c6c5a6da9561b82ebbae00418a1ca3869325f6a84f96e2bd53"
+        },
+        {
+          "page": 21,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "7e42304b0163f1c35fdb8cbab81adbe51131d848b71b94582b3d704d9f5e1e15"
+        },
+        {
+          "page": 22,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "6acd7a7879a70ae408d55488bb75be4dad639e148545491411d54f154d80b3e0"
+        },
+        {
+          "page": 23,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "9d39516c778d346bbd8030cf65a5b15584c266307a0dc0be0f090ecd8bfdaee1"
+        },
+        {
+          "page": 24,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "4f7e94cb219aac9095d86c18acff7a4fdb889867d68b9e2404f6865a2c27bcf5"
+        },
+        {
+          "page": 25,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "95ef4e4dcae8590e09e346e4db78d5e9220c57b7f380fd7f50513d1e15f52077"
+        },
+        {
+          "page": 26,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "87cf2af68a9a07f6b967eb2a8594a1b6234a051666a4d8fcc35559189b11d36c"
+        },
+        {
+          "page": 27,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d6326cca2220f3c0bfcf66621ac1d826420be9bde6f92a0872c5126bb48bba22"
+        },
+        {
+          "page": 28,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "daee882c1b75c63ad3854908c3e2e0ec4feb2f644902b31bdaf0261f49197236"
+        },
+        {
+          "page": 29,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "6776450499cfb915f7bbdd8d2f4412906bd41366c218e91ad886c85a1b1e36c6"
+        },
+        {
+          "page": 30,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "4bf2e4860d597a51274ef0ff47d3cc1fd23e60334583a0977d25689583ef71da"
+        },
+        {
+          "page": 31,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "d24602c8b244ab3d55bd20fb38d2e9e09b37006c09b962cb4ee535b7a172db6b"
+        },
+        {
+          "page": 32,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "1b2bdc108c2c956d80fb53393ece8f84689b873f54d63f3e1d27f97ceff54124"
+        },
+        {
+          "page": 33,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "7849e5f71dbd2909d0b5a1850e5632e7041e8c9515cd64731ad5b147e5a0aca6"
+        },
+        {
+          "page": 34,
+          "images": 1,
+          "width": 2550,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "df3a9d0ed36ee077b50217353a0e9521305be06165dc04f32836a6efee1c3380"
+        },
+        {
+          "page": 35,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "a8e0b75813edbef8d1ef186000d5bf9ced0deda6c5d41750241f4279fa9d606f"
+        },
+        {
+          "page": 36,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "e06880e4e95d8a6493fff225031a665066f59d38a10515ea099ec7c47a4b6855"
+        },
+        {
+          "page": 37,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "3ae02308ecead16fd6940a270e9ed21e86a346535726b594a175fcf22277de2c"
+        },
+        {
+          "page": 38,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "48b4b7f60f1ce5672c98d04ae132635ef78946eda2a7683a9d66c0985f1bca43"
+        },
+        {
+          "page": 39,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "3af0dab8e205350a602cb094048b5222a9b98b1d05320c70d0046dab50fbb24d"
+        },
+        {
+          "page": 40,
+          "images": 1,
+          "width": 2560,
+          "height": 3300,
+          "mode": "1",
+          "raster_sha256": "8e7f25bdc8c659d5fd00e30f46966c4e5eccba4a118c9079179dc4f68041161f"
+        }
+      ]
+    }
+  ],
+  "decoded_download_raster_sets_identical": true,
+  "official_pdf_page_roles": {
+    "cover_pages": [
+      1
+    ],
+    "drawing_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "specification_pages": [
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38
+    ],
+    "claim_pages": [
+      38,
+      39,
+      40
+    ],
+    "cross_section_and_aberration_pages": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "optical_table_pages": [
+      12,
+      14,
+      16,
+      18,
+      20,
+      22,
+      24,
+      26
+    ],
+    "asphere_table_pages": [
+      13,
+      15,
+      17,
+      19,
+      21,
+      23,
+      25,
+      27
+    ],
+    "common_table_pages": [
+      28
+    ]
+  },
+  "default_raster_dimensions": [
+    2560,
+    3300
+  ],
+  "exceptional_raster_dimensions": {
+    "29": [
+      2550,
+      3300
+    ],
+    "34": [
+      2550,
+      3300
+    ]
+  },
+  "all_raster_modes": [
+    "1"
+  ],
+  "reviewed_original_pages": [
+    4,
+    11,
+    12,
+    13,
+    27,
+    28,
+    29,
+    37,
+    38,
+    39,
+    40
+  ]
+}

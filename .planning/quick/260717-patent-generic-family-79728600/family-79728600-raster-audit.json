@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "family_id": "79728600",
+  "root_ids": [
+    "US-20230132659"
+  ],
+  "publication_id": "US-20230132659-A1",
+  "application_number": "17/607400",
+  "independent_wrapper_checks": {
+    "google_a1": {
+      "url": "https://patents.google.com/patent/US20230132659A1/en",
+      "checked_at_utc": "2026-07-17",
+      "http_status": 200,
+      "html": {
+        "path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-google.html",
+        "bytes": 522631,
+        "sha256": "1739e22255f7bcf4eb0b52d5ea2686242284b8390f529ac3c4a8cd3db0366cf5"
+      },
+      "math_ids": [
+        "MATH-US-00001", "MATH-US-00002", "MATH-US-00003", "MATH-US-00004",
+        "MATH-US-00005", "MATH-US-00006", "MATH-US-00007", "MATH-US-00008",
+        "MATH-US-00009"
+      ]
+    },
+    "google_same_application_b2": {
+      "url": "https://patents.google.com/patent/US12050308B2/en",
+      "checked_at_utc": "2026-07-17",
+      "http_status": 200,
+      "html": {
+        "path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-12050308-B2-google.html",
+        "bytes": 611133,
+        "sha256": "f6ffcdcdadd4bb2208c7bdce4218187f30d699f68ac74417d496abbfb702a204"
+      },
+      "math_ids": [
+        "MATH-US-00001", "MATH-US-00001-2", "MATH-US-00001-3",
+        "MATH-US-00001-4", "MATH-US-00001-5", "MATH-US-00001-6",
+        "MATH-US-00001-7", "MATH-US-00001-8", "MATH-US-00001-9",
+        "MATH-US-00002", "MATH-US-00003"
+      ]
+    },
+    "formula_conclusion": "Both exact HTML wrappers define Q0 through Q5 only, publish coefficients through non-zero A8, publish no per-surface conic-parameter values, and contain no logical TABLE 3."
+  },
+  "official_pdf": {
+    "page_count": 19,
+    "decoded_rasters_per_page": 1,
+    "page_shape_counts": {
+      "3300x2560": 19
+    },
+    "page_structure": {
+      "cover_pages": [1],
+      "drawing_pdf_page_range": [2, 11],
+      "drawing_sheet_count": 10,
+      "figure_panel_count": 14,
+      "specification_pdf_page_range": [12, 19],
+      "specification_page_count": 8
+    },
+    "page_raster_sha256": [
+      "1709478063403085adf810ef963dbdef44b5902361b2995a15db3f02697026cd",
+      "5d46c2eae46c7eee310b2323dcf2e7914f1f885e6a42649038d7414ad4b0fb17",
+      "95845710c722c749a0ac6ec95e2492acb67c1ba923186e456e378606add07c8d",
+      "18be620b25ffd78d8cb96b444d79f855776111f62e8052c71928686ecd908d9a",
+      "735c55ae459528f1043fbeaabae9c3de1a4569c6c5bd980c0fe1673fd2ca33c1",
+      "63df0ccd029b07cfc1d57e4c4a9893815d343c49fcec769be0d8fa62fe19ad0e",
+      "4e1afde45e546fa2a54488158570a9551b7839f79fa95b361ac3e440d4d193c1",
+      "bf52983a917b43da505f89e3e6de6af9797b3be57be064f3ad6024ba610380c1",
+      "53a59eb77da2a1e134e5283c7714ff0db49a1c86a9d6a16c882de935507a8312",
+      "1a29a27bed2885b26db7f7d9c75d4e021766957fdeeb4e9414f0554713204b3b",
+      "8bcdd99dda55063c32c2bff4ce419f7082b879b294936d07acd706552cc49f41",
+      "17682517cd77e4fb777d09cd038551b33b9648b352830dea8307ee304c985461",
+      "d1b8b61734273d1a7480d4c2f42908e1caa454dff9ee699525e9052b49637c60",
+      "1ced07a8afc40fe1f24c8a6ec62207dd090644832c3913af20548957baa0fdb4",
+      "f8d897affce101ed103d300d1bc89a963e61cb76e84677b3b459a06d52d42726",
+      "339cf90e18675d9aad70636166c93403a21010bdbcbf9b3e87c51e1aa89d1ece",
+      "10fd13d9e61916dc00d291c84d7d287b49a5674bafa674d20f9949c66db3e3fa",
+      "3834615e3644b93b548b2803847a9332aceb4f8ae29c52449fd67d854eda8f36",
+      "a99b0004222b94974d655a7dc0e581ce4e945511d4976aae43281b0081ae8f55"
+    ],
+    "raster_set_sha256": "6017cc18f7abe57255691b58236a897a3fdb4a005b802d3cf56f3a8b743fbeb5",
+    "wrappers": {
+      "official-live-1": {
+        "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20230132659",
+        "path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-official-1.pdf",
+        "bytes": 1259970,
+        "sha256": "4daa9f5d71d87c7de35c70c5b4d30c7a4f0ad67ed78d978281399f730c1188d0",
+        "text_characters_on_all_pages": 0
+      },
+      "official-live-2": {
+        "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20230132659?download=1",
+        "path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-official-2.pdf",
+        "bytes": 1259970,
+        "sha256": "ff41967ca078e4b5aff77adecee654cba9f91130ce2f0656a6769e97c1b2f92a",
+        "text_characters_on_all_pages": 0
+      },
+      "google-exact": {
+        "url": "https://patentimages.storage.googleapis.com/79/7b/5d/2877ba4763b878/US20230132659A1.pdf",
+        "path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-google.pdf",
+        "bytes": 1260749,
+        "sha256": "d4e8da161b278cf53890d43693d882958579f7968684738d8ebc1f066035802a",
+        "text_characters_on_all_pages": 0
+      }
+    }
+  },
+  "same_position_raster_equality": {
+    "official-live-1_vs_official-live-2": {
+      "compared_pages": 19,
+      "equal_pages": 19
+    },
+    "official-live-1_vs_google-exact": {
+      "compared_pages": 19,
+      "equal_pages": 19
+    }
+  },
+  "retained_visual_audits": [
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-contact-sheet.png", "bytes": 1513077, "sha256": "8eadb86bd7999faac2030a5a52524a726c28f40742d3d1c8c6ae86e0480a6992"},
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-page-13.png", "bytes": 205456, "sha256": "ba35106a67c61332c1e9c229577d0dd9fbc8aa6d12d62b91c0d9ae974dd9e73b"},
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-page-14.png", "bytes": 221667, "sha256": "ab239850d6c21f12feb4f6829e2b275fae2dd203195c738b7e8db3bbe572bb29"},
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-page-15.png", "bytes": 180361, "sha256": "05d8f3b9ca6758cf4ccbcee9082a4dceead1fba370e7b3e59dc7a418d6e7e23a"},
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-page-16.png", "bytes": 127758, "sha256": "b67a78f967ad9a447a1e0fccd7f8bb5f6e9cf238a3c416eee21f448d679f2b26"},
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-page-17.png", "bytes": 196195, "sha256": "49ed692e22e6955de4bbbbe01940b9a3148103c8cf04c8f150a9cfb483206449"},
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-page-18.png", "bytes": 213863, "sha256": "6ae053ced0c4597bfc50a132c6b6470af5b0cfa2b488c6de556cb12d5d19f377"},
+    {"path": ".planning/quick/260717-patent-generic-family-79728600/source-review/US-20230132659-A1-page-19.png", "bytes": 144256, "sha256": "e3338cf0c7f2dad1982b58943ad511076b20bc78af7ad3d2ad66e85db6231476"}
+  ],
+  "key_visual_findings": {
+    "pdf_page_15": "Qcon sag formula and explicit definitions only through Q5",
+    "pdf_page_16": "Table 1 surface rows and Table 2 coefficient rows",
+    "pdf_page_17": "2.5 mm and 2.45 mm directional-aperture variants"
+  },
+  "visual_conclusion": "All 19 page rasters, all 10 drawing sheets and all 14 declared figure panels were inspected. The prescription reaches non-zero A8, but neither the official raster publication nor either exact HTML wrapper publishes Q6-Q8 definitions, per-surface conic values or the referenced logical Table 3."
+}

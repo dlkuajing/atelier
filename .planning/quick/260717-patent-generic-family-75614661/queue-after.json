@@ -1,0 +1,52 @@
+{
+  "executable_buckets": [
+    {
+      "affected_items": 120,
+      "affected_roots": 120,
+      "parser_signature": "generic_summary_metadata_missing"
+    },
+    {
+      "affected_items": 174,
+      "affected_roots": 55,
+      "parser_signature": "aac_raytech_summary_metadata_missing"
+    },
+    {
+      "affected_items": 177,
+      "affected_roots": 49,
+      "parser_signature": "sunny_embodiment_metadata_missing"
+    }
+  ],
+  "next_exact_group": {
+    "affected_items": 1,
+    "affected_roots": 1,
+    "application_number": "17/930078",
+    "family_id": "82951912",
+    "layout_signature": "2c5dd9f4c30cb120e3ae35c3b81995c494aa9e4481dfc6f4d79a8fb5f198ac38",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 122,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "publication_ids": [
+      "US-12591109-B2"
+    ],
+    "queue_only": true,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/862996927fdd6006/US-12591109-B2.html",
+      "sha256": "862996927fdd600646901ffc9a8e81f686b62949fca143201d665b3dc14390a7"
+    },
+    "root_ids": [
+      "US-12591109"
+    ],
+    "table_count": 3,
+    "title": "Optical reflecting assembly, optical lens element module and electronic device"
+  },
+  "result_set_sha256": "e6b551ee0be48a1d09612a3366320d285d652812bd997fab1bc196d6d5329a5d",
+  "saturation_complete": false,
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order"
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "83151794",
+  "root_id": "US-12379524",
+  "publication_id": "US-12379524-B2",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-12379524/attempt-0001/result.json",
+    "bytes": 1272,
+    "sha256": "ad0cb46c11b584946dfbdbaeecf31f4b364ccb812b6546b57f4b311f9ddbbcf4",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "e3d9d4a3d85fed8cc1aca78ac7c86297d0f0bd970b377d8f031e751be32fe084"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12379524/attempt-0002/result.json",
+      "bytes": 35258,
+      "sha256": "63a8e0b233eb9a2344ab859c531355967b856aa9a070ac2b945e75df5f19f8ef",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "e38b01824313631df3c199c0590bfc87e8955b0fe17079fed0168f6c527195a2"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12379524/attempt-0003/result.json",
+      "bytes": 35258,
+      "sha256": "014083d7df225d7547a98cfc140e62f11efd895f5eea50568bd13300bc4077d0",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "e38b01824313631df3c199c0590bfc87e8955b0fe17079fed0168f6c527195a2"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "e38b01824313631df3c199c0590bfc87e8955b0fe17079fed0168f6c527195a2",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+    "terminal.confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+    "terminal.confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

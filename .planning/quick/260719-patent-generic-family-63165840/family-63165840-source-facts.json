@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "family_id": "63165840",
+  "root_id": "US-10197774",
+  "publication_id": "US-10197774-B1",
+  "application_number": "15/864483",
+  "identity": {
+    "title": "Camera optical lens",
+    "first_inventor": "Teraoka; Hiroyuki",
+    "applicant": "AAC Technologies Pte. Ltd.",
+    "assignee": "AAC TECHNOLOGIES PTE. LTD.",
+    "filed": "2018-01-08",
+    "patent_date": "2019-02-05",
+    "priority_applications": [
+      "CN 2017 1 1151223 (2017-11-18)",
+      "CN 2017 1 1151235 (2017-11-18)"
+    ]
+  },
+  "source_denominator": {
+    "background_summary_numbered_paragraphs": 4,
+    "brief_drawing_numbered_paragraphs": 13,
+    "detailed_numbered_paragraphs": 108,
+    "description_numbered_paragraphs": 121,
+    "claims": 11,
+    "independent_claims": [1],
+    "declared_figures": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "drawing_sheets": 7,
+    "flattened_tables": 13,
+    "inline_formula_pairs": 22,
+    "description_formula_pairs": 1,
+    "claim_formula_pairs": 21,
+    "source_disclosed_prescriptions": 3,
+    "wrapper_items_with_additional_prescriptions": 0
+  },
+  "table_roles": [
+    {
+      "table": 1,
+      "embodiment": 1,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 2,
+      "embodiment": 1,
+      "role": "R1-R12 even-asphere coefficients"
+    },
+    {
+      "table": 3,
+      "embodiment": 1,
+      "role": "inflexion points"
+    },
+    {
+      "table": 4,
+      "embodiment": 1,
+      "role": "arrest points"
+    },
+    {
+      "table": 5,
+      "embodiment": 2,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 6,
+      "embodiment": 2,
+      "role": "R1-R12 even-asphere coefficients"
+    },
+    {
+      "table": 7,
+      "embodiment": 2,
+      "role": "inflexion points"
+    },
+    {
+      "table": 8,
+      "embodiment": 2,
+      "role": "arrest points"
+    },
+    {
+      "table": 9,
+      "embodiment": 3,
+      "role": "ordered surface prescription"
+    },
+    {
+      "table": 10,
+      "embodiment": 3,
+      "role": "R1-R12 even-asphere coefficients"
+    },
+    {
+      "table": 11,
+      "embodiment": 3,
+      "role": "inflexion points"
+    },
+    {
+      "table": 12,
+      "embodiment": 3,
+      "role": "arrest points"
+    },
+    {
+      "table": 13,
+      "embodiment": null,
+      "role": "shared conditions and summary metadata"
+    }
+  ],
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "AAC Teraoka six-lens camera optical lens embodiment 1",
+      "paragraphs": [34, 97],
+      "figures": [1, 2, 3, 4],
+      "tables": [1, 2, 3, 4, 13],
+      "published_surface_rows": 15,
+      "modeled_surfaces_including_appended_image": 16,
+      "asphere_surfaces": 12,
+      "asphere_terms_per_surface": 8,
+      "focal_length_mm": 4.569,
+      "f_number": 2.2,
+      "published_full_diagonal_field_deg": 80.73,
+      "parsed_half_field_deg": 40.365,
+      "published_entrance_pupil_diameter_mm": 2.077,
+      "published_full_field_image_height_mm": 3.928,
+      "published_ttl_mm": 5.2,
+      "detailed_surface_distance_sum_mm": 5.201,
+      "published_stop_distance_mm": -0.2,
+      "prescription_fingerprint": "75588376c449da1f",
+      "ledger_state": "terminal",
+      "terminal_status": "trace_failed",
+      "terminal_reason_code": "terminal.process_receipt_classified",
+      "terminal_detail": "trace_failed.optical_trace_exception: PatentTraceError: PatentParseError: full-field real rays did not reach image surface",
+      "staging_zmx": null
+    },
+    {
+      "embodiment_number": 2,
+      "label": "AAC Teraoka six-lens camera optical lens embodiment 2",
+      "paragraphs": [98, 108],
+      "figures": [5, 6, 7, 8],
+      "tables": [5, 6, 7, 8, 13],
+      "published_surface_rows": 15,
+      "modeled_surfaces_including_appended_image": 16,
+      "asphere_surfaces": 12,
+      "asphere_terms_per_surface": 8,
+      "focal_length_mm": 4.353,
+      "f_number": 2.2,
+      "published_full_diagonal_field_deg": 83.41,
+      "parsed_half_field_deg": 41.705,
+      "published_entrance_pupil_diameter_mm": 1.978,
+      "published_full_field_image_height_mm": 3.928,
+      "published_ttl_mm": 5.201,
+      "detailed_surface_distance_sum_mm": 5.199,
+      "published_stop_distance_mm": -0.2,
+      "prescription_fingerprint": "d36d28b2342ccb2a",
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "terminal_reason_code": null,
+      "terminal_detail": null,
+      "staging_zmx": {
+        "path": "data/zmx-staging/patent-local-replay/US-10197774-B1-e2.zmx",
+        "sha256": "66851dd7e5d61f639dfd0337ec0d82674503ddff885e14098aae79693a4bca12"
+      }
+    },
+    {
+      "embodiment_number": 3,
+      "label": "AAC Teraoka six-lens camera optical lens embodiment 3",
+      "paragraphs": [109, 119],
+      "figures": [9, 10, 11, 12],
+      "tables": [9, 10, 11, 12, 13],
+      "published_surface_rows": 15,
+      "modeled_surfaces_including_appended_image": 16,
+      "asphere_surfaces": 12,
+      "asphere_terms_per_surface": 8,
+      "focal_length_mm": 4.604,
+      "f_number": 2.2,
+      "published_full_diagonal_field_deg": 80.34,
+      "parsed_half_field_deg": 40.17,
+      "published_entrance_pupil_diameter_mm": 2.093,
+      "published_full_field_image_height_mm": 3.928,
+      "published_ttl_mm": 5.201,
+      "detailed_surface_distance_sum_mm": 5.202,
+      "published_stop_distance_mm": -0.25,
+      "prescription_fingerprint": "80ee3f676160f46a",
+      "ledger_state": "terminal",
+      "terminal_status": "trace_failed",
+      "terminal_reason_code": "terminal.process_receipt_classified",
+      "terminal_detail": "trace_failed.optical_trace_exception: PatentTraceError: PatentParseError: full-field real rays did not reach image surface",
+      "staging_zmx": null
+    }
+  ],
+  "published_internal_exceptions": [
+    {
+      "scope": "R13/R14 role definitions",
+      "conflict": "paragraphs 52-69 call R13/R14 and d12-d14 a seventh lens L7, while claim 2, FIGS. 1/5/9, ndg/vg definitions and each detailed surface table identify six lenses followed by optical filter GF",
+      "adjudication": "retain every published R/d/nd/vd cell; bind R13/R14 to GF from the detailed table material row and six-lens figure/claim sequence",
+      "numeric_repair": false
+    },
+    {
+      "scope": "embodiment 3 TABLE 9 versus TABLE 13",
+      "detailed_table_9_center_thicknesses_mm": [0.635, 0.199, 0.162, 0.41, 0.699, 0.25],
+      "summary_table_13_center_thicknesses_mm": [0.6, 0.319, 0.486, 0.353, 0.369, 0.403],
+      "detailed_table_9_n3_v3": [1.741, 52.64],
+      "detailed_table_9_n6_v6": [1.5352, 56.12],
+      "summary_table_13_n3_v3": [1.5439, 55.9524],
+      "summary_table_13_n6_v6": [1.741, 52.6365],
+      "adjudication": "TABLE 9 is the direct ordered prescription and remains authoritative; TABLE 13 is retained as conflicting summary evidence and never repairs TABLE 9",
+      "numeric_repair": false
+    },
+    {
+      "scope": "detailed sequential distance sums versus rounded TABLE 13 TTL",
+      "detailed_sums_mm": [5.201, 5.199, 5.202],
+      "summary_ttl_mm": [5.2, 5.201, 5.201],
+      "absolute_deltas_mm": [0.001, 0.002, 0.001],
+      "adjudication": "retain ordered detailed distances and treat TABLE 13 TTL as redundant rounded summary",
+      "numeric_repair": false
+    }
+  ],
+  "reconciliation": {
+    "unmapped_background_summary_paragraphs": 0,
+    "unmapped_description_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_formula_pairs": 0,
+    "unmapped_source_items": 0
+  },
+  "formal_outputs": {
+    "worker_requests": 3,
+    "worker_receipts": 3,
+    "prescription_fingerprints": 3,
+    "candidate_zmx": 1,
+    "staging_zmx": 1,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

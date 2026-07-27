@@ -1,0 +1,388 @@
+{
+  "schema_version": 1,
+  "family_id": "76444624",
+  "root_id": "US-11783729",
+  "publication_id": "US-11783729-B2",
+  "identity": {
+    "application_number": "17/017662",
+    "applicant": "MICROSOFT TECHNOLOGY LICENSING, LLC",
+    "inventors": [
+      "Somasundaram Kumaresan Beerana",
+      "Ankit Mahajan"
+    ],
+    "filed": "September 10, 2020",
+    "patent_date": "October 10, 2023",
+    "same_application_publication": "US-20220076590-A1",
+    "publication_date": "March 10, 2022"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/7a5a9cc3ba92de76/US-11783729-B2.html",
+    "bytes": 115299,
+    "raw_characters": 114145,
+    "raw_sha256": "7a5a9cc3ba92de76af68d8cf0e51d06e5f1c77c0b45feceaf50a5382f7b632ad",
+    "normalized_characters": 100777,
+    "normalized_sha256": "3be90bda9dbddf3c5cd071c11fa5cfd008e64e7d195bbd39da63d97a6686eef2",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_raster_publications": 1,
+    "numbered_heading_markers": 0,
+    "background_numbered_paragraphs": 3,
+    "summary_numbered_paragraphs": 4,
+    "brief_numbered_paragraphs": 10,
+    "detailed_numbered_paragraphs": 79,
+    "claims": 16,
+    "same_application_a1_claims": 20,
+    "declared_textual_figure_statements": 10,
+    "declared_textual_figure_panel_occurrences": 19,
+    "unique_declared_figure_panels": 17,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "pseudocode_listings": 11,
+    "source_declared_architecture_items": 4,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 4,
+    "replayed_ledger_items": 4,
+    "official_b2_pdf_pages": 31,
+    "official_b2_drawing_sheets": 15,
+    "same_application_a1_pdf_pages": 32,
+    "same_application_a1_drawing_sheets": 15,
+    "same_application_claim_count_differences": 1,
+    "source_label_discrepancies": 0
+  },
+  "sections": {
+    "abstract": {
+      "position": 442,
+      "characters": 3351,
+      "sha256": "d28f4b47826513a608b40ed07d1baf773c8433662271c5d5464db39b94987804"
+    },
+    "background": {
+      "position": 3793,
+      "characters": 3097,
+      "sha256": "ebdb4349946235616a4506862f94928a875926d2210ebf1002306a78ab8d809a",
+      "paragraphs": [
+        1,
+        3
+      ]
+    },
+    "summary": {
+      "position": 6890,
+      "characters": 4042,
+      "sha256": "cdade465192c14024a9260a901c982e716b240de25b9b4935d219ec74a0ab577",
+      "paragraphs": [
+        4,
+        7
+      ]
+    },
+    "brief": {
+      "position": 10932,
+      "characters": 1726,
+      "sha256": "d5dcdecb0663e759233285eaa5b682b9f449f7d0171b5d56a908dca979486858",
+      "paragraphs": [
+        1,
+        10
+      ]
+    },
+    "detailed": {
+      "position": 12658,
+      "characters": 81087,
+      "sha256": "c7d20f2da99b6ad3455fbcc9d553aaa3ced3fc860ccd8e7302ea40da0c83bf41",
+      "paragraphs": [
+        11,
+        89
+      ]
+    },
+    "claims": {
+      "position": 93745,
+      "characters": 7032,
+      "sha256": "f3380803c67f3a48664c31ff3b90503448f2195778610637e775890bbdd51e37",
+      "claims": [
+        1,
+        16
+      ]
+    }
+  },
+  "summary_items": [
+    {
+      "paragraph": 4,
+      "characters": 1137,
+      "sha256": "32d3a88f36df48b7c7cc96ac411a1af9844ce35b149a4dad575e2e639c53dd01",
+      "scope": "colorblind-accessible image-rendering system"
+    },
+    {
+      "paragraph": 5,
+      "characters": 1077,
+      "sha256": "28c2c121aedea25f295f80b2d39859279bb29d7b5ecac98dc61ac3621c857671",
+      "scope": "colorblind-accessible image-rendering method"
+    },
+    {
+      "paragraph": 6,
+      "characters": 1333,
+      "sha256": "2313ee75b6057a476e9537b670b24446bbb602b81fc055a7b55bee8c2cbbbafe",
+      "scope": "color-vision-deficiency transformation-model method"
+    }
+  ],
+  "detailed_spans": [
+    {
+      "paragraphs": [
+        11,
+        20
+      ],
+      "characters": 10688,
+      "sha256": "80772e745f6227a6071afc86b04f4284ea9e65fd2f66c9af7ff2d858871668c9",
+      "scope": "general CVD, electronic-content, device and accessibility context"
+    },
+    {
+      "paragraphs": [
+        21,
+        31
+      ],
+      "characters": 14689,
+      "sha256": "42fc7d297ab2bf1b5ba434bb6e2604906a956cb9aba9254dbd8fc9b7e29ac200",
+      "scope": "system overview, real-time camera/display use and color-simulation stage"
+    },
+    {
+      "paragraphs": [
+        32,
+        44
+      ],
+      "characters": 12562,
+      "sha256": "549456dcab585b9d397291d7232b8f8aee041953c5f9486841e51578b4e2bb82",
+      "scope": "color-distance translation tables, rendered-image generation and pseudocode listings 5-10"
+    },
+    {
+      "paragraphs": [
+        45,
+        50
+      ],
+      "characters": 8576,
+      "sha256": "6d542ceaca1e06e7413b84c77786d11fd4f20eba6aee0c701cb30be149b865dd",
+      "scope": "dynamic camera/viewfinder, optical-lens functional reference and classroom use"
+    },
+    {
+      "paragraphs": [
+        51,
+        66
+      ],
+      "characters": 13660,
+      "sha256": "b266d093ae982fcd306c60105813d7c35700846c2c5ff8b78c9fec57ec6e5ef6",
+      "scope": "static-image adjustment, pseudocode listing 11 and rendering method"
+    },
+    {
+      "paragraphs": [
+        67,
+        74
+      ],
+      "characters": 6898,
+      "sha256": "b1a36e8a60fe50e519929b587d695aeb10a9f44752f6fddd5a21fdc28e292f08",
+      "scope": "software architecture"
+    },
+    {
+      "paragraphs": [
+        75,
+        89
+      ],
+      "characters": 13986,
+      "sha256": "ae463240ed5d8f2a0917b7f94fb4c1dc47c88f1ab138a6f206e9604cbf60c44c",
+      "scope": "machine architecture and implementation boilerplate"
+    }
+  ],
+  "claim_families": [
+    {
+      "claims": [
+        1,
+        8
+      ],
+      "characters": 3398,
+      "sha256": "79a667c539ca4add32149f1434f415d00a67a57bd82b856b8f99bdc68050f120",
+      "scope": "color-vision-deficiency transformation-model method",
+      "item": 3
+    },
+    {
+      "claims": [
+        9,
+        16
+      ],
+      "characters": 3626,
+      "sha256": "5a8567f3656300b4867d508fbe020b51ec8fb07ee21526467d4c4aa63a7e8832",
+      "scope": "machine-readable-medium wrapper",
+      "item": 4
+    }
+  ],
+  "figure_panel_occurrences": [
+    "1A",
+    "1B",
+    "1A",
+    "1B",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "4A",
+    "4B",
+    "4C",
+    "5A",
+    "5B",
+    "6A",
+    "6B",
+    "6C",
+    "7",
+    "8",
+    "9"
+  ],
+  "figures": [
+    "1A",
+    "1B",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "4A",
+    "4B",
+    "4C",
+    "5A",
+    "5B",
+    "6A",
+    "6B",
+    "6C",
+    "7",
+    "8",
+    "9"
+  ],
+  "pseudocode_listings": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "prescription_marker_census": {
+    "focal length": 0,
+    "effective focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "FNO": 0,
+    "F/#": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "aspheric": 0,
+    "aspherical": 0,
+    "surface prescription": 0,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "surface no": 0,
+    "radius of curvature": 0,
+    "radius curvature": 0,
+    "curvature radius": 0,
+    "thickness": 0,
+    "lens element": 0,
+    "aperture stop": 0,
+    "conic": 0,
+    "ordered surface": 0,
+    "camera": 24,
+    "field of view": 1,
+    "camera optical lens": 1,
+    "optical lens": 1,
+    "display device": 28,
+    "source image": 16,
+    "rendering image": 16,
+    "color distance": 14,
+    "machine-readable medium": 18,
+    "Pseudocode Listing": 31,
+    "lookup table": 1,
+    "color vision deficiency": 26,
+    "image sensor": 0,
+    "full_field": 1
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "summary_paragraph": 4,
+      "retained_b2_claims": null,
+      "same_application_a1_claims": [
+        1,
+        8
+      ],
+      "source_category": "colorblind_image_rendering_system",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.colorblind_image_rendering_system_architecture_only",
+      "ordered_surface_prescription_rows": 0
+    },
+    {
+      "embodiment_number": 2,
+      "summary_paragraph": 5,
+      "retained_b2_claims": null,
+      "same_application_a1_claims": [
+        9,
+        16
+      ],
+      "source_category": "colorblind_image_rendering_method",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.colorblind_image_rendering_method_only",
+      "ordered_surface_prescription_rows": 0
+    },
+    {
+      "embodiment_number": 3,
+      "summary_paragraph": 6,
+      "retained_b2_claims": [
+        1,
+        8
+      ],
+      "same_application_a1_claims": [
+        18,
+        20
+      ],
+      "source_category": "color_vision_deficiency_transformation_model_method",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.color_vision_deficiency_transformation_model_method_only",
+      "ordered_surface_prescription_rows": 0
+    },
+    {
+      "embodiment_number": 4,
+      "summary_paragraph": null,
+      "retained_b2_claims": [
+        9,
+        16
+      ],
+      "same_application_a1_claims": [
+        17,
+        17
+      ],
+      "source_category": "colorblind_image_rendering_machine_readable_medium",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.colorblind_image_rendering_machine_readable_medium_only",
+      "ordered_surface_prescription_rows": 0
+    }
+  ],
+  "same_application_scope_note": {
+    "classification_b2": "US-11783729-B2 publishes 16 claims in two independent families: transformation-model method and machine-readable medium.",
+    "cross_check_a1": "US-20220076590-A1 publishes 20 claims in four independent families: rendering system, rendering method, machine-readable medium and transformation-model method.",
+    "numeric_effect": "none; no optical prescription is present in either raster publication"
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_pseudocode_listings": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "reason": "The source publishes CVD color simulation, color-distance selection, lookup tables, RGB pseudocode, camera/display/UI and generic computing architecture. Its single camera optical-lens reference is functional; no ordered radii, spacings, materials, conics, asphere coefficients or required numeric optical system metadata is published.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-100208972/generic-residual-after-2.json",
+  "result_set_sha256": "868fcfde145c084b6e95433b142b10fb0da5993bc1507abaa0058b0771dd4aa0",
+  "generic_residual_roots": 66,
+  "generic_residual_items": 66,
+  "next_exact_group": {
+    "family_id": "99635674",
+    "root_ids": ["US-20260126648"],
+    "publication_ids": ["US-20260126648-A1"],
+    "application_number": "19/424407",
+    "title": "IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "first_inventor": "HSU; Chih-Wen et al.",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": null,
+    "layout_signature": "76a8914521b462de8ccde669fd4bbd2ec5636620f9762ecf4d5110d41f53c10c",
+    "layout_signature_count": 1,
+    "table_count": 13,
+    "marker_counts": {
+      "effective_focal_length": 27,
+      "embodiment_anchor": 70,
+      "example_anchor": 0,
+      "f_number": 2,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0358dfc131913d9a/US-20260126648-A1.html",
+      "sha256": "0358dfc131913d9af55e3db73a70aebf7786005f0f57bdce7d30854cbac4b172"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

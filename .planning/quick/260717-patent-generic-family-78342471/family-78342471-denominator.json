@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "family_id": "78342471",
+  "root_id": "US-12092276",
+  "publication_id": "US-12092276-B2",
+  "identity": {
+    "application_number": "18/417865",
+    "title": "Lamp having dynamic starry sky effect",
+    "applicant": "Guangdong Baolun Electronics Co., Ltd.",
+    "assignee": "GUANGDONG BAOLUN ELECTRONICS CO., LTD.",
+    "filed": "2024-01-19",
+    "patent_date": "2024-09-17",
+    "kind_code": "B2",
+    "prior_publication": {"publication": "US 20240159369 A1", "date": "2024-05-16"},
+    "related_application": {"application": "PCT/CN2021/122618", "date": "2021-10-08"},
+    "priority_applications": [
+      {"application": "CN 202111018116.4", "date": "2021-08-31"}
+    ]
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/0071f38b2b89c02e/US-12092276-B2.html",
+    "bytes": 44579,
+    "raw_characters": 44532,
+    "raw_sha256": "0071f38b2b89c02e2caaf7121233eb1beeccde171d4a474d54f845661ffcf933",
+    "normalized_characters": 34979,
+    "normalized_sha256": "a6b5217a668ddf7c5f9e286b61086043dc259d6187e36a5aab3dafc5c54ed7d8"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_application_numbered_paragraphs": 1,
+    "technical_field_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 1,
+    "summary_numbered_paragraphs": 17,
+    "brief_drawing_numbered_paragraphs": 4,
+    "detailed_numbered_paragraphs": 16,
+    "total_numbered_paragraphs": 40,
+    "claims": 10,
+    "claim_families": 1,
+    "declared_textual_figures": 3,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 1,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 1,
+    "replayed_ledger_items": 1,
+    "official_pdf_files": 0,
+    "retained_drawing_images": 0,
+    "unmapped_source_items": 0
+  },
+  "paragraph_spans": {
+    "related_applications": [
+      {"range": [1, 1], "role": "continuation and Chinese priority"}
+    ],
+    "technical_background_summary": [
+      {"range": [1, 2], "role": "technical field and background"},
+      {"range": [3, 19], "role": "summary and single claim-family architecture"}
+    ],
+    "description": [
+      {"range": [1, 5], "role": "three figure declarations, reference numerals and introduction"},
+      {"range": [6, 7], "role": "shared lamp light paths"},
+      {"range": [8, 8], "role": "alternative first-source/integrator placement"},
+      {"range": [9, 14], "role": "mounting, controls, drive and shared laser path"},
+      {"range": [15, 17], "role": "light-source, lens-cone, mirror-disc and roller-splitter details"},
+      {"range": [18, 20], "role": "mounting, effect description and closing boilerplate"}
+    ]
+  },
+  "figures": ["1", "2", "3"],
+  "claim_families": [
+    {"range": [1, 10], "role": "dynamic starry-sky lamp and dependent component options"}
+  ],
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Baolun dynamic starry-sky lamp optical architecture",
+      "description_paragraphs": [6, 19],
+      "claim_context": [1, 10],
+      "status": "confirmed_no_prescription",
+      "reason_code": "dynamic_starry_sky_lamp_optical_architecture_only"
+    }
+  ],
+  "optical_scope": {
+    "optical_integrating_lens_occurrences": 23,
+    "roller_beam_splitter_occurrences": 49,
+    "starry_sky_laser_assembly_occurrences": 39,
+    "starry_sky_mirror_disc_occurrences": 40,
+    "optical_imaging_lens_assembly_occurrences": 7,
+    "lens_cone_occurrences": 24,
+    "interpretation": "lamp component identities, material and light-path topology only",
+    "ordered_surface_prescriptions": 0
+  },
+  "non_prescription_numeric_contexts": [
+    {
+      "value": "108 degrees",
+      "location": "description paragraph 17",
+      "meaning": "included angle of adjacent flat plates in a regular pentagonal roller splitter"
+    },
+    {
+      "values": "5 flat lenses, 10 lens-cone strips, 11 beams, 140+ mirror facets and 1540+ light dots",
+      "location": "description paragraphs 16-17",
+      "meaning": "component and output-dot counts, not an ordered lens prescription"
+    },
+    {
+      "values": ["embossed tempered glass", "other transparent glass"],
+      "location": "description paragraph 17",
+      "meaning": "optional flat roller-splitter plate material without index, Abbe or surface data"
+    }
+  ],
+  "forbidden_substitutions": [
+    "the 108-degree pentagon angle for lens field or prescription angle",
+    "component, beam or light-dot counts for optical surface counts",
+    "generic optical-integrator, imaging-assembly or lens-cone wording for an ordered prescription",
+    "flat plate material for a complete optical design",
+    "drawing coordinates or prior-publication values for missing source data"
+  ]
+}

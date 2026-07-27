@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "0278c809e43a9b92dce1b8365533c195e764073c169e5d618f791468773ddf40",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 117,
+      "affected_items": 117
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "100037253",
+    "root_ids": ["US-20260161906"],
+    "publication_ids": ["US-20260161906-A1"],
+    "application_number": "18/971924",
+    "title": "Dynamic Activation of Mobile Phone Frames in an Indicia Reader",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 30,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/e5102e5dae5ccc64/US-20260161906-A1.html",
+      "sha256": "e5102e5dae5ccc64bd4965edf4ed3539b7b4cdd3a7c24a37f70152be83c7eb21"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

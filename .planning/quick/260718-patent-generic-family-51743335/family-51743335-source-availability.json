@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "family_id": "51743335",
+  "publication_id": "US-9360657-B2",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/b74d7e8a6f9f2982/US-9360657-B2.html",
+    "bytes": 38717,
+    "characters": 38671,
+    "sha256": "b74d7e8a6f9f29825e44ec488e48a164e0807fbf0c2070e4f6529a06b50c2491",
+    "normalized_characters": 24033,
+    "normalized_sha256": "49038c109d2eddc4fb961ccf3134f5debb1ee3ed7b7efcdd6b70828a6904f2c4"
+  },
+  "official_pdf": {
+    "authority": "USPTO Patent Public Search image service",
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9360657",
+    "request_authentication": "anonymous PPUBS session token passed as requestToken and x-access-token",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/f47484c8a3548f6f/US-9360657-B2.pdf",
+    "bytes": 655673,
+    "container_sha256": "f47484c8a3548f6f6f0d7cb524b8b73d744a5019698200d3f3b180ffb9e2d9ad",
+    "page_count": 21,
+    "single_raster_pages": 21,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "1876cabda170446490b897f726323f5891e1616b0515247b7525ceb51685b7aa"
+  },
+  "repeat_official_probe": {
+    "bytes": 655673,
+    "container_sha256": "60d33c822d7fc6d0284630d49535a68fabdc6f5c6e2a3780931ecc9b6b4e3663",
+    "container_equal": false,
+    "decoded_page_rasters_equal": true
+  },
+  "google_wrapper_probe": {
+    "authority": "Google Patents citation PDF wrapper",
+    "bytes": 872316,
+    "container_sha256": "f4bec69dac9cf1aa62e812e40e77cf0d59c2df67dcf6635ff782899606ec4e2c",
+    "page_count": 21,
+    "text_layer_characters": 25061,
+    "blank_text_layer_pages": [5, 6, 11],
+    "decoded_page_rasters_equal_to_official": true,
+    "classification_authority": false
+  },
+  "same_application_alternate": {
+    "publication_id": "US-20150116847-A1",
+    "application_number": "14/520589",
+    "family_id": "51743335",
+    "official_html_live_probe_sha256": "2de3aea9f17555005e7a247da734bb19a3560aebe36b509e4e217942dab7c565",
+    "official_html_normalized_live_probe_sha256": "bb3f55b4d0445ccbf9ee0b44c4ea47b42fed2bdbcd482e2da772761337bc5957",
+    "official_pdf_live_probe_bytes": 660953,
+    "official_pdf_live_probe_sha256": "60829c3923c94a00e453320ad31fa4007e3ffd8daa77f301d7c7832d8b2ab82a",
+    "official_pdf_pages": 21,
+    "official_pdf_single_raster_pages": 21,
+    "official_pdf_text_layer_characters": 0,
+    "same_position_equal_raster_pages_with_b2": 0,
+    "in_frozen_cohort": false,
+    "used_as_parser_input": false,
+    "numeric_borrowing_used": false
+  },
+  "drawing_source": {
+    "declared_textual_figures": 16,
+    "located_raster_figures": 16,
+    "drawing_sheets": 16,
+    "drawing_pdf_pages": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+    "image_only_table_pages": [5, 6, 10, 11, 15, 16, 17],
+    "full_page_raster_review_claimed": true,
+    "classification_dependency": true,
+    "source_discrepancies": []
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO B2 HTML plus retained exact official B2 decoded-raster set",
+    "google_text_used_only_after_raster_equivalence": true,
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "f_over_dg_derivation_permitted": false,
+    "dg_to_angular_field_derivation_permitted": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

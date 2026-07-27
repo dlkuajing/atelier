@@ -1,0 +1,34 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260722-patent-generic-family-76895572/generic-residual-after-1.json",
+  "affected_roots": 29,
+  "affected_items": 29,
+  "result_set_sha256": "b89c4b87150b6577e738155ce9f3e159de2958a3dc922621187c04ccfd1d6f13",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "c9055d280cd8498d80825b5b7e578b28fa9459cdebaa755ee7cf25b92196c9c3",
+    "layout_signature_count": 1,
+    "family_id": "81111812",
+    "root_ids": ["US-12474541"],
+    "publication_ids": ["US-12474541-B2"],
+    "application_numbers": ["17/527220"],
+    "title": "Imaging lens assembly module, imaging lens assembly driving module, camera module and electronic device",
+    "applicant_and_assignee": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/d812e6b1ee07b3f5/US-12474541-B2.html",
+      "bytes": 173216,
+      "sha256": "d812e6b1ee07b3f532cd2b0217a754c87f2f82c661f27dd15259a708a6b4bbd2"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 250,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 1,
+      "half_field": 0
+    },
+    "table_count": 11
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

@@ -1,0 +1,54 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "98608050",
+  "root_id": "US-20260140289",
+  "publication_id": "US-20260140289-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20260140289/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "c82165c03400ec175858e47c22ce631caabd448f40ff82e268abd858a8952ffe",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "49cbd4e9183a73b995d6af776c2e3ea908e3110bbff5fb074ca720b2b1e6b075"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260140289/attempt-0002/result.json",
+      "bytes": 14839,
+      "sha256": "5891cf03de1de8df27f405f5767a95d3c417806467e0b0358c852d6027c6e8b1",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "6b0f48662f5bdb8cd67f46ac961fd42f7a8a38c715758193744afbca23ed0fe7"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260140289/attempt-0003/result.json",
+      "bytes": 14839,
+      "sha256": "431d055ddb3d8ab254e69f74be928c62ff2fc44d5a657abf444e82d167038350",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "6b0f48662f5bdb8cd67f46ac961fd42f7a8a38c715758193744afbca23ed0fe7"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "6b0f48662f5bdb8cd67f46ac961fd42f7a8a38c715758193744afbca23ed0fe7",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.electronic_device_multi_camera_wrapper_only",
+    "terminal.confirmed_no_prescription.plastic_optical_element_gate_vestige_and_nozzle_geometry_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

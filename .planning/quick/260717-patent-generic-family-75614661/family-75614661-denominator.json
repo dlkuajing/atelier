@@ -1,0 +1,395 @@
+{
+  "asphere_contract": {
+    "all_nonzero_terms_representable_by_patent_xasphere_writer": true,
+    "equation": "K plus A-J at even radial powers r^4 through r^20"
+  },
+  "claims": {
+    "characters": 3589,
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "sha256": "a209e8106e62f06974620830d81bf2c6432cc071c174b01aae43c7ec3482f79a"
+  },
+  "denominator": {
+    "asphere_rows_by_example": [
+      14,
+      14,
+      14,
+      14,
+      14
+    ],
+    "asphere_tables": 5,
+    "claims": 12,
+    "conditional_tables": 1,
+    "declared_figures": 10,
+    "disclosed_optical_examples": 5,
+    "drawing_sheets": 10,
+    "frozen_cohort_roots": 1,
+    "mathml_objects": 10,
+    "numbered_paragraphs": 91,
+    "official_pdf_pages": 22,
+    "representable_prescriptions": 4,
+    "retained_publications": 1,
+    "source_conflict_prescriptions": 1,
+    "surface_rows_by_example": [
+      18,
+      18,
+      18,
+      17,
+      17
+    ],
+    "surface_tables": 5,
+    "system_metadata_tables": 1,
+    "tagged_html_tables": 12
+  },
+  "family_id": "75614661",
+  "field_contract": {
+    "division_factor": 2.0,
+    "drawing_values_transcribed": false,
+    "pipeline_values_are_half_field": true,
+    "published_table_11_values_are_full_fov": true
+  },
+  "identity": {
+    "application_number": "19/384402",
+    "continuation_chain": [
+      {
+        "application": "16/998,063",
+        "grant": "US-11899171"
+      },
+      {
+        "application": "17/858,195",
+        "grant": "US-12493170"
+      },
+      {
+        "application": "19/384402",
+        "publication": "US-20260063874-A1"
+      }
+    ],
+    "filed": "November 10, 2025",
+    "priority": "KR 10-2020-0046525 / April 17, 2020"
+  },
+  "items": [
+    {
+      "asphere_rows": 14,
+      "detail": null,
+      "embodiment_number": 1,
+      "label": "Samsung seven-lens wide-angle example 1",
+      "parsed_surface_count": 18,
+      "source_state": "representable_prescription",
+      "stop_surface": 5,
+      "surface_rows": 18,
+      "table_pair": [
+        1,
+        2
+      ]
+    },
+    {
+      "asphere_rows": 14,
+      "detail": null,
+      "embodiment_number": 2,
+      "label": "Samsung seven-lens wide-angle example 2",
+      "parsed_surface_count": 18,
+      "source_state": "representable_prescription",
+      "stop_surface": 5,
+      "surface_rows": 18,
+      "table_pair": [
+        3,
+        4
+      ]
+    },
+    {
+      "asphere_rows": 14,
+      "detail": "Samsung seven-lens example 3 source conflict: all 14 lens-surface radii in TABLE 5 disagree with the R column in TABLE 6",
+      "embodiment_number": 3,
+      "label": "Samsung seven-lens wide-angle example 3",
+      "parsed_surface_count": 0,
+      "source_state": "source_conflict",
+      "stop_surface": null,
+      "surface_rows": 18,
+      "table_pair": [
+        5,
+        6
+      ]
+    },
+    {
+      "asphere_rows": 14,
+      "detail": null,
+      "embodiment_number": 4,
+      "label": "Samsung seven-lens wide-angle example 4",
+      "parsed_surface_count": 17,
+      "source_state": "representable_prescription",
+      "stop_surface": 6,
+      "surface_rows": 17,
+      "table_pair": [
+        7,
+        8
+      ]
+    },
+    {
+      "asphere_rows": 14,
+      "detail": null,
+      "embodiment_number": 5,
+      "label": "Samsung seven-lens wide-angle example 5",
+      "parsed_surface_count": 17,
+      "source_state": "representable_prescription",
+      "stop_surface": 6,
+      "surface_rows": 17,
+      "table_pair": [
+        9,
+        10
+      ]
+    }
+  ],
+  "mathml": [
+    {
+      "characters": 128,
+      "id": "MATH-US-00001",
+      "sha256": "42548a2294c0a01822da08d2e4399d1f807bec03e058dcb0f0b82c2fe5df86e3"
+    },
+    {
+      "characters": 90,
+      "id": "MATH-US-00002",
+      "sha256": "a48d9aea3533c24c1f406bcc1143caa2ef19bd06ec234bd47c29b2c5282b86be"
+    },
+    {
+      "characters": 71,
+      "id": "MATH-US-00002-2",
+      "sha256": "56a8883dd28b6f50cdd0f0269eb22274ba9bbbb52728376b6375af87ebf8e705"
+    },
+    {
+      "characters": 26,
+      "id": "MATH-US-00002-3",
+      "sha256": "0315e7e4ff05f3d3e2a1364014b8f84f6728f6094582a0cbe21c32347e111999"
+    },
+    {
+      "characters": 37,
+      "id": "MATH-US-00002-4",
+      "sha256": "668c57987b1a59c2939e3cf5e0dadabc5c3bdf4918f750c7952d44f0e67c2259"
+    },
+    {
+      "characters": 31,
+      "id": "MATH-US-00002-5",
+      "sha256": "1f4d25d672b5100f1aab21ab356432b05b24ec2ad4b185c8c0db2ffdafb79d0d"
+    },
+    {
+      "characters": 48,
+      "id": "MATH-US-00002-6",
+      "sha256": "c90f34aa3df7b5fdf6717e3564726a6b4bba9ff408ea9b7bcbda839f71fa4f1c"
+    },
+    {
+      "characters": 32,
+      "id": "MATH-US-00002-7",
+      "sha256": "38e18c594d0e53637184531454ba6407312abe104fba95d5f90bfd801983ea36"
+    },
+    {
+      "characters": 37,
+      "id": "MATH-US-00002-8",
+      "sha256": "673310c514ec5d3af4797ce142cd79f9a0ae4a4b5116e2ecb866430d9c5452ce"
+    },
+    {
+      "characters": 36,
+      "id": "MATH-US-00002-9",
+      "sha256": "36a7ecb7f18427e1a63a4c78710c4347a183cdcb6c1fe9fbd690369127c0a307"
+    }
+  ],
+  "paragraph_groups": {
+    "background_summary": {
+      "characters": 5379,
+      "paragraphs": [
+        1,
+        22
+      ],
+      "sha256": "97482eab487930a365ab6076ffd9ea8437fb582bd9b0064a06eca9a631db23c8"
+    },
+    "detailed_description": {
+      "characters": 41713,
+      "paragraphs": [
+        34,
+        91
+      ],
+      "sha256": "09854326521e1a330e8822017957f2457d821bdf9e44f7c176d6b07875995efb"
+    },
+    "drawing_description": {
+      "characters": 1245,
+      "paragraphs": [
+        23,
+        33
+      ],
+      "sha256": "c8aaddd13fc8129d48306d7feaa66d3f165018ac584c039b2c0638f5db33cbae"
+    }
+  },
+  "publication_id": "US-20260063874-A1",
+  "reconciliation": {
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_disclosed_items": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_tagged_table_blocks": 0
+  },
+  "schema_version": 1,
+  "source": {
+    "bytes": 66714,
+    "normalized_characters": 53583,
+    "normalized_sha256": "df0fce200fc3fb932895ba5e7dfeaf0f48dde5bfde82e4223c752548f8508dd9",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/efa6c9872a90688f/US-20260063874-A1.html",
+    "raw_sha256": "efa6c9872a90688f543d804e5145f113167cdd900db49108f70e5def0180094a"
+  },
+  "tables": [
+    {
+      "characters": 747,
+      "role": "surface prescription",
+      "sha256": "2e53c8b47ecc4f4c14d4e268f9d865891bb1c104dce9ac816f3bfdc12266f7f7",
+      "table": 1
+    },
+    {
+      "characters": 1407,
+      "role": "asphere prescription",
+      "sha256": "50cbb6976f874998a43237c95ce6442968b552e313b1749eab6a79790a7c5e6d",
+      "table": 2
+    },
+    {
+      "characters": 748,
+      "role": "surface prescription",
+      "sha256": "d9229ef2439f18b4ef7ecfbae134ee5354b0bf17d4890c00b79e2bfa171f4885",
+      "table": 3
+    },
+    {
+      "characters": 1421,
+      "role": "asphere prescription",
+      "sha256": "69f80a069e2db63d199b04786acb87684a75c17b586d89084a11080f2b2e5c26",
+      "table": 4
+    },
+    {
+      "characters": 746,
+      "role": "surface prescription",
+      "sha256": "c9c0712517491fa09c97ebf0ce0f5480179c815d069f919194ab5e6492bad92e",
+      "table": 5
+    },
+    {
+      "characters": 1387,
+      "role": "asphere prescription",
+      "sha256": "24464c2978db4be836185434e16fc5926ff6f57f879d4d8cc5b7660db7267ec6",
+      "table": 6
+    },
+    {
+      "characters": 723,
+      "role": "surface prescription",
+      "sha256": "21f27c08feef63db442988ef814d18e3f873c8d9a08a5793b6af45ff6affc764",
+      "table": 7
+    },
+    {
+      "characters": 1346,
+      "role": "asphere prescription",
+      "sha256": "aeaa53f0f17a4fbfc01ba9ea03bf02883da7ab147658bcea41d5fee65fa43385",
+      "table": 8
+    },
+    {
+      "characters": 726,
+      "role": "surface prescription",
+      "sha256": "d409a81992fd8c73ebfe26469e075fd1e9d83c1637fa34ef2fcfce41965bb94b",
+      "table": 9
+    },
+    {
+      "characters": 1316,
+      "role": "asphere prescription",
+      "sha256": "d2e0b41310fe3e26bf8c4184c4cb971f0cac0a821507147d036ebe18d44fdb7c",
+      "table": 10
+    },
+    {
+      "characters": 545,
+      "role": "system metadata",
+      "sha256": "dc25194845520e3f0ec4bf7b07774da609c1ac14e9fb091412267ac6b927a271",
+      "table": 11
+    },
+    {
+      "characters": 499,
+      "role": "conditional expressions",
+      "sha256": "2c6b91470798603d82ac15a49b11f2e50218c7bab849a03810fadbd7afb22596",
+      "table": 12
+    }
+  ],
+  "third_example_radius_conflicts": [
+    {
+      "surface": 1,
+      "table_5_radius": -5.492,
+      "table_6_radius": -5.1283
+    },
+    {
+      "surface": 2,
+      "table_5_radius": -3.494,
+      "table_6_radius": -3.6514
+    },
+    {
+      "surface": 3,
+      "table_5_radius": 2.742,
+      "table_6_radius": 2.1014
+    },
+    {
+      "surface": 4,
+      "table_5_radius": 2.278,
+      "table_6_radius": 1.9468
+    },
+    {
+      "surface": 6,
+      "table_5_radius": 9.527,
+      "table_6_radius": 10.7797
+    },
+    {
+      "surface": 7,
+      "table_5_radius": -2.937,
+      "table_6_radius": -2.9467
+    },
+    {
+      "surface": 8,
+      "table_5_radius": 4.309,
+      "table_6_radius": 3.8064
+    },
+    {
+      "surface": 9,
+      "table_5_radius": 3.3,
+      "table_6_radius": 3.1643
+    },
+    {
+      "surface": 10,
+      "table_5_radius": -1.947,
+      "table_6_radius": -1.5729
+    },
+    {
+      "surface": 11,
+      "table_5_radius": -4.946,
+      "table_6_radius": -3.1751
+    },
+    {
+      "surface": 12,
+      "table_5_radius": 8.734,
+      "table_6_radius": 5.2466
+    },
+    {
+      "surface": 13,
+      "table_5_radius": -0.983,
+      "table_6_radius": -1.1462
+    },
+    {
+      "surface": 14,
+      "table_5_radius": 17.092,
+      "table_6_radius": -39.5782
+    },
+    {
+      "surface": 15,
+      "table_5_radius": 0.993,
+      "table_6_radius": 1.1421
+    }
+  ]
+}

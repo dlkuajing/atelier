@@ -1,0 +1,33 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-after-1.json",
+  "affected_roots": 39,
+  "affected_items": 39,
+  "result_set_sha256": "dd52fecc4dc1b51a85b8680fbe96b50abc8f7195c9401c8d3551dd71cd4bc7c0",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then exact family grouping",
+    "layout_signature": "ba0eebe2bf6869af6594b480f6059bad42582863b96360cc021689239954e04e",
+    "layout_signature_count": 1,
+    "family_id": "87279038",
+    "root_ids": ["US-20250155675"],
+    "publication_ids": ["US-20250155675-A1"],
+    "application_numbers": ["18/728486"],
+    "title": "IMAGING LENS SYSTEM, CAMERA MODULE, IN-VEHICLE SYSTEM, AND VEHICLE",
+    "applicant_and_assignee": "Maxell, Ltd.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/3ee42e192dfcd1f2/US-20250155675-A1.html",
+      "bytes": 80610,
+      "sha256": "3ee42e192dfcd1f207594337705a223136d2fd9781918c42eff4d4d32bd6206a"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 10,
+      "example_anchor": 87,
+      "f_number": 17,
+      "full_field": 0,
+      "half_field": 6
+    },
+    "table_count": 14
+  },
+  "saturation_complete": false
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-90040108/generic-residual-after-2.json",
+  "result_set_sha256": "476349656fe93db72ed775925da2e272e223823b81de79911fec1fe0979acf19",
+  "generic_residual_roots": 68,
+  "generic_residual_items": 68,
+  "next_exact_group": {
+    "family_id": "88793298",
+    "root_ids": ["US-20260153710"],
+    "publication_ids": ["US-20260153710-A1"],
+    "application_number": "19/424607",
+    "title": "SLIM POP-OUT WIDE CAMERA LENSES AND POP-OUT CAMERA ACTUATORS",
+    "first_inventor": "Goldenberg; Ephraim et al.",
+    "applicant": "Corephotonics Ltd.",
+    "assignee": "Corephotonics Ltd.",
+    "layout_signature": "731aa3ed6b61ddff0ef04728dc9ba7c2bc48e7e6780b49d108ddfbb43f2e6140",
+    "layout_signature_count": 1,
+    "table_count": 10,
+    "marker_counts": {
+      "effective_focal_length": 39,
+      "embodiment_anchor": 0,
+      "example_anchor": 6,
+      "f_number": 19,
+      "full_field": 26,
+      "half_field": 8
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/188dbb739fd8d713/US-20260153710-A1.html",
+      "sha256": "188dbb739fd8d71378d568a9d8d9d94dd06931b1c5ae9a0c7373836a4b31f36e"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

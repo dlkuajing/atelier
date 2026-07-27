@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "family_id": "89511297",
+  "root_id": "US-11874478",
+  "publication_id": "US-11874478-B1",
+  "application_number": "16/990939",
+  "background_summary_numbered_payloads": 19,
+  "brief_drawing_paragraphs": 12,
+  "detailed_description_paragraphs": 67,
+  "description_paragraphs_total": 79,
+  "claims": 20,
+  "independent_claims": [1, 10, 16],
+  "source_tables": 1,
+  "mathml_objects": 22,
+  "unique_numbered_equations": 20,
+  "figref_tags": 78,
+  "figures": 12,
+  "drawing_sheets": 10,
+  "source_items": 11,
+  "ordered_optical_prescriptions": 0,
+  "source_item_groups": [
+    {
+      "item_number": 1,
+      "label": "Golden Gate claimed range-compensating lens assembly",
+      "claims": [1, 9],
+      "reason_code": "confirmed_no_prescription.range_compensating_lens_assembly_architecture_only"
+    },
+    {
+      "item_number": 2,
+      "label": "Golden Gate claimed range-finding system",
+      "claims": [10, 15],
+      "paragraphs": [77, 77],
+      "reason_code": "confirmed_no_prescription.range_finding_system_architecture_only"
+    },
+    {
+      "item_number": 3,
+      "label": "Golden Gate range-compensating lens design method",
+      "claims": [16, 20],
+      "paragraph_spans": [[13, 39], [62, 66]],
+      "table": 1,
+      "figures": [6],
+      "reason_code": "confirmed_no_prescription.range_compensating_lens_design_method_only"
+    },
+    {
+      "item_number": 4,
+      "label": "Golden Gate on-axis dual-power lens embodiment (FIGS. 1-2)",
+      "paragraphs": [40, 46],
+      "figures": [1, 2],
+      "reason_code": "confirmed_no_prescription.on_axis_dual_power_lens_schematic_only"
+    },
+    {
+      "item_number": 5,
+      "label": "Golden Gate off-axis non-imaging dual-power lens embodiment (FIG. 3)",
+      "paragraphs": [47, 54],
+      "figures": [3],
+      "reason_code": "confirmed_no_prescription.off_axis_nonimaging_dual_power_lens_schematic_only"
+    },
+    {
+      "item_number": 6,
+      "label": "Golden Gate neutral-density range-compensating lens embodiment (FIG. 4)",
+      "paragraphs": [55, 57],
+      "figures": [4],
+      "reason_code": "confirmed_no_prescription.neutral_density_range_compensating_lens_schematic_only"
+    },
+    {
+      "item_number": 7,
+      "label": "Golden Gate GRIN range-compensating lens embodiment (FIG. 5)",
+      "paragraphs": [58, 61],
+      "figures": [5],
+      "reason_code": "confirmed_no_prescription.grin_metamaterial_polarimetric_lens_architecture_only"
+    },
+    {
+      "item_number": 8,
+      "label": "Golden Gate short-range first-order radiometric example (FIGS. 7-8)",
+      "paragraphs": [67, 71],
+      "figures": [7, 8],
+      "reason_code": "confirmed_no_prescription.short_range_first_order_radiometric_parameters_only"
+    },
+    {
+      "item_number": 9,
+      "label": "Golden Gate long-range first-order radiometric example (FIGS. 9-10)",
+      "paragraphs": [72, 73],
+      "figures": [9, 10],
+      "reason_code": "confirmed_no_prescription.long_range_first_order_radiometric_parameters_only"
+    },
+    {
+      "item_number": 10,
+      "label": "Golden Gate relaxed long-range first-order variant (FIG. 11)",
+      "paragraphs": [74, 74],
+      "figures": [11],
+      "reason_code": "confirmed_no_prescription.relaxed_long_range_first_order_radiometric_variant_only"
+    },
+    {
+      "item_number": 11,
+      "label": "Golden Gate neutral-density long-range first-order example (FIG. 12)",
+      "paragraphs": [75, 76],
+      "figures": [12],
+      "reason_code": "confirmed_no_prescription.neutral_density_long_range_first_order_parameters_only"
+    }
+  ],
+  "unmapped_source_items": 0
+}

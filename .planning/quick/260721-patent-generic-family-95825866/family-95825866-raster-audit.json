@@ -1,0 +1,212 @@
+{
+  "schema_version": "patent-family-raster-audit/v1",
+  "family_id": "95825866",
+  "raster_hash_algorithm": "sha256(decoded-page-raster-v1 + NUL + ASCII shape + NUL + ASCII dtype + NUL + decoded pixel bytes)",
+  "raster_set_hash_algorithm": "sha256(newline-joined ordered page raster hashes plus trailing newline)",
+  "publications": {
+    "US-20260079328-A1": {
+      "role": "classification_primary",
+      "wrappers": {
+        "pinned_official_1": {
+          "path": "data/patent-lake/uspto-ppubs-pdf/3cc62464ef6c5f0f/US-20260079328-A1.pdf",
+          "bytes": 2649658,
+          "sha256": "3cc62464ef6c5f0f71d359ada5f6c4b5bb9a20eecd3a8b932a922e825dd2b4dc",
+          "page_count": 48
+        },
+        "official_download_2": {
+          "path": ".planning/quick/260721-patent-generic-family-95825866/source-review/US-20260079328-A1-official-2.pdf",
+          "bytes": 2649658,
+          "sha256": "65b2039cc75614f07aaf1606544187c4f715c000bf4c91fff3cc026a4973c49c",
+          "page_count": 48
+        }
+      },
+      "page_count": 48,
+      "single_raster_page_count": 48,
+      "text_layer_characters": 0,
+      "common_raster_dimensions": [2560, 3300],
+      "narrow_raster_dimensions": [2550, 3300],
+      "narrow_raster_page_numbers": [33, 34, 46, 47, 48],
+      "embedded_raster_mode": "1-bit",
+      "page_raster_sha256": [
+        "bf00e91e1adc539384ba4613435d22856673c096d92af97b1cc4075244b4a312",
+        "6590040a715f468af8284e091e9a4debd8f32f3447cc8b3e655952322e2c3fc2",
+        "5498f42b96200b08d20dbc50e9c56ec75fc67b4f940ca17e1a7c6bb204b94f8f",
+        "a3c6b49bd0f6574a8a7cc6fd24c4309eb037b71c0520e6a355e5fc9df25d4db4",
+        "3d8ca9bcb1c18ffb6527c8c11a960d827edab24ff190eeee3fc54333af7e3fe4",
+        "900611945edf0c8c279404f090f0818b81792beb717b6d234afec72a84a44a58",
+        "e6200351c6f4f4c5da16999d8317e40ca6665d3d8b5f16de15e84cc4b017c7f8",
+        "c9ef454eb0802acab13fbf0e9f2357251ee6d4d72fe22f96ace8fb332bbf5db0",
+        "fd3384a31a33a1b6890b84415bf91b20ad59dfa30ba7e4d44ba777e5a3da0b30",
+        "ae2b4a8c219e683ed1f71ea2b049ed7c9abccc7c2bb10da4ec144f180329a5f5",
+        "16a17338132c631cf5c9612b1f0d0176ab85114a5cd6f44ba6fe9eaac80aa432",
+        "f28a2afddd34fa8a56a10317cdb81676ff93e0b3e967443d41a5da74e6fd9095",
+        "02550a448c587d7baeb8240a6a50cf39dae431161ed03cdee460986481f9d84e",
+        "0f8220dc48e0c42e51e9bf9d7b00e912a0a0a346ea37370bcd33dd0fcac84d25",
+        "55b7e2d07ba972ce2678d7df06dce3b668e708c3440c686a2a66ba894ed0fd95",
+        "83696953030fda0dbc33ee41b93500ca09b0db08d0415a9bbab827fa1a0e7264",
+        "da867b58de0a96784ebde3a9668157c384658948607cc3e82c206d5d87ad94d9",
+        "b3e878ad5d18ad0ccadcfffd91fa4e97c32efbc5a434f695098a3916b4171107",
+        "41a276283e739d89db0a7433c0bfab1867cd4462aec6b68dc971bc1ecbcb348f",
+        "e0468883b7ca5f80f096045c8080f5db1762a0e6bd4a8b6cd4c58d27d60eb28d",
+        "efef832198b4c33703141f99de378ffc05247c2600d8ca4b6b7810448c27245f",
+        "b1752f46566199e55ac726cc4bae173866020de7cb578a874afba3014a4009f6",
+        "c8958e93182a06d5bca6e48450756b28d12b66220d66062809d69a9dada6d3c1",
+        "005f35ab080fcee28914a7bfb121bd21ed1c440d67969c23aff3f6e460119f2c",
+        "6346350b8491a96ea7a976497928fd2223cf383505714e7c7adac76aebe63bf0",
+        "abf5544e1e80ab37391d7526477478b139fe6078e7095b37018852c4a0ffe060",
+        "77ba5a4529e649252e710a37a802a5a38b97ec03f1a73c369bd0debcc224bdc2",
+        "634cf3e6c622b5b4203fbd3bfdcb53382c91625029fe2141e3e6ca9833e43c4b",
+        "36964d55ffa4f6ad787f304ea4609d98d21e820900c17c0a92d7c13e58e98ed5",
+        "2434de357cf404e3c194640829190a5acf34e60f1e4090845f4aadb768d68968",
+        "3aa1daf7f6c84aef8bf20bc81929df6a221097248ef070affac6367189e8c7ed",
+        "20b74303f4e9fb6aa645914d32c3b91af5ebcd8c7da2c2f7109f2d0b10efd50f",
+        "ccbf88e4c9b7483e05b11a1a208b95356b636d62478c595bc01683d86ea610da",
+        "d93585e2699c0debbc373fce8f1855107a9e9c131037d8b2d5de559f71ccb943",
+        "b53614787b81cd90c5a2caeb5d3243cc4a842ba6e169bbbd1a2b011db3ef7a74",
+        "8126b58526b25787d25854abf8baa2d3e4f98421450996807102564d6002882e",
+        "4ccaa1b8fde1e9ccd1e6e409ca3d45d4375bee5e68ca48a7aa3a4b31cb335cd9",
+        "6afdc7e73566f93f450bae5a73bd71fe29224fdf339cc8117ce52301c4dc0901",
+        "3cd34b33bd7f6341ed9898b7537d2800fd97a004fe9a7eb112e4f262693a0e30",
+        "14217b1accbf90dfba0cb9ef46bbd3c0e8243272e946692f9467735d5ab1f5f6",
+        "70f3fc1bc4872d870634186182bb60e7cc91d7e91f58e87f111d7c5e2c58ac27",
+        "800cf6e219b479d07eae36d6afab0de692f26e3ed094f8b1f93b20395aa0d486",
+        "a8a0bd3ae818e51718de48dd2af58cd13ff346b2b92a42069d3a749baf320894",
+        "70df85316600ef4ea60d298827aadb71ce93f79ae410039e75290e1443559283",
+        "848db1dd2e00deb858f4353f9b0b30c6cf7907a66182e4c46c2874616989f30b",
+        "2d55c0562d7da245a06f1749fffc6d43732583b3616d7dc2fea9c7e111289892",
+        "35ec2def6185e7158bd7297f5626bf54dd0ff2ed20836df989d27deec8d4941e",
+        "d7837fde6c087c8a2b107b446913a2b316a278f441acb93565ede4ce5a946044"
+      ],
+      "raster_set_sha256": "f8c13c416e61516cadb82d3fefd4e6bcb9cff254ac7c5db5262a1116dbebd353",
+      "page_roles": {
+        "cover": [1],
+        "drawing_sheets": [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+        "specification": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46],
+        "tables": [35, 36, 38, 39, 41, 42, 43, 44],
+        "claims": [46, 47, 48]
+      },
+      "original_raster_directory": {
+        "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review",
+        "file_count": 48,
+        "pattern": "page-??-original.png",
+        "format": "lossless grayscale PNG expanded from the sole embedded 1-bit official page raster",
+        "embedded_mode": "1-bit",
+        "serialized_mode": "L",
+        "pixel_comparison": "the serialized grayscale samples exactly equal the decoded embedded 1-bit samples"
+      }
+    }
+  },
+  "source_comparison": {
+    "official_download_container_hashes_distinct": true,
+    "container_byte_lengths_equal": true,
+    "compared_wrappers": 2,
+    "compared_pages_per_wrapper": 48,
+    "equal_decoded_pages_across_all_wrappers": 48,
+    "same_missing_or_illegible_placeholders_preserved": true,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "retained_visual_audits": [
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/contact-sheet-pages-01-48-navigation-only.png",
+      "bytes": 475924,
+      "sha256": "5abc7a2c0e48ee7f5734a506e6f835833794ddc2b80e70bea14ff671af5107f9",
+      "role": "complete 48-page navigation contact sheet; nearest-neighbor navigation only; not numeric evidence"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-29-original.png",
+      "bytes": 88680,
+      "sha256": "1868f55dd75409843cb100d760136733961a239e87d6ca7d753f0ecd52d98071",
+      "publication_id": "US-20260079328-A1",
+      "page": 29,
+      "embedded_page_raster_sha256": "36964d55ffa4f6ad787f304ea4609d98d21e820900c17c0a92d7c13e58e98ed5",
+      "role": "FIG. 25 and final drawing sheet"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-35-original.png",
+      "bytes": 108424,
+      "sha256": "6e7673e0138ef0d24a3858c2fb7618ed0b5b21881b2c7d3f74fe3839afce3ac3",
+      "publication_id": "US-20260079328-A1",
+      "page": 35,
+      "embedded_page_raster_sha256": "b53614787b81cd90c5a2caeb5d3243cc4a842ba6e169bbbd1a2b011db3ef7a74",
+      "role": "first example TABLE 1 with source-printed missing-character placeholders"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-36-original.png",
+      "bytes": 139883,
+      "sha256": "245d4e054be45d3486d3f75a0029ba1acf5b80cfee9158c66f2248cb52109688",
+      "publication_id": "US-20260079328-A1",
+      "page": 36,
+      "embedded_page_raster_sha256": "8126b58526b25787d25854abf8baa2d3e4f98421450996807102564d6002882e",
+      "role": "first example TABLES 1-3 and missing-or-illegible legend"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-38-original.png",
+      "bytes": 128086,
+      "sha256": "80913911630f1b7bf9d83f31212ae31f943761f6918832105d42521519274ad8",
+      "publication_id": "US-20260079328-A1",
+      "page": 38,
+      "embedded_page_raster_sha256": "6afdc7e73566f93f450bae5a73bd71fe29224fdf339cc8117ce52301c4dc0901",
+      "role": "second example TABLE 4 start"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-39-original.png",
+      "bytes": 269761,
+      "sha256": "4329c84068454920184221a976371859ef54d8e9ef61d76872a8fa6a2dae25b4",
+      "publication_id": "US-20260079328-A1",
+      "page": 39,
+      "embedded_page_raster_sha256": "3cd34b33bd7f6341ed9898b7537d2800fd97a004fe9a7eb112e4f262693a0e30",
+      "role": "second example TABLES 4-7 and missing-or-illegible legend"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-41-original.png",
+      "bytes": 129488,
+      "sha256": "33e0a475221c0596c019ffa84bcf9554726b37e7a426c2c4272f18fd1377addf",
+      "publication_id": "US-20260079328-A1",
+      "page": 41,
+      "embedded_page_raster_sha256": "70f3fc1bc4872d870634186182bb60e7cc91d7e91f58e87f111d7c5e2c58ac27",
+      "role": "third example TABLE 8 start"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-43-original.png",
+      "bytes": 235508,
+      "sha256": "6f169f0b3f567942592754ff9202330bd06503805e731e5a2dbfe81cd4cfb216",
+      "publication_id": "US-20260079328-A1",
+      "page": 43,
+      "embedded_page_raster_sha256": "a8a0bd3ae818e51718de48dd2af58cd13ff346b2b92a42069d3a749baf320894",
+      "role": "third example TABLES 8-11 and fourth example TABLE 12 start"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-44-original.png",
+      "bytes": 156798,
+      "sha256": "eecb1931249bf51d48a909eecbffb8aa49ef30ce644658320f4de66aef9df289",
+      "publication_id": "US-20260079328-A1",
+      "page": 44,
+      "embedded_page_raster_sha256": "70df85316600ef4ea60d298827aadb71ce93f79ae410039e75290e1443559283",
+      "role": "fourth example TABLE 12 continuation and missing-or-illegible legend"
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/pdf-review/page-46-original.png",
+      "bytes": 342548,
+      "sha256": "ce3c6c3963c48b1d5848b14c5a5963d0031c7de07166dfa5ecaf5c5fca306ad7",
+      "publication_id": "US-20260079328-A1",
+      "page": 46,
+      "embedded_page_raster_sha256": "2d55c0562d7da245a06f1749fffc6d43732583b3616d7dc2fea9c7e111289892",
+      "role": "closing description and claims 1-8; original typography reviewed without transcription"
+    }
+  ],
+  "review_policy": {
+    "complete_contact_sheets_reviewed": true,
+    "original_resolution_key_pages_reviewed": true,
+    "original_rasters_only": true,
+    "nearest_neighbor_contact_sheet_navigation_only": true,
+    "image_enhancement_used": false,
+    "drawing_geometry_measured": false,
+    "numeric_transcription_from_raster": false,
+    "plot_sampling_used": false,
+    "ocr_repair_used": false,
+    "raster_numeric_inference_used": false,
+    "angular_field_derived_from_raster_and_focal_length": false,
+    "symbolic_H_or_h_treated_as_numeric_image_height": false,
+    "related_publication_numeric_borrowing": false
+  }
+}

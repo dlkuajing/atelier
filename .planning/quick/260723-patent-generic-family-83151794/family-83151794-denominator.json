@@ -1,0 +1,605 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "83151794",
+  "root_id": "US-12379524",
+  "publication_id": "US-12379524-B2",
+  "sections": {
+    "background_summary_paragraphs": 6,
+    "description_paragraphs": 180,
+    "claims": 24,
+    "independent_claims": 2,
+    "machine_readable_tables": 19,
+    "optical_prescription_tables": 0,
+    "optical_coating_architecture_tables": 13,
+    "coating_experiment_tables": 6,
+    "inline_formula_pairs": 19,
+    "mathml_objects": 0,
+    "figref_tags": 80,
+    "declared_figure_panels": 19,
+    "drawing_sheets": 16,
+    "native_html_tables": 0,
+    "native_html_rows": 0,
+    "native_html_cells": 0,
+    "embedded_images": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan optical/coating first embodiment",
+      "paragraph_range": [
+        82,
+        89
+      ],
+      "figures": [
+        "1"
+      ],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        1
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 2,
+      "label": "Largan optical/coating second embodiment",
+      "paragraph_range": [
+        90,
+        93
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        2
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 3,
+      "label": "Largan optical/coating third embodiment",
+      "paragraph_range": [
+        94,
+        97
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        3
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 4,
+      "label": "Largan optical/coating fourth embodiment",
+      "paragraph_range": [
+        98,
+        101
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        4
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 5,
+      "label": "Largan optical/coating fifth embodiment",
+      "paragraph_range": [
+        102,
+        105
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        5
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 6,
+      "label": "Largan optical/coating sixth embodiment",
+      "paragraph_range": [
+        106,
+        109
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        6
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 7,
+      "label": "Largan optical/coating seventh embodiment",
+      "paragraph_range": [
+        110,
+        113
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        7
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 8,
+      "label": "Largan optical/coating eighth embodiment",
+      "paragraph_range": [
+        114,
+        117
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        8
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 9,
+      "label": "Largan optical/coating ninth embodiment",
+      "paragraph_range": [
+        118,
+        121
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        9
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 10,
+      "label": "Largan optical/coating tenth embodiment",
+      "paragraph_range": [
+        122,
+        125
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        10
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 11,
+      "label": "Largan optical/coating eleventh embodiment",
+      "paragraph_range": [
+        126,
+        129
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        11
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 12,
+      "label": "Largan optical/coating twelfth embodiment",
+      "paragraph_range": [
+        130,
+        133
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        12
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 13,
+      "label": "Largan optical/coating thirteenth embodiment",
+      "paragraph_range": [
+        134,
+        137
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.optical_lens_composition_and_antireflective_coating_material_data_only",
+      "tables": [
+        13
+      ],
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 14,
+      "label": "Largan anti-reflective-coating first comparative experiment",
+      "description_ranges": [
+        [
+          138,
+          141
+        ],
+        [
+          151,
+          159
+        ]
+      ],
+      "tables": [
+        14,
+        17,
+        18
+      ],
+      "figures": [
+        "2"
+      ],
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 15,
+      "label": "Largan anti-reflective-coating second comparative experiment",
+      "description_ranges": [
+        [
+          138,
+          139
+        ],
+        [
+          160,
+          161
+        ]
+      ],
+      "tables": [
+        14
+      ],
+      "figures": [
+        "7A"
+      ],
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 16,
+      "label": "Largan anti-reflective-coating third comparative experiment",
+      "description_ranges": [
+        [
+          138,
+          141
+        ],
+        [
+          155,
+          159
+        ]
+      ],
+      "tables": [
+        15,
+        18
+      ],
+      "figures": [
+        "3"
+      ],
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 17,
+      "label": "Largan anti-reflective-coating first embodiment experiment",
+      "description_ranges": [
+        [
+          138,
+          138
+        ],
+        [
+          140,
+          145
+        ],
+        [
+          148,
+          159
+        ],
+        [
+          161,
+          161
+        ]
+      ],
+      "tables": [
+        15,
+        17,
+        19
+      ],
+      "figures": [
+        "4",
+        "7B"
+      ],
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 18,
+      "label": "Largan anti-reflective-coating second embodiment experiment",
+      "description_ranges": [
+        [
+          138,
+          138
+        ],
+        [
+          146,
+          159
+        ]
+      ],
+      "tables": [
+        16,
+        17,
+        19
+      ],
+      "figures": [
+        "5"
+      ],
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 19,
+      "label": "Largan anti-reflective-coating third embodiment experiment",
+      "description_ranges": [
+        [
+          138,
+          138
+        ],
+        [
+          146,
+          159
+        ]
+      ],
+      "tables": [
+        16,
+        17,
+        19
+      ],
+      "figures": [
+        "6"
+      ],
+      "reason_code": "confirmed_no_prescription.antireflective_coating_layer_and_reflectance_test_data_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 20,
+      "label": "Largan long-wavelength absorbing/filtering architecture",
+      "background_paragraphs": [
+        6
+      ],
+      "description_paragraphs": [
+        43,
+        44
+      ],
+      "claim_numbers": [
+        24
+      ],
+      "figures": [],
+      "reason_code": "confirmed_no_prescription.long_wavelength_absorbing_and_filtering_architecture_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 21,
+      "label": "Largan fourteenth-embodiment camera-module wrapper",
+      "description_paragraphs": [
+        162,
+        163,
+        164
+      ],
+      "claim_numbers": [
+        22
+      ],
+      "figures": [
+        "8"
+      ],
+      "reason_code": "confirmed_no_prescription.camera_module_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 22,
+      "label": "Largan fifteenth-embodiment smartphone wrapper",
+      "description_paragraphs": [
+        165,
+        166
+      ],
+      "figures": [
+        "9A",
+        "9B",
+        "9C"
+      ],
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 23,
+      "label": "Largan sixteenth-embodiment smartphone wrapper",
+      "description_paragraphs": [
+        167,
+        168
+      ],
+      "figures": [
+        "10"
+      ],
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 24,
+      "label": "Largan seventeenth-embodiment smartphone wrapper",
+      "description_paragraphs": [
+        169,
+        170,
+        171
+      ],
+      "figures": [
+        "11"
+      ],
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 25,
+      "label": "Largan eighteenth-embodiment smartphone wrapper",
+      "description_paragraphs": [
+        172,
+        173
+      ],
+      "figures": [
+        "12A",
+        "12B"
+      ],
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    },
+    {
+      "number": 26,
+      "label": "Largan nineteenth-embodiment vehicle wrapper",
+      "background_paragraphs": [
+        5
+      ],
+      "description_paragraphs": [
+        174,
+        175
+      ],
+      "claim_numbers": [
+        23
+      ],
+      "figures": [
+        "13A",
+        "13B",
+        "13C"
+      ],
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only",
+      "status": "confirmed_no_prescription",
+      "published_numerical_prescription": false,
+      "machine_readable_numerical_prescription": false,
+      "complete_ordered_prescription_published": false,
+      "numeric_inference_or_repair_performed": false
+    }
+  ],
+  "optical_interpretation": {
+    "source_items": 26,
+    "optical_coating_architecture_items": 13,
+    "coating_experiment_items": 6,
+    "long_wavelength_architecture_items": 1,
+    "camera_module_wrapper_items": 1,
+    "electronic_device_wrapper_items": 5,
+    "published_numerical_prescriptions": 0,
+    "machine_readable_numerical_prescriptions": 0,
+    "machine_readable_prescription_rows": 0,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_system_focal_length_published": false,
+    "absolute_image_height_published": false,
+    "ocr_or_raster_numeric_transcription_authorized": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 26,
+    "nonterminal_items": 0,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "numeric_inference_or_repair_performed": false,
+  "lineage_or_layout_value_borrowing_performed": false
+}

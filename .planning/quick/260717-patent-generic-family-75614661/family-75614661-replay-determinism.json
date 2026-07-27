@@ -1,0 +1,486 @@
+{
+  "budget_prelude": {
+    "effect": "Examples 1-2 reached receipt-backed trace_timeout; examples 4-5 remained conversion_retry_required.patent_budget_exhausted. This attempt is retained as budget evidence and is not part of the equal-outcome pair.",
+    "patent_budget_seconds": "default",
+    "result_attempt": 2
+  },
+  "final_state": {
+    "conversion_receipts": 4,
+    "conversion_requests": 4,
+    "item_state_counts": {
+      "parser_review_required": 1,
+      "terminal": 4
+    },
+    "parser_review_items": 1,
+    "prescription_fingerprints": 4,
+    "result_attempt": 4,
+    "root_reason_code": "mixed_nonterminal.multiple_item_states",
+    "root_state": "mixed_nonterminal",
+    "staging_zmx": 0,
+    "terminal_status_counts": {
+      "trace_timeout": 4
+    }
+  },
+  "publication_id": "US-20260063874-A1",
+  "receipt_determinism": {
+    "all_pairs_semantic_equal": true,
+    "groups": [
+      {
+        "conversion_request_sha256": "6b6aeff9ca14781c0ba0a2965368dc69df0acdec13484f46e687688a53fcb5f0",
+        "determinism_pair": [
+          2,
+          3
+        ],
+        "embodiment_number": 1,
+        "normalized_equal": true,
+        "normalized_receipt_sha256": "e72c413304836635d47688e02fb4a07e1f7f6de53d74f41801f6004d3e0d3726",
+        "prescription_fingerprint": "0aa1239b749ad33c",
+        "records": [
+          {
+            "attempt_number": 1,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.0930000001099,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1918,
+              "file_sha256": "8fce80adbf60c323d64be0f1ce3efdb799234b721049e28390882ffb49803a3f",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0001/receipt.json"
+            },
+            "request_file": {
+              "bytes": 5000,
+              "file_sha256": "be476a2aea5a115462762db442aada9c541aff1ae0bfa817b8ec660cdce3f1c6",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0001/request.json"
+            },
+            "request_file_sha256": "be476a2aea5a115462762db442aada9c541aff1ae0bfa817b8ec660cdce3f1c6",
+            "request_sha256": "6b6aeff9ca14781c0ba0a2965368dc69df0acdec13484f46e687688a53fcb5f0",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 38624,
+              "fallback_warning_count": 136,
+              "file_sha256": "1daa43ded5cf368d14a1832883f801930beda82282723cdf620176d460b59b58",
+              "line_count": 272,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0001/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0001/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          },
+          {
+            "attempt_number": 2,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.09400000004098,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1915,
+              "file_sha256": "5da8e8d1fe69c8f40315934c7392248433e86fe0a66b5f07b78d7c864b01ad98",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0002/receipt.json"
+            },
+            "request_file": {
+              "bytes": 5000,
+              "file_sha256": "be476a2aea5a115462762db442aada9c541aff1ae0bfa817b8ec660cdce3f1c6",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0002/request.json"
+            },
+            "request_file_sha256": "be476a2aea5a115462762db442aada9c541aff1ae0bfa817b8ec660cdce3f1c6",
+            "request_sha256": "6b6aeff9ca14781c0ba0a2965368dc69df0acdec13484f46e687688a53fcb5f0",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 39192,
+              "fallback_warning_count": 138,
+              "file_sha256": "c075cb01bd32a942183ded7c9b6d2cd472ed876b06063d26f262ea8e2b3d58c5",
+              "line_count": 276,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0002/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0002/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          },
+          {
+            "attempt_number": 3,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.09400000004098,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1919,
+              "file_sha256": "0d03a9cb3bee2ca9994013be1205d8baceb54865b2412db7f55ebea19368290b",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0003/receipt.json"
+            },
+            "request_file": {
+              "bytes": 5000,
+              "file_sha256": "be476a2aea5a115462762db442aada9c541aff1ae0bfa817b8ec660cdce3f1c6",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0003/request.json"
+            },
+            "request_file_sha256": "be476a2aea5a115462762db442aada9c541aff1ae0bfa817b8ec660cdce3f1c6",
+            "request_sha256": "6b6aeff9ca14781c0ba0a2965368dc69df0acdec13484f46e687688a53fcb5f0",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 39192,
+              "fallback_warning_count": 138,
+              "file_sha256": "c075cb01bd32a942183ded7c9b6d2cd472ed876b06063d26f262ea8e2b3d58c5",
+              "line_count": 276,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0003/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-1-6b6aeff9ca14781c/attempt-0003/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          }
+        ]
+      },
+      {
+        "conversion_request_sha256": "42d86c925c67c2743023acedf0d47c445265a38b71d384eeaafa68df18d3d89d",
+        "determinism_pair": [
+          2,
+          3
+        ],
+        "embodiment_number": 2,
+        "normalized_equal": true,
+        "normalized_receipt_sha256": "f2d7e5a1b55187c0b5eaea85754c8b1ef4f5f7b1595ac9d70bf185c754c97628",
+        "prescription_fingerprint": "45942ee516d4a534",
+        "records": [
+          {
+            "attempt_number": 1,
+            "detail": "worker exceeded 59.375 seconds",
+            "elapsed_seconds": 59.46899999980815,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1922,
+              "file_sha256": "bffdb5d44a5b6da3d192e8230d4c85ca1662bcd9f22c4691069a4775c639fbd4",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0001/receipt.json"
+            },
+            "request_file": {
+              "bytes": 5010,
+              "file_sha256": "aef35b6ce7673612c6e1e7fa55ddad8b7ea9ee5c4881b308370a9e1c04b74963",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0001/request.json"
+            },
+            "request_file_sha256": "aef35b6ce7673612c6e1e7fa55ddad8b7ea9ee5c4881b308370a9e1c04b74963",
+            "request_sha256": "42d86c925c67c2743023acedf0d47c445265a38b71d384eeaafa68df18d3d89d",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 24708,
+              "fallback_warning_count": 87,
+              "file_sha256": "46204d3344946fa3bdc4e94e513543c2f78be1c8f5d462f47aa89a4f41f3923d",
+              "line_count": 174,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0001/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0001/stdout.log"
+            },
+            "timeout_seconds": 59.375
+          },
+          {
+            "attempt_number": 2,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.0930000001099,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1918,
+              "file_sha256": "f5f716a933f3bf2de0d97adf39fcfd56205bb1339556a63f8e9577e98ed8814a",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0002/receipt.json"
+            },
+            "request_file": {
+              "bytes": 5010,
+              "file_sha256": "aef35b6ce7673612c6e1e7fa55ddad8b7ea9ee5c4881b308370a9e1c04b74963",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0002/request.json"
+            },
+            "request_file_sha256": "aef35b6ce7673612c6e1e7fa55ddad8b7ea9ee5c4881b308370a9e1c04b74963",
+            "request_sha256": "42d86c925c67c2743023acedf0d47c445265a38b71d384eeaafa68df18d3d89d",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 42884,
+              "fallback_warning_count": 151,
+              "file_sha256": "8bb83a2c0aea0f87edb34fd6734350618b8ea8a5b83cc84dbc33d3e80603dd75",
+              "line_count": 302,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0002/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0002/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          },
+          {
+            "attempt_number": 3,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.0930000001099,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1913,
+              "file_sha256": "c9bf4f779179d0d187df0cd47a01e48e8842535c7cca5d1a6fb39650d3d8532f",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0003/receipt.json"
+            },
+            "request_file": {
+              "bytes": 5010,
+              "file_sha256": "aef35b6ce7673612c6e1e7fa55ddad8b7ea9ee5c4881b308370a9e1c04b74963",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0003/request.json"
+            },
+            "request_file_sha256": "aef35b6ce7673612c6e1e7fa55ddad8b7ea9ee5c4881b308370a9e1c04b74963",
+            "request_sha256": "42d86c925c67c2743023acedf0d47c445265a38b71d384eeaafa68df18d3d89d",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 44304,
+              "fallback_warning_count": 156,
+              "file_sha256": "42890398970f8243e1a1c7d0e624535b92fe119e9c529da8ef69e5e908e65f2e",
+              "line_count": 312,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0003/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-2-42d86c925c67c274/attempt-0003/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          }
+        ]
+      },
+      {
+        "conversion_request_sha256": "8bd769ce2aa2b12352c446b79d2090b06b50e8f0d6e198589cd29f182179ba9c",
+        "determinism_pair": [
+          1,
+          2
+        ],
+        "embodiment_number": 4,
+        "normalized_equal": true,
+        "normalized_receipt_sha256": "c8dfd8adad2d45d2c021bf31d6b3a00da4adb4cb5f0e97b5e8ff2d9a6ac0e95c",
+        "prescription_fingerprint": "344b0448b188a60b",
+        "records": [
+          {
+            "attempt_number": 1,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.07799999997951,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1919,
+              "file_sha256": "c42baddc52d096852a27c8576e71e03c172c94df3ad810f1b3861483b745ad90",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0001/receipt.json"
+            },
+            "request_file": {
+              "bytes": 4780,
+              "file_sha256": "2006509ff3c7145a336b24702b7ba57dc76f5f6459dfc056d64450b9acca0391",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0001/request.json"
+            },
+            "request_file_sha256": "2006509ff3c7145a336b24702b7ba57dc76f5f6459dfc056d64450b9acca0391",
+            "request_sha256": "8bd769ce2aa2b12352c446b79d2090b06b50e8f0d6e198589cd29f182179ba9c",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 30104,
+              "fallback_warning_count": 106,
+              "file_sha256": "c6eefc6cc4a40110d1bd97cd4c9836cd8a22ead62b5d38845408160e4a326290",
+              "line_count": 212,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0001/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0001/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          },
+          {
+            "attempt_number": 2,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.09399999980815,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1919,
+              "file_sha256": "dd53452b435dc271d5f6739e0d10c0180945162c51537ef44477705e82e335a1",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0002/receipt.json"
+            },
+            "request_file": {
+              "bytes": 4780,
+              "file_sha256": "2006509ff3c7145a336b24702b7ba57dc76f5f6459dfc056d64450b9acca0391",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0002/request.json"
+            },
+            "request_file_sha256": "2006509ff3c7145a336b24702b7ba57dc76f5f6459dfc056d64450b9acca0391",
+            "request_sha256": "8bd769ce2aa2b12352c446b79d2090b06b50e8f0d6e198589cd29f182179ba9c",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 29820,
+              "fallback_warning_count": 105,
+              "file_sha256": "95356141a4bebf5607d7ba16c4a28d2e63de7a938de681abc0a65f0ee60c2e51",
+              "line_count": 210,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0002/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-4-8bd769ce2aa2b123/attempt-0002/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          }
+        ]
+      },
+      {
+        "conversion_request_sha256": "269a842e6456a540be0ad72df10f89e1fc40ba7c84cb7359714793981c0f2963",
+        "determinism_pair": [
+          1,
+          2
+        ],
+        "embodiment_number": 5,
+        "normalized_equal": true,
+        "normalized_receipt_sha256": "69b35d02005f8c02bc70a194f81cb4ae0bc478112f8b4de0326a2793bc8e6178",
+        "prescription_fingerprint": "53012ea48c91077e",
+        "records": [
+          {
+            "attempt_number": 1,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.09399999980815,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1915,
+              "file_sha256": "eb1a20429be98fde9670b900cb2591e05c366b3a732953d8b9e3d58771e5339e",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0001/receipt.json"
+            },
+            "request_file": {
+              "bytes": 4822,
+              "file_sha256": "db9eb3337486669e95c384faf62bf7a5c477307e3a633c538e0e67972febd831",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0001/request.json"
+            },
+            "request_file_sha256": "db9eb3337486669e95c384faf62bf7a5c477307e3a633c538e0e67972febd831",
+            "request_sha256": "269a842e6456a540be0ad72df10f89e1fc40ba7c84cb7359714793981c0f2963",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 26696,
+              "fallback_warning_count": 94,
+              "file_sha256": "7b6ec76d319cd92e3c48069747f238c036bcbabdd02f50019638d5ad15e910a0",
+              "line_count": 188,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0001/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0001/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          },
+          {
+            "attempt_number": 2,
+            "detail": "worker exceeded 120 seconds",
+            "elapsed_seconds": 120.07799999997951,
+            "reason_code": "trace_timeout.worker_hard_timeout",
+            "receipt": {
+              "bytes": 1918,
+              "file_sha256": "24d3548e76ea08fb81729b93961311b613163680f70ea06c264267958ab26a5f",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0002/receipt.json"
+            },
+            "request_file": {
+              "bytes": 4822,
+              "file_sha256": "db9eb3337486669e95c384faf62bf7a5c477307e3a633c538e0e67972febd831",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0002/request.json"
+            },
+            "request_file_sha256": "db9eb3337486669e95c384faf62bf7a5c477307e3a633c538e0e67972febd831",
+            "request_sha256": "269a842e6456a540be0ad72df10f89e1fc40ba7c84cb7359714793981c0f2963",
+            "returncode": 1,
+            "status": "trace_timeout",
+            "stderr_log": {
+              "bytes": 26980,
+              "fallback_warning_count": 95,
+              "file_sha256": "d8fc782d8dd0f97002ac19ad8bee68956ffd3d94d81a796556c5419995fc0701",
+              "line_count": 190,
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0002/stderr.log"
+            },
+            "stdout_log": {
+              "bytes": 0,
+              "file_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "path": "data/patent-conversion-attempts/local-replay/US-20260063874-A1-Samsung-seven-lens-wide-angle-example-5-269a842e6456a540/attempt-0002/stdout.log"
+            },
+            "timeout_seconds": 120.0
+          }
+        ]
+      }
+    ],
+    "normalization": {
+      "explanation": "stderr_sha256 is retained in every raw record above but excluded from semantic equality because a hard-timeout window can capture a different repetition count of the same Optiland fallback warning. Status, reason_code, detail, timeout_seconds, request hashes, returncode and process outcome remain compared.",
+      "normalized_process_fields": {
+        "process_kill": [
+          "method",
+          "returncode"
+        ],
+        "process_reap": [
+          "method",
+          "reaped",
+          "returncode"
+        ]
+      },
+      "outcome_fields_removed": [],
+      "removed_runtime_identity_fields": [
+        "attempt_id",
+        "receipt_path",
+        "request_path",
+        "stderr_path",
+        "stdout_path",
+        "retry_number",
+        "elapsed_seconds"
+      ],
+      "removed_runtime_log_identity_fields": [
+        "stderr_sha256"
+      ],
+      "request_fields_removed": []
+    }
+  },
+  "result_attempts": [
+    {
+      "bytes": 6123,
+      "file_sha256": "65fd28288150f3efca91995db1af2c754d0f11990077301256cdd5df74bd9e27",
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260063874/attempt-0002/result.json",
+      "result_attempt": 2
+    },
+    {
+      "bytes": 6942,
+      "file_sha256": "7f8c05f2d83737424b45945b3885705263220e0328916f3c482693290b9e98b6",
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260063874/attempt-0003/result.json",
+      "result_attempt": 3,
+      "semantic_sha256": "d4f99c4329e3cd7180464084ccf486c6e0b3927c32cfe4b17a1321537b521f36"
+    },
+    {
+      "bytes": 6942,
+      "file_sha256": "93ff37c2ead4e560051c3a090eb42ea53f9be7b141b3d05eaa7d89fb8aee4bb4",
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260063874/attempt-0004/result.json",
+      "result_attempt": 4,
+      "semantic_sha256": "d4f99c4329e3cd7180464084ccf486c6e0b3927c32cfe4b17a1321537b521f36"
+    }
+  ],
+  "result_determinism": {
+    "compared_result_attempts": [
+      3,
+      4
+    ],
+    "normalization": {
+      "coverage_fields_removed": [],
+      "normalized_fields": [
+        "items[].conversion_attempt_id attempt suffix",
+        "receipt evidence path attempt segment",
+        "receipt evidence sha256"
+      ],
+      "outcome_fields_removed": [],
+      "removed_fields": [
+        "result_attempt"
+      ],
+      "request_fields_removed": []
+    },
+    "patent_budget_seconds": 600,
+    "semantic_equal": true,
+    "semantic_sha256": "d4f99c4329e3cd7180464084ccf486c6e0b3927c32cfe4b17a1321537b521f36"
+  },
+  "root_id": "US-20260063874",
+  "schema_version": 1
+}

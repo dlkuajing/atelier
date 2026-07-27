@@ -1,0 +1,1085 @@
+{
+  "schema_version": 1,
+  "publication_id": "US-20260169265-A1",
+  "containers": [
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94801574/source-review/US-20260169265-A1-official-1.pdf",
+      "bytes": 2413976,
+      "sha256": "4dfc1734ff286b7aa82cf914d0302a6c69b254efd37462cd19999d72105daca8",
+      "page_count": 41,
+      "text_layer_characters": 0,
+      "page_records": [
+        {
+          "page": 1,
+          "embedded_bytes": 43914,
+          "embedded_sha256": "c47702042cf170c145f1a9d2fe4b13aab19371ff64fb5c785873f9e3e89791b1",
+          "raster_sha256": "571f44ce2b894cb0fc9ab856250c8e350c0247ac6c9ee4ca8199c47417976d34",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 2,
+          "embedded_bytes": 20392,
+          "embedded_sha256": "ebec046ec67de05d5cb997348335b552f8622368a5737b28b9f8ace05ef88a87",
+          "raster_sha256": "7405dba785c50945049cdbe209454d0c3bb8139da16c98d45a7ce9755c256d6c",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 3,
+          "embedded_bytes": 34354,
+          "embedded_sha256": "7ceb1cbc04b819ac0c48251f74bf2f8e1770fbf28855ed92756bf60cac390d98",
+          "raster_sha256": "553da1fa9ede6f768330970f0a9511feffebc86bc00cd51cf55c241ba295c35e",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 4,
+          "embedded_bytes": 21428,
+          "embedded_sha256": "c0d08f869054c39a698876fc789dcfaf2b49c13754c782190bdbc731f5b55ea3",
+          "raster_sha256": "c9eca1415fbd404cb1ed969753029330c78be98631518b463761f1506aedd33a",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 5,
+          "embedded_bytes": 41108,
+          "embedded_sha256": "71463d7563df289caa7dbdb03d240fe556b84aea86797fc3745899d5328e8753",
+          "raster_sha256": "e3dbc0651c240c8cb50d0f1ba653c42947a3fcc766a7b13504e6c55238a16f3b",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 6,
+          "embedded_bytes": 37394,
+          "embedded_sha256": "71f81d07b08380e7fd7b14b699d49ffbd55cdcdff25c4c5f7307a28ef1502ddf",
+          "raster_sha256": "df120b8d267065eefde11da5bfaa079440180125127046167c742d842705d4de",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 7,
+          "embedded_bytes": 39138,
+          "embedded_sha256": "af082fff740102b734aeebbb5108b9b122a189ff9ab5f80b87a1d03e7bf5d2d4",
+          "raster_sha256": "2e7ce11f25524622582dbc836311e46e06488c2555c915a9b1aaeacac3211558",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 8,
+          "embedded_bytes": 36214,
+          "embedded_sha256": "69264a430d7c2ca49daadeb70a44c2d89a950a5cfd13476dc301394f77127411",
+          "raster_sha256": "f50b372bf19afa409c0d0ec6f462cfeba1369725ac77c4880425a8afe090e374",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 9,
+          "embedded_bytes": 36754,
+          "embedded_sha256": "e1ebfc6c0022debbfed6311b76e312aed1543914a2968024eefcc71097bea960",
+          "raster_sha256": "3b74ae34c606a0fcdc4098fac2f496d1e82dafbccd263c5a86079086906731b7",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 10,
+          "embedded_bytes": 40102,
+          "embedded_sha256": "bfd9fef2bf0834febe792326dace35d7c922ff3449deaf6b49281847ccdc0fb4",
+          "raster_sha256": "291fd20ca2343e33df5c48f22af96f20bee8c916319e41128825c061ff70a624",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 11,
+          "embedded_bytes": 36160,
+          "embedded_sha256": "cba70154a03f112ab553bd688cbaa82b9ad6cd2a473e0aa3b777e64da70074f6",
+          "raster_sha256": "4d5ac25451039e205fb2f17956875defd71d3037ed330c3c0bb54f4961d8a8ec",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 12,
+          "embedded_bytes": 39208,
+          "embedded_sha256": "98d732032ac4cd93657262694b9fe85495204ddfdd1fe55157d63ce408abf38c",
+          "raster_sha256": "02b653ae25b9153311fe1cc466b1e79b17e645058510c28622df7ae7b20c6ca2",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 13,
+          "embedded_bytes": 49590,
+          "embedded_sha256": "3763f63d9921bce6621f905481b422472aed47b2c37640330ad40f542ddaf211",
+          "raster_sha256": "a373038dd5443f162934f9dcc6ef26877bee3e6aee714015d118497011685ad5",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 14,
+          "embedded_bytes": 41640,
+          "embedded_sha256": "fabd233db9a52c2195df5b029b4af6f2a80186c0d7b2ddb6da624515a6b370e1",
+          "raster_sha256": "4e6e033d37b27ff56f10d0feced98fffed3d55ea81e36ce29e5a8819d3a095f8",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 15,
+          "embedded_bytes": 56490,
+          "embedded_sha256": "c2e2f9155efc9632260d717f08647c35911e36e2a2782a6c94db290906583b2b",
+          "raster_sha256": "9ab8be2af43bfed42924fad9b8bb46f03cf07e59d15abaf6eb02d5a05d6034e1",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 16,
+          "embedded_bytes": 37936,
+          "embedded_sha256": "0b9509cadc726c37180c530654c530a53aaacc4c1adb768b0096ddaadcdd51c0",
+          "raster_sha256": "8a48228120f6b713bd86d5f5c36fec2286d7b7a8b64ae5848eaa5ed29b16e20c",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 17,
+          "embedded_bytes": 55822,
+          "embedded_sha256": "fd6ecfead7d9c08e5963c4706a2dccf6c7827d913f7bc7b522b16889997fc005",
+          "raster_sha256": "8c15d2c62326c1ce74d51494c380ed5fce4fb8b2c44a6251b105ef56ddf9f130",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 18,
+          "embedded_bytes": 40194,
+          "embedded_sha256": "dd45812ad11ccb318c3c3f3c00f288bb27f5eba0da1ecb161af60b3bd522e8df",
+          "raster_sha256": "3819e0f81d383ce76a61670bfa2b6767f665333139a2e22af622dc8a1bef14e7",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 19,
+          "embedded_bytes": 55114,
+          "embedded_sha256": "781b3720b40281921f109513b6608a97e7cb93911ee9dc201fda8ddcdc8daf03",
+          "raster_sha256": "ca44b5221aa97d04c5ed9eff74d3afa49b578291908983f0c9df1d03f8e99fb0",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 20,
+          "embedded_bytes": 42014,
+          "embedded_sha256": "e14ab076fc91336b16d6c0274b16d243f8df3bd7c70f5c212712debc0b4505a9",
+          "raster_sha256": "fa12f1a3f03773eb54006718c4da0dfdb451bec0c1985ffa3a5ebef32423472c",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 21,
+          "embedded_bytes": 54366,
+          "embedded_sha256": "6802b6c991aee4f736a07eddcbc0ae18f75ddf228ba76d158e0dc1c2a3c4339d",
+          "raster_sha256": "daaf09c6a14e730061e5860d111d9f276e32400616d71a901acb71e810a52e93",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 22,
+          "embedded_bytes": 39300,
+          "embedded_sha256": "a7d15a227cbd9f376d88b293e359aadb512e5907a501616c154df4a417c8f00f",
+          "raster_sha256": "1a8623b9c8cdc2ee1771b5872bc680f3a2c85923c7dbf7e87853c01e8bfcdc3b",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 23,
+          "embedded_bytes": 51560,
+          "embedded_sha256": "55a8809946ec98a01916fed4c77f06a2ae8bdbe536a0c50fb04d4d7d4b6d58dc",
+          "raster_sha256": "dc4b61930de2220b5ea5fee94c2e063897e088be008bc78611d0ff7a197ba6dc",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 24,
+          "embedded_bytes": 41140,
+          "embedded_sha256": "094c25cbb60fa4d3c0b6229824c061c70b4bf7da18b42f0677492deba689fed4",
+          "raster_sha256": "ef818da61536cf687db375a0637e8f5595135ef2f038f9d981fe3d22561e6853",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 25,
+          "embedded_bytes": 52722,
+          "embedded_sha256": "d12243920e2530b99cbcb8305bbab348cfec3e6f096b25e0d5451a1d952dce59",
+          "raster_sha256": "73d0787c952ea11944dc289e1d1048de37a0f7cc3e8d19f0464c2e2ab7a974b6",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 26,
+          "embedded_bytes": 40572,
+          "embedded_sha256": "fd9d19da2830e9f72968220bcdbbb1edc67300f3aed34c3c9b7ea7620e2299da",
+          "raster_sha256": "3250be0cb9d82f033332ae99878100bfc6c2342c09897b6f73fe6a12cdf68b2b",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 27,
+          "embedded_bytes": 50968,
+          "embedded_sha256": "36fa7b6d030adea758c406078401db44948254eedaa0704e8e643314b72fa63c",
+          "raster_sha256": "a2f8b48719bf72b227131efb93869dd122ad93fc31e5632a9c1e1da30b595d40",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 28,
+          "embedded_bytes": 41308,
+          "embedded_sha256": "a52095dc88e51888d6d0effdd35a584ac5dd5f4b6b8b4ba4f11c2c427a1e6789",
+          "raster_sha256": "e26a8ba87de259b117eebc887c73788ac6f9ed6725d81ffa82fe7581500870f1",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 29,
+          "embedded_bytes": 90534,
+          "embedded_sha256": "eab110377a651d4aaee66936e7b8d9133c8dcab5c081552b0daa8c2fc18c83fb",
+          "raster_sha256": "884f1c0675e146757d3fc3d68b437d969d2b9ae6940d4a85fd845424729f9424",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 30,
+          "embedded_bytes": 96472,
+          "embedded_sha256": "2d583eacbe664829a29eacfd63f1682c883fe7eacaf6f0bcef01b1c58bdba342",
+          "raster_sha256": "7baa84853be6c292b72e104170969d1babeec3bdff75ed182d9cf28e44cc4822",
+          "mode": "1",
+          "dimensions": [
+            2550,
+            3300
+          ]
+        },
+        {
+          "page": 31,
+          "embedded_bytes": 107286,
+          "embedded_sha256": "f93e19e9f3a50d1e69fb603dc66eb3e749c91debafebb3bfc8f478af88ab5f72",
+          "raster_sha256": "dd53bc5327f7689c7a416380fbafb57c1080bd0745bf6b50a81bb21a29d5118d",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 32,
+          "embedded_bytes": 123456,
+          "embedded_sha256": "6a23a15b4a2e7b6713a78183713074e6d62c3072a98955f33e5caede2720efcb",
+          "raster_sha256": "f7504f6d2a5858170956afaa70b17a75218d985b58c85c8e2680a997a6a93010",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 33,
+          "embedded_bytes": 128662,
+          "embedded_sha256": "0f8ff8ab9eea8d5b2c577a8a64b88ff9182eb4ae794d1bc9332562d80c8cdcfb",
+          "raster_sha256": "d61e97fb69737a3c43b688184056bba667e6877a91776db50f98520c95682f36",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 34,
+          "embedded_bytes": 127230,
+          "embedded_sha256": "473878f72dd4c08a57557faca566b08a9fdd4886ebda0e7f0cb0a6059b152027",
+          "raster_sha256": "45b83e582dec88768f79b4f3b6339b66f64ccb6ec8753a60fab7736951c2752d",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 35,
+          "embedded_bytes": 109504,
+          "embedded_sha256": "7817458d5519937d4353562b58240c59fbc785f4590bcbbe64a39a4495f578dd",
+          "raster_sha256": "402530deda545dce7a67a0b6e3f91326b275dbcb114aa9887b86817f4314f719",
+          "mode": "1",
+          "dimensions": [
+            2550,
+            3300
+          ]
+        },
+        {
+          "page": 36,
+          "embedded_bytes": 120508,
+          "embedded_sha256": "2c58c38fdb10ef74a0addd87662de907b4cfcfab059ad0c4f8ec4ad6fe95a720",
+          "raster_sha256": "e976b455c916b2e4ff55e0f4075103a42eeb61f6fc8c3a702e3cd0fb826efe41",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 37,
+          "embedded_bytes": 116262,
+          "embedded_sha256": "3a240dfbdd79e85d46d53f98fce932ef1e31e0581d0b66420b48a4cdaefc6247",
+          "raster_sha256": "5db7444dc44e91eb45756b8d4100964b8551e169117fcb29b6bef1e8a282e5dc",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 38,
+          "embedded_bytes": 84322,
+          "embedded_sha256": "675a41a505d0f5ecf762aa84d28145a33f54a03af35f5b183f9a03bc0a03b4ce",
+          "raster_sha256": "925f2969e50c780790225a012f851f77ec25ceb560b579be4fda3f5c392fdaae",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 39,
+          "embedded_bytes": 107388,
+          "embedded_sha256": "11c043f27a612d009f7d82ecfd0c94644f269c14aebf8f4dd9a16adddc4e2fad",
+          "raster_sha256": "8e1d3547ff42b690fc058260b84ec1d5d6ebacf6dfce9335b617d587b7624239",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 40,
+          "embedded_bytes": 122050,
+          "embedded_sha256": "664e4286693dcc5f922ec2614f2b66fc9fc0c283e84f8798df6a1d2afcc8b6c9",
+          "raster_sha256": "b7402ebd3e5130bccb33587250ace0d32b60fc8ce304daa57d33e3c4b2d249a3",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 41,
+          "embedded_bytes": 42054,
+          "embedded_sha256": "94d86c608a1776fddc59c88b79ef3627f3fc02fe3b6f4f1c86e6cfc9d4e19958",
+          "raster_sha256": "d8deb58df54e2f428b09d49d742a2145b1603f1e51986ff0777100da5082bdee",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        }
+      ],
+      "raster_set_sha256": "e8a582b3f9dd6d554ccb7ac51d55f43dcfa50ee34987e0d71c48253c4981d24e"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94801574/source-review/US-20260169265-A1-official-2.pdf",
+      "bytes": 2413976,
+      "sha256": "4bb0528fa82c439275c0092865bdf024bb910c33aace679d01b5ee0b00915ec4",
+      "page_count": 41,
+      "text_layer_characters": 0,
+      "page_records": [
+        {
+          "page": 1,
+          "embedded_bytes": 43914,
+          "embedded_sha256": "c47702042cf170c145f1a9d2fe4b13aab19371ff64fb5c785873f9e3e89791b1",
+          "raster_sha256": "571f44ce2b894cb0fc9ab856250c8e350c0247ac6c9ee4ca8199c47417976d34",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 2,
+          "embedded_bytes": 20392,
+          "embedded_sha256": "ebec046ec67de05d5cb997348335b552f8622368a5737b28b9f8ace05ef88a87",
+          "raster_sha256": "7405dba785c50945049cdbe209454d0c3bb8139da16c98d45a7ce9755c256d6c",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 3,
+          "embedded_bytes": 34354,
+          "embedded_sha256": "7ceb1cbc04b819ac0c48251f74bf2f8e1770fbf28855ed92756bf60cac390d98",
+          "raster_sha256": "553da1fa9ede6f768330970f0a9511feffebc86bc00cd51cf55c241ba295c35e",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 4,
+          "embedded_bytes": 21428,
+          "embedded_sha256": "c0d08f869054c39a698876fc789dcfaf2b49c13754c782190bdbc731f5b55ea3",
+          "raster_sha256": "c9eca1415fbd404cb1ed969753029330c78be98631518b463761f1506aedd33a",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 5,
+          "embedded_bytes": 41108,
+          "embedded_sha256": "71463d7563df289caa7dbdb03d240fe556b84aea86797fc3745899d5328e8753",
+          "raster_sha256": "e3dbc0651c240c8cb50d0f1ba653c42947a3fcc766a7b13504e6c55238a16f3b",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 6,
+          "embedded_bytes": 37394,
+          "embedded_sha256": "71f81d07b08380e7fd7b14b699d49ffbd55cdcdff25c4c5f7307a28ef1502ddf",
+          "raster_sha256": "df120b8d267065eefde11da5bfaa079440180125127046167c742d842705d4de",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 7,
+          "embedded_bytes": 39138,
+          "embedded_sha256": "af082fff740102b734aeebbb5108b9b122a189ff9ab5f80b87a1d03e7bf5d2d4",
+          "raster_sha256": "2e7ce11f25524622582dbc836311e46e06488c2555c915a9b1aaeacac3211558",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 8,
+          "embedded_bytes": 36214,
+          "embedded_sha256": "69264a430d7c2ca49daadeb70a44c2d89a950a5cfd13476dc301394f77127411",
+          "raster_sha256": "f50b372bf19afa409c0d0ec6f462cfeba1369725ac77c4880425a8afe090e374",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 9,
+          "embedded_bytes": 36754,
+          "embedded_sha256": "e1ebfc6c0022debbfed6311b76e312aed1543914a2968024eefcc71097bea960",
+          "raster_sha256": "3b74ae34c606a0fcdc4098fac2f496d1e82dafbccd263c5a86079086906731b7",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 10,
+          "embedded_bytes": 40102,
+          "embedded_sha256": "bfd9fef2bf0834febe792326dace35d7c922ff3449deaf6b49281847ccdc0fb4",
+          "raster_sha256": "291fd20ca2343e33df5c48f22af96f20bee8c916319e41128825c061ff70a624",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 11,
+          "embedded_bytes": 36160,
+          "embedded_sha256": "cba70154a03f112ab553bd688cbaa82b9ad6cd2a473e0aa3b777e64da70074f6",
+          "raster_sha256": "4d5ac25451039e205fb2f17956875defd71d3037ed330c3c0bb54f4961d8a8ec",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 12,
+          "embedded_bytes": 39208,
+          "embedded_sha256": "98d732032ac4cd93657262694b9fe85495204ddfdd1fe55157d63ce408abf38c",
+          "raster_sha256": "02b653ae25b9153311fe1cc466b1e79b17e645058510c28622df7ae7b20c6ca2",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 13,
+          "embedded_bytes": 49590,
+          "embedded_sha256": "3763f63d9921bce6621f905481b422472aed47b2c37640330ad40f542ddaf211",
+          "raster_sha256": "a373038dd5443f162934f9dcc6ef26877bee3e6aee714015d118497011685ad5",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 14,
+          "embedded_bytes": 41640,
+          "embedded_sha256": "fabd233db9a52c2195df5b029b4af6f2a80186c0d7b2ddb6da624515a6b370e1",
+          "raster_sha256": "4e6e033d37b27ff56f10d0feced98fffed3d55ea81e36ce29e5a8819d3a095f8",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 15,
+          "embedded_bytes": 56490,
+          "embedded_sha256": "c2e2f9155efc9632260d717f08647c35911e36e2a2782a6c94db290906583b2b",
+          "raster_sha256": "9ab8be2af43bfed42924fad9b8bb46f03cf07e59d15abaf6eb02d5a05d6034e1",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 16,
+          "embedded_bytes": 37936,
+          "embedded_sha256": "0b9509cadc726c37180c530654c530a53aaacc4c1adb768b0096ddaadcdd51c0",
+          "raster_sha256": "8a48228120f6b713bd86d5f5c36fec2286d7b7a8b64ae5848eaa5ed29b16e20c",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 17,
+          "embedded_bytes": 55822,
+          "embedded_sha256": "fd6ecfead7d9c08e5963c4706a2dccf6c7827d913f7bc7b522b16889997fc005",
+          "raster_sha256": "8c15d2c62326c1ce74d51494c380ed5fce4fb8b2c44a6251b105ef56ddf9f130",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 18,
+          "embedded_bytes": 40194,
+          "embedded_sha256": "dd45812ad11ccb318c3c3f3c00f288bb27f5eba0da1ecb161af60b3bd522e8df",
+          "raster_sha256": "3819e0f81d383ce76a61670bfa2b6767f665333139a2e22af622dc8a1bef14e7",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 19,
+          "embedded_bytes": 55114,
+          "embedded_sha256": "781b3720b40281921f109513b6608a97e7cb93911ee9dc201fda8ddcdc8daf03",
+          "raster_sha256": "ca44b5221aa97d04c5ed9eff74d3afa49b578291908983f0c9df1d03f8e99fb0",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 20,
+          "embedded_bytes": 42014,
+          "embedded_sha256": "e14ab076fc91336b16d6c0274b16d243f8df3bd7c70f5c212712debc0b4505a9",
+          "raster_sha256": "fa12f1a3f03773eb54006718c4da0dfdb451bec0c1985ffa3a5ebef32423472c",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 21,
+          "embedded_bytes": 54366,
+          "embedded_sha256": "6802b6c991aee4f736a07eddcbc0ae18f75ddf228ba76d158e0dc1c2a3c4339d",
+          "raster_sha256": "daaf09c6a14e730061e5860d111d9f276e32400616d71a901acb71e810a52e93",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 22,
+          "embedded_bytes": 39300,
+          "embedded_sha256": "a7d15a227cbd9f376d88b293e359aadb512e5907a501616c154df4a417c8f00f",
+          "raster_sha256": "1a8623b9c8cdc2ee1771b5872bc680f3a2c85923c7dbf7e87853c01e8bfcdc3b",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 23,
+          "embedded_bytes": 51560,
+          "embedded_sha256": "55a8809946ec98a01916fed4c77f06a2ae8bdbe536a0c50fb04d4d7d4b6d58dc",
+          "raster_sha256": "dc4b61930de2220b5ea5fee94c2e063897e088be008bc78611d0ff7a197ba6dc",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 24,
+          "embedded_bytes": 41140,
+          "embedded_sha256": "094c25cbb60fa4d3c0b6229824c061c70b4bf7da18b42f0677492deba689fed4",
+          "raster_sha256": "ef818da61536cf687db375a0637e8f5595135ef2f038f9d981fe3d22561e6853",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 25,
+          "embedded_bytes": 52722,
+          "embedded_sha256": "d12243920e2530b99cbcb8305bbab348cfec3e6f096b25e0d5451a1d952dce59",
+          "raster_sha256": "73d0787c952ea11944dc289e1d1048de37a0f7cc3e8d19f0464c2e2ab7a974b6",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 26,
+          "embedded_bytes": 40572,
+          "embedded_sha256": "fd9d19da2830e9f72968220bcdbbb1edc67300f3aed34c3c9b7ea7620e2299da",
+          "raster_sha256": "3250be0cb9d82f033332ae99878100bfc6c2342c09897b6f73fe6a12cdf68b2b",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 27,
+          "embedded_bytes": 50968,
+          "embedded_sha256": "36fa7b6d030adea758c406078401db44948254eedaa0704e8e643314b72fa63c",
+          "raster_sha256": "a2f8b48719bf72b227131efb93869dd122ad93fc31e5632a9c1e1da30b595d40",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 28,
+          "embedded_bytes": 41308,
+          "embedded_sha256": "a52095dc88e51888d6d0effdd35a584ac5dd5f4b6b8b4ba4f11c2c427a1e6789",
+          "raster_sha256": "e26a8ba87de259b117eebc887c73788ac6f9ed6725d81ffa82fe7581500870f1",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 29,
+          "embedded_bytes": 90534,
+          "embedded_sha256": "eab110377a651d4aaee66936e7b8d9133c8dcab5c081552b0daa8c2fc18c83fb",
+          "raster_sha256": "884f1c0675e146757d3fc3d68b437d969d2b9ae6940d4a85fd845424729f9424",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 30,
+          "embedded_bytes": 96472,
+          "embedded_sha256": "2d583eacbe664829a29eacfd63f1682c883fe7eacaf6f0bcef01b1c58bdba342",
+          "raster_sha256": "7baa84853be6c292b72e104170969d1babeec3bdff75ed182d9cf28e44cc4822",
+          "mode": "1",
+          "dimensions": [
+            2550,
+            3300
+          ]
+        },
+        {
+          "page": 31,
+          "embedded_bytes": 107286,
+          "embedded_sha256": "f93e19e9f3a50d1e69fb603dc66eb3e749c91debafebb3bfc8f478af88ab5f72",
+          "raster_sha256": "dd53bc5327f7689c7a416380fbafb57c1080bd0745bf6b50a81bb21a29d5118d",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 32,
+          "embedded_bytes": 123456,
+          "embedded_sha256": "6a23a15b4a2e7b6713a78183713074e6d62c3072a98955f33e5caede2720efcb",
+          "raster_sha256": "f7504f6d2a5858170956afaa70b17a75218d985b58c85c8e2680a997a6a93010",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 33,
+          "embedded_bytes": 128662,
+          "embedded_sha256": "0f8ff8ab9eea8d5b2c577a8a64b88ff9182eb4ae794d1bc9332562d80c8cdcfb",
+          "raster_sha256": "d61e97fb69737a3c43b688184056bba667e6877a91776db50f98520c95682f36",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 34,
+          "embedded_bytes": 127230,
+          "embedded_sha256": "473878f72dd4c08a57557faca566b08a9fdd4886ebda0e7f0cb0a6059b152027",
+          "raster_sha256": "45b83e582dec88768f79b4f3b6339b66f64ccb6ec8753a60fab7736951c2752d",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 35,
+          "embedded_bytes": 109504,
+          "embedded_sha256": "7817458d5519937d4353562b58240c59fbc785f4590bcbbe64a39a4495f578dd",
+          "raster_sha256": "402530deda545dce7a67a0b6e3f91326b275dbcb114aa9887b86817f4314f719",
+          "mode": "1",
+          "dimensions": [
+            2550,
+            3300
+          ]
+        },
+        {
+          "page": 36,
+          "embedded_bytes": 120508,
+          "embedded_sha256": "2c58c38fdb10ef74a0addd87662de907b4cfcfab059ad0c4f8ec4ad6fe95a720",
+          "raster_sha256": "e976b455c916b2e4ff55e0f4075103a42eeb61f6fc8c3a702e3cd0fb826efe41",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 37,
+          "embedded_bytes": 116262,
+          "embedded_sha256": "3a240dfbdd79e85d46d53f98fce932ef1e31e0581d0b66420b48a4cdaefc6247",
+          "raster_sha256": "5db7444dc44e91eb45756b8d4100964b8551e169117fcb29b6bef1e8a282e5dc",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 38,
+          "embedded_bytes": 84322,
+          "embedded_sha256": "675a41a505d0f5ecf762aa84d28145a33f54a03af35f5b183f9a03bc0a03b4ce",
+          "raster_sha256": "925f2969e50c780790225a012f851f77ec25ceb560b579be4fda3f5c392fdaae",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 39,
+          "embedded_bytes": 107388,
+          "embedded_sha256": "11c043f27a612d009f7d82ecfd0c94644f269c14aebf8f4dd9a16adddc4e2fad",
+          "raster_sha256": "8e1d3547ff42b690fc058260b84ec1d5d6ebacf6dfce9335b617d587b7624239",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 40,
+          "embedded_bytes": 122050,
+          "embedded_sha256": "664e4286693dcc5f922ec2614f2b66fc9fc0c283e84f8798df6a1d2afcc8b6c9",
+          "raster_sha256": "b7402ebd3e5130bccb33587250ace0d32b60fc8ce304daa57d33e3c4b2d249a3",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        },
+        {
+          "page": 41,
+          "embedded_bytes": 42054,
+          "embedded_sha256": "94d86c608a1776fddc59c88b79ef3627f3fc02fe3b6f4f1c86e6cfc9d4e19958",
+          "raster_sha256": "d8deb58df54e2f428b09d49d742a2145b1603f1e51986ff0777100da5082bdee",
+          "mode": "1",
+          "dimensions": [
+            2560,
+            3300
+          ]
+        }
+      ],
+      "raster_set_sha256": "e8a582b3f9dd6d554ccb7ac51d55f43dcfa50ee34987e0d71c48253c4981d24e"
+    }
+  ],
+  "decoded_page_records_equal": true,
+  "drawing_sheet_count": 28,
+  "key_page_roles": [
+    {
+      "role": "genius_four_eight_optical_1",
+      "page": 13,
+      "sheet": 12,
+      "figure": 22
+    },
+    {
+      "role": "genius_four_eight_optical_2",
+      "page": 15,
+      "sheet": 14,
+      "figure": 24
+    },
+    {
+      "role": "genius_four_eight_optical_3",
+      "page": 17,
+      "sheet": 16,
+      "figure": 26
+    },
+    {
+      "role": "genius_four_eight_optical_4",
+      "page": 19,
+      "sheet": 18,
+      "figure": 28
+    },
+    {
+      "role": "genius_four_eight_optical_5",
+      "page": 21,
+      "sheet": 20,
+      "figure": 30
+    },
+    {
+      "role": "genius_four_eight_optical_6",
+      "page": 23,
+      "sheet": 22,
+      "figure": 32
+    },
+    {
+      "role": "genius_four_eight_optical_7",
+      "page": 25,
+      "sheet": 24,
+      "figure": 34
+    },
+    {
+      "role": "genius_four_eight_optical_8",
+      "page": 27,
+      "sheet": 26,
+      "figure": 36
+    },
+    {
+      "role": "genius_four_eight_asphere_1",
+      "page": 14,
+      "sheet": 13,
+      "figure": 23
+    },
+    {
+      "role": "genius_four_eight_asphere_2",
+      "page": 16,
+      "sheet": 15,
+      "figure": 25
+    },
+    {
+      "role": "genius_four_eight_asphere_3",
+      "page": 18,
+      "sheet": 17,
+      "figure": 27
+    },
+    {
+      "role": "genius_four_eight_asphere_4",
+      "page": 20,
+      "sheet": 19,
+      "figure": 29
+    },
+    {
+      "role": "genius_four_eight_asphere_5",
+      "page": 22,
+      "sheet": 21,
+      "figure": 31
+    },
+    {
+      "role": "genius_four_eight_asphere_6",
+      "page": 24,
+      "sheet": 23,
+      "figure": 33
+    },
+    {
+      "role": "genius_four_eight_asphere_7",
+      "page": 26,
+      "sheet": 25,
+      "figure": 35
+    },
+    {
+      "role": "genius_four_eight_asphere_8",
+      "page": 28,
+      "sheet": 27,
+      "figure": 37
+    },
+    {
+      "role": "genius_four_eight_comparison",
+      "page": 29,
+      "sheet": 28,
+      "figure": 38
+    }
+  ],
+  "retained_original_pngs": [
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-01-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-02-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-03-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-04-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-05-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-06-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-07-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-08-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-09-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-10-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-11-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-12-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-13-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-14-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-15-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-16-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-17-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-18-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-19-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-20-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-21-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-22-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-23-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-24-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-25-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-26-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-27-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-28-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-29-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-30-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-31-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-32-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-33-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-34-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-35-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-36-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-37-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-38-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-39-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-40-original.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/page-41-original.png"
+  ],
+  "contact_sheets_navigation_only": [
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/contact-sheet-pages-01-07.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/contact-sheet-pages-08-14.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/contact-sheet-pages-15-21.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/contact-sheet-pages-22-28.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/contact-sheet-pages-29-35.png",
+    ".planning/quick/260719-patent-generic-family-94801574/source-review/pdf-review/contact-sheet-pages-36-41.png"
+  ]
+}

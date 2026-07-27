@@ -1,0 +1,40 @@
+{
+    "schema_version":  1,
+    "source_census":  ".planning\\quick\\260719-patent-generic-family-94801574\\generic-residual-after-2.json",
+    "result_set_sha256":  "b9655a70613c2c5d95b2edd607f8fa7abb90064b782e27affe96a7457ca9021b",
+    "generic_residual_roots":  60,
+    "generic_residual_items":  60,
+    "next_exact_group":  {
+                             "family_id":  "94115759",
+                             "root_ids":  [
+                                              "US-12560789"
+                                          ],
+                             "publication_ids":  [
+                                                     "US-12560789-B2"
+                                                 ],
+                             "application_number":  "18/465987",
+                             "title":  "Optical lens assembly and electronic device",
+                             "first_inventor":  "Chen; Ping-Yi",
+                             "applicant":  "NEWMAX TECHNOLOGY CO., LTD.",
+                             "assignee":  null,
+                             "prior_publication_marker":  "US 20250013025 A1 Jan. 09, 2025",
+                             "layout_signature":  "83fa195a53c2afaf1f9a4e36a2a627409d3212d03966359958cc930bbaae7637",
+                             "layout_signature_count":  1,
+                             "table_count":  32,
+                             "marker_counts":  {
+                                                   "effective_focal_length":  16,
+                                                   "embodiment_anchor":  120,
+                                                   "example_anchor":  0,
+                                                   "f_number":  0,
+                                                   "full_field":  2,
+                                                   "half_field":  0
+                                               },
+                             "raw_document":  {
+                                                  "evidence_type":  "uspto_ppubs_parser_input_html",
+                                                  "path":  "data/patent-lake/uspto-ppubs-html/USPAT/bf9bd6013b3118d1/US-12560789-B2.html",
+                                                  "sha256":  "bf9bd6013b3118d153420f9942f11d057cb2bdcfce65550683fdf5680b9aa561"
+                                              }
+                         },
+    "selection_rule":  "minimum remaining exact layout signature, then stable root/publication order",
+    "saturation_complete":  false
+}

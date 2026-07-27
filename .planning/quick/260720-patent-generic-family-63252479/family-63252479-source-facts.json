@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "family_id": "63252479",
+  "root_id": "US-20250284086",
+  "publication_id": "US-20250284086-A1",
+  "application_number": "19/218688",
+  "content_authority": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/67c144ce4c85777e/US-20250284086-A1.html",
+    "bytes": 139856,
+    "sha256": "67c144ce4c85777eb2d938fb609997aa48742fb1247a2e8880321fb47492773d",
+    "normalized_characters": 116920,
+    "normalized_sha256": "76be399fe0f40a3d37aa8da061fc0da06c7a1b07e743f3a4b656921b4224bcfe"
+  },
+  "derived_exact_profile": {
+    "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/derived-source-profile.json",
+    "bytes": 36026,
+    "sha256": "cf94cc9eac5cb2816c0658c47a89a4580accc227cccaf17ff366100a72a12043"
+  },
+  "sections": [
+    {"name": "abstract", "characters": 2208, "sha256": "3192bdb20ab93d6a78dbbc3ccfda8d5bc0339e065629c421a2156f21db850b7a"},
+    {"name": "background_summary", "characters": 17006, "sha256": "32a54f4ff7567adb09dda0510c2ea4a104c6da01454b6b480f451b3372bf0dc9"},
+    {"name": "brief", "characters": 7617, "sha256": "74269993e165f4c7ca93bb2bd38cd3928d8dbe839c4364c65b8d91a67445c61f"},
+    {"name": "detailed", "characters": 86588, "sha256": "6385ac1b880468c8997d7a02470e8237087d419e2d88e442cfb9f2b11e8bfebe"},
+    {"name": "claims", "characters": 3225, "sha256": "8ead9a2919b77c4a5b54b47e2d38416baf9cfb859b6ca53a34d8a6476986209f"}
+  ],
+  "numbered_paragraphs": {
+    "sequence": "1-391",
+    "count": 391,
+    "shared_context_ranges": [[1, 119], [132, 172], [215, 269], [282, 283], [362, 362], [389, 391]],
+    "unmapped": []
+  },
+  "declared_figures": {
+    "description_paragraph_range": [64, 115],
+    "panel_count": 52,
+    "declaration_sha256": "73829d23d8cb0f6c70ad1adc1c3675f90dd76f34833620ddc97883b6e935fb77",
+    "shared_definition_panels": ["3 A", "3 B", "4", "5"],
+    "unmapped": []
+  },
+  "claims": {
+    "source_number_sequence": "1-20",
+    "independent_claim_numbers": [1],
+    "mapped_item_number": 30,
+    "section_sha256": "8ead9a2919b77c4a5b54b47e2d38416baf9cfb859b6ca53a34d8a6476986209f",
+    "unmapped": []
+  },
+  "mathml": {
+    "object_count": 2,
+    "outer_object_sha256": [
+      "ab801cbc9f4e21eb197e9d0a351bab51c5d79182d7d04d22402fe6d4f56203e5",
+      "93bee64472a90e94ab062be0e392e375523fd9e4c0311f499f0b3d6ff362add8"
+    ],
+    "external_basis_imported": false,
+    "formula_substitution_used": false,
+    "unmapped": []
+  },
+  "tables": {
+    "object_count": 8,
+    "payload_sha256": [
+      "1f348b2b68bdeba6ab11b4a5f7a06a65f41a13a4839deec0bd3765d7cffb2341",
+      "bf37716f4ddec7bc1000cc64d6a918a49c103bec00cfec5596161d82d40f1cc6",
+      "8c9e0660e95467341ef6236f7a7b32a10b363c8133b2e1f74e58238fad7569ed",
+      "82c16ba09ec32f03d1c87fad3d2a24c666585ade9c6a18a6e744f1cc4a0877bb",
+      "25c3264a4bce1013507505d702a4da1e3ceca1bc7db31d9da4847812adb12995",
+      "effbf214c61ab126da1aa449f3c261798265f1f933a15bd0cffe1b512a90776c",
+      "ae5726de97a92937ad03836c22433b8f1540bec9bd27d8f8dd0ad80be633977e",
+      "8581c749768008c8153ea28c609a8e758ede99165104cbef40ce2607b40fa283"
+    ],
+    "token_counts": [68, 75, 68, 75, 81, 91, 90, 72],
+    "table_7_printed_surface_rows": "1-13; paragraph 154 says line 0, but no row 0 is printed",
+    "table_8_blank_coefficient_cells_preserved": true,
+    "blank_cells_imputed_as_zero": false,
+    "unmapped": []
+  },
+  "prescription_facts": [
+    {
+      "item_number": 1,
+      "tables": [1, 2],
+      "paragraphs": [[173, 182], [221, 221]],
+      "figures": ["2 A", "2 B"],
+      "lens_elements": 4,
+      "surface_rows": "0-11",
+      "coefficient_rows": "1-8",
+      "efl_mm": 13.8,
+      "ttl_mm": 13.6,
+      "f_number": 2.76,
+      "sensor_diagonal_mm": 5.86,
+      "bfl_mm": 4.93,
+      "system_stop_binding": "paragraph 221 binds module 200 aperture stop before S1",
+      "numeric_angular_field": null,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"
+    },
+    {
+      "item_number": 2,
+      "tables": [3, 4],
+      "paragraphs": [[183, 192]],
+      "figures": ["6", "7", "8", "9 A", "9 B"],
+      "lens_elements": 4,
+      "surface_rows": "0-11",
+      "coefficient_rows": "1-8",
+      "efl_mm": 11.2,
+      "ttl_mm": 11.1,
+      "f_number": 2.5,
+      "sensor_diagonal_mm": 5.24,
+      "bfl_mm": 4.3,
+      "system_stop_binding": null,
+      "numeric_angular_field": null,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent"
+    },
+    {
+      "item_number": 3,
+      "tables": [5, 6],
+      "paragraphs": [[193, 202], [361, 361]],
+      "figures": ["20"],
+      "lens_elements": 5,
+      "surface_rows": "0-13",
+      "coefficient_rows": "1-10",
+      "efl_mm": 16.0,
+      "ttl_mm": 15.0,
+      "f_number": 2.7,
+      "sensor_diagonal_mm": 5.86,
+      "bfl_mm": 6.9,
+      "system_stop_binding": "paragraph 361 imports the publication-local module 200 description with N changed from 4 to 5",
+      "numeric_angular_field": null,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"
+    },
+    {
+      "item_number": 4,
+      "tables": [7, 8],
+      "paragraphs": [[203, 214], [363, 363]],
+      "figures": ["21 A", "21 B"],
+      "lens_elements": 5,
+      "surface_rows": "1-13 as printed; no object row 0",
+      "coefficient_rows": "1-10 with printed blank cells preserved",
+      "efl_mm": 7.97,
+      "ttl_mm": 7.78,
+      "f_number": 2.2,
+      "sensor_diagonal_mm": 5.86,
+      "bfl_mm": 3.23,
+      "system_stop_binding": null,
+      "numeric_angular_field": null,
+      "status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent"
+    }
+  ],
+  "items": [
+    {"number": 1, "kind": "prescription", "paragraphs": [[173, 182], [221, 221]], "figures": ["2 A", "2 B"], "tables": [1, 2], "status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 2, "kind": "prescription", "paragraphs": [[183, 192]], "figures": ["6", "7", "8", "9 A", "9 B"], "tables": [3, 4], "status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent"},
+    {"number": 3, "kind": "prescription", "paragraphs": [[193, 202], [361, 361]], "figures": ["20"], "tables": [5, 6], "status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 4, "kind": "prescription", "paragraphs": [[203, 214], [363, 363]], "figures": ["21 A", "21 B"], "tables": [7, 8], "status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent"},
+    {"number": 5, "kind": "mechanical", "paragraphs": [[270, 273]], "figures": ["6"]},
+    {"number": 6, "kind": "mechanical", "paragraphs": [[274, 281]], "figures": ["7"]},
+    {"number": 7, "kind": "mechanical", "paragraphs": [[284, 290]], "figures": ["8"]},
+    {"number": 8, "kind": "mechanical", "paragraphs": [[291, 292]], "figures": ["9 A"]},
+    {"number": 9, "kind": "mechanical", "paragraphs": [[293, 293]], "figures": ["9 B"]},
+    {"number": 10, "kind": "mechanical", "paragraphs": [[294, 297]], "figures": ["10"]},
+    {"number": 11, "kind": "mechanical", "paragraphs": [[298, 298]], "figures": ["10"]},
+    {"number": 12, "kind": "mechanical", "paragraphs": [[299, 304]], "figures": ["11 A", "11 B", "11 C", "11 D", "11 E", "11 F"]},
+    {"number": 13, "kind": "mechanical", "paragraphs": [[309, 316]], "figures": ["13 A", "13 B"]},
+    {"number": 14, "kind": "mechanical", "paragraphs": [[317, 317]], "figures": ["13 A", "13 C"]},
+    {"number": 15, "kind": "mechanical", "paragraphs": [[318, 320], [322, 326]], "figures": ["17 A", "17 B", "17 C"]},
+    {"number": 16, "kind": "mechanical", "paragraphs": [[321, 326]], "figures": ["17 D"]},
+    {"number": 17, "kind": "mechanical", "paragraphs": [[327, 329]], "figures": ["18 A", "18 B", "18 C"]},
+    {"number": 18, "kind": "mechanical", "paragraphs": [[330, 335]], "figures": ["19 A", "19 B"]},
+    {"number": 19, "kind": "mechanical", "paragraphs": [[364, 365]], "figures": ["22"]},
+    {"number": 20, "kind": "mechanical", "paragraphs": [[366, 369]], "figures": ["23"]},
+    {"number": 21, "kind": "mechanical", "paragraphs": [[370, 370]], "figures": ["24"]},
+    {"number": 22, "kind": "mechanical", "paragraphs": [[371, 383]], "figures": ["25 A", "25 B", "25 C", "25 D"]},
+    {"number": 23, "kind": "mechanical", "paragraphs": [[384, 385], [387, 387]], "figures": ["26 A", "26 B"]},
+    {"number": 24, "kind": "mechanical", "paragraphs": [[386, 387]], "figures": ["26 C"]},
+    {"number": 25, "kind": "mechanical", "paragraphs": [[388, 388]], "figures": ["27"]},
+    {"number": 26, "kind": "camera_wrapper", "paragraphs": [[120, 131]], "figures": ["1 A", "1 B", "1 C", "1 D"]},
+    {"number": 27, "kind": "manufacturing", "paragraphs": [[305, 308]], "figures": ["12"]},
+    {"number": 28, "kind": "device_integration", "paragraphs": [[336, 345]], "figures": []},
+    {"number": 29, "kind": "stitched_imaging", "paragraphs": [[346, 360]], "figures": ["14", "15", "16"]},
+    {"number": 30, "kind": "claim_wrapper", "paragraphs": [], "figures": [], "claims": "1-20"}
+  ],
+  "non_prescription_terminal_policy": {
+    "mechanical_items_5_through_25": "confirmed_no_prescription.mechanical_lens_module_geometry_only",
+    "item_26": "confirmed_no_prescription.folded_dual_camera_architecture_wrapper_only",
+    "item_27": "confirmed_no_prescription.lens_module_manufacturing_method_only",
+    "item_28": "confirmed_no_prescription.image_production_and_device_integration_wrapper_only",
+    "item_29": "confirmed_no_prescription.scanning_stitched_image_processing_wrapper_only",
+    "item_30": "confirmed_no_prescription.mobile_device_multi_camera_wrapper_only"
+  },
+  "angular_field_boundary": {
+    "hfov_occurrences": 0,
+    "degrees_occurrences": 0,
+    "field_of_view_phrase_occurrences": 8,
+    "fov_token_occurrences": 39,
+    "prescription_specific_numeric_angular_field_values": 0,
+    "sensor_diagonal_and_efl_derivation_used": false,
+    "related_application_numeric_borrowing_used": false
+  },
+  "conversion_policy": {
+    "angular_field_derived": false,
+    "system_stop_synthesized": false,
+    "blank_table_cells_repaired": false,
+    "missing_table_row_repaired": false,
+    "drawing_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "related_family_numeric_borrowing_used": false
+  }
+}

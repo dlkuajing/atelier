@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "10b873228f5b8b9d5e64c8e435e17ffac4d71432eea96dff89270accbdab646c",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 88,
+      "affected_items": 88
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "90535253",
+    "root_ids": ["US-20240118520"],
+    "publication_ids": ["US-20240118520-A1"],
+    "application_number": "18/306676",
+    "title": "IMAGING LENS SYSTEM AND ELECTRONIC DEVICE HAVING THE SAME",
+    "first_inventor": "CHO; Yongsik",
+    "applicant": "SAMSUNG ELECTRONICS CO., LTD.",
+    "assignee": null,
+    "layout_signature": "50d77537d1a790ed464997f1b6f9d490417bc0b53440bfd788b44d48c66ebc91",
+    "marker_counts": {
+      "effective_focal_length": 10,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 5,
+      "full_field": 13,
+      "half_field": 19
+    },
+    "table_count": 21,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f72e752aba1ccbdb/US-20240118520-A1.html",
+      "sha256": "f72e752aba1ccbdb0fcc09e45ecd23dbea549b6d39f677ed0d466d21b2c7e96e"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

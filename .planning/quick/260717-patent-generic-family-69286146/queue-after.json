@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "result_set_sha256": "f9ef042b0668b0dbe70eb55ff41b6e3dcbbe9f0658e533b17688d1e812dbc404",
+  "ordering": [
+    "nonterminal_root_count_desc",
+    "item_count_desc",
+    "parser_layout_family_signature_ascending"
+  ],
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 138,
+      "affected_items": 138
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "74529057",
+    "root_id": "US-20210364452",
+    "publication_id": "US-20210364452-A1",
+    "layout_signature": "18f601741e46968dd9aa08221b03b91587e37313eeac6ae406034b44be026e21",
+    "raw_document_sha256": "b9d1c7899e19e694c93851449a323d54c84c5ac47802af0821c4766603d253d2",
+    "title": "PLASTIC LENS ELEMENT AND IMAGING LENS ASSEMBLY",
+    "affected_roots": 1,
+    "affected_items": 1
+  }
+}

@@ -68,6 +68,22 @@ A16: −1.0420E−07 −2.0100E−08 3.2000E−09 7.0000E−10 9.0000E−10
 """
 
 
+NEWMAX_ORDINAL_EMBODIMENT_1 = (
+    "A half of the maximum field of view of the optical lens assembly is HFOV. "
+    + US_12596237_B2_EMBODIMENT_1.replace(
+        "TABLE-US-00001 TABLE 1 Embodiment 1",
+        "TABLE-US-00001 TABLE 1 First embodiment",
+        1,
+    ).replace(
+        "f = 2.47 mm, Fno = 1.21, FOV = 149.87°",
+        "f (focal length) = 2.47 mm (millimeters), Fno (f-number) = 1.21, "
+        "FOV (field of view) = 149.87 deg (degrees).",
+        1,
+    )
+    + " (45) A schematic follows."
+)
+
+
 @pytest.mark.parametrize(
     ("text", "patent_id", "f", "fno", "hfov", "surface_count", "nd", "vd"),
     [
@@ -98,6 +114,52 @@ def test_newmax_complete_real_embodiments_end_to_end(
     assert powered.nd == pytest.approx(nd)
     assert powered.vd == pytest.approx(vd)
     assert powered.asphere_coefficients
+
+
+def test_newmax_ordinal_header_requires_full_field_definition_and_parses() -> None:
+    attempts = patent_to_zmx._parse_prescription_attempts(
+        NEWMAX_ORDINAL_EMBODIMENT_1,
+        patent_id="US-NEWMAX-ORDINAL-A1",
+    )
+
+    assert len(attempts) == 1
+    assert attempts[0].error is None
+    prescription = attempts[0].prescription
+    assert prescription is not None
+    assert (prescription.focal_length_mm, prescription.f_number, prescription.hfov_deg) == (
+        pytest.approx(2.47),
+        pytest.approx(1.21),
+        pytest.approx(74.935),
+    )
+    assert sum(surface.label == "Stop" for surface in prescription.surfaces) == 1
+
+
+def test_newmax_ordinal_header_fails_without_official_full_field_definition() -> None:
+    text = NEWMAX_ORDINAL_EMBODIMENT_1.replace(
+        "A half of the maximum field of view of the optical lens assembly is HFOV.",
+        "FOV and HFOV are listed in degrees.",
+        1,
+    )
+
+    attempt = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-NEWMAX-ORDINAL-NO-DEFINITION-A1",
+    )[0]
+
+    assert attempt.prescription is None
+    assert "maximum-FOV/HFOV definition not found" in str(attempt.error)
+
+
+def test_newmax_ordinal_header_requires_exactly_one_published_stop() -> None:
+    text = NEWMAX_ORDINAL_EMBODIMENT_1.replace("5 Stop Infinity", "5 Infinity", 1)
+
+    attempt = patent_to_zmx._parse_prescription_attempts(
+        text,
+        patent_id="US-NEWMAX-ORDINAL-NO-STOP-A1",
+    )[0]
+
+    assert attempt.prescription is None
+    assert "must publish exactly one stop" in str(attempt.error)
 
 
 def test_newmax_alphabetic_equation_maps_a_and_f_to_h4_and_h14() -> None:

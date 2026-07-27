@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "family_id": "56417699",
+  "root_id": "US-10782453",
+  "publication_id": "US-10782453-B2",
+  "application_number": "15/545636",
+  "title": "Display devices with reflectors",
+  "source_document": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/2b7b7c65164b8240/US-10782453-B2.html",
+    "bytes": 74996,
+    "raw_sha256": "2b7b7c65164b82404ce5b37f939fa020461ec07d94003182ca828f39d30cb43b",
+    "normalized_characters": 49503,
+    "normalized_sha256": "d8339ee8d5243e007faffeb2af4ec75298c0cad66aa50f0f14b4118c278637f8",
+    "same_application_prior_publication": "US-20180003978-A1",
+    "pct_application": "PCT/US2016/014162",
+    "pct_publication": "WO2016/160099",
+    "priority_applications": ["US62/105905", "US62/208235"]
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "source_declared_designs": 10,
+    "numerical_freeform_designs": 1,
+    "architecture_only_designs": 9,
+    "replayed_ledger_items": 10,
+    "metadata_unpublished_items": 1,
+    "confirmed_no_prescription_items": 9,
+    "declared_figures": 12,
+    "prior_art_figures": 2,
+    "item_figures": 10,
+    "source_table_markers": 2,
+    "numerical_table_coefficient_rows": 66,
+    "mathml_objects": 3,
+    "claims": 14,
+    "official_pdf_pages": 17,
+    "drawing_sheets": 8
+  },
+  "paragraph_boundary": {
+    "cross_reference_narratives": 2,
+    "background_and_summary": [1, 31],
+    "brief_description": [1, 13],
+    "detailed_description": [14, 40],
+    "detailed_general_paragraphs": [14, 15, 16, 17, 18, 19, 34, 39, 40]
+  },
+  "figure_boundary": {
+    "prior_art": [1, 2],
+    "source_design_items": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+    "raw_figref_tags": 51,
+    "drawing_pdf_pages": [3, 4, 5, 6, 7, 8, 9, 10]
+  },
+  "table_boundary": {
+    "TABLE-US-00001": "definitions only",
+    "TABLE-US-00002": "TABLE 1; Mirror-1 and Mirror-2 rectangular domains plus 66 Legendre coefficient pairs",
+    "table_1_payload_sha256": "38eb06e09f5b9cd1f0b92673f58ae620e8942217982bbec0c0018c4ffb96eed3",
+    "x_orders": [0, 2, 4, 6, 8, 10],
+    "y_orders": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "nonzero_coefficients": {"Mirror-1": 36, "Mirror-2": 36},
+    "rectangular_domains_mm": {
+      "Mirror-1": {"x": [-18, 18], "y": [-16, 16]},
+      "Mirror-2": {"x": [-27, 27], "y": [-16, 16]}
+    }
+  },
+  "mathml_boundary": [
+    {"id": "MATH-US-00001", "sha256": "5894652cd47a344fb5c045ebfa60ce991ed7669b652e9d29cd66ad6f16ff4cc1"},
+    {"id": "MATH-US-00002", "sha256": "425c887c4c9396c94da51b118157ec0138905839659595c1eb593e5544735795"},
+    {"id": "MATH-US-00003", "sha256": "76a62d54b8b4e6d30651ac16f383b2b2cb940f5bc956d94f09bed49ffa24d4a3"}
+  ],
+  "items": [
+    {"figure": 3, "paragraphs": [20, 28], "label": "two-mirror free-form VR HMD", "published_system_values": {"focal_length_mm": 52, "vertical_full_fov_deg": 35, "horizontal_full_fov_deg": 60, "display_diagonal_mm": 63.5}, "published_freeform_surfaces": 2, "published_legendre_coefficient_pairs": 66, "prescription_specific_f_number_published": false, "ledger_state": "terminal", "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_f_number_absent"},
+    {"figure": 4, "paragraphs": [29, 29], "label": "two-mirror plus exit-lens VR HMD", "published_system_values": {"vertical_full_fov_deg": 70, "horizontal_full_fov_deg": 100, "display_diagonal_mm": 55}, "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 5, "paragraphs": [30, 30], "label": "display-side-lens two-mirror VR HMD", "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 6, "paragraphs": [31, 31], "label": "inter-mirror-lens two-mirror VR HMD", "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 7, "paragraphs": [32, 32], "label": "four-free-form-surface VR HMD", "published_system_values": {"vertical_full_fov_deg": 70, "horizontal_full_fov_deg": 100, "display_diagonal_mm": 55}, "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 8, "paragraphs": [33, 33], "label": "free-form wedge and lens VR HMD", "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 9, "paragraphs": [35, 35], "label": "see-through two-mirror AR HMD", "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 10, "paragraphs": [36, 36], "label": "see-through two-mirror plus lens AR HMD", "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 11, "paragraphs": [37, 37], "label": "four-free-form-surface AR HMD", "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"},
+    {"figure": 12, "paragraphs": [38, 38], "label": "free-form wedge and lens AR HMD", "ledger_state": "terminal", "terminal_status": "confirmed_no_prescription"}
+  ],
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_source_table_markers": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_claims": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "zmx_written": 0,
+    "formal_intake": 0,
+    "code_v_used": false,
+    "drawing_numeric_derivation": false,
+    "cross_publication_numeric_borrowing": false,
+    "reason": "FIG. 3 lacks a prescription-specific aperture/F-number and the source designs are non-sequential free-form reflective AR/VR systems; FIGS. 4-12 lack their own complete surface prescriptions."
+  }
+}

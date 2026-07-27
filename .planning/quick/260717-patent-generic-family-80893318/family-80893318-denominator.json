@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "family_id": "80893318",
+  "root_id": "US-12461279",
+  "publication_id": "US-12461279-B2",
+  "identity": {
+    "application_number": "17/711168",
+    "assignee": "LARGAN PRECISION CO., LTD.",
+    "filed": "April 01, 2022",
+    "prior_publication": "US-20220373715-A1 / November 24, 2022",
+    "foreign_priority": "TW 110130558 / August 18, 2021",
+    "provisional_priority": "US 63/191366 / May 21, 2021"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/abdc62e122533c4e/US-12461279-B2.html",
+    "bytes": 80873,
+    "raw_characters": 80873,
+    "raw_sha256": "abdc62e122533c4e77bac703c31ba41385de1caff48874b1431dac5b034a4ae2",
+    "normalized_characters": 58698,
+    "normalized_sha256": "3fe77504fe89a02d1f44577764dc56a73e2f3b84cc17e8c9954c2f7752b0f733"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_raster_publications": 1,
+    "related_application_paragraphs": 1,
+    "background_numbered_paragraphs": 2,
+    "summary_numbered_paragraphs": 3,
+    "brief_numbered_paragraphs": 17,
+    "detailed_numbered_paragraphs": 62,
+    "claims": 9,
+    "declared_textual_figures": 17,
+    "tagged_html_tables": 3,
+    "reflective_film_table_rows": 2,
+    "wavelength_reflectivity_table_rows": 671,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 5,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 5,
+    "replayed_ledger_items": 5,
+    "official_b2_pdf_pages": 30,
+    "official_b2_drawing_sheets": 17,
+    "same_application_a1_pdf_pages": 30,
+    "same_application_a1_drawing_sheets": 17,
+    "source_label_discrepancies": 0
+  },
+  "sections": {
+    "background": {"characters": 889, "sha256": "d5748f28584546e09c85e9e5dbfaf6151e45194f721cb669fe973873c11b6d62"},
+    "summary": {"characters": 2400, "sha256": "ca2a0a144069e044291a1c76a3fe91359df3762a917fd172bea5f7d6845fb775"},
+    "brief": {"characters": 1931, "sha256": "b4aee8dc10f5d64281c20255ec7321b058c4a11c4affbb965f192e7907fdc25d"},
+    "detailed": {"characters": 45985, "sha256": "9aa1b2d63c5e14b98f03ba16545ac819b484da8341d445837d1b9c3bd5041f72"},
+    "claims": {"characters": 3581, "sha256": "1cc05e46895d54e477bce25968d7e1047bc6459c428956abaaa50ed2a619b27b"}
+  },
+  "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "2", "3A", "3B", "3C", "3D", "4A", "4B", "4C", "4D", "4E", "5"],
+  "paragraph_spans": [
+    {"paragraphs": [18, 31], "characters": 8549, "sha256": "78bdd70ad42af9f9b8321f29f92f72035bb3f964a375559086a1e8ca5037baa3", "scope": "common light-folding and reflective-film disclosure"},
+    {"paragraphs": [32, 48], "characters": 19031, "sha256": "b45f814807118e54ae816c8e2a04904b09170946ebb25140d11ff1d21d0379aa", "scope": "first example"},
+    {"paragraphs": [49, 53], "characters": 3013, "sha256": "595339c5d5ee118d06661094442987d1675712558e9bbcad2953abb8588a9405", "scope": "second example"},
+    {"paragraphs": [54, 63], "characters": 5267, "sha256": "0d856e54f983452d19d842fa263b02a1c52b6f80aa3f86a6d376c3dcde581d44", "scope": "third example"},
+    {"paragraphs": [64, 73], "characters": 6618, "sha256": "a38dd68d686236164c065ada15c90c0a74e841fb601bbb7fd563d93b5bc53997", "scope": "fourth example"},
+    {"paragraphs": [74, 78], "characters": 2645, "sha256": "731a7767e6a279e7c359b16d866a8da49ef6c3da0d6d9adbfb76f9e7bfdb39f0", "scope": "fifth example"},
+    {"paragraphs": [79, 79], "characters": 834, "sha256": "2f2469ced70dd15ea0f8c54efdd1fc5ac0f21da38dfa22839d8d545231faca33", "scope": "disclaimer"}
+  ],
+  "tables": [
+    {
+      "table_number": 1,
+      "characters": 99,
+      "sha256": "17a2d21c98b8ee56d8b175032730df937f37d4c7da907734d3ba88ddf34ca625",
+      "semantic_scope": "first-example reflective-film refractive indices and nanometer thicknesses",
+      "values": {"Nb": 1.6726, "db_nm": 20, "Nt": 1.4618, "dt_nm": 65, "NAg": 0.051, "dAg_nm": 100}
+    },
+    {
+      "table_number": 2,
+      "characters": 8774,
+      "sha256": "3884b9ef9ca5ff8b2abb36f2dd1847a614a784c539bce5a5f6e1e53eec5e16ff",
+      "semantic_scope": "wavelength-versus-reflectivity samples",
+      "rows": 671,
+      "wavelength_nm": [380, 1050],
+      "reflectivity_percent": {"minimum": 92.55895, "maximum": 98.41539},
+      "canonical_row_sha256": "6605865429680f69c815f31010f077be30b0c01b38b1891137cfa4e9931be11d"
+    },
+    {
+      "table_number": 3,
+      "characters": 99,
+      "sha256": "aeac6be64cee929c94956a91b537fb80e4c3a53a91ec25f9e352dd766095ee3e",
+      "semantic_scope": "third-example reflective-film refractive indices and nanometer thicknesses",
+      "values": {"Nb": 1.6726, "db_nm": 20, "Nt": 1.4618, "dt_nm": 65, "NAg": 0.051, "dAg_nm": 100}
+    }
+  ],
+  "prescription_marker_census": {
+    "focal length": 1,
+    "focal_length_context": "the single occurrence is a fourth-example image-processing wrapper phrase",
+    "F-number": 0,
+    "F number": 0,
+    "FNO": 0,
+    "effective focal length": 0,
+    "refractive index": 30,
+    "refractive_index_context": "all occurrences concern reflective-film layers",
+    "thickness": 27,
+    "thickness_context": "all occurrences concern reflective-film layers",
+    "Abbe": 0,
+    "aspheric": 0,
+    "aspherical": 0,
+    "surface prescription": 0,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "surface no": 0,
+    "radius of curvature": 0,
+    "curvature radius": 0,
+    "lens element": 10,
+    "Ag layer": 75,
+    "optical film": 96,
+    "includes lens elements": 2
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Largan plastic light-folding reflective-film first example",
+      "paragraphs": [32, 48],
+      "source_category": "plastic_light_folding_reflective_film_module",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_light_folding_reflective_film_architecture_only",
+      "ordered_surface_prescription_rows": 0
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Largan dual plastic light-folding module second example",
+      "paragraphs": [49, 53],
+      "source_category": "dual_plastic_light_folding_module",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_light_folding_reflective_film_architecture_only",
+      "ordered_surface_prescription_rows": 0
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Largan multipass plastic light-folding reflective-film third example",
+      "paragraphs": [54, 63],
+      "source_category": "multipass_plastic_light_folding_module",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.plastic_light_folding_reflective_film_architecture_only",
+      "ordered_surface_prescription_rows": 0
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Largan smartphone multi-camera electronic-device fourth example",
+      "paragraphs": [64, 73],
+      "source_category": "smartphone_multi_camera_wrapper",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only",
+      "ordered_surface_prescription_rows": 0
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Largan smartphone telephoto-camera electronic-device fifth example",
+      "paragraphs": [74, 78],
+      "source_category": "smartphone_telephoto_camera_wrapper",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only",
+      "ordered_surface_prescription_rows": 0
+    }
+  ],
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_table_rows": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "reason": "The source publishes plastic folding-element placement, reflective-film indices/thicknesses and reflectivity samples plus electronic-device placement, but no ordered optical radius, spacing, material, conic or asphere prescription and no required focal-length, F-number or angular-field metadata.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  }
+}

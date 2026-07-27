@@ -1,0 +1,762 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "97520240",
+  "root_id": "US-20260110880",
+  "publication_id": "US-20260110880-A1",
+  "application_number": "19/209987",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/24bad625cfaa1f14/US-20260110880-A1.html",
+    "bytes": 92929,
+    "sha256": "24bad625cfaa1f1468ec1e707b0058e1ddbfe29f66cb65253a43a16435518474",
+    "characters": 89797,
+    "normalized_characters": 71659,
+    "normalized_sha256": "4081b7ca05db90beebcb0e44c0f4c4753bc7fa32d51f162f0eadf085b27c074f",
+    "layout_signature": "cce52749cd6c4754d359ae25d54545d85cf715841792b6eebc3e65eb79511a14"
+  },
+  "bibliography": {
+    "title": "IMAGING LENS SYSTEM",
+    "inventors": [
+      "RYU; Seon Ho",
+      "KIM; Hag Chul",
+      "KIM; Byung Hyun"
+    ],
+    "applicant": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "assignee": "SAMSUNG ELECTRO-MECHANICS CO., LTD."
+  },
+  "lineage": {
+    "filing_date": "2025-05-16",
+    "publication_date": "2026-04-23",
+    "korean_priority_application": "10-2024-0145051",
+    "priority_date": "2024-10-22"
+  },
+  "source_denominator": {
+    "background_summary_paragraphs": 24,
+    "brief_drawing_paragraphs": 10,
+    "detailed_description_paragraphs": 95,
+    "description_paragraphs_total": 105,
+    "numbered_paragraphs_total": 129,
+    "claims": 19,
+    "independent_claims": 2,
+    "source_tables": 17,
+    "mathml_objects": 25,
+    "figref_tags": 22,
+    "declared_figures": 9,
+    "drawing_sheets": 9,
+    "source_items": 5,
+    "ordered_optical_prescriptions": 4,
+    "published_zoom_states": 8,
+    "metadata_unpublished_items": 4,
+    "confirmed_no_prescription_items": 1
+  },
+  "sections": {
+    "preamble": {
+      "marker": "US-20260110880-A1",
+      "normalized_characters": 265,
+      "normalized_sha256": "1af9e3e7d7e216ea0d554149d27f6cb292f28b7222c701d79a6f30ba0d5b0561"
+    },
+    "abstract": {
+      "marker": "Abstract An imaging lens system includes",
+      "normalized_characters": 849,
+      "normalized_sha256": "b48a8a75b00a662cf187fc85393101f1c85eeb758ab101ebdd14450cd249389b"
+    },
+    "background": {
+      "marker": "Background/Summary CROSS-REFERENCE TO RELATED APPLICATION(S) [0001]",
+      "normalized_characters": 4074,
+      "normalized_sha256": "c21124ca26bdeb1d32044f687fba4b870c8bd4914dad674fd80ad8552f7c3e95"
+    },
+    "brief": {
+      "marker": "Description BRIEF DESCRIPTION OF DRAWINGS [0025]",
+      "normalized_characters": 1348,
+      "normalized_sha256": "e741ebb44dce7ea74f59579de0682cf99dede34bedce27daecca2527de4afb4a"
+    },
+    "detailed": {
+      "marker": "DETAILED DESCRIPTION [0035]",
+      "normalized_characters": 62652,
+      "normalized_sha256": "e33ad6cba55cd9929f3b2849ac5c1770ae4a9339e6fa5977ec05a725fb2dc74a"
+    },
+    "claims": {
+      "marker": "Claims 1 . An imaging lens system",
+      "normalized_characters": 2471,
+      "normalized_sha256": "0e9b231dea9028b51c70a08e0936efbb6597aa39df7062cc841fcc213cbbaa22"
+    }
+  },
+  "paragraph_spans": {
+    "background-1-24": {
+      "range": [
+        1,
+        24
+      ],
+      "normalized_sha256": "9cc1ec188ad7125e566b2fbb22186f6570eb19e234b48df898705c475de99b7a"
+    },
+    "brief-25-34": {
+      "range": [
+        25,
+        34
+      ],
+      "normalized_sha256": "3bccbd7fb7dcb49bd3b0b917243ffb1cc562479104d36703f090a984e0ddc829"
+    },
+    "shared-detail-35-86": {
+      "range": [
+        35,
+        86
+      ],
+      "normalized_sha256": "d9ef7cbbe5a0bc6143f312463e2cf4a451837db2ac9996f0b2236d10dfcdf842"
+    },
+    "embodiment-1-87-96": {
+      "range": [
+        87,
+        96
+      ],
+      "normalized_sha256": "38595e5ecaad89687b08bdf4f2000f8315bf55f658287ffd77738ee2da0c6a41"
+    },
+    "embodiment-2-97-105": {
+      "range": [
+        97,
+        105
+      ],
+      "normalized_sha256": "a3fc8085d2fe10ff99d36daf426f8d4234c333a81ceafbc5f772d9a455dcc727"
+    },
+    "embodiment-3-106-114": {
+      "range": [
+        106,
+        114
+      ],
+      "normalized_sha256": "5da11ef875e7ab2a1956f4defc22f19e50f61ab10744ce86f1ea5db1a4dc570f"
+    },
+    "embodiment-4-115-123": {
+      "range": [
+        115,
+        123
+      ],
+      "normalized_sha256": "27ba061565fede1bf1cdc8b19d224cddbeb03e29677eee9cd45d8ab6528ba05e"
+    },
+    "shared-tables-124-125": {
+      "range": [
+        124,
+        125
+      ],
+      "normalized_sha256": "7315e063ef7b97d2e35272105b8d9503f7dce35f9d26010eb1ff84fd220b7915"
+    },
+    "wrapper-126-127": {
+      "range": [
+        126,
+        127
+      ],
+      "normalized_sha256": "c94dee054eb8e84a4500ba89f4957d25d6628e1ebd8be2143825b0f88dff1d53"
+    },
+    "closing-128-129": {
+      "range": [
+        128,
+        129
+      ],
+      "normalized_sha256": "58cb14af81f08b5a52dc1bb93cdc20240313ea062b0571880e4dcd79f4bae7be"
+    },
+    "detailed-35-129": {
+      "range": [
+        35,
+        129
+      ],
+      "normalized_sha256": "11869766995142ae3a0d722046b9719d4438e8debcc3a8a5907b8d825b6ea31b"
+    }
+  },
+  "claims": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "independent_numbers": [
+      1,
+      11
+    ],
+    "dependencies": [
+      [],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [],
+      [
+        11
+      ],
+      [
+        11
+      ],
+      [
+        11
+      ],
+      [
+        11
+      ],
+      [
+        11
+      ],
+      [
+        11
+      ],
+      [
+        11
+      ],
+      [
+        11
+      ]
+    ],
+    "payload_sha256": [
+      "21e5b870b6417cd7f948ece5f5223a6b84cf0b15f346cb2a55caddd5eeefd4ad",
+      "0706e14e86cf9a05d1d05631bda5ebcf9c7bb6101e0dfc89e41bfa9630236693",
+      "73b01e6126a38ff717383904b039c77b24e54bbeb9dcf5a6d9b7103adb1e997f",
+      "02bf74ecde6e5226868f1655672e2116367062852edd13d8c20ba094a76a18c9",
+      "1b882e15d46fdb6f83851f1e0bdf9c61854fd689e8e7678959f47e70c200b1a3",
+      "8db10b145b66de9d5fc65c656e5d02727338418c62f705144a895d18367451fc",
+      "4b07d78f6c92995a270b4908ae95f01b71bc945afdc0b2705b3434b9c1364e53",
+      "0d0151156e7102a3af50702df9e02d8caebb919abdabf453ca9dfc779fdd8006",
+      "f78ad5f908bb5e336366db59c4b2312e288e486a5eeeafbc2a63ab08b69a77c9",
+      "c724c557b2f41b66904c0f15bca190eb9e1545422b982744d2b5e3adf8bc6b45",
+      "750471bb8560d3a3c925dfa455a89e10054853a2d783f37e70ce4f90729aceb0",
+      "6b9ffc69e6d68286a5c7bf0437516007f7f116ffae67f3e165434f3e2d0d6a12",
+      "2d8baf5e82731dd3b22b647ef96bba069a5b489ff91dcec5e50c45c0b5a4c0d5",
+      "5e2c4b3b6b5db2cf7c526bb546ef61a65172d28a2c48ef688142350c90e5c3b6",
+      "a04cdc0f2643dff2e9637527757f59b00c0f582f24ecfcdb384fe75bc5dabc87",
+      "56101361cf05cf5c9f02e3964df3b0afa1d54c451aa22d52e84187abdd991673",
+      "62c0f1ab71c5ecace418e159ec160713705435b34449674e5d2415326db94a97",
+      "41114b545bbcbb9e3a9883520f5db08cb4cb6312cac8820c78f046c38c7f0dc6",
+      "4c4fe22c8cbde357fc5a476ee4d3875e52a7ae4b458dcc62d598dc81b4671d05"
+    ]
+  },
+  "figures": {
+    "declared_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "figref_count": 22,
+    "reference_counts": [
+      3,
+      2,
+      3,
+      2,
+      3,
+      2,
+      3,
+      2,
+      2
+    ]
+  },
+  "tables_and_math": {
+    "table_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "table_owner_paragraphs": {
+      "1": 96,
+      "2": 96,
+      "3": 96,
+      "4": 105,
+      "5": 105,
+      "6": 105,
+      "7": 114,
+      "8": 114,
+      "9": 114,
+      "10": 123,
+      "11": 123,
+      "12": 123,
+      "13": 124,
+      "14": 124,
+      "15": 124,
+      "16": 124,
+      "17": 124
+    },
+    "table_payload_sha256": [
+      "98ab6c3506cb299221e14d548e53d5b1ac280481f2eb3635e7e29d36d5064388",
+      "d8547dd9bde6e6f6a0a85e0cd4ef5f9965e017a4116726f56b9846d756cc9094",
+      "4e8615c868d9450e7f01c8286c6d30400aa807714ca310a62edaf25d6f4fe3ee",
+      "c586972077ad2e2aab8d7702ae521f1fc324f71954667603875778ca712e5c05",
+      "1520d4d3f77b049c1d983de80d740727fee8af8fb9e021b227de6715d140edc5",
+      "2855f8daf2efc21c13179c77ab58d3958ea5e12be179347d9a339abb960f11c1",
+      "2a9246de11631af24980419de41c72a103b84aa1c8f566746dcc12a22448ae1e",
+      "5034b978a83b83ddabab5fa22e2e063871d2a3354082f5a5d8479313b3e94a34",
+      "4b06c8b5b4b97568ef68dc75ffd2b12087951a64202f59c16cf6f86ad1e69208",
+      "a672746162684dc0bc9f4f4ed930f454856945fb8caba664d66cb5c36720e7a9",
+      "83c20627ef48ae3ae97e06c4c4dcff6f86c9ba349eebc53b8beb240a0105ead0",
+      "cafb3866a0ddaa349be6095522c2c1a4110c1c69de7522b9f263ec704519891e",
+      "47012e8aea1ff78186c1d1b43919120d68e18c4a5af76fb037fd18b2736069ac",
+      "3ee8b2965c570f66d431c0f3c11299c79e59c1126b3a10a77612e41c3f223fbb",
+      "e21d1b1eb2db97fec4973077b5fc3e53c65bcdaa0f46a1ac67706e1c90981fc4",
+      "dfb90cd4fc6dd4630a50385ae49c330ac00b508142cab7e73302573007177ae7",
+      "c3a5543e551972b1242a633851b8096190292b9d6f24bfb3f893df36cf9251bf"
+    ],
+    "surface_tables": [
+      1,
+      4,
+      7,
+      10
+    ],
+    "asphere_tables": [
+      2,
+      5,
+      8,
+      11
+    ],
+    "state_tables": [
+      3,
+      6,
+      9,
+      12
+    ],
+    "surface_rows_total": 80,
+    "asphere_surfaces_total": 64,
+    "conic_plus_coefficient_cells_total": 960,
+    "table13_direct_values": {
+      "TTL": [
+        "34.000",
+        "33.401",
+        "34.000",
+        "34.760"
+      ],
+      "f": [
+        "22.474",
+        "22.474",
+        "22.474",
+        "22.474"
+      ],
+      "f_number": [
+        "2.157",
+        "2.175",
+        "2.145",
+        "2.107"
+      ],
+      "ImgHT": [
+        "5.720",
+        "5.720",
+        "5.720",
+        "5.720"
+      ]
+    },
+    "table10_printed_blank_signature": {
+      "S18": true,
+      "S19": true,
+      "S20": true
+    },
+    "mathml_count": 25,
+    "mathml_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "ordered_math_object_sha256": [
+      "039475264bc196c7f189db51d962b54453ece17fa77375f83d5e743caff30293",
+      "863da81f643c9ab72453982a95fccf66b861a7c7f1bcb16be7d4431b3e69d1f3",
+      "6d6fe4301da062c85effe24621c5ab21688b9ffe9eb202b38f7f564e863d81d8",
+      "361c4e0010fa74ffb906aba9dc4fef17a308a4ba0690bcad1f89a23e36d24a2b",
+      "9c921a6484c11c04aec2d2673ea81dc74daac2f7c475b390a695437f0f76afef",
+      "bf01dc9003d61aff3927133c907200c16764a157c2bf20fae06c6330f1384b6d",
+      "007b28393494facebdf65c6ede96bc8fc81301420ee5643cfd7d3b089b33fdae",
+      "9529db0814b3039e92ea044c213def6da1cf6bd42b1523403a7a9a922c89eea6",
+      "4f022169e10861e47864931ed60a40373137a4d193ab53af2b7a42b2d9995df1",
+      "1d2f6e5cf9978338272af89cc2534702cfbf96d20a0fa3da574a452073a5c37b",
+      "3d3535540fc25d161b80851dfb86dbc0b170da93c1a5595c45ec8d8cbe39241c",
+      "0812e76ef9422b16dbe4dc854dd32118c9c9885057943be92b9084d76e0453c1",
+      "b6162ad5e794c0177e656ddc1f79d45a9f28012d955b8bf17279854ef3ca0470",
+      "d9f463f24263454b2fbb0836d2e7ba8da23a7e51cc590bba5dc2519c0bf8879a",
+      "f8beaeef3aab330e7ae4626081253bc2f224be1d6265280c07b16101380aa3c0",
+      "f8c57c36c31d26c8c06649bb6452478eec0d14941e852b2ecef462876e84bd83",
+      "847e3691bb6165f428cf2a8e4f16e33bf35b4361e864a5e0e75157d836f186fe",
+      "0cd45d4373f7f3bd349198cae855c0fc74d1c20d4b21edc24f9801bfeeb78b75",
+      "1fb542b204a2adcfb00dd761b26c6f6360e8fee891596d6e0078435d7cf4c213",
+      "dfaedb911f7b87ae2771fd6f1fb081319a510e65f7fc5937eab550062163dd03",
+      "096c1212402c3643c949e41234e4b065897fac83b059b36687b80860ee592976",
+      "aa488e743541cec20cd98ba27d3f46b5b0097212baed009ce1adf954b0ac94c1",
+      "f9605a8804be14d3cebb228b52c65eb5fe3f6b4422bbaa02c88dd36e5246b923",
+      "7cf9057fc2d0d9de3b1d36cb1a3bd76ab742a3ff676a140771e0cb4a9edf66d6",
+      "9cc4ce9063f9135320fbe4de129d6912f775e29553593a1d92621847902884ce"
+    ]
+  },
+  "phrase_counts": {
+    "field of view": 0,
+    "FOV": 0,
+    "HFOV": 0,
+    "angle of view": 0,
+    "angular field": 0,
+    "field angle": 0,
+    "IMGHT": 2,
+    "IMG HT": 0,
+    "image height": 0,
+    "aperture stop": 0,
+    "(Stop)": 4,
+    "f number": 2,
+    "F-number": 0,
+    "reflective surface": 15
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Samsung first imaging-lens-system embodiment 100",
+      "paragraph_range": [
+        87,
+        96
+      ],
+      "figures": [
+        1,
+        2
+      ],
+      "tables": [
+        1,
+        2,
+        3
+      ],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_angular_field_absent",
+      "published_modes": [
+        "telephoto",
+        "wide"
+      ],
+      "published_prescription_states": 2,
+      "surface_rows": 20,
+      "stop_surface": "S8",
+      "asphere_surfaces": 16,
+      "focal_length_mm": "22.474",
+      "f_number": "2.157",
+      "image_height_mm": "5.720",
+      "ttl_mm": "34.000"
+    },
+    {
+      "number": 2,
+      "label": "Samsung second imaging-lens-system embodiment 200",
+      "paragraph_range": [
+        97,
+        105
+      ],
+      "figures": [
+        3,
+        4
+      ],
+      "tables": [
+        4,
+        5,
+        6
+      ],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_angular_field_absent",
+      "published_modes": [
+        "telephoto",
+        "wide"
+      ],
+      "published_prescription_states": 2,
+      "surface_rows": 20,
+      "stop_surface": "S8",
+      "asphere_surfaces": 16,
+      "focal_length_mm": "22.474",
+      "f_number": "2.175",
+      "image_height_mm": "5.720",
+      "ttl_mm": "33.401"
+    },
+    {
+      "number": 3,
+      "label": "Samsung third imaging-lens-system embodiment 300",
+      "paragraph_range": [
+        106,
+        114
+      ],
+      "figures": [
+        5,
+        6
+      ],
+      "tables": [
+        7,
+        8,
+        9
+      ],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_angular_field_absent",
+      "published_modes": [
+        "telephoto",
+        "wide"
+      ],
+      "published_prescription_states": 2,
+      "surface_rows": 20,
+      "stop_surface": "S8",
+      "asphere_surfaces": 16,
+      "focal_length_mm": "22.474",
+      "f_number": "2.145",
+      "image_height_mm": "5.720",
+      "ttl_mm": "34.000"
+    },
+    {
+      "number": 4,
+      "label": "Samsung fourth imaging-lens-system embodiment 400",
+      "paragraph_range": [
+        115,
+        123
+      ],
+      "figures": [
+        7,
+        8
+      ],
+      "tables": [
+        10,
+        11,
+        12
+      ],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_angular_field_and_final_axial_distances_absent",
+      "published_modes": [
+        "telephoto",
+        "wide"
+      ],
+      "published_prescription_states": 2,
+      "surface_rows": 20,
+      "stop_surface": "S8",
+      "asphere_surfaces": 16,
+      "focal_length_mm": "22.474",
+      "f_number": "2.107",
+      "image_height_mm": "5.720",
+      "ttl_mm": "34.760",
+      "printed_blank_final_axial_distance_surfaces": [
+        "S18",
+        "S19",
+        "S20"
+      ]
+    },
+    {
+      "number": 5,
+      "label": "Samsung electronic-device/camera-module wrapper",
+      "paragraph_range": [
+        126,
+        127
+      ],
+      "figures": [
+        9
+      ],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "official_pdf": {
+    "download_1": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/source-review/US-20260110880-A1-official-1.pdf",
+      "bytes": 1246229,
+      "sha256": "528d1565458311a7a1d301fba6b5c43cd8bfeae3f5484b2b7cf9a2ff6e509645"
+    },
+    "download_2": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/source-review/US-20260110880-A1-official-2.pdf",
+      "bytes": 1246229,
+      "sha256": "3c3dcc41b82fe5b5687a607de3ffd6a2406164b8a865a8fa30199274429a5a65"
+    },
+    "pinned_download_1": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/528d1565458311a7/US-20260110880-A1.pdf",
+      "bytes": 1246229,
+      "sha256": "528d1565458311a7a1d301fba6b5c43cd8bfeae3f5484b2b7cf9a2ff6e509645"
+    },
+    "page_count": 24,
+    "text_layer_characters": 0,
+    "embedded_page_mode": "1-bit",
+    "raster_set_sha256": "6fafdb8ce988060a913ef4770ca29db5f6768d33990e4e6fc9fed0c840b404ca",
+    "original_png_count": 24,
+    "original_png_total_bytes": 3295006,
+    "original_png_ordered_set_sha256": "d8e2342775838b71bccbd9c4a8e09f8eb175c2ce5cbdb3371bdff08e6000ec47",
+    "reviewed_original_pages": [
+      17,
+      22,
+      23,
+      24
+    ]
+  },
+  "replay": {
+    "preserved_attempt_1": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110880/attempt-0001/result.json",
+      "bytes": 1299,
+      "sha256": "0c1b85670f829084bf421ff292516d4d018349fdc047bd5d5fa364e71c3bfce8"
+    },
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110880/attempt-0002/result.json",
+      "bytes": 6064,
+      "sha256": "65a4c0f05fec2704936720bb6c7429007e371061ef0598e7471f27d7cb79ab7f",
+      "semantic_sha256": "5ed70937f280ab62db85c98e0602c03bdc0f2fed41e02bfa3a2066d4f2ad73c9"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260110880/attempt-0003/result.json",
+      "bytes": 6064,
+      "sha256": "b1246ad93fbd0a85e9cbb650f4b2028eaf87b67d304c011f91e27e8c382c9066",
+      "semantic_sha256": "5ed70937f280ab62db85c98e0602c03bdc0f2fed41e02bfa3a2066d4f2ad73c9"
+    },
+    "semantic_equal": true,
+    "semantic_sha256": "5ed70937f280ab62db85c98e0602c03bdc0f2fed41e02bfa3a2066d4f2ad73c9",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/generic-residual-before-28.json",
+      "bytes": 17613,
+      "sha256": "e9b9664ef6e00478e2d6e6ea3b49644a61855149051b53476e0ecb7bf08144a4"
+    },
+    "after_1": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/generic-residual-after-1.json",
+      "bytes": 16974,
+      "sha256": "dcf3b26e23e841ba5275abdfbc6d6d40935ce10ecf3712eec7c7d499b5d2d3e9"
+    },
+    "after_2": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/generic-residual-after-2.json",
+      "bytes": 16974,
+      "sha256": "dcf3b26e23e841ba5275abdfbc6d6d40935ce10ecf3712eec7c7d499b5d2d3e9"
+    },
+    "before_roots": 28,
+    "after_roots": 27,
+    "result_set_sha256": "843699ac02589c748683ce5202fda6c78e0669b4cc2a568c3c39e33f1c337c6e"
+  },
+  "supporting_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/family-97520240-source-audit.md",
+      "bytes": 6294,
+      "sha256": "7bc97f77ab83bc757c1bb29c635d11015a27dcf4843296ddb958f0beec85fbe1"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/family-97520240-raster-audit.json",
+      "bytes": 13654,
+      "sha256": "ce8f8a97314cbe44115f18069865dfff1f0b59360bffefb53a0740c03cad9209"
+    },
+    "source_lineage": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/family-97520240-external-family-members.json",
+      "bytes": 1160,
+      "sha256": "6ca8746df89c1e8b69ae02f24fa6d62b359008bc7cf730d0fbd211f57ac1e483"
+    },
+    "denominator": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/family-97520240-denominator.json",
+      "bytes": 8312,
+      "sha256": "98f6180503dbcb78f76e910dd2b372bb34562796969dc8956e3a2e16f22f6c6c"
+    },
+    "computed_facts": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/source-review/computed-facts.json",
+      "bytes": 27166,
+      "sha256": "28f483a4789e13d981367280bd182553b3d677f7f5f6c175aa79d8242b722d96"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/family-97520240-replay-determinism.json",
+      "bytes": 2330,
+      "sha256": "ee2548b936ff4227d56c9d76bd3a54c0cf607b56b3beaf57aa014000d234dcbf"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/queue-after.json",
+      "bytes": 1560,
+      "sha256": "00e750c50387e2496cb9c32edb1a47151399d3bd0e4d91b2616b450b44b697a4"
+    },
+    "roots": {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/roots.txt",
+      "bytes": 15,
+      "sha256": "6d54a9bc1235703fa65171d78591dbef4f2ddad5802af3e043d1cf589811f1aa"
+    }
+  },
+  "review_policy": {
+    "image_enhancement_used": false,
+    "ocr_used": false,
+    "ocr_repair_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "raster_numeric_inference_used": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "related_family_or_layout_borrowing_used": false,
+    "printed_blank_cells_repaired": false
+  },
+  "terminal_outcome": {
+    "metadata_unpublished_items": 4,
+    "confirmed_no_prescription_items": 1,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "next_exact_group": {
+    "family_id": "86539672",
+    "root_ids": [
+      "US-20240352227"
+    ],
+    "publication_ids": [
+      "US-20240352227-A1"
+    ],
+    "layout_signature": "ce187bdc695585487f4461c26f6c58cbc8db711f79d98e688883d865e955a6a2"
+  },
+  "saturation_complete": false
+}

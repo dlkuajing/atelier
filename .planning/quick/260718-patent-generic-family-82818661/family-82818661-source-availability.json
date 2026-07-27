@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "family_id": "82818661",
+  "publication_id": "US-20260056353-A1",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/bff6870e0ecf8024/US-20260056353-A1.html",
+    "bytes": 111754,
+    "characters": 111390,
+    "sha256": "bff6870e0ecf8024336d03a2917255f277cbb94ec76ed8eb8b164c35dbff2396",
+    "normalized_characters": 89023,
+    "normalized_sha256": "26ff37458755b4166736664be130cfa730182155dfcbf3ac559e15739e51e083"
+  },
+  "official_pdf": {
+    "authority": "USPTO Patent Public Search image service",
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20260056353",
+    "request_authentication": "anonymous direct download",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "path": "data/patent-lake/uspto-ppubs-pdf/ef8fa323cb6bae4c/US-20260056353-A1.pdf",
+    "bytes": 2206945,
+    "container_sha256": "ef8fa323cb6bae4c8d1e7a74b8d35814068d8929a94a0e89c17c8b69d94c3a6f",
+    "page_count": 54,
+    "single_raster_pages": 54,
+    "common_raster_dimensions": [2560, 3300],
+    "narrow_raster_page_numbers": [53, 54],
+    "narrow_raster_dimensions": [2550, 3300],
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "2ec8accab03edf2f0a590ed27f3b2e2db04b6dba15648145172cc487a91ce902"
+  },
+  "drawing_source": {
+    "declared_figure_paragraphs": 51,
+    "drawing_sheets": 39,
+    "drawing_pdf_page_range": [2, 40],
+    "full_page_contact_review_claimed": true,
+    "original_resolution_pages_reviewed": [46, 47, 48, 49, 50, 54],
+    "classification_dependency": true,
+    "source_discrepancies": [
+      "The HTML renders the official drawing labels FIG. 1I and FIG. 1O as FIG. 11 and FIG. 10; the retained normalized HTML is not repaired.",
+      "Claim 11 contains the official [text missing or illegible when filed] marker in both the HTML custom-character image and the official page-54 raster."
+    ]
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO A1 HTML plus retained exact official A1 decoded-raster set",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "experimental_rows_promoted_to_prescriptions": false,
+    "placement_focal_ranges_used_as_prescription_metadata": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/root/publication order",
+  "result_set_sha256": "32eaadcfbe1f7956ee5213d02d9f48dbe44527900e964141ea2ac774cd5af8b2",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 96,
+      "affected_items": 96
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "85177416",
+    "root_ids": [
+      "US-12498545"
+    ],
+    "publication_ids": [
+      "US-12498545-B2"
+    ],
+    "application_number": "17/813265",
+    "title": "SMALL LENS SYSTEM",
+    "applicant": "SEKONIX CO., LTD.",
+    "layout_signature": "3d684a6bcca86c1d718a3ccbbfd08dfe9660ecce94f9c9b2fdfbc2814c921d3e",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 75,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 10,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/db9ea5f722c47ae3/US-12498545-B2.html",
+      "sha256": "db9ea5f722c47ae3cf3b90ee77f8862813d2e410fffd9f7929cff4dba2f561ab"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

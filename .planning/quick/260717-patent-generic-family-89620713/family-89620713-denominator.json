@@ -1,0 +1,534 @@
+{
+  "schema_version": 1,
+  "family_id": "89620713",
+  "root_id": "US-20240272406",
+  "publication_id": "US-20240272406-A1",
+  "identity": {
+    "application_number": "18/642955",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "filed": "April 23, 2024",
+    "publication_date": "August 15, 2024",
+    "continuation_parent_application": "18/413330",
+    "continuation_parent_publication": "US-20240241352-A1",
+    "priority_claims": [
+      "US 63/480111 (January 17, 2023)",
+      "TW 112135457 (September 18, 2023)"
+    ]
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b299af6070ba4f93/US-20240272406-A1.html",
+    "bytes": 97011,
+    "raw_characters": 97007,
+    "raw_sha256": "b299af6070ba4f9342cf8a79e5f5cf806cd5d93695b6f2f867b0307239e546f9",
+    "normalized_characters": 79576,
+    "normalized_sha256": "f46a725345908f1253f4b832dea934b6e209a6f0593f9c000e9bf861c43be104",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "parent_application_raster_publications": 1,
+    "numbered_heading_markers": 0,
+    "background_summary_numbered_paragraphs": 7,
+    "brief_numbered_paragraphs": 31,
+    "detailed_numbered_paragraphs": 74,
+    "claims": 16,
+    "parent_application_claims": 30,
+    "declared_textual_figure_statements": 30,
+    "declared_textual_figure_panels": 30,
+    "tagged_html_tables": 0,
+    "mathml_objects": 2,
+    "source_declared_architecture_items": 10,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 10,
+    "replayed_ledger_items": 10,
+    "official_continuation_pdf_pages": 40,
+    "official_continuation_drawing_sheets": 27,
+    "parent_application_pdf_pages": 40,
+    "parent_application_drawing_sheets": 27,
+    "parent_application_claim_count_differences": 1,
+    "source_label_discrepancies": 0
+  },
+  "sections": {
+    "abstract": {
+      "position": 307,
+      "characters": 1443,
+      "sha256": "1f27bd803f2a9a51934e79b8b4d0250fb8bffc998a9785186672c8ff2f6645ce"
+    },
+    "background_summary": {
+      "position": 1750,
+      "characters": 4084,
+      "sha256": "a07044e32953c6b2074933997025fd6ffdc8b7144543ba5cf9f99755fdd21b5a",
+      "paragraphs": [
+        1,
+        7
+      ]
+    },
+    "brief": {
+      "position": 5834,
+      "characters": 4202,
+      "sha256": "f703b72a2c0fcf09bfa320df363f758cb8d5549ab964d078f0bb6d6c07746379",
+      "paragraphs": [
+        8,
+        38
+      ]
+    },
+    "detailed": {
+      "position": 10036,
+      "characters": 66172,
+      "sha256": "52864579e879ad84c9e39f8022d7b3018ca9f7163fcf23937183e0bd9fc9b632",
+      "paragraphs": [
+        39,
+        112
+      ]
+    },
+    "claims": {
+      "position": 76208,
+      "characters": 3368,
+      "sha256": "22ff2b13ac1bbe63e68f0afeb19de06b8cdb8074120bcb274775b031815b390e",
+      "claims": [
+        1,
+        16
+      ]
+    }
+  },
+  "summary_items": [
+    {
+      "paragraph": 4,
+      "characters": 1304,
+      "sha256": "1887b4b3dbcdfa53846775e5f8cda985f96ab425e2b466fa6d866d5dafbaf130",
+      "scope": "folded optical imaging module with first light-blocking-element geometry"
+    },
+    {
+      "paragraph": 5,
+      "characters": 1182,
+      "sha256": "effdb70b1175ad3c9cfb7c835d6f94705504027d890f4da712102787ab441cc5",
+      "scope": "folded optical imaging module with second light-blocking-element geometry"
+    },
+    {
+      "paragraph": 6,
+      "characters": 168,
+      "sha256": "2f25fefadeb410463f9f092594ca952d9524c691cfd3d9d682845adb23e5c3b0",
+      "scope": "camera-module wrapper with image sensor"
+    },
+    {
+      "paragraph": 7,
+      "characters": 144,
+      "sha256": "531853d3c2b2ea8a8e357e4deac8e4aa433a6bed0b0d7589d80f88f044f98c9e",
+      "scope": "electronic-device wrapper"
+    }
+  ],
+  "detailed_spans": [
+    {
+      "paragraphs": [
+        39,
+        58
+      ],
+      "characters": 9078,
+      "sha256": "eddb9de648b1bbffc9ac1419c611ad39ed9930032abc32a131e10dc773dd4f78",
+      "scope": "general folded-module, membrane, nanostructure and distance-inequality architecture"
+    },
+    {
+      "paragraphs": [
+        59,
+        63
+      ],
+      "characters": 6300,
+      "sha256": "2198ba6a2f677ab0e3992bcd1df35cd088976841a02db22da3038636ec72f121",
+      "scope": "first folded optical-imaging-module example; BS 99.5 nm"
+    },
+    {
+      "paragraphs": [
+        64,
+        68
+      ],
+      "characters": 6462,
+      "sha256": "b548666b48432396cd674f5cf52c0adb926f522c599324ccb085e6f28be731da",
+      "scope": "second folded optical-imaging-module example; RS 235.3 nm"
+    },
+    {
+      "paragraphs": [
+        69,
+        74
+      ],
+      "characters": 6845,
+      "sha256": "a7b33a1ad19782c758a28431910f496118bc31f59edf2ef8b83f4ab8414d61a4",
+      "scope": "third folded optical-imaging-module example; BS 66.1 nm"
+    },
+    {
+      "paragraphs": [
+        75,
+        79
+      ],
+      "characters": 7221,
+      "sha256": "8a4b3b7aca957f6776c926eb7a3dcde8901157187ed072d9adb0da584c77b7c0",
+      "scope": "fourth folded optical-imaging-module example; RS 173.5 nm"
+    },
+    {
+      "paragraphs": [
+        80,
+        84
+      ],
+      "characters": 6045,
+      "sha256": "8476fc72d7062ee9c5985aae8de443c2eabc9f9f06687d2a19980cd687b45ccf",
+      "scope": "fifth folded optical-imaging-module example; BS 110.7 nm"
+    },
+    {
+      "paragraphs": [
+        85,
+        89
+      ],
+      "characters": 7304,
+      "sha256": "5db508872dc9a9d54273c59cbf358eeba0ae3b07509766e5ee47231650aed78a",
+      "scope": "sixth folded optical-imaging-module example; BS 56.6 nm"
+    },
+    {
+      "paragraphs": [
+        90,
+        94
+      ],
+      "characters": 4794,
+      "sha256": "39e752cea7d89fc760349452c0a4c5f44c28aa52869fed3a26b42baf95f1ce6e",
+      "scope": "seventh folded optical-imaging-module example; RS 218.0 nm"
+    },
+    {
+      "paragraphs": [
+        95,
+        103
+      ],
+      "characters": 6226,
+      "sha256": "66392ab6ba02f9d63e8ecf5dc4dd289cc17c5571742f21a6e8df90aedce47a8f",
+      "scope": "eighth electronic-device multi-camera and digital-zoom wrapper"
+    },
+    {
+      "paragraphs": [
+        104,
+        107
+      ],
+      "characters": 2488,
+      "sha256": "7067b0474da9374ea2d66d676dfda3457ed530196ecf4d23164ccd5b0615a4f4",
+      "scope": "ninth electronic-device ultra-wide/wide/telephoto/time-of-flight wrapper"
+    },
+    {
+      "paragraphs": [
+        108,
+        111
+      ],
+      "characters": 2680,
+      "sha256": "6e1b19da87a9c84ae4ebbf9b0f7ec0bcc3f93f3d6e66bb67c7ad0df00252eabc",
+      "scope": "tenth vehicle six-camera placement wrapper"
+    },
+    {
+      "paragraphs": [
+        112,
+        112
+      ],
+      "characters": 696,
+      "sha256": "c82666be0d44fa1057c24ef4578083a96e6ce7b33a6dace2dd6866b1e9f11079",
+      "scope": "implementation boilerplate"
+    }
+  ],
+  "claim_families": [
+    {
+      "claims": [
+        1,
+        14
+      ],
+      "characters": 3196,
+      "sha256": "5e7641b27e4e1518433f361be4bc2c3efb1deda3d1715a2795fa6720a1e3fc5b",
+      "scope": "folded optical imaging module",
+      "items": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "claims": [
+        15,
+        15
+      ],
+      "characters": 93,
+      "sha256": "39c1b1b9f2d1e46768331b45b97932c2c95a75ee1194a996fe5ddb9fc4e5982e",
+      "scope": "camera-module wrapper",
+      "items": []
+    },
+    {
+      "claims": [
+        16,
+        16
+      ],
+      "characters": 70,
+      "sha256": "f61de82681f7cbded8e9a3ff389be3bdc72af0de0af8f8f0fef1d2d0f78fe1dd",
+      "scope": "electronic-device wrapper",
+      "items": []
+    }
+  ],
+  "figure_panels": [
+    "1A",
+    "1B",
+    "1C",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "3A",
+    "3B",
+    "3C",
+    "4A",
+    "4B",
+    "4C",
+    "5A",
+    "5B",
+    "5C",
+    "6A",
+    "6B",
+    "7A",
+    "7B",
+    "7C",
+    "8A",
+    "8B",
+    "8C",
+    "8D",
+    "8E",
+    "9",
+    "10A",
+    "10B",
+    "10C"
+  ],
+  "math_objects": [
+    {
+      "object": 1,
+      "sha256": "a14baeb146717282caf2cf2c11c5fde498ca56af80dc7bd57e966a86a775a573",
+      "scope": "mechanical light-blocking-element distance inequality D"
+    },
+    {
+      "object": 2,
+      "sha256": "7ec2737bb108ce7e820039590599f995ab56d535054cf9c506ecb5d96a9e4f9d",
+      "scope": "mechanical light-blocking-element distance inequality D"
+    }
+  ],
+  "items": [
+    {
+      "item": 1,
+      "label": "Largan folded-nanostructure optical imaging module first example",
+      "paragraphs": [
+        59,
+        63
+      ],
+      "characters": 6300,
+      "sha256": "2198ba6a2f677ab0e3992bcd1df35cd088976841a02db22da3038636ec72f121",
+      "scope": "folded optical-imaging-module light-blocking/nanostructure architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+      "coating_microstructure_marker": {
+        "variable": "BS",
+        "value_nm": "99.5"
+      }
+    },
+    {
+      "item": 2,
+      "label": "Largan folded-nanostructure optical imaging module second example",
+      "paragraphs": [
+        64,
+        68
+      ],
+      "characters": 6462,
+      "sha256": "b548666b48432396cd674f5cf52c0adb926f522c599324ccb085e6f28be731da",
+      "scope": "folded optical-imaging-module light-blocking/nanostructure architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+      "coating_microstructure_marker": {
+        "variable": "RS",
+        "value_nm": "235.3"
+      }
+    },
+    {
+      "item": 3,
+      "label": "Largan folded-nanostructure optical imaging module third example",
+      "paragraphs": [
+        69,
+        74
+      ],
+      "characters": 6845,
+      "sha256": "a7b33a1ad19782c758a28431910f496118bc31f59edf2ef8b83f4ab8414d61a4",
+      "scope": "folded optical-imaging-module light-blocking/nanostructure architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+      "coating_microstructure_marker": {
+        "variable": "BS",
+        "value_nm": "66.1"
+      }
+    },
+    {
+      "item": 4,
+      "label": "Largan folded-nanostructure optical imaging module fourth example",
+      "paragraphs": [
+        75,
+        79
+      ],
+      "characters": 7221,
+      "sha256": "8a4b3b7aca957f6776c926eb7a3dcde8901157187ed072d9adb0da584c77b7c0",
+      "scope": "folded optical-imaging-module light-blocking/nanostructure architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+      "coating_microstructure_marker": {
+        "variable": "RS",
+        "value_nm": "173.5"
+      }
+    },
+    {
+      "item": 5,
+      "label": "Largan folded-nanostructure optical imaging module fifth example",
+      "paragraphs": [
+        80,
+        84
+      ],
+      "characters": 6045,
+      "sha256": "8476fc72d7062ee9c5985aae8de443c2eabc9f9f06687d2a19980cd687b45ccf",
+      "scope": "folded optical-imaging-module light-blocking/nanostructure architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+      "coating_microstructure_marker": {
+        "variable": "BS",
+        "value_nm": "110.7"
+      }
+    },
+    {
+      "item": 6,
+      "label": "Largan folded-nanostructure optical imaging module sixth example",
+      "paragraphs": [
+        85,
+        89
+      ],
+      "characters": 7304,
+      "sha256": "5db508872dc9a9d54273c59cbf358eeba0ae3b07509766e5ee47231650aed78a",
+      "scope": "folded optical-imaging-module light-blocking/nanostructure architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+      "coating_microstructure_marker": {
+        "variable": "BS",
+        "value_nm": "56.6"
+      }
+    },
+    {
+      "item": 7,
+      "label": "Largan folded-nanostructure optical imaging module seventh example",
+      "paragraphs": [
+        90,
+        94
+      ],
+      "characters": 4794,
+      "sha256": "39e752cea7d89fc760349452c0a4c5f44c28aa52869fed3a26b42baf95f1ce6e",
+      "scope": "folded optical-imaging-module light-blocking/nanostructure architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.folded_optical_imaging_module_light_blocking_nanostructure_architecture_only",
+      "coating_microstructure_marker": {
+        "variable": "RS",
+        "value_nm": "218.0"
+      }
+    },
+    {
+      "item": 8,
+      "label": "Largan folded-nanostructure electronic device eighth example",
+      "paragraphs": [
+        95,
+        103
+      ],
+      "characters": 6226,
+      "sha256": "66392ab6ba02f9d63e8ecf5dc4dd289cc17c5571742f21a6e8df90aedce47a8f",
+      "scope": "electronic-device multi-camera placement architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only"
+    },
+    {
+      "item": 9,
+      "label": "Largan folded-nanostructure electronic device ninth example",
+      "paragraphs": [
+        104,
+        107
+      ],
+      "characters": 2488,
+      "sha256": "7067b0474da9374ea2d66d676dfda3457ed530196ecf4d23164ccd5b0615a4f4",
+      "scope": "electronic-device multi-camera placement architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only"
+    },
+    {
+      "item": 10,
+      "label": "Largan folded-nanostructure vehicle device tenth example",
+      "paragraphs": [
+        108,
+        111
+      ],
+      "characters": 2680,
+      "sha256": "6e1b19da87a9c84ae4ebbf9b0f7ec0bcc3f93f3d6e66bb67c7ad0df00252eabc",
+      "scope": "vehicle multi-camera placement architecture",
+      "ordered_surface_prescription_rows": 0,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.vehicle_multi_camera_placement_architecture_only"
+    }
+  ],
+  "prescription_marker_census": {
+    "focal length": 9,
+    "back focal length": 8,
+    "field of view": 2,
+    "refractive index": 4,
+    "optical lens element": 30,
+    "image sensor": 33,
+    "anti-reflective light blocking membrane layer": 60,
+    "nanostructure": 80,
+    "light path folding element": 171
+  },
+  "absent_prescription_marker_census": {
+    "effective focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "FNO": 0,
+    "F/#": 0,
+    "Abbe": 0,
+    "aspheric": 0,
+    "aspherical": 0,
+    "surface prescription": 0,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "surface no": 0,
+    "radius of curvature": 0,
+    "radius curvature": 0,
+    "curvature radius": 0,
+    "thickness": 0,
+    "aperture stop": 0,
+    "conic": 0,
+    "ordered surface": 0
+  },
+  "conversion_boundary": {
+    "reason": "The continuation publishes folded-module, light-blocking membrane, nanostructure, camera-placement and device architecture. Its seven BS/RS values are coating microstructure sizes; no ordered radii, spacings, materials, conics, asphere coefficients, stop or required F-number metadata is published.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_disclosed_items": 0
+  }
+}

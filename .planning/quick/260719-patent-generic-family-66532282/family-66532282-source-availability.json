@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "family_id": "66532282",
+  "root_id": "US-10739564",
+  "publication_id": "US-10739564-B2",
+  "application_number": "16/101640",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/b8aafd0ef41e2c01/US-10739564-B2.html",
+    "bytes": 43738,
+    "characters": 43094,
+    "normalized_characters": 30560,
+    "sha256": "b8aafd0ef41e2c015ed9d5a2335ea891e1c8c5b87a652f7703da2f7cb5585941",
+    "normalized_sha256": "2156fb863e6d2f0565b7eb71c266d44e2a051b02165390e5c9dfb339a62ca4d4",
+    "html_h2_title_count": 1,
+    "flattened_table_count": 12,
+    "mathml_count": 0,
+    "inline_formula_processing_instruction_count": 50,
+    "html_table_tag_count": 0,
+    "embedded_img_tag_count": 0
+  },
+  "official_pdf_endpoint": {
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10739564",
+    "page_count": 12,
+    "single_raster_pages": 12,
+    "text_layer_characters": 0,
+    "canonical_page_record_set_sha256": "a13cb35070479fbd507a48382ff838602d50b748dc5db7225efc3298f467522c",
+    "consecutive_container_sha256_stable": false,
+    "consecutive_canonical_page_records_stable": true,
+    "retained_fetches": [
+      {
+        "path": ".planning/quick/260719-patent-generic-family-66532282/source-review/US-10739564-B2-official-1.pdf",
+        "bytes": 524144,
+        "sha256": "b5931b2aaa3549c4c614898a3bc57acffcdc3643e1822bc7707e94f1a27f82a4",
+        "page_count": 12,
+        "single_raster_pages": 12,
+        "text_layer_characters": 0
+      },
+      {
+        "path": ".planning/quick/260719-patent-generic-family-66532282/source-review/US-10739564-B2-official-2.pdf",
+        "bytes": 524144,
+        "sha256": "06b56ee9e1e0f888dd1e7ce384a1470455d71a215cf00c539b4ec60511b2fa47",
+        "page_count": 12,
+        "single_raster_pages": 12,
+        "text_layer_characters": 0
+      }
+    ]
+  },
+  "bibliography": {
+    "inventor": "Wang; Jianming",
+    "applicant": "AAC Acoustic Technologies (Shenzhen) Co., Ltd.",
+    "assignee": "AAC Communication Technologies (Changzhou) Co., Ltd.",
+    "filed": "2018-08-13",
+    "patent_date": "2020-08-11",
+    "prior_publication_id": "US-20190154988-A1",
+    "prior_publication_date": "2019-05-23",
+    "priority_applications": [
+      "CN 2017 1 1143816",
+      "CN 2017 1 1144063"
+    ],
+    "priority_date": "2017-11-17"
+  },
+  "lineage": {
+    "same_application_prior_publication": "US-20190154988-A1",
+    "priority_applications": [
+      "CN 2017 1 1143816",
+      "CN 2017 1 1144063"
+    ],
+    "priority_date": "2017-11-17",
+    "related_application_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_b2_html_is_content_authority": true,
+    "official_pdf_used_for_layout_confirmation_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_application_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "derived_f_number_permitted": false
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "after_census": {
+    "affected_items": 186,
+    "affected_roots": 186,
+    "artifact_sha256": "f47b2a27a052dcb21ffab70975f1c5e7ae7e32aa80c16c47ed4aabfb1b32106d",
+    "result_set_sha256": "dbf8a68e115fc09d2ffe5ad90e4118548360869c528c43f1f1cec8988790469a"
+  },
+  "before_census": {
+    "affected_items": 189,
+    "affected_roots": 189,
+    "artifact_sha256": "d638c3c548ac5bca9bbc088a9dc5aaf06e204beea004e00373f70d7932f81db5",
+    "result_set_sha256": "e0b098b9b622c5ce6033889b93690aa18e5691a869309198a680c8f3ed74c180"
+  },
+  "cohort_sha256": "e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b",
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "roots": {
+    "US-20140036377": [
+      {
+        "attempt": 2,
+        "result_sha256": "004887be3f837a49c67aea7e2761874e45a6f237cf990ff20d6478cd2f686bd9",
+        "semantic_sha256": "ded6fd106b35edef7071cabf4a03e348a3168802f9e478ad39d8bf22d6823b7c"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "15a500cda72cffa7bb7735e931aa6e245b28d87fa155ad3e6db52d8e4606e7ae",
+        "semantic_sha256": "ded6fd106b35edef7071cabf4a03e348a3168802f9e478ad39d8bf22d6823b7c"
+      }
+    ],
+    "US-8649094": [
+      {
+        "attempt": 2,
+        "result_sha256": "249a73efd1ce134d76bc60b6e17ed9aff57b55e6b83e7fe24d8a95327f0a4e97",
+        "semantic_sha256": "df2d5144c6478f89ef00f96fc766e0c3ba12f5c44ef9ab69e1f81a2c2edbb67b"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "3997e3001ef938afbf04e2b6498e67d16785b82c6f4b8c46d3f2b5add5f86c2b",
+        "semantic_sha256": "df2d5144c6478f89ef00f96fc766e0c3ba12f5c44ef9ab69e1f81a2c2edbb67b"
+      }
+    ],
+    "US-9069105": [
+      {
+        "attempt": 2,
+        "result_sha256": "bc955485939746dbaafe19034883bb3a54ba3780899fc5aea577f30967da12e2",
+        "semantic_sha256": "cceb0acf081d8aaccbed2cd5d785a6a06d885f9bb678a228e9f1effb77674192"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "9eaca4056d69c9ad0ff6232a09bd752086d2fb925ef95c304a1cab98a889fe52",
+        "semantic_sha256": "cceb0acf081d8aaccbed2cd5d785a6a06d885f9bb678a228e9f1effb77674192"
+      }
+    ]
+  },
+  "schema_version": 1
+}

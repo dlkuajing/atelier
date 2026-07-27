@@ -1,0 +1,392 @@
+{
+  "schema_version": 1,
+  "family_id": "66532282",
+  "root_id": "US-10739564",
+  "publication_id": "US-10739564-B2",
+  "application_number": "16/101640",
+  "title": "Camera optical lens",
+  "bibliography": {
+    "inventor": "Wang; Jianming",
+    "applicant": "AAC Acoustic Technologies (Shenzhen) Co., Ltd.",
+    "assignee": "AAC Communication Technologies (Changzhou) Co., Ltd.",
+    "filed": "2018-08-13",
+    "patent_date": "2020-08-11",
+    "prior_publication_id": "US-20190154988-A1",
+    "prior_publication_date": "2019-05-23",
+    "priority_applications": [
+      "CN 2017 1 1143816",
+      "CN 2017 1 1144063"
+    ],
+    "priority_date": "2017-11-17"
+  },
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/b8aafd0ef41e2c01/US-10739564-B2.html",
+    "bytes": 43738,
+    "characters": 43094,
+    "normalized_characters": 30560,
+    "sha256": "b8aafd0ef41e2c015ed9d5a2335ea891e1c8c5b87a652f7703da2f7cb5585941",
+    "normalized_sha256": "2156fb863e6d2f0565b7eb71c266d44e2a051b02165390e5c9dfb339a62ca4d4",
+    "html_h2_title_count": 1,
+    "flattened_table_count": 12,
+    "mathml_count": 0,
+    "inline_formula_processing_instruction_count": 50,
+    "html_table_tag_count": 0,
+    "embedded_img_tag_count": 0
+  },
+  "sections": {
+    "background": {
+      "marker": "FIELD OF THE PRESENT DISCLOSURE (1)",
+      "characters": 1591,
+      "sha256": "9c499f7d9390ab532fdcf0b39ef11c5ad90383a0e2d1b402bbb83ea5810bb0f5",
+      "numbered_paragraph_range": [
+        1,
+        2
+      ]
+    },
+    "brief": {
+      "marker": "BRIEF DESCRIPTION OF THE DRAWINGS (1)",
+      "characters": 1131,
+      "sha256": "f1c9edad0f0ac6aa74182f85197c49b2771711b43861d5432114a454960f7785",
+      "numbered_paragraph_range": [
+        1,
+        9
+      ]
+    },
+    "detailed": {
+      "marker": "DETAILED DESCRIPTION OF THE EXEMPLARY EMBODIMENTS (10)",
+      "characters": 23228,
+      "sha256": "acfa458e33120d04953463824b223f941a69b59e51bbbe753af34c21342e5360",
+      "numbered_paragraph_range": [
+        10,
+        116
+      ]
+    },
+    "claims": {
+      "marker": "Claims 1. A camera optical lens comprising,",
+      "characters": 3009,
+      "sha256": "787dfde0131b6baa206c1b4b38fac855df3ea7af04daf60460db3a2400f69cb3",
+      "numbered_paragraph_range": null
+    }
+  },
+  "denominators": {
+    "retained_content_authority_documents": 1,
+    "numbered_background_paragraphs": 2,
+    "numbered_brief_paragraphs": 9,
+    "numbered_detailed_paragraphs": 107,
+    "numbered_paragraph_occurrences": 118,
+    "claims": 9,
+    "independent_claims": 1,
+    "declared_figure_panels": 8,
+    "official_drawing_sheets": 5,
+    "flattened_tables": 12,
+    "inline_formula_processing_instructions": 50,
+    "mathml_objects": 0,
+    "source_items": 2,
+    "complete_ordered_prescriptions": 2
+  },
+  "claim_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "independent_claim_numbers": [
+    1
+  ],
+  "declared_figures": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "tables": [
+    {
+      "number": 1,
+      "paragraph": 24,
+      "role": "focal_length",
+      "block_sha256": "fa151b8506be480b94d52f25021be141edc5ca3a927333c74efa25f59cc4359e",
+      "formal_sha256": "32241a99f7851426ac54e2b57c6624738822aea32fc4035edb6eae97f93c53d9",
+      "formal_token_count": 18,
+      "formal_text": "TABLE-US-00001 TABLE 1 focal length (mm) f 3.354 f1 2.893 f2 -9.767 f3 -25.244 f4 2.018 f5 -1.751"
+    },
+    {
+      "number": 2,
+      "paragraph": 33,
+      "role": "ordered_surface_material",
+      "block_sha256": "66a60217c43c120e7671b41b37a6ffd5bd6357542198c5b4aebbc63b3cdefa25",
+      "formal_sha256": "7fde70966d4eb8d34251c3c57771dad3518e18ecd22026d7c6b678a24fe32954",
+      "formal_token_count": 100,
+      "formal_text": "TABLE-US-00002 TABLE 2 Curvature Thickness/ Refractive Abbe radius (R) Distance (d) power number (mm) (mm) (nd) (νd) St St Infinity d0= -0.376 L1 R1 1.228 d1= 0.573 nd1 1.5441 ν1 56.12 R2 4.609 d2= 0.078 L2 R3 157.569 d3= 0.201 nd2 1.6614 ν2 20.41 R4 6.255 d4= 0.377 L3 R5 -6.050 d5= 0.258 nd3 2.0240 ν3 20.41 R6 -8.049 d6= 0.320 L4 R7 -5.977 d7= 0.581 nd4 1.5441 ν4 56.12 R8 -0.962 d8= 0.313 L5 R9 -2.624 d9= 0.295 nd5 1.5352 ν5 56.12 R10 1.522 d10= 0.329 Glass R11 Infinity d11= 0.210 ndg 1.5168 νg 64.17 R12 Infinity d12= 0.469"
+    },
+    {
+      "number": 3,
+      "paragraph": 61,
+      "role": "asphere_coefficients",
+      "block_sha256": "05a958020d6604f380be5bd2a0a66360be62560e87168899aa740915629d2a63",
+      "formal_sha256": "ece2490a3a2c67652e7952af8ae9ba1285645ba25fdf762b4645c5fd8d178ad6",
+      "formal_token_count": 106,
+      "formal_text": "TABLE-US-00003 TABLE 3 Conic Index Aspherical Surface Index k A4 A6 A8 A10 A12 A14 A16 R1 -2.2715E-02 -1.4757E-02 1.1203E-01 -4.4188E-01 1.0203E+00 -1.4794E+00 1.2352E+00 -5.0464E-01 R2 -5.7623E+01 8.7900E-03 -3.3810E-01 1.4926E+00 -3.9812E+00 6.2918E+00 -5.3641E+00 1.8304E+00 R3 -7.8407E+00 -4.7472E-02 1.8389E-01 3.8677E-02 -2.2352E-01 2.0831E-01 5.8972E-02 -1.1034E-01 R4 3.8510E+01 -4.9444E-02 1.3190E+00 -7.6279E+00 2.9276E+01 -6.4191E+01 7.5351E+01 -3.6835E+01 R5 5.7425E+01 -2.3239E-01 5.6298E-01 -4.0021E+00 1.6503E+01 -3.8501E+01 4.7671E+01 -2.4281E+01 R6 -3.7517E+00 -1.7318E-01 -3.7778E-02 3.7860E-01 -1.1212E+00 1.5877E+00 -9.7466E-01 1.7741E-01 R7 -7.6776E+00 -7.6583E-02 1.1822E-01 -1.8450E-01 1.8399E-01 -9.1175E-02 2.1364E-02 -1.8989E-03 R8 -1.0029E+00 2.5149E-01 -2.5260E-01 2.4027E-01 -1.3001E-01 4.0870E-02 -7.1651E-03 5.4142E-04 R9 -1.4985E+01 -9.2344E-02 3.8552E-02 -6.5874E-03 1.0395E-03 -2.2070E-04 3.1058E-05 -1.7088E-06 R10 -1.3453E+01 -8.7717E-02 4.3906E-02 -1.9056E-02 5.2653E-03 -9.0575E-04 8.7475E-05 -3.4368E-06"
+    },
+    {
+      "number": 4,
+      "paragraph": 63,
+      "role": "inflexion_points",
+      "block_sha256": "3b9812a941c1d86c16e3f17f0c590040e212baf4fe8a87f29ab111d7c212373b",
+      "formal_sha256": "104adbf02231bf1ba1fff891bd571abb14583090fa3372841acad1a505f50190",
+      "formal_token_count": 51,
+      "formal_text": "TABLE-US-00004 TABLE 4 Inflexion point Inflexion point Inflexion point Inflexion point number position 1 position 2 position 3 R1 1 0.875 R2 1 0.505 R3 2 0.115 0.305 R4 1 0.755 R5 0 R6 0 R7 3 0.955 1.395 1.515 R8 2 0.865 1.595 R9 1 1.255 R10 2 0.495 2.155"
+    },
+    {
+      "number": 5,
+      "paragraph": 64,
+      "role": "arrest_points",
+      "block_sha256": "fab91781c43d496223a9e6e2961e0fa44c00a13daaa1afa4ac5d866102510408",
+      "formal_sha256": "60a849af89411e147eafe83476a8d821ee32f7ad7c1367dcab59da384083598e",
+      "formal_token_count": 39,
+      "formal_text": "TABLE-US-00005 TABLE 5 Arrest point Arrest point Arrest point number position 1 position 2 R1 0 R2 1 0.805 R3 2 0.215 0.355 R4 0 R5 0 R6 0 R7 0 R8 0 R9 1 1.985 R10 1 1.145"
+    },
+    {
+      "number": 6,
+      "paragraph": 68,
+      "role": "condition_values",
+      "block_sha256": "c1ca29c3498857cb64358d04aa89f588f5220a8ec90649d48196726754ecf30f",
+      "formal_sha256": "4821dd1ea3b988b03d9ee1d4f45a153279da0e60829b89868bc8e539565752e9",
+      "formal_token_count": 63,
+      "formal_text": "TABLE-US-00006 TABLE 6 Embodiment 1 0.85 < f1/f < 0.87, 0.8625522 -2.8 < f2/f < -3.0 -2.912045 -8.4 < f3/f < -7.3 -7.5265355 0.58 < f4/f < 0.62 0.6016696 -0.55 < f5/f < -0.50 -0.5220632 9.5 < v3/n3 < 11.5, 10.083993 40 < V2 + V3 < 42 40.82 0.25 < d5 < 0.26 0.258 4.4 < (d1 + d7)/d5 < 4.8 4.4728682"
+    },
+    {
+      "number": 7,
+      "paragraph": 72,
+      "role": "focal_length",
+      "block_sha256": "e0fb06aed3f4a1d28537c9adc0cf85f95b8a9b13bb2e64d2c8b2771431e0b37b",
+      "formal_sha256": "335c5a097c52c3798363ab1ad89732668dafa40f9d53a001ecabd502a0586967",
+      "formal_token_count": 18,
+      "formal_text": "TABLE-US-00007 TABLE 7 focal length (mm) f 3.367 f1 2.900 f2 -9.705 f3 -27.842 f4 2.030 f5 -1.749"
+    },
+    {
+      "number": 8,
+      "paragraph": 80,
+      "role": "ordered_surface_material",
+      "block_sha256": "e639567a1cae61570bd15808b19554fc2986b97e523cfad15219995567a7371b",
+      "formal_sha256": "5910e1f2145ab43e5ba4ca1f909197ce43943729c98b7f33b7c442f52cf7b015",
+      "formal_token_count": 100,
+      "formal_text": "TABLE-US-00008 TABLE 8 Curvature Thickness/ Refractive Abbe radius (R) Distance (d) power number (mm) (mm) (nd) (νd) St St Infinity d0= -0.381 L1 R1 1.227 d1= 0.580 nd1 1.5441 ν1 56.12 R2 4.541 d2= 0.078 L2 R3 188.524 d3= 0.201 nd2 1.6614 ν2 20.41 R4 6.258 d4= 0.382 L3 R5 -6.050 d5= 0.252 nd3 2.0240 ν3 20.41 R6 -7.825 d6= 0.327 L4 R7 -5.671 d7= 0.572 nd4 1.5441 ν4 56.12 R8 -0.960 d8= 0.311 L5 R9 -2.629 d9= 0.299 nd5 1.5352 ν5 56.12 R10 1.518 d10= 0.326 Glass R11 Infinity d11= 0.210 ndg 1.5168 νg 64.17 R12 Infinity d12= 0.466"
+    },
+    {
+      "number": 9,
+      "paragraph": 108,
+      "role": "asphere_coefficients",
+      "block_sha256": "adc0c0cd1e8e044d9a192bccc925f17496fc01c3751a17fd6dee0df03d54de71",
+      "formal_sha256": "ed6bc4116253640e169ac79c1338752073287ad8654349dc7aaff9636b39ca71",
+      "formal_token_count": 106,
+      "formal_text": "TABLE-US-00009 TABLE 9 Conic Index Aspherical Surface Index k A4 A6 A8 A10 A12 A14 A16 R1 -2.0982E-02 -1.4909E-02 1.1384E-01 -4.4200E-01 1.0208E+00 -1.4791E+00 1.2359E+00 -5.0338E-01 R2 -5.6157E+01 7.4683E-03 -3.3913E-01 1.4921E+00 -3.9811E+00 6.2929E+00 -5.3645E+00 1.8300E+00 R3 1.0766E+02 -4.9118E-02 1.8143E-01 3.6997E-02 -2.2432E-01 2.0694E-01 5.8421E-02 -1.0872E-01 R4 3.8764E+01 -4.6105E-02 1.3238E+00 -7.6257E+00 2.9275E+01 -6.4220E+01 7.5335E+01 -3.6678E+01 R5 5.6619E+01 -2.3172E-01 5.6096E-01 -3.9963E+00 1.6497E+01 -3.8517E+01 4.7659E+01 -2.4192E+01 R6 -2.7737E+00 -1.7444E-01 -3.8413E-02 3.7854E-01 -1.1199E+00 1.5887E+00 -9.7555E-01 1.7475E-01 R7 -8.6633E+00 -7.6637E-02 1.1805E-01 -1.8461E-01 1.8396E-01 -9.1180E-02 2.1367E-02 -1.8954E-03 R8 -1.0019E+00 2.5136E-01 -2.5262E-01 2.4025E-01 -1.3002E-01 4.0872E-02 -7.1647E-03 5.4110E-04 R9 -1.5593E+01 -9.2240E-02 3.8553E-02 -6.5895E-03 1.0390E-03 -2.2077E-04 3.1058E-05 -1.7039E-06 R10 -1.3196E+01 -8.7552E-02 4.3913E-02 -1.9056E-02 5.2651E-03 -9.0578E-04 8.7472E-05 -3.4362E-06"
+    },
+    {
+      "number": 10,
+      "paragraph": 110,
+      "role": "inflexion_points",
+      "block_sha256": "56aefb59a19a5c8fe397122af5f950f3a9fba0a2ea2c2d52da90ce8e0ea2906d",
+      "formal_sha256": "552f206f920da9875b3dc10ba66cd5c521fda8238dc92f3581c2aae6dbc5894f",
+      "formal_token_count": 51,
+      "formal_text": "TABLE-US-00010 TABLE 10 Inflexion point Inflexion point Inflexion point Inflexion point number position 1 position 2 position 3 R1 1 0.875 R2 1 0.495 R3 2 0.105 0.315 R4 1 0.765 R5 0 R6 0 R7 3 0.965 1.395 1.495 R8 2 0.875 1.595 R9 1 1.255 R10 2 0.495 2.155"
+    },
+    {
+      "number": 11,
+      "paragraph": 111,
+      "role": "arrest_points",
+      "block_sha256": "4efb0ff18238c10fe8e2329d246741ed233b72b1b43efdbd7be8f78729d874f4",
+      "formal_sha256": "3ed208bb2d2362a5532f278496639a6ff072fc41b3cac854d48471438927236a",
+      "formal_token_count": 39,
+      "formal_text": "TABLE-US-00011 TABLE 11 Arrest point Arrest point Arrest point number position 1 position 2 R1 0 R2 1 0.805 R3 2 0.185 0.385 R4 0 R5 0 R6 0 R7 0 R8 0 R9 1 1.985 R10 1 1.155"
+    },
+    {
+      "number": 12,
+      "paragraph": 114,
+      "role": "condition_values",
+      "block_sha256": "b16d2b35bdf59ca2c5896d86546023b812fdd557da1fc3884beb081e4f7c4e8d",
+      "formal_sha256": "ef058b7a781b84149bbc0e2badf505b718dff365c96d546bfed4acfe99f2f18e",
+      "formal_token_count": 63,
+      "formal_text": "TABLE-US-00012 TABLE 12 Embodiment 2 0.85 < f1/f < 0.87, 0.86130086 -2.8 < f2/f < -3.0 -2.8823879 -8.4 < f3/f < -7.3 -8.2690823 0.58 < f4/f < 0.62 0.6029106 -0.55 < f5/f < -0.50 -0.5194535 9.5 < v3/n3 < 11.5, 10.083992 40 < V2 + nV3 < 42 40.82 0.25 < d5 < 0.26 0.252 4.4 < (d1 + d7)/d5 < 4.8 4.57142857"
+    }
+  ],
+  "item_boundaries": {
+    "detailed_preamble": [
+      10,
+      10
+    ],
+    "items": [
+      {
+        "item_number": 1,
+        "label": "AAC camera optical lens embodiment 1",
+        "detailed_paragraphs": [
+          11,
+          69
+        ],
+        "figures": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "tables": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "focal_length_mm": 3.354,
+        "entrance_pupil_diameter_mm": 1.86,
+        "full_vision_field_image_height_mm": 2.9335,
+        "diagonal_vision_field_angle_deg": 81.39,
+        "exact_f_number": null,
+        "f_number_upper_bound": 1.8,
+        "terminal_status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.system_f_number_absent"
+      },
+      {
+        "item_number": 2,
+        "label": "AAC camera optical lens embodiment 2",
+        "detailed_paragraphs": [
+          70,
+          115
+        ],
+        "figures": [
+          5,
+          6,
+          7,
+          8
+        ],
+        "tables": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "focal_length_mm": 3.367,
+        "entrance_pupil_diameter_mm": 1.87,
+        "full_vision_field_image_height_mm": 2.9335,
+        "diagonal_vision_field_angle_deg": 81.21,
+        "exact_f_number": null,
+        "f_number_upper_bound": 1.8,
+        "terminal_status": "metadata_unpublished",
+        "reason_code": "metadata_unpublished.system_f_number_absent"
+      }
+    ],
+    "closing_boilerplate": [
+      116,
+      116
+    ]
+  },
+  "prescription_denominator_per_item": {
+    "lens_elements": 5,
+    "lens_surfaces": 10,
+    "filter_elements": 1,
+    "filter_surfaces": 2,
+    "ordered_radius_distance_rows": 13,
+    "material_rows": 6,
+    "asphere_rows": 10,
+    "asphere_terms_per_row_including_conic": 8
+  },
+  "direct_system_metadata_fields": [
+    "focal_length_mm",
+    "entrance_pupil_diameter_mm",
+    "full_vision_field_image_height_mm",
+    "diagonal_vision_field_angle_deg"
+  ],
+  "missing_required_system_metadata": [
+    "exact_f_number"
+  ],
+  "f_number_evidence": {
+    "upper_bound": 1.8,
+    "upper_bound_occurrences": 2,
+    "exact_f_number_occurrences": 0,
+    "FNO_occurrences": 0,
+    "numerical_aperture_occurrences": 0,
+    "derived_from_focal_length_and_entrance_pupil": false
+  },
+  "items": [
+    {
+      "item_number": 1,
+      "label": "AAC camera optical lens embodiment 1",
+      "detailed_paragraphs": [
+        11,
+        69
+      ],
+      "figures": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "tables": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "focal_length_mm": 3.354,
+      "entrance_pupil_diameter_mm": 1.86,
+      "full_vision_field_image_height_mm": 2.9335,
+      "diagonal_vision_field_angle_deg": 81.39,
+      "exact_f_number": null,
+      "f_number_upper_bound": 1.8,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item_number": 2,
+      "label": "AAC camera optical lens embodiment 2",
+      "detailed_paragraphs": [
+        70,
+        115
+      ],
+      "figures": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "tables": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "focal_length_mm": 3.367,
+      "entrance_pupil_diameter_mm": 1.87,
+      "full_vision_field_image_height_mm": 2.9335,
+      "diagonal_vision_field_angle_deg": 81.21,
+      "exact_f_number": null,
+      "f_number_upper_bound": 1.8,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    }
+  ],
+  "source_adjudication": {
+    "outcome": "two source-proven metadata_unpublished terminals",
+    "conversion_count": 0,
+    "formal_output_count": 0,
+    "related_application_numeric_borrowing_used": false,
+    "drawing_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "source_typography_repaired": false,
+    "html_is_content_authority": true
+  }
+}

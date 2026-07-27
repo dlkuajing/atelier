@@ -1,0 +1,941 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "97226661",
+  "root_id": "US-20260043988",
+  "publication_id": "US-20260043988-A1",
+  "application_number": "19/046138",
+  "title": "IMAGING LENS SYSTEM",
+  "bibliography": {
+    "inventors": [
+      "KIM; Hag Chul",
+      "CHO; Seong Il"
+    ],
+    "applicant": "Samsung Electro-Mechanics Co., Ltd.",
+    "assignee": "Samsung Electro-Mechanics Co., Ltd.",
+    "filing_date": "2025-02-05",
+    "priority_application": "KR 10-2024-0105343",
+    "priority_date": "2024-08-07"
+  },
+  "source": {
+    "evidence_type": "uspto_ppubs_parser_input_html",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/bde68afa0fbd460a/US-20260043988-A1.html",
+    "bytes": 147944,
+    "sha256": "bde68afa0fbd460a1fb0fbe97e617072175a3a315b0e787ffa68a3d3ce4b4d5d",
+    "characters": 141144,
+    "normalized_characters": 110055,
+    "normalized_sha256": "5e9f93a42a2e62cac478a27b72af168d8a0c1fc41bc415b0ed4f94d7bff274f7"
+  },
+  "sections": {
+    "preamble": {
+      "normalized_start": 0,
+      "normalized_sha256": "c180e4c79ceb4057b5f92734ffa7b04d12b003aeec62e74ac5f022e903e75ec6"
+    },
+    "abstract": {
+      "normalized_start": 269,
+      "normalized_sha256": "9ddf3b26db8788976ae2b5bbb1b5901d69345001d23c38560d254b905a221edc"
+    },
+    "background": {
+      "normalized_start": 1561,
+      "normalized_sha256": "99057a35e8b2ce8ae9a13e253d788670d1ad8bf70a179a5b5d26e8db0975da6b"
+    },
+    "brief": {
+      "normalized_start": 3406,
+      "normalized_sha256": "7696c798df01087b892bd50cfb4d4eb1eee9a30931c1754f817c56d51aa766cb"
+    },
+    "detailed": {
+      "normalized_start": 6112,
+      "normalized_sha256": "af8389c4a1f1b8edee03fe05a019de915e224d7ab77a9af4091e9189488cfe89"
+    },
+    "claims": {
+      "normalized_start": 106766,
+      "normalized_sha256": "247ac311998617effe44235143d62980c4f22a7bf1863bc4c33485624fc4108e"
+    }
+  },
+  "paragraph_spans": [
+    {
+      "role": "background_summary",
+      "paragraph_range": [
+        1,
+        6
+      ],
+      "paragraph_count": 6,
+      "payload_sha256": "8cb0b0543b55ab3513f0a6c80b2726aa0624601749729625cfe4273fa6c864ef"
+    },
+    {
+      "role": "brief_drawings",
+      "paragraph_range": [
+        7,
+        28
+      ],
+      "paragraph_count": 22,
+      "payload_sha256": "6870741cd7604d8b3e7e5b20203bbda165576c3561d043db272df10d90452837"
+    },
+    {
+      "role": "detailed_description",
+      "paragraph_range": [
+        29,
+        178
+      ],
+      "paragraph_count": 150,
+      "payload_sha256": "1f59cf3ad507747567479e01b9c5e440699c26d8e6b2e6a159eadc2fe6d67b87"
+    },
+    {
+      "role": "general_detailed_disclosure",
+      "paragraph_range": [
+        29,
+        81
+      ],
+      "paragraph_count": 53,
+      "payload_sha256": "b392fa8cc745b8d253d7a2c0b9a96dc0400e9c0fc096cdf767a8271d8585e9c8"
+    },
+    {
+      "role": "source_item_1",
+      "paragraph_range": [
+        82,
+        91
+      ],
+      "paragraph_count": 10,
+      "payload_sha256": "846508fc99e890fe190a42545ef0c3be7e6608abce2e815b54bf212e7a50b0bc"
+    },
+    {
+      "role": "source_item_2",
+      "paragraph_range": [
+        92,
+        100
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "cad864153153e46b87100495510e45194f19cf1755821495ea4db59757617d83"
+    },
+    {
+      "role": "source_item_3",
+      "paragraph_range": [
+        101,
+        109
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "d62d6275ee0444826652b865af99bc7e030ed525e9c70403647459d61ab9b650"
+    },
+    {
+      "role": "source_item_4",
+      "paragraph_range": [
+        110,
+        118
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "f71d85666c951d14a8b247e69ab0d9d9ceb2bc19f5fe697f803f92c67111c085"
+    },
+    {
+      "role": "source_item_5",
+      "paragraph_range": [
+        119,
+        127
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "5189b7cd9401590278f459b4b6a8e2f5320a5878a53bcb580a9fcea32fb347c4"
+    },
+    {
+      "role": "source_item_6",
+      "paragraph_range": [
+        128,
+        136
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "9de46e603efd7170e291e295f779afb2ddb9aabaf5e122e80cc0b3f530f01657"
+    },
+    {
+      "role": "source_item_7",
+      "paragraph_range": [
+        137,
+        145
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "26b657db856d8c396b121644714fa2979d8bdd29f34a68cb54d2a9d8546b2095"
+    },
+    {
+      "role": "source_item_8",
+      "paragraph_range": [
+        146,
+        154
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "3b0a1da85d9d686d44273eb908f10972a65cf60b604a75b898d11c0dd8a5dc14"
+    },
+    {
+      "role": "source_item_9",
+      "paragraph_range": [
+        155,
+        163
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "230334c37df7aec40b2929ffc24bdded1463091b9cd6f97a4fa049ec65fc8e7a"
+    },
+    {
+      "role": "source_item_10",
+      "paragraph_range": [
+        164,
+        172
+      ],
+      "paragraph_count": 9,
+      "payload_sha256": "21a1b62b09a9b39b1d120ebf99257ee3f2c0e0d8369a47acfe8b9eeb9fb885e4"
+    },
+    {
+      "role": "shared_tables_and_characteristics",
+      "paragraph_range": [
+        173,
+        174
+      ],
+      "paragraph_count": 2,
+      "payload_sha256": "bce21d686848ab34e4ffda28eb702be7f1e21d0c90a30c39fe5d9cbfe0ada048"
+    },
+    {
+      "role": "source_item_11",
+      "paragraph_range": [
+        175,
+        176
+      ],
+      "paragraph_count": 2,
+      "payload_sha256": "d03f8f986c3264b98835eac2ebac5fa2035fc31ad65c5994ddf156af0f76643c"
+    },
+    {
+      "role": "closing",
+      "paragraph_range": [
+        177,
+        178
+      ],
+      "paragraph_count": 2,
+      "payload_sha256": "22c830d7cd5990bee55d5e366a7b853086d1fe2e834b28690ea216ab276f7859"
+    }
+  ],
+  "denominator": {
+    "background_summary_paragraphs": 6,
+    "brief_drawing_paragraphs": 22,
+    "detailed_description_paragraphs": 150,
+    "description_paragraphs_total": 172,
+    "numbered_paragraphs_total": 178,
+    "claims": 16,
+    "independent_claims": 2,
+    "source_tables": 26,
+    "mathml_objects": 31,
+    "figref_tags": 64,
+    "declared_figures": 31,
+    "drawing_sheets": 31,
+    "source_items": 11,
+    "ordered_optical_prescriptions": 10,
+    "published_zoom_states": 20
+  },
+  "claims": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "independent_numbers": [
+      1,
+      9
+    ],
+    "payload_sha256": [
+      "e4a17269b2f5f1a726318aa470d0ddf04c611209349cc0e9bdc3090beeb160dc",
+      "7c6d175470326289e56d90e41bb750eefb4900d1bcd91f108fd6e48a74a6830c",
+      "812c211fe4829e8925f7edd0b2b3ddd5180430e0e609a678c8572110e5ec1b7c",
+      "bc2b90759d9ed8007533e94ed78b33696d4e20bf1e45e61aab24074346589cde",
+      "cd51b0ac104eda009bca661d81626b12b668c34dbc9b8a9455742af2c2d4d87f",
+      "480e9542836afdb77c47cfdfc82e3970d3bac19cc4846177333d6e34a834c922",
+      "60926b2f48fc36e4f2b24f0221a1b3bac55e3e0ecae8274af43799676b834974",
+      "6f39ecb677956ced083cd2901af33157045dd38656a38b8f33ca831ff68a4f2c",
+      "8530716e098455f69a1212116373cc565afb6c2176f5539396dfb7802f619546",
+      "e5a72cbf8f40ae13ef6f26abbac35ff457e416b5c10357ba8af5d577f1ed3d7f",
+      "c34147ace605e79ee66fa58da6ad3d51e87e91a82139ee4efe516d31db5aced9",
+      "66bd12aecf7710e962de7d0c3f832a20951cc62d1fdcc8192d16d2f80451e924",
+      "40f6e38d84bc70c938143ce7d1f34c9905c52cd74603ad7c995232c74fd6a9b2",
+      "88076847d4b97b59a37b15c7c17490d3b58c075c447348348d9ad9a8f9f9aa30",
+      "bdce49886de5a00ad4c4e369abe724d428f04a9d14f2ebd517a043f4dfdda8c8",
+      "71319e79d0456b470e4a5432a677719cdd97b37121a05a8623220ddd9d3ea1fa"
+    ]
+  },
+  "figures": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "pdf_page_range": [
+      2,
+      32
+    ]
+  },
+  "tables_and_math": {
+    "table_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+    ],
+    "table_payload_sha256": [
+      "f3b1b030795a009318be557de0eed27066f032a29596383d252dc5a5ec85c119",
+      "7978be5552bb949c4b9c18d759f7022e308b7a762ceea3c4757d8bfc89b37526",
+      "91a2e89ca34c280675fb60a4a45a348368c7d30db2fa38070f2b41e04fb64bec",
+      "c1303fd4358e79c54f818551c34b8fd7ecd9bbb585754e2dc2105831deabfdce",
+      "c3037836a89cc44f7c6a40dfb764dfe35a1f483d866588c5c0695e78d4851aec",
+      "1cfd57adf96f77566a79bad957a086ebbb07f732e6bc9fd1afd4f797eaf62c44",
+      "328d7a9f6fa364ddf32556fc7be9a1a357aed661678dceb94ef851c7ce9498f5",
+      "c4a229a8eb42612d95ca1fd451b4145fc05416d6bb0b1f564615caecf07bfd51",
+      "1b98d88bcad62827c9d7679f40e8b1370d56623cf2c70a77a70f707ff6f05e8a",
+      "b776e903c2a3e46b1c8353ce456c0807651997a077814fb29598acfa5a3d5b5d",
+      "db4b85e738d93cf4b417cd698fad6e135fde32956c8338d418521243dc20a66a",
+      "4364b157a9cccb6da29277a80bf9606d2f91d596fa18a26feaaaf1d7d27c5ed4",
+      "42ed3238f2e850e3b8dd443f174449db6c8a4175af94033dab54c02a96ec2892",
+      "e08348ea090ec8073acbb241a00bc305feb348bb50fb54c1f4d9f8f6ee9b29fa",
+      "69abab61705b5ecb6c70ac1acaf0466d13bb1ab98d22af376c2fbbfe639d1c7a",
+      "52381f4d34a51a2bcc43345b4b5dab7179d781f52bae9be57c73e8a09f8b7100",
+      "9ef93e3cc3395026866fe8f97bd8aa7e42699a556d12104eb85e4fad490ba914",
+      "0007924239bf6b582289582e39a63c3f6449c2abcaa1146e09199a5c1a8b2347",
+      "1fde71963673376f4a232a91141aca6f51328830554c0399890bdbe7b72910fa",
+      "e782330a854c75438a4fbcdface4fb634fe3303d6b8ce01ba0b4037cff87edc7",
+      "b6250d6d9edf25137eb450e7306934aac845e5e76a538265eb3da1729fe6b667",
+      "348b8fb8c342352f4dbfc7900af1739e47f22ba7862186a35b0605de61bbaded",
+      "c70e8f496ff596a321d663748316ebb163ad86f023169065c3b0fc04584eb80a",
+      "6e8d733d8def4df8ae352c850bba599f2351435bed44d1b035266e5b32f54d53",
+      "f6b6df2ae7cdf740c90a6f44decb4fb6923da08e0194611bf7a94d4e15eddb25",
+      "b0ba724bb9a4967c38636df84ec2f17e3809c2894584402d1a49ecd2b0dbf7b3"
+    ],
+    "surface_tables": [
+      1,
+      3,
+      5,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19
+    ],
+    "asphere_tables": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20
+    ],
+    "surface_rows_total": 220,
+    "asphere_surfaces_total": 160,
+    "conic_plus_coefficient_cells_total": 1600,
+    "table21_direct_values": {
+      "fw": [
+        "18.70",
+        "18.70",
+        "18.70",
+        "18.70",
+        "18.70",
+        "18.70",
+        "18.70",
+        "18.70",
+        "18.70",
+        "18.70"
+      ],
+      "wide_f_number": [
+        "2.50",
+        "2.50",
+        "2.40",
+        "2.40",
+        "2.40",
+        "2.40",
+        "2.40",
+        "2.40",
+        "2.40",
+        "2.50"
+      ],
+      "ft": [
+        "28.00",
+        "28.00",
+        "28.00",
+        "28.00",
+        "28.00",
+        "28.00",
+        "28.00",
+        "28.00",
+        "30.00",
+        "30.00"
+      ],
+      "tele_f_number": [
+        "3.40",
+        "3.40",
+        "3.30",
+        "3.30",
+        "3.30",
+        "3.30",
+        "3.30",
+        "3.30",
+        "3.40",
+        "3.70"
+      ]
+    },
+    "table22_printed_ratios": {
+      "TTL/2lmgHT": [
+        "2.5087",
+        "2.5087",
+        "2.4913",
+        "2.4913",
+        "2.4913",
+        "2.4913",
+        "2.4913",
+        "2.4913",
+        "2.4913",
+        "2.4913"
+      ],
+      "BFLw/2lmgHT": [
+        "0.4341",
+        "0.4494",
+        "0.4432",
+        "0.4409",
+        "0.4428",
+        "0.4481",
+        "0.4410",
+        "0.4562",
+        "0.4284",
+        "0.4330"
+      ],
+      "TTL/fw": [
+        "1.5348",
+        "1.5348",
+        "1.5241",
+        "1.5241",
+        "1.5241",
+        "1.5241",
+        "1.5241",
+        "1.5241",
+        "1.5241",
+        "1.5241"
+      ]
+    },
+    "ordered_math_object_sha256": [
+      "e37ae0f5c16a0028f6d6378dcae253106e502d9f220eb033aa26cf587dc867dc",
+      "7eec31fd6060ec17f119a05b6b1d02935fa6ec65bf089048638fc72fbe86cfd1",
+      "526e94fb174314d55943a0cca907b2a164427db679e50f97c4eee62d9bcd5e26",
+      "6c8a6a4b593f5458bc8862b31cfe60b1d11ec9bb4be8b3f195be7c2f4cfa778b",
+      "50e82f7f1d8d3bc87f989dfb85116f7058b4bc51b7bd549dabb6219bfb546e3e",
+      "651ddd3bf7e5f346777f73c859887fadba9d41154e2ac38be49d794707eedf02",
+      "3a11ff967cfe2e60d00ca6aed75ced49db61c13661af26cc5c6c211aa4ea9281",
+      "7fc47485c47a9ec368b2b5ceda94e2d7cad1cc6e7be00952e6e6a118d2f10256",
+      "55e0361556c8c27f94388b77d074d9dd5b31805376251107c6696e56f3918541",
+      "8a73c7c2c4686edec1cbdc6440115e0f0871530b09da9b9558bab829fd3a2edf",
+      "cc7a4a9a017e4d3c3ff61ee51f27dae258d4de0a0c98c6618b4ad70692265290",
+      "cacae16774f9ac77aabd2d4a8f0b0f2032a0821168bc56ac6e55c8771d33de6f",
+      "f9707be491069315e70c85acec7b7e4a4b836ecf5d52f1780a637fcd5d29e3dd",
+      "9569e710e0a76f557a6c40971813da9182cc8898d15b795302854f55273d5d68",
+      "1ae24fc61ce598107eda7dcbed232d8708c55f282885c8055d7faaa2a82e2d8e",
+      "03c0670bcabd94d45e1b711ff1cb1a2c23c0c6519d11f55c14fe2269538ce15e",
+      "32ff48f2071c081767bd49a1ee430896de37a4f759d122bf255e18bd356a3fa5",
+      "9a87f5d8c1eaddfae6dc98be7a40f3da1ef87359e76b8d689d9e904198f127dd",
+      "5214c9a9b299ba742118639af3c25b88efcb225460ba2c3e8b285cf59db39bb8",
+      "ccffbe122c207cd8a1097f67035aa6e507311201b5b9b9e36d4713cb03a9bded",
+      "2ab0434ec3860029ad4ac7364cf32c521c80f9c3ab0ad886075ed88f1a2ef7e1",
+      "8fed1d8a200050b4e6ab36360b1d17877a087ec51ecf667acc65a8da209ad2ad",
+      "3315c44444db60b2222c82491852e032b1150dd0f43e9bff3e94b4261979e7b9",
+      "4895642cb5f722f9af6c30d40e031198a7dac4d52645014183444e82b37d7676",
+      "ffd299075b6f52853f24a9b8599a8aa5e9471a671e2c695c808c9a50004bd2cd",
+      "fb27830edd5cce25fd2ec7b78b653def65df8d4636e79b9279b0c5ef5d058838",
+      "52ca9db1628da113a26109496dec6cfe74f9badab8a5860473902f097aa23583",
+      "d4c8295ce5803c8073c19a3ec7c01aafc1653a52964a6d19383c9bedcfd6ac6a",
+      "e6e111ac4b60770ee3c884353547891bf2a01b150810c592d75b8a1746e7a4f6",
+      "6724c4145b92f9c9ea4810498dd13f9ab4d40cf8fc73d4dd6a98d58b0fe5d460",
+      "b8f135c81ab05cc62cca8bd128a78cdeddbd78b4d7af67a2b8b157116484bcbb"
+    ],
+    "equation_1_math_object_number": 31
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Samsung zoom eight-lens first embodiment",
+      "paragraph_range": [
+        82,
+        91
+      ],
+      "figures": [
+        1,
+        2,
+        3
+      ],
+      "tables": [
+        1,
+        2
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.50",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.40",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 2,
+      "label": "Samsung zoom eight-lens second embodiment",
+      "paragraph_range": [
+        92,
+        100
+      ],
+      "figures": [
+        4,
+        5,
+        6
+      ],
+      "tables": [
+        3,
+        4
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.50",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.40",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 3,
+      "label": "Samsung zoom eight-lens third embodiment",
+      "paragraph_range": [
+        101,
+        109
+      ],
+      "figures": [
+        7,
+        8,
+        9
+      ],
+      "tables": [
+        5,
+        6
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.40",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.30",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 4,
+      "label": "Samsung zoom eight-lens fourth embodiment",
+      "paragraph_range": [
+        110,
+        118
+      ],
+      "figures": [
+        10,
+        11,
+        12
+      ],
+      "tables": [
+        7,
+        8
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.40",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.30",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 5,
+      "label": "Samsung zoom eight-lens fifth embodiment",
+      "paragraph_range": [
+        119,
+        127
+      ],
+      "figures": [
+        13,
+        14,
+        15
+      ],
+      "tables": [
+        9,
+        10
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.40",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.30",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 6,
+      "label": "Samsung zoom eight-lens sixth embodiment",
+      "paragraph_range": [
+        128,
+        136
+      ],
+      "figures": [
+        16,
+        17,
+        18
+      ],
+      "tables": [
+        11,
+        12
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.40",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.30",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 7,
+      "label": "Samsung zoom eight-lens seventh embodiment",
+      "paragraph_range": [
+        137,
+        145
+      ],
+      "figures": [
+        19,
+        20,
+        21
+      ],
+      "tables": [
+        13,
+        14
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.40",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.30",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 8,
+      "label": "Samsung zoom eight-lens eighth embodiment",
+      "paragraph_range": [
+        146,
+        154
+      ],
+      "figures": [
+        22,
+        23,
+        24
+      ],
+      "tables": [
+        15,
+        16
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.40",
+      "tele_focal_length_mm": "28.00",
+      "tele_f_number": "3.30",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 9,
+      "label": "Samsung zoom eight-lens ninth embodiment",
+      "paragraph_range": [
+        155,
+        163
+      ],
+      "figures": [
+        25,
+        26,
+        27
+      ],
+      "tables": [
+        17,
+        18
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.40",
+      "tele_focal_length_mm": "30.00",
+      "tele_f_number": "3.40",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 10,
+      "label": "Samsung zoom eight-lens tenth embodiment",
+      "paragraph_range": [
+        164,
+        172
+      ],
+      "figures": [
+        28,
+        29,
+        30
+      ],
+      "tables": [
+        19,
+        20
+      ],
+      "published_modes": [
+        "wide-angle",
+        "telephoto"
+      ],
+      "wide_focal_length_mm": "18.70",
+      "wide_f_number": "2.50",
+      "tele_focal_length_mm": "30.00",
+      "tele_f_number": "3.70",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_stop_angular_field_absent_and_image_height_raster_only"
+    },
+    {
+      "number": 11,
+      "label": "Samsung electronic-device wrapper",
+      "paragraph_range": [
+        175,
+        176
+      ],
+      "figures": [
+        31
+      ],
+      "tables": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "official_pdf": {
+    "download_1": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/source-review/US-20260043988-A1-official-1.pdf",
+      "bytes": 2416124,
+      "sha256": "1c7dbada0530d6d40a2a245763999140e86c983f2442707a5676b52259d8651a"
+    },
+    "download_2": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/source-review/US-20260043988-A1-official-2.pdf",
+      "bytes": 2416124,
+      "sha256": "c487335764b855f5e1d4afb091bbd8b493461b6ee9c0fbb8004a6a3c1abc288b"
+    },
+    "pinned_download_1": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/1c7dbada0530d6d4/US-20260043988-A1.pdf",
+      "bytes": 2416124,
+      "sha256": "1c7dbada0530d6d40a2a245763999140e86c983f2442707a5676b52259d8651a"
+    },
+    "page_count": 54,
+    "text_layer_characters": 0,
+    "embedded_page_mode": "1-bit",
+    "raster_set_sha256": "f25ec6472c8d51db25d564faf20cba6d4b608029e59aa3951a6d7aeb2d044202"
+  },
+  "replay": {
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260043988/attempt-0002/result.json",
+      "bytes": 14315,
+      "sha256": "2792948e27de9b6332851aeec5a23b186a874b731badf30d75723ec774f1d4a6",
+      "semantic_sha256": "92678db524e8ef31630b38898bf530f93e73c95246b04a6150b07b5a3ec8bcdb"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260043988/attempt-0003/result.json",
+      "bytes": 14315,
+      "sha256": "22018edbfcc37344ece632c9820798593da73ec843cc92c11fe3593766176dc3",
+      "semantic_sha256": "92678db524e8ef31630b38898bf530f93e73c95246b04a6150b07b5a3ec8bcdb"
+    },
+    "semantic_equal": true,
+    "semantic_sha256": "92678db524e8ef31630b38898bf530f93e73c95246b04a6150b07b5a3ec8bcdb",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/generic-residual-before-45.json",
+      "bytes": 27909,
+      "sha256": "0af3b215a58a7e76b3d75933ec20c316a1e8d19195f4b9c5a33f788ba76f438f"
+    },
+    "after_1": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/generic-residual-after-1.json",
+      "bytes": 27269,
+      "sha256": "aa0779d379dd982eba2ec940a0a57ade898602eb35c252749fc9d12de5801f80"
+    },
+    "after_2": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/generic-residual-after-2.json",
+      "bytes": 27269,
+      "sha256": "aa0779d379dd982eba2ec940a0a57ade898602eb35c252749fc9d12de5801f80"
+    },
+    "before_roots": 45,
+    "after_roots": 44,
+    "result_set_sha256": "e2a1e5960a20d5cbdc26597ed1bc42d8689f1266f9f99f15e1803b25f8c0da64"
+  },
+  "supporting_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/family-97226661-source-audit.md",
+      "bytes": 5051,
+      "sha256": "d34379c919da36813e259628b7134d98ce8e967ff8075564b7ac39507bfcd92f"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/family-97226661-raster-audit.json",
+      "bytes": 12282,
+      "sha256": "2ed7776ff382e43ad3c4c1518d91d6d8276a5044bd7b2d5c4a034e573d0ebe44"
+    },
+    "source_lineage": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/family-97226661-external-family-members.json",
+      "bytes": 1159,
+      "sha256": "4e3c4f1ff7c77af286d7fb2555c81c5d183f80a0edcf73be437d3feece4cd751"
+    },
+    "denominator": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/family-97226661-denominator.json",
+      "bytes": 14638,
+      "sha256": "2a29b7d674f41550ccf6d06842eccea5893e491bfe16ebfdcc137c811677ac71"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/family-97226661-replay-determinism.json",
+      "bytes": 1687,
+      "sha256": "620d803604218e1c8e746e92c50a1f22673cacf2cd664b7c1eaba1f6be94f34c"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/queue-after.json",
+      "bytes": 1628,
+      "sha256": "68847ecbd1cda8dad69ccd93c0d28b45488afd26daf0d25121764c5c624e50bc"
+    },
+    "roots": {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/roots.txt",
+      "bytes": 15,
+      "sha256": "dce7bda6465effde4936189013cbf72c1219c6105e6fa30d114ba381f0f47a8d"
+    }
+  },
+  "review_policy": {
+    "source_typography_repaired": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "image_enhancement_used": false,
+    "drawing_geometry_measured": false,
+    "numeric_transcription_from_raster": false,
+    "ocr_repair_used": false,
+    "raster_inference_used": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "next_exact_group": {
+    "family_id": "69060231",
+    "root_ids": [
+      "US-20260089289"
+    ],
+    "publication_ids": [
+      "US-20260089289-A1"
+    ]
+  },
+  "saturation_complete": false
+}

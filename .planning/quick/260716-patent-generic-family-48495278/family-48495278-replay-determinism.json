@@ -1,0 +1,201 @@
+{
+  "after_census": {
+    "affected_items": 155,
+    "affected_roots": 155,
+    "artifact_sha256": "1a112e9d347999b23462cf363a961ca3d30b169529ba50b0858b4c8a05172b22",
+    "independent_repeat_sha256": "1a112e9d347999b23462cf363a961ca3d30b169529ba50b0858b4c8a05172b22",
+    "result_set_sha256": "eb1d03194b2e6f7daa50d14f4fe4409518e0a63df7a7e2be1b4ad3a55bd6076e"
+  },
+  "before_census": {
+    "affected_items": 157,
+    "affected_roots": 157,
+    "artifact_sha256": "6680be2f2cc9ee312e1b24125f1248133658a60bd5ca1d663ede7bd408d168fe",
+    "result_set_sha256": "9a5bb4f9f35a0ac531d53cc02e0dd0b6d08ef7b6bbb55cf41f287270e7223da3"
+  },
+  "cohort_sha256": "e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b",
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "ocr_audit_sha256": "27d5f1b8e1e63f9b9036376a06ceea9f6576bc5a748958964e42b973d36cb107",
+  "production_recovery_sha256": "db0e7d42b37ee16413c4df0dc37f4202f76e9e645b9fa9ce643a63c29f7dfb07",
+  "raster_audit_sha256": "4548cf92729b7b0f4b92c0de0a5a86595533f023f8259dd36db03b4e7b1aae83",
+  "roots": {
+    "US-20150138653": {
+      "attempt_0001_head_sha256": "3014cbadbda8fbdf934006d33d9fd2507541914dbae59cfa25ef1f7783a7df24",
+      "attempt_0001_matches_head": true,
+      "attempt_0002_0003_semantics_equal": true,
+      "attempt_directories": [
+        "attempt-0001",
+        "attempt-0002",
+        "attempt-0003"
+      ],
+      "attempts": [
+        {
+          "attempt": "attempt-0001",
+          "conversion_attempt_count": 0,
+          "conversion_request_count": 0,
+          "embodiment_numbers": [
+            null
+          ],
+          "item_count": 1,
+          "item_reason_codes": [
+            "parser_review_required.deterministic_parser_rejected"
+          ],
+          "prescription_fingerprint_count": 0,
+          "reason_code": "parser_review_required.all_disclosed_items_rejected",
+          "result_attempt": 1,
+          "result_sha256": "3014cbadbda8fbdf934006d33d9fd2507541914dbae59cfa25ef1f7783a7df24",
+          "result_size": 1299,
+          "root_state": "parser_review_required",
+          "semantic_projection_sha256": "a5a96951d806c85277139138c8f5dcf1db39a777fd8166dec2259ed9891f20ac"
+        },
+        {
+          "attempt": "attempt-0002",
+          "conversion_attempt_count": 0,
+          "conversion_request_count": 0,
+          "embodiment_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "item_count": 6,
+          "item_reason_codes": [
+            "parser_review_required.deterministic_parser_rejected"
+          ],
+          "prescription_fingerprint_count": 0,
+          "reason_code": "parser_review_required.all_disclosed_items_rejected",
+          "result_attempt": 2,
+          "result_sha256": "debf77e44b71f18e206afecfc11270a68674c22fa51ef769c14afbcfcbfd2adb",
+          "result_size": 12308,
+          "root_state": "parser_review_required",
+          "semantic_projection_sha256": "909deaf10b565b79011a88f4656148c02c1722500f9294db0da3e858bcf9c207"
+        },
+        {
+          "attempt": "attempt-0003",
+          "conversion_attempt_count": 0,
+          "conversion_request_count": 0,
+          "embodiment_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "item_count": 6,
+          "item_reason_codes": [
+            "parser_review_required.deterministic_parser_rejected"
+          ],
+          "prescription_fingerprint_count": 0,
+          "reason_code": "parser_review_required.all_disclosed_items_rejected",
+          "result_attempt": 3,
+          "result_sha256": "386f942956fe73002e8f1bfc3b204472e6117e52c2d118df2a3f146e96ea2157",
+          "result_size": 12308,
+          "root_state": "parser_review_required",
+          "semantic_projection_sha256": "909deaf10b565b79011a88f4656148c02c1722500f9294db0da3e858bcf9c207"
+        }
+      ]
+    },
+    "US-8976467": {
+      "attempt_0001_head_sha256": "a75c90a125fced04877b4032602ac510266c1c3ef48247129e6e8f90ce5460e4",
+      "attempt_0001_matches_head": true,
+      "attempt_0002_0003_semantics_equal": true,
+      "attempt_directories": [
+        "attempt-0001",
+        "attempt-0002",
+        "attempt-0003"
+      ],
+      "attempts": [
+        {
+          "attempt": "attempt-0001",
+          "conversion_attempt_count": 0,
+          "conversion_request_count": 0,
+          "embodiment_numbers": [
+            null
+          ],
+          "item_count": 1,
+          "item_reason_codes": [
+            "parser_review_required.deterministic_parser_rejected"
+          ],
+          "prescription_fingerprint_count": 0,
+          "reason_code": "parser_review_required.all_disclosed_items_rejected",
+          "result_attempt": 1,
+          "result_sha256": "a75c90a125fced04877b4032602ac510266c1c3ef48247129e6e8f90ce5460e4",
+          "result_size": 1266,
+          "root_state": "parser_review_required",
+          "semantic_projection_sha256": "7875d11dc81d62dce16681edd35b7e668cc008a083098d2bac39a19463b2d8ba"
+        },
+        {
+          "attempt": "attempt-0002",
+          "conversion_attempt_count": 0,
+          "conversion_request_count": 0,
+          "embodiment_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "item_count": 6,
+          "item_reason_codes": [
+            "parser_review_required.deterministic_parser_rejected"
+          ],
+          "prescription_fingerprint_count": 0,
+          "reason_code": "parser_review_required.all_disclosed_items_rejected",
+          "result_attempt": 2,
+          "result_sha256": "ddd3e5a9e078446fa326f037e2923db7ea9f8230d3e1a9e7e5dba8198aa972fe",
+          "result_size": 11370,
+          "root_state": "parser_review_required",
+          "semantic_projection_sha256": "b9a50e93e90cecd9f7249cefeb076fcd113eb3d103f78b7f443efd255e4e6562"
+        },
+        {
+          "attempt": "attempt-0003",
+          "conversion_attempt_count": 0,
+          "conversion_request_count": 0,
+          "embodiment_numbers": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "item_count": 6,
+          "item_reason_codes": [
+            "parser_review_required.deterministic_parser_rejected"
+          ],
+          "prescription_fingerprint_count": 0,
+          "reason_code": "parser_review_required.all_disclosed_items_rejected",
+          "result_attempt": 3,
+          "result_sha256": "78babcd16344cbd17cd927c12006900b24befabf9a124a57d8a871bb8f55df85",
+          "result_size": 11370,
+          "root_state": "parser_review_required",
+          "semantic_projection_sha256": "b9a50e93e90cecd9f7249cefeb076fcd113eb3d103f78b7f443efd255e4e6562"
+        }
+      ]
+    }
+  },
+  "schema_version": 1,
+  "strict_audit": {
+    "cohort_roots": 619,
+    "corrupt_results": 0,
+    "missing_roots": 0,
+    "report_sha256": "1b71b05b6920071c19c01b9fbc2a36cfc93e60bff5aacd2d9b70343a1b0d7c7d",
+    "result_set_sha256": "eb1d03194b2e6f7daa50d14f4fe4409518e0a63df7a7e2be1b4ad3a55bd6076e",
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 143,
+      "parser_review_required": 343,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 108
+    },
+    "roots_with_results": 619,
+    "summary_sha256": "59cc2380ff8984a676689767637122c78a16da6e199f288556b1988128a58969"
+  }
+}

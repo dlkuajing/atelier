@@ -1,0 +1,387 @@
+{
+  "conversion_boundary": {
+    "code_v_used": false,
+    "cross_publication_numeric_borrowing": false,
+    "drawing_transcription": false,
+    "formal_intake": 0,
+    "numeric_derivation_from_rasters": false,
+    "reason": "The source publishes reflector-holder and stamped-support architecture, three mechanical angle/clearance rows, a smartphone wrapper, and an AR wrapper, but no ordered optical radius, spacing, material, conic, or asphere prescription and no focal length, F-number, or angular-field system metadata.",
+    "zmx_written": 0
+  },
+  "denominator": {
+    "background_numbered_paragraphs": 3,
+    "brief_numbered_paragraphs": 35,
+    "claims": 18,
+    "confirmed_no_prescription_items": 9,
+    "declared_textual_figures": 34,
+    "detailed_numbered_paragraphs": 96,
+    "frozen_cohort_roots": 1,
+    "mathml_objects": 0,
+    "mechanical_table_rows": 3,
+    "official_b2_drawing_sheets": 32,
+    "official_b2_pdf_pages": 44,
+    "related_application_paragraphs": 1,
+    "replayed_ledger_items": 9,
+    "retained_classification_publications": 1,
+    "same_application_a1_drawing_sheets": 32,
+    "same_application_a1_pdf_pages": 44,
+    "same_application_raster_publications": 1,
+    "source_declared_architecture_items": 9,
+    "source_declared_optical_prescriptions": 0,
+    "source_label_discrepancies": 1,
+    "summary_numbered_paragraphs": 3,
+    "tagged_html_tables": 3
+  },
+  "family_id": "82951912",
+  "figures": {
+    "numeric_derivation_from_discrepancy": false,
+    "official_drawing_panel_label": "FIG. 1C",
+    "textual_declarations": [
+      "1A",
+      "1B",
+      "10",
+      "1D",
+      "1E",
+      "1F",
+      "1G",
+      "1H",
+      "2",
+      "3A",
+      "3B",
+      "3C",
+      "3D",
+      "3E",
+      "3F",
+      "3G",
+      "3H",
+      "3I",
+      "4",
+      "5A",
+      "5B",
+      "5C",
+      "5D",
+      "5E",
+      "5F",
+      "5G",
+      "6",
+      "7A",
+      "7B",
+      "8A",
+      "8B",
+      "9A",
+      "9B",
+      "9C"
+    ],
+    "textual_source_label": "FIG. 10"
+  },
+  "identity": {
+    "application_number": "17/930078",
+    "assignee": "LARGAN PRECISION CO., LTD.",
+    "filed": "September 07, 2022",
+    "prior_publication": "US-20230098359-A1 / March 30, 2023",
+    "provisional_priority": "US 63/247818 / September 24, 2021"
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Largan optical-reflecting assembly first embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        61,
+        75
+      ],
+      "reason_code": "confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only",
+      "source_category": "optical_reflecting_module",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Largan structure-component second embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        76,
+        79
+      ],
+      "reason_code": "confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only",
+      "source_category": "structure_component",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Largan optical-reflecting assembly third embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        80,
+        93
+      ],
+      "reason_code": "confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only",
+      "source_category": "optical_reflecting_module",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Largan structure-component fourth embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        94,
+        97
+      ],
+      "reason_code": "confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only",
+      "source_category": "structure_component",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Largan optical-reflecting assembly fifth embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        98,
+        111
+      ],
+      "reason_code": "confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only",
+      "source_category": "optical_reflecting_module",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Largan structure-component sixth embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        112,
+        115
+      ],
+      "reason_code": "confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only",
+      "source_category": "structure_component",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Largan optical-reflecting assembly seventh embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        116,
+        119
+      ],
+      "reason_code": "confirmed_no_prescription.optical_reflecting_holder_structure_architecture_only",
+      "source_category": "optical_reflecting_module",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 8,
+      "label": "Largan smartphone multi-camera electronic-device eighth embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        120,
+        126
+      ],
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_placement_architecture_only",
+      "source_category": "smartphone_multi_camera_wrapper",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 9,
+      "label": "Largan AR head-mounted-display electronic-device ninth embodiment",
+      "ordered_surface_prescription_rows": 0,
+      "paragraphs": [
+        127,
+        130
+      ],
+      "reason_code": "confirmed_no_prescription.ar_head_mounted_display_architecture_only",
+      "source_category": "ar_head_mounted_display_wrapper",
+      "source_state": "confirmed_no_prescription",
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "paragraph_spans": [
+    {
+      "characters": 10223,
+      "paragraphs": [
+        36,
+        60
+      ],
+      "sha256": "47e8ecf044d047bb8029195f7d29479f20c693ee19f07966b2a40f32cbcedef3"
+    },
+    {
+      "characters": 10856,
+      "paragraphs": [
+        61,
+        75
+      ],
+      "sha256": "4f6ced6e12e4dfcabbe942f60697abea4876b70147025ef1ab8586dff6938b39"
+    },
+    {
+      "characters": 1836,
+      "paragraphs": [
+        76,
+        79
+      ],
+      "sha256": "887db943d7f176eac41086f2f659b2164166dd62b066ab64eae5a25e5fb59bad"
+    },
+    {
+      "characters": 9660,
+      "paragraphs": [
+        80,
+        93
+      ],
+      "sha256": "bc89f959a1c78aabaa525cc769f737c41b2ba6fa99a02a01d299b06ad0aacd8f"
+    },
+    {
+      "characters": 1889,
+      "paragraphs": [
+        94,
+        97
+      ],
+      "sha256": "e3c51a505b524992ab89919f610992fee9b1110bd813aec9f527175f282708df"
+    },
+    {
+      "characters": 9202,
+      "paragraphs": [
+        98,
+        111
+      ],
+      "sha256": "32fea7b630253dec160e22df6131ba49f3268fee61e0ea96f56fccae860b08d8"
+    },
+    {
+      "characters": 1863,
+      "paragraphs": [
+        112,
+        115
+      ],
+      "sha256": "d8d8fac14b7ce53ff0e98c1bb0ea5abfc86292804cdf21d2fb6392d0d4152571"
+    },
+    {
+      "characters": 2265,
+      "paragraphs": [
+        116,
+        119
+      ],
+      "sha256": "a411233228d129a1afa58cfb924388f9ef4f4ceaba33d6ecf92f29202b50f198"
+    },
+    {
+      "characters": 4739,
+      "paragraphs": [
+        120,
+        126
+      ],
+      "sha256": "7f9eb4e5ff613a3f7ded82f5b94bacd82eb04c0eacc41be6c3f99de08c54bd5d"
+    },
+    {
+      "characters": 1826,
+      "paragraphs": [
+        127,
+        130
+      ],
+      "sha256": "d31bbed8bf4aabe4cc90a7e6cee2b2584a1b642f68cbfcfe6db8adff9034b05e"
+    },
+    {
+      "characters": 853,
+      "paragraphs": [
+        131,
+        131
+      ],
+      "sha256": "f8bfb8b0cdb13032602644bc9f4fee11702af9d6ba012b71247d9164a7e30a7a"
+    }
+  ],
+  "prescription_marker_census": {
+    "Abbe": 0,
+    "F number": 0,
+    "F-number": 0,
+    "FNO": 0,
+    "aspheric": 0,
+    "aspherical": 0,
+    "effective focal length": 0,
+    "focal length": 0,
+    "lens element": 76,
+    "lens prescription": 0,
+    "optical prescription": 0,
+    "radius of curvature": 4,
+    "radius_context": "all four occurrences describe stamped round corners",
+    "refractive index": 0,
+    "surface no": 0,
+    "surface prescription": 0,
+    "thickness": 4,
+    "thickness_context": "all four occurrences describe 0.15 mm stamped metal plate"
+  },
+  "publication_id": "US-12591109-B2",
+  "reconciliation": {
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_disclosed_items": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_table_rows": 0,
+    "unmapped_tagged_tables": 0
+  },
+  "root_id": "US-12591109",
+  "schema_version": 1,
+  "sections": {
+    "background": {
+      "characters": 1409,
+      "sha256": "4cf9c2aa511df33dd509ff56efb701b2e1395745a814d5a46d32d7ecc9941df8"
+    },
+    "brief": {
+      "characters": 4553,
+      "sha256": "0331a92af96debb8dd0f0adf6ba6577a90f323aab9adfdea4a933d8a1596d8bc"
+    },
+    "claims": {
+      "characters": 4671,
+      "sha256": "240c8bb52542c99e036120f58f7b701e897d714eff29d25f48ac984bca58c141"
+    },
+    "detailed": {
+      "characters": 55244,
+      "sha256": "c00cd40608ecca6ece34dd384f45cea348d7e88442bf6fbb60fec9644c48fdbc"
+    },
+    "summary": {
+      "characters": 2069,
+      "sha256": "7bbb46cc28bc624e0b3b309b9aec625ed8930d2c60b874c0a1ecae5cd0244196"
+    }
+  },
+  "source": {
+    "bytes": 96924,
+    "normalized_characters": 71595,
+    "normalized_sha256": "3b6dbaf54bd5c36c9f2ef26c6c2a58478aa3d6de4307b64911224d6bc254e8b3",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/862996927fdd6006/US-12591109-B2.html",
+    "raw_characters": 96878,
+    "raw_sha256": "862996927fdd600646901ffc9a8e81f686b62949fca143201d665b3dc14390a7"
+  },
+  "tables": [
+    {
+      "characters": 96,
+      "d_r_mm": 0.76,
+      "semantic_scope": "mechanical bending angles and reflector-to-structure minimum distance",
+      "sha256": "e1f6dc941aef17ffac4ed81e45c99b9421148225d83f3920fe117605530d710d",
+      "source_embodiment_spelling": "1st Embodiment",
+      "table_number": 1,
+      "theta_e_degree": 102.0,
+      "theta_s_degree": 90.0
+    },
+    {
+      "characters": 97,
+      "d_r_mm": 0.21,
+      "semantic_scope": "mechanical bending angles and reflector-to-structure minimum distance",
+      "sha256": "49af56bcb746be07b3ad36023f1a7ff24a2a03c13a5e57f74d9536b65a38341e",
+      "source_embodiment_spelling": "3th Embodiment",
+      "table_number": 2,
+      "theta_e_degree": 113.0,
+      "theta_s_degree": 135.0
+    },
+    {
+      "characters": 96,
+      "d_r_mm": 0.16,
+      "semantic_scope": "mechanical bending angles and reflector-to-structure minimum distance",
+      "sha256": "b0dd3e1be5a41ff016d79fd7c741eca5486437a0345f5218ce7e8b4bb4ff3ce3",
+      "source_embodiment_spelling": "5th Embodiment",
+      "table_number": 3,
+      "theta_e_degree": 98.0,
+      "theta_s_degree": 105.0
+    }
+  ]
+}

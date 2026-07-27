@@ -1,0 +1,185 @@
+{
+  "applicant": "HUAWEI TECHNOLOGIES CO., LTD.",
+  "application_number": "18/845222",
+  "family_id": "87936009",
+  "figure_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23
+  ],
+  "official_html": {
+    "normalized_sha256": "d30d8e3c5633b1de6d37375aa64852f63628cec45f293c5c93db1cc518098fb2",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/8f7df2cc433e510c/US-12591118-B2.html",
+    "sha256": "8f7df2cc433e510cb39cd9a5a9b28912c38683908d0f7b55ec5197715b93fa44"
+  },
+  "outcome_denominator": {
+    "converted_pending_intake": 1,
+    "metadata_unpublished": 7,
+    "terminal_items": 10,
+    "trace_failed": 2
+  },
+  "pct": {
+    "application_number": "PCT/CN2023/080164",
+    "publication_id": "WO-2023169441-A1"
+  },
+  "prior_publication": {
+    "publication_date": "2025-06-19",
+    "publication_id": "US-20250199270-A1"
+  },
+  "priority": {
+    "application_number": "CN202210240794.3",
+    "date": "2022-03-10"
+  },
+  "publication_id": "US-12591118-B2",
+  "schema_version": 1,
+  "source_states": {
+    "embodiments": 5,
+    "first_non_working_states": 5,
+    "second_working_states": 5,
+    "state_specific_axial_deltas": [
+      "CG S2",
+      "last lens S2"
+    ]
+  },
+  "table_count": 16,
+  "table_triplets": [
+    {
+      "asphere_table": 3,
+      "embodiment": 1,
+      "lens_count": 7,
+      "surface_table": 2,
+      "system_table": 4
+    },
+    {
+      "asphere_table": 6,
+      "embodiment": 2,
+      "lens_count": 7,
+      "surface_table": 5,
+      "system_table": 7
+    },
+    {
+      "asphere_table": 9,
+      "embodiment": 3,
+      "lens_count": 7,
+      "surface_table": 8,
+      "system_table": 10
+    },
+    {
+      "asphere_table": 12,
+      "embodiment": 4,
+      "lens_count": 8,
+      "surface_table": 11,
+      "system_table": 13
+    },
+    {
+      "asphere_table": 15,
+      "embodiment": 5,
+      "lens_count": 8,
+      "surface_table": 14,
+      "system_table": 16
+    }
+  ],
+  "title": "Electronic device having a lens assembly employing an avoidance space in conjunction with a total track length",
+  "working_state_metadata": [
+    {
+      "embodiment": 1,
+      "equivalent_focal_length_mm": 22.2,
+      "f_number": 1.69,
+      "full_fov_deg": 87.01,
+      "hfov_deg": 43.505,
+      "retraction_ratio_pct": 88.9,
+      "total_focal_length_mm": 8.38,
+      "total_image_height_mm": 16.33
+    },
+    {
+      "embodiment": 2,
+      "equivalent_focal_length_mm": 21.02,
+      "f_number": 1.59,
+      "full_fov_deg": 89.8,
+      "hfov_deg": 44.9,
+      "retraction_ratio_pct": 88.9,
+      "total_focal_length_mm": 7.93,
+      "total_image_height_mm": 16.33
+    },
+    {
+      "embodiment": 3,
+      "equivalent_focal_length_mm": 21.81,
+      "f_number": 1.57,
+      "full_fov_deg": 87.83,
+      "hfov_deg": 43.915,
+      "retraction_ratio_pct": 86.7,
+      "total_focal_length_mm": 8.23,
+      "total_image_height_mm": 16.33
+    },
+    {
+      "embodiment": 4,
+      "equivalent_focal_length_mm": 22.67,
+      "f_number": 1.55,
+      "full_fov_deg": 85.5,
+      "hfov_deg": 42.75,
+      "retraction_ratio_pct": 85.4,
+      "total_focal_length_mm": 8.56,
+      "total_image_height_mm": 16.34
+    },
+    {
+      "embodiment": 5,
+      "equivalent_focal_length_mm": 22.8,
+      "f_number": 1.55,
+      "full_fov_deg": 85.17,
+      "hfov_deg": 42.585,
+      "retraction_ratio_pct": 85.1,
+      "total_focal_length_mm": 8.6,
+      "total_image_height_mm": 16.33
+    }
+  ],
+  "working_state_outcomes": [
+    {
+      "embodiment": 1,
+      "outcome": "metadata_unpublished.asphere_a26_exponent_marker_absent",
+      "source_token": "2.2728-07",
+      "table": 3
+    },
+    {
+      "candidate_zmx_sha256": "8a24f5c8ed0da05ed42457b4caf67e39f94fe7b3b01e220fb8c94fd0b22a9760",
+      "embodiment": 2,
+      "outcome": "converted_pending_intake.process_isolated_zmx_ready",
+      "prescription_fingerprint": "69a550ed936b1d8e"
+    },
+    {
+      "embodiment": 3,
+      "outcome": "trace_failed",
+      "prescription_fingerprint": "406386102f953286"
+    },
+    {
+      "embodiment": 4,
+      "outcome": "metadata_unpublished.asphere_a24_numeric_token_malformed",
+      "source_token": "-5.39SE-06",
+      "table": 12
+    },
+    {
+      "embodiment": 5,
+      "outcome": "trace_failed",
+      "prescription_fingerprint": "1631a5013b56c93a"
+    }
+  ]
+}

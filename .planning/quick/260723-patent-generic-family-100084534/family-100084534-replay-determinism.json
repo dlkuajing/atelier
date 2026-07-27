@@ -1,0 +1,55 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "100084534",
+  "root_id": "US-20260169250",
+  "publication_id": "US-20260169250-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20260169250/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "d480867583f0334d1aac1a59a8ed03ae4d1d9445e1fde7768789e51f00e9f506",
+    "result_attempt": 1,
+    "root_state": "parser_review_required"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260169250/attempt-0002/result.json",
+      "bytes": 13686,
+      "sha256": "b53ba9347a52791b0e11d6c44bb8f19e54572b18b508a32e5fc27774b23435b1",
+      "result_attempt": 2,
+      "file_sha256": "b53ba9347a52791b0e11d6c44bb8f19e54572b18b508a32e5fc27774b23435b1",
+      "semantic_sha256": "0ce46d81a45de9f88dae208e6d690cae0e1ac727ed553fd4e9b4c08b8968c5a0"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260169250/attempt-0003/result.json",
+      "bytes": 13686,
+      "sha256": "9f629ebb812b89207dac84850d1a3a1a5f631a13b62651c028fb7d32a22d39ba",
+      "result_attempt": 3,
+      "file_sha256": "9f629ebb812b89207dac84850d1a3a1a5f631a13b62651c028fb7d32a22d39ba",
+      "semantic_sha256": "0ce46d81a45de9f88dae208e6d690cae0e1ac727ed553fd4e9b4c08b8968c5a0"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "0ce46d81a45de9f88dae208e6d690cae0e1ac727ed553fd4e9b4c08b8968c5a0",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_low_reflective_cluster_layer_architecture_only",
+    "terminal.confirmed_no_prescription.smartphone_multi_camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.unmanned_aerial_vehicle_camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.vehicle_multi_camera_module_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

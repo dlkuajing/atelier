@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260721-patent-generic-family-97226661/generic-residual-after-2.json",
+  "result_set_sha256": "9c86fa40727d4efded14d1cc3c7a6564e2a997955319fc2c01a891dcbfa342d4",
+  "generic_residual_roots": 44,
+  "generic_residual_items": 44,
+  "next_exact_group": {
+    "family_id": "69060231",
+    "root_ids": [
+      "US-20260089289"
+    ],
+    "publication_ids": [
+      "US-20260089289-A1"
+    ],
+    "application_number": "19/207416",
+    "title": "CAMERAS WITH SCANNING OPTICAL PATH FOLDING ELEMENTS FOR AUTOMOTIVE OR SURVEILLANCE APPLICATIONS",
+    "inventors": [
+      "Shabtay; Gal",
+      "Briman; Eran",
+      "Fridman; Roy",
+      "Cohen; Noy",
+      "Goldenberg; Ephraim",
+      "Bachar; Gil"
+    ],
+    "applicant": "Corephotonics Ltd.",
+    "assignee": null,
+    "layout_signature": "a0b9015b5867e4774d273973f45a2035bffe6dde871083404e533aebf1bf1918",
+    "layout_signature_count": 1,
+    "table_count": 0,
+    "marker_counts": {
+      "effective_focal_length": 8,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 75,
+      "half_field": 4
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a5cb54fb94394f67/US-20260089289-A1.html",
+      "bytes": 42363,
+      "sha256": "a5cb54fb94394f679b0c38f7903206a4b43fd962affa0ff4e9f333c4fcf0c733"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

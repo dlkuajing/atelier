@@ -1,0 +1,53 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "81110170",
+  "root_id": "US-20260169260",
+  "publication_id": "US-20260169260-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20260169260/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "318b019280b937b62bde894fc7f8c2201ab5dc22e680b430ec53cd3992854dd4",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "632fa7c18783083f7d347ec6aa009c0b8c8517ff2dda5852d92c81dc49a6deda"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260169260/attempt-0002/result.json",
+      "bytes": 16231,
+      "sha256": "b6f6b42c023eaed88b49f3b3cd9e7fc2afbbe485ceac78e66755c9f604d42629",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "26f262463919d4e045c19d4d031af30e8f3c8a5fda9a3c942a632bd477b69a2d"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260169260/attempt-0003/result.json",
+      "bytes": 16231,
+      "sha256": "5becdaf0df0b6d09923da008219a7e4469bc5ce4daf2505e82c96298596915ab",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "26f262463919d4e045c19d4d031af30e8f3c8a5fda9a3c942a632bd477b69a2d"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "26f262463919d4e045c19d4d031af30e8f3c8a5fda9a3c942a632bd477b69a2d",
+  "terminal_reason_codes": [
+    "terminal.metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

@@ -1,0 +1,70 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "95073324",
+  "root_id": "US-20260147257",
+  "publication_id": "US-20260147257-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20260147257/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "386eec98e96a4baa320ae29b07f813aaa75b6f755a33d9907f8f3df28d15f918",
+    "result_attempt": 1,
+    "root_state": "parser_review_required"
+  },
+  "append_only_prefix_preserved": true,
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260147257/attempt-0002/result.json",
+      "bytes": 7078,
+      "sha256": "8bfd6223bad39f4efce6915f0f738203216bb1ca0aaae80f3f1411a775956a51",
+      "result_attempt": 2,
+      "root_state": "mixed_nonterminal"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260147257/attempt-0003/result.json",
+      "bytes": 7078,
+      "sha256": "848dce6d75de92bdc672e2fbcd6f652d8b11ec34ebe721b7d2e2c1081c97469e",
+      "result_attempt": 3,
+      "root_state": "mixed_nonterminal"
+    }
+  ],
+  "semantic_sha256": "f583e01f7378fe046dd31e0f2f754115c2a2c9679321f0b59e2484d20521bd3a",
+  "semantic_equal": true,
+  "item_counts": {
+    "source_items": 8,
+    "parser_review_required": 6,
+    "terminal_confirmed_no_prescription": 2
+  },
+  "item_states": [
+    "parser_review_required",
+    "parser_review_required",
+    "parser_review_required",
+    "parser_review_required",
+    "parser_review_required",
+    "parser_review_required",
+    "terminal",
+    "terminal"
+  ],
+  "reason_codes": [
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "terminal.confirmed_no_prescription.camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.imaging_device_wrapper_only"
+  ],
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "result_set_sha256": "d25e55011dcc69583ca7b9b298980acfbb61839ed8ad3e430353e8f42676be05",
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "conversion_receipts_absent": true,
+  "candidate_zmx_absent": true,
+  "formal_intake_absent": true,
+  "codev_calls": 0
+}

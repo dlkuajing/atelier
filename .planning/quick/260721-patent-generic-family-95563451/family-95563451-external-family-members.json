@@ -1,0 +1,28 @@
+{
+  "schema_version": "patent-family-lineage-audit/v1",
+  "family_id": "95563451",
+  "classification_primary": {
+    "publication_id": "US-20250264785-A1",
+    "application_number": "19/049057",
+    "filing_date": "2025-02-10",
+    "relationship_evidence": [
+      "retained USPTO A1 header",
+      "Related U.S. Application Data",
+      "paragraph [0001]"
+    ]
+  },
+  "direct_priority_relationships": [
+    {
+      "publication_id": null,
+      "application_number": "63/555469",
+      "filing_date": "2024-02-20",
+      "relationship": "US provisional priority",
+      "printed_header_token": "us-provisional-application US 63555469 20240220",
+      "printed_paragraph_token": "U.S. Provisional Application Ser. No. 63/555,469, filed Feb. 20, 2024"
+    }
+  ],
+  "scope_note": "This audit records only relationships directly printed by the retained official A1; it does not infer unprinted continuations or foreign counterparts.",
+  "classification_source": "US-20250264785-A1 only",
+  "related_publication_numeric_borrowing_used": false,
+  "provisional_numeric_borrowing_used": false
+}

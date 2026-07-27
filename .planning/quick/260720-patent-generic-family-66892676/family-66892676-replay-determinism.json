@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "family_id": "66892676",
+  "root_id": "US-11340422",
+  "publication_id": "US-11340422-B2",
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-11340422/attempt-0002/result.json",
+      "bytes": 5765,
+      "file_sha256": "2901fe6f0d0ffe5bb012ac9671a5926fd885b7de5081ec51550a2d8b7e91cefa",
+      "result_attempt": 2,
+      "semantic_sha256": "89807805c06463fead99f0b9927eeee3eba3324f9bb8b8ab36e5881dd9161d89",
+      "receipt_semantic_sha256": {
+        "1": "631042d8d8bb99cded942904875fda385cc13e0c97a6efaed9a52da4bd1ad6d7",
+        "2": "2dd10d8fd2c5de38dc755fd849b18616bf8455a35453c3b49de0e88bf8336eac",
+        "3": "440125d4f6403c00ed24811e135bb9422c0616241223aace31d6474e0a77515b"
+      },
+      "request_sha256": {
+        "1": "1e644c5af2b3f70e112ea982bc555cbaeaac78fe5948775b216045b389ae8935",
+        "2": "b26ce372cffa6231bf5f0acc393507531610b77e77c010b926c3f05dd68fc5a6",
+        "3": "31e778d89bd1005805d2a000718284df7eb0000c6c7ce96f442abd42bbe6215d"
+      },
+      "response_sha256": {
+        "1": "6fdfa2da6bb662e1b829b2dd8d87188aa8120b906a62eac429f495b0f2868eda",
+        "2": "c7b9ad0de41478c2bceef3ef9e98612ae988e151abb0e3738d7c4b5a9ba0d679",
+        "3": "834d02868774128e9356aa5699e23b13c5b898270125cb3d8702914a1fd1d867"
+      },
+      "candidate_zmx_sha256": {
+        "1": "f0fbfab29e933cdc68ee6216050ad0b8b1b1b1402b424f78ad252d8906bbd483",
+        "2": "cd0ec60c3b69ed30700bd461f52fb190496e4d52632794769a11a7d89911df6d",
+        "3": "0055e31b4c77bd1f89913354c23ca16d5b71e9345e45d33cb8316d3a2fd5f4b5"
+      },
+      "stdout_sha256": {
+        "1": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "2": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "3": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr_sha256": {
+        "1": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "2": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "3": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "staging_zmx_sha256": {
+        "1": "f0fbfab29e933cdc68ee6216050ad0b8b1b1b1402b424f78ad252d8906bbd483",
+        "2": "cd0ec60c3b69ed30700bd461f52fb190496e4d52632794769a11a7d89911df6d",
+        "3": "0055e31b4c77bd1f89913354c23ca16d5b71e9345e45d33cb8316d3a2fd5f4b5"
+      }
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-11340422/attempt-0003/result.json",
+      "bytes": 5765,
+      "file_sha256": "c48a2a572f675589a178a46691deed96e48a17930a1757193b21f6d850f610a1",
+      "result_attempt": 3,
+      "semantic_sha256": "89807805c06463fead99f0b9927eeee3eba3324f9bb8b8ab36e5881dd9161d89",
+      "receipt_semantic_sha256": {
+        "1": "631042d8d8bb99cded942904875fda385cc13e0c97a6efaed9a52da4bd1ad6d7",
+        "2": "2dd10d8fd2c5de38dc755fd849b18616bf8455a35453c3b49de0e88bf8336eac",
+        "3": "440125d4f6403c00ed24811e135bb9422c0616241223aace31d6474e0a77515b"
+      },
+      "request_sha256": {
+        "1": "1e644c5af2b3f70e112ea982bc555cbaeaac78fe5948775b216045b389ae8935",
+        "2": "b26ce372cffa6231bf5f0acc393507531610b77e77c010b926c3f05dd68fc5a6",
+        "3": "31e778d89bd1005805d2a000718284df7eb0000c6c7ce96f442abd42bbe6215d"
+      },
+      "response_sha256": {
+        "1": "6fdfa2da6bb662e1b829b2dd8d87188aa8120b906a62eac429f495b0f2868eda",
+        "2": "c7b9ad0de41478c2bceef3ef9e98612ae988e151abb0e3738d7c4b5a9ba0d679",
+        "3": "834d02868774128e9356aa5699e23b13c5b898270125cb3d8702914a1fd1d867"
+      },
+      "candidate_zmx_sha256": {
+        "1": "f0fbfab29e933cdc68ee6216050ad0b8b1b1b1402b424f78ad252d8906bbd483",
+        "2": "cd0ec60c3b69ed30700bd461f52fb190496e4d52632794769a11a7d89911df6d",
+        "3": "0055e31b4c77bd1f89913354c23ca16d5b71e9345e45d33cb8316d3a2fd5f4b5"
+      },
+      "stdout_sha256": {
+        "1": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "2": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "3": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr_sha256": {
+        "1": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "2": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "3": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "staging_zmx_sha256": {
+        "1": "f0fbfab29e933cdc68ee6216050ad0b8b1b1b1402b424f78ad252d8906bbd483",
+        "2": "cd0ec60c3b69ed30700bd461f52fb190496e4d52632794769a11a7d89911df6d",
+        "3": "0055e31b4c77bd1f89913354c23ca16d5b71e9345e45d33cb8316d3a2fd5f4b5"
+      }
+    }
+  ],
+  "semantic_sha256": "89807805c06463fead99f0b9927eeee3eba3324f9bb8b8ab36e5881dd9161d89",
+  "semantic_equal": true,
+  "exact_worker_payload_equal": {
+    "request_sha256": true,
+    "response_sha256": true,
+    "candidate_zmx_sha256": true,
+    "stdout_sha256": true,
+    "stderr_sha256": true,
+    "staging_zmx_sha256": true
+  },
+  "result_normalization": {
+    "removed_fields": [
+      "result_attempt"
+    ],
+    "normalized_fields": [
+      "items[].conversion_attempt_id attempt sequence",
+      "items[].evidence[patent_conversion_receipt].path attempt sequence",
+      "items[].evidence[patent_conversion_receipt].sha256 replaced by normalized receipt semantic hash"
+    ],
+    "outcome_fields_removed": [],
+    "request_or_response_fields_removed": []
+  },
+  "worker_receipt_normalization": {
+    "removed_fields": [
+      "elapsed_seconds",
+      "retry_number"
+    ],
+    "normalized_fields": [
+      "attempt_id attempt sequence",
+      "candidate_zmx_path attempt sequence",
+      "published_zmx_path attempt sequence",
+      "receipt_path attempt sequence",
+      "request_path attempt sequence",
+      "response_path attempt sequence",
+      "stderr_path attempt sequence",
+      "stdout_path attempt sequence"
+    ]
+  },
+  "final_state": {
+    "result_attempt": 3,
+    "root_state": "converted_pending_intake",
+    "root_reason_code": "converted_pending_intake.all_disclosed_items_converted",
+    "item_state_counts": {
+      "converted_pending_intake": 3
+    },
+    "terminal_status_counts": {},
+    "conversion_requests": 3,
+    "conversion_receipts": 3,
+    "prescription_fingerprints": 3,
+    "candidate_zmx": 3,
+    "staging_zmx": 3,
+    "formal_intake_items": 0
+  },
+  "strict_replay": {
+    "cohort_roots": 619,
+    "roots_with_results": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 28,
+      "mixed_nonterminal": 155,
+      "parser_review_required": 246,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 190
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 606,
+      "parser_review_required": 1359,
+      "terminal": 1596
+    },
+    "terminal_status_counts": {
+      "confirmed_no_prescription": 571,
+      "duplicate": 0,
+      "externally_blocked": 0,
+      "fulltext_unavailable": 0,
+      "intaken": 0,
+      "metadata_unpublished": 279,
+      "parser_family_missing": 0,
+      "quality_rejected": 0,
+      "trace_failed": 631,
+      "trace_timeout": 115
+    },
+    "result_set_sha256": "9795bb868624b08ba6eaf0c566ee012b0146def6b07f027c7cd7ce65094f04c6"
+  },
+  "codev_calls": 0
+}

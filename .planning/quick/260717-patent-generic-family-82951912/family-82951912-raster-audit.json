@@ -1,0 +1,1225 @@
+{
+  "contact_sheets": [
+    {
+      "bytes": 1992353,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-contact.png",
+      "publication_id": "US-12591109-B2",
+      "sha256": "6c11283260d8ae73dfcbc38556aa341e893bfbb618c50415c7cc9c52c7c71eb0"
+    },
+    {
+      "bytes": 2059109,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-20230098359-A1-contact.png",
+      "publication_id": "US-20230098359-A1",
+      "sha256": "a55d42b49b072ee674b4af79f237eb6b089f1956e857771b9048f54a68b49306"
+    }
+  ],
+  "cross_publication_raster_comparison": {
+    "comparison_basis": "decoded 2560x3300 RGB raster SHA-256",
+    "exact_cross_position_pixel_matches": 0,
+    "exact_same_position_pixel_matches": 0
+  },
+  "family_id": "82951912",
+  "official_b2": {
+    "bytes": 1808486,
+    "decoded_raster_set_sha256": "bc3c80bd7f1d3751181943522a80baf70c50e911e9e3906837bb04bfd8d2b378",
+    "decoded_raster_size": [
+      2560,
+      3300
+    ],
+    "drawing_pdf_pages": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34
+    ],
+    "page_count": 44,
+    "pages": [
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 1,
+        "raster_sha256": "81c60802cdfd19c0f9f6405c06a34419c997d1e072b09bd6b772fd1db5f65e47",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 2,
+        "raster_sha256": "0a3c9faadfd54d07168a395090e770812a8fec296332fb0c674692f49649b440",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 3,
+        "raster_sha256": "d7a0a66fbf0c3a8a6b5731609e1c2b5018cb9ef52623ba4a4cdc8a00acfb3128",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 4,
+        "raster_sha256": "535752b09883f1b273c0c5ff8765ee2ad1c6b1367583ea6a27da31caaa09822e",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 5,
+        "raster_sha256": "3a05cd8815f323f546f6ec38889665015346ad903591743b06c54a6d023af8f2",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 6,
+        "raster_sha256": "a17d5ec9e11b2353dce0ca7bbc9769c963a3c7923d1a71368cc8a59e6f04331f",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 7,
+        "raster_sha256": "b5a67e1ce9803af5908c08fe3c1b4f34a7402372b7caf08f3aa53fd23fe7be03",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 8,
+        "raster_sha256": "ecb7b149c4e1c977f23455caedce392c5cc1c94d072bb04ba465cdf5c97c9128",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 9,
+        "raster_sha256": "492e227f3b1cfc0a6475e174f82d564dd652591e2d1c293f16f0daed057692fb",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 10,
+        "raster_sha256": "9d67126fe258c70df8ab99f2ab6a2e2e0a480dc84a82cbb8c243821c88179988",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 11,
+        "raster_sha256": "9990ff722e8e601e91f8d74472398d9b52fe37dd0b6f6915cf6cb200e1af0824",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 12,
+        "raster_sha256": "325773ada5c80c4fe7f80cc8d2369cb41897a0c9e35aacc53452c72c5ab67cd5",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 13,
+        "raster_sha256": "249a7f794e15fc8bb723d60d9c19f431ee3abcc7487d9d475da3d0b41c6138a8",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 14,
+        "raster_sha256": "b132ef14b0a23cfb44c2f9bb1cbe6d5bdf528ff9e81396a9fbb34fcf32deb426",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 15,
+        "raster_sha256": "78a483ac4d90037141fba2b93842ddba039fe99422deb73196a9ebe47dfbff04",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 16,
+        "raster_sha256": "6b7ef0e14e42d6830120b96dc5d87b86f47a557d9e5ca76bfcb36729727afe4f",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 17,
+        "raster_sha256": "a7264c096a5183469d15337e7f2d62126410501e7a5fa1180d26cbb31371a697",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 18,
+        "raster_sha256": "e81e8d6e328b616fc8e3a555c9fab27867dd9cb80f87bf89446a7f07702930c3",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 19,
+        "raster_sha256": "9378c806a778f6a32cb9adfdc3ede0a1eae6ae99d2dfdc5d88642c4c7fbcb758",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 20,
+        "raster_sha256": "2b4409624343300b8b78d75e7330914125bc6bbff914db451eb692630fe89f36",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 21,
+        "raster_sha256": "24dafe9131b3d9a23058b045d0cf2d274e73d8cf0c0f7a4380bb397cf43f002b",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 22,
+        "raster_sha256": "9ac295899aef3e7e55a41c2b8121f2bb594e9e9b057cf890568d51e6421b1ff1",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 23,
+        "raster_sha256": "c5ee13344066c533d496e24ac0d3c40ce550abec36c1824044d569471dbb3d63",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 24,
+        "raster_sha256": "5d566404d41b265953ffeb35de1c3ac3f805d53c468ac93f36ba9f7027441433",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 25,
+        "raster_sha256": "31f8f9dc4b093519b92e5028d29919ac57c9ef34d6e682a40947d941121f33d7",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 26,
+        "raster_sha256": "51b03291ccec59fccbee8c05be257bb88e4b5e434a25af02defc17e58bb84e3f",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 27,
+        "raster_sha256": "522bee27e9ea417ca341d604ae82793e9e52d97bdd919cf7a85bcc0afd2c251f",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 28,
+        "raster_sha256": "27e7f19ea1faa6325f2a2d2fc57ad46fed31eaeb522f82c9d8f9632ff00a4327",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 29,
+        "raster_sha256": "ffd2f2918568883d38c1babd460917500b704d157aca19752e2851f033c5d91d",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 30,
+        "raster_sha256": "0bb9ddad2e24f6a0877a1fb3464881e9563b71ce88234e60148ccf6247130782",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 31,
+        "raster_sha256": "4dbe02dffed7b38faf7fa3523e83e3c07ef6b0e71a693f6d7d56a130b019729b",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 32,
+        "raster_sha256": "b451758a5e34e566b0f78c5eeebeeb542375ba42f8d3335154e4c6ec204f955c",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 33,
+        "raster_sha256": "606637f10b2b5fbac50d6bc5aca8ac76219beb1f12393a6cff3589788ceaf04a",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 34,
+        "raster_sha256": "07bd813afc37a9a87f2080c26685ab8f1c9212dd58b5000f87aa2de2b09e835f",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 35,
+        "raster_sha256": "9cb5dabc72e07d7529554826099fe6711fa97522ae295ef7e2897cdde968e14d",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 36,
+        "raster_sha256": "864283d2119730648f06b4e2da4d5ea14630e6ddb3999dd024f7cd1a8db24f9a",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 37,
+        "raster_sha256": "6db5b5c8e93e616d29583eb8d49f5a9bad51588eab6d63a0dda230d680892169",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 38,
+        "raster_sha256": "38772247e99fa1f7d2137682d4914c4992f0baf703689f7be29cf7e701c34dde",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 39,
+        "raster_sha256": "39ff8c6a56c3ba74b2c9fd75ab9f30872ec3e7160edfb70d00b0ab8572f95848",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 40,
+        "raster_sha256": "f7c43963ccdce4f00f1431c83c9818a25408623fa3491536b00a7922756191ee",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 41,
+        "raster_sha256": "8fed51b85139401d7ad55379d3e89904221b7af41665d894e22ae38f3f5c112e",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 42,
+        "raster_sha256": "4c55add316be1e17ed7064be8c5ada184cfc9720f05f9344f0b4eccc978a4179",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 43,
+        "raster_sha256": "d998457b70bbe3dac82ec50f6f86182ddba8dfe49b5b9feffa9c92558fd974cd",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 44,
+        "raster_sha256": "2a2014663ea63dbac70c01297430a36b3039ed46af216090dc000c6d7434c110",
+        "text_characters": 0
+      }
+    ],
+    "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-official.pdf",
+    "publication_id": "US-12591109-B2",
+    "sha256": "a8a783ac3f619bc7a3f7ddc0957fc0a70c088cf5d7c49b2aef2de7be52283514",
+    "specification_and_claim_pdf_pages": [
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+    ]
+  },
+  "page_classes": {
+    "official_b2": {
+      "claims": [
+        44
+      ],
+      "cover": [
+        1
+      ],
+      "drawing_sheets": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "mechanical_table_pages": [
+        39,
+        40,
+        42
+      ],
+      "references": [
+        2
+      ],
+      "specification_and_claims": [
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ]
+    },
+    "same_application_a1": {
+      "cover": [
+        1
+      ],
+      "drawing_sheets": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "specification_and_claims": [
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44
+      ]
+    }
+  },
+  "retained_original_resolution_pages": [
+    {
+      "bytes": 30989,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-page-5.png",
+      "role": "drawing_panel_labeled_FIG_1C",
+      "sha256": "f7f71ebc96f184862d4bb3aac9fdbcbb5528a57fec35fb00c5570910835b8dcb"
+    },
+    {
+      "bytes": 142067,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-page-39.png",
+      "role": "specification_FIG_10_text_and_TABLE_1",
+      "sha256": "f5e02308799ab5740101d2bd56c4ad8262a1a3d6f2ef30f0cd6df69211cdfd00"
+    },
+    {
+      "bytes": 147010,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-page-40.png",
+      "role": "specification_TABLE_2",
+      "sha256": "3fca0e9c3859f3ce5d0a2be1548009dfd7cb8fce82eb190d0cfe2adee179a70a"
+    },
+    {
+      "bytes": 150897,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-page-41.png",
+      "role": "retained_adjacent_specification",
+      "sha256": "344d04976dbaae21df1751bc5acd1d2f60a7c9b00f638b0208bdfa42e69fabbc"
+    },
+    {
+      "bytes": 140931,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-page-42.png",
+      "role": "specification_TABLE_3",
+      "sha256": "164e7876462a8bb626af6b75c53444b0aa14517136456857fc279fb5d0628a71"
+    },
+    {
+      "bytes": 152289,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-page-43.png",
+      "role": "retained_adjacent_specification",
+      "sha256": "6830d2cd01c86c2a3dc8ad546959f12475899969b3d2ea242c083f53a4198e74"
+    },
+    {
+      "bytes": 98612,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-12591109-B2-page-44.png",
+      "role": "claims_1_18",
+      "sha256": "972aca2187c2e7bd127325b3828da2cbc97a2a373f859335ce6f7fc7298dc855"
+    },
+    {
+      "bytes": 25796,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-20230098359-A1-page-4.png",
+      "role": "same_application_drawing_panel_labeled_FIG_1C",
+      "sha256": "207e62f48dc078d55ac426a66b59cc257cc1a586504acf51ea32baa10de19389"
+    },
+    {
+      "bytes": 140029,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-20230098359-A1-page-41.png",
+      "role": "same_application_specification_TABLE_3",
+      "sha256": "d1ff8b729396ffe42b15e87fccf75c6c82ee6075c59fa1940ff108295c1cae14"
+    },
+    {
+      "bytes": 147509,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-20230098359-A1-page-42.png",
+      "role": "same_application_adjacent_specification",
+      "sha256": "9ede16d5596462b66b07ed64c8c049b502e82c4a36b440af16ec83d554900a48"
+    },
+    {
+      "bytes": 136059,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-20230098359-A1-page-43.png",
+      "role": "same_application_claims",
+      "sha256": "4a6d7917856b65a0b55bb0b7992165abe2b7a97e2cbc8b0acfe0c0c91ab2ddff"
+    },
+    {
+      "bytes": 31008,
+      "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-20230098359-A1-page-44.png",
+      "role": "same_application_claims",
+      "sha256": "73ebd2f4669625ff2e54fb2a9012b45932cd1e08aeec122793dea9132cbd1323"
+    }
+  ],
+  "same_application_a1": {
+    "bytes": 1660180,
+    "decoded_raster_set_sha256": "7d5f6b966db827ebee3a9aedbafa3713dcb503da445acdbdc1a0e40c1ea49444",
+    "decoded_raster_size": [
+      2560,
+      3300
+    ],
+    "drawing_pdf_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "page_count": 44,
+    "pages": [
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 1,
+        "raster_sha256": "f258a0edd2a885d5d01e0d76fccb7144f8e954430f20d85ae1f66a6f80c6737f",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 2,
+        "raster_sha256": "0bda8fbce2ad2f74be711522cc81cb45f621562d85d7ebf31d34018c04c00935",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 3,
+        "raster_sha256": "d3155004483d7d8a0e764818b7799c97cac4db590d0d034a0284dc3641ff7bd3",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 4,
+        "raster_sha256": "ff64ad725f90fc38ec0ce4ada2026c89c220dd950f903866dedaf9126b9baf07",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 5,
+        "raster_sha256": "fa33caee5720c47eb0a2e400f7c9947b277ddbd2ab00312805c704ac18ed4b45",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 6,
+        "raster_sha256": "02a9edf6ea865e9405db77819a4f5d4642c1dee2a481ede2df9a3d35c2fd880b",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 7,
+        "raster_sha256": "d5c6a7abad1309affd21c82571d383db8548081bb565e36d8d4af9234fb54ed6",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 8,
+        "raster_sha256": "9ed52fece1672761c10007b50f601a283c6127341069d2be4fdd3ee5386b3bd0",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 9,
+        "raster_sha256": "3c6948f59469f7e4b775ade57f58e1ca5caa9650e67a22e2fd12ed8a5350fae9",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 10,
+        "raster_sha256": "7b661109f82e989efb3b1e0014eed6cb644a0605accc1a22ab7f28e2e1a9668e",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 11,
+        "raster_sha256": "19a4af60e6a5a2b9fcca3ff9660f2515f33dadfae84d502d0dbdd65cf2f030cd",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 12,
+        "raster_sha256": "a44343767bf2238b63a7a260d21fdb53af3f6fc08be420a145fdbebd7136cae7",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 13,
+        "raster_sha256": "9db51ee49d4497ac9c62480bbaec5bec1e95352d2f49d92f825175904dac2dd0",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 14,
+        "raster_sha256": "e438ff97786e5529f43de2534cf7a133ea3a260f8dabcad22f5e8f593ca43b77",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 15,
+        "raster_sha256": "ceb0362603fbcaea18033a568e27f8a668645a89a351a32735da6b81d3c2a72a",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 16,
+        "raster_sha256": "af81cdcca9de1a348194a2293c21c6a33a53348979b0ffecee54a5879f4deb57",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 17,
+        "raster_sha256": "a39d22d7587ce88b56f2bf0171e812c9b28a3fa39a2d27882df70c319fa4df84",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 18,
+        "raster_sha256": "53899f779b565293b76621afdf4cfbea3d47c214f781ab391158e9fecd274712",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 19,
+        "raster_sha256": "8ea4efa5775f055cc6532e2a1b1f8b45028f40bace15c06e65e2fcc2a45f476b",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 20,
+        "raster_sha256": "4f519a1762df9ea1250e1ff16b6b80239f0afd2a3ee70686270ac6934a70d058",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 21,
+        "raster_sha256": "d5ca51e9f494d0719395b78593798aad2a44717ea173c71547d06f629f62ca4e",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 22,
+        "raster_sha256": "f335d609c766518faf541f6067c14b25eac1361f228c0063d5514cfaec187cb4",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 23,
+        "raster_sha256": "e0a0e0825dfdd8b90bec2935042386e74aff602956a9b41629fb494b54d71b6c",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 24,
+        "raster_sha256": "fd130261b55eb5c6caf97c2ebf2f0eeefb74779cbe0e1c66384094a2e91f50ba",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 25,
+        "raster_sha256": "54348fd7ee197dd8955af7e3842fb2267e9757903549e2831527cc65e828fa46",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 26,
+        "raster_sha256": "fba66745b830747f531b0cd7ae2e2eb876aae8e437ad942812d0286937ba8806",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 27,
+        "raster_sha256": "2e18f4625b11471fd17da87d793e176a99012ad5cdf8213cb34012579b50ebba",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 28,
+        "raster_sha256": "5deacfb61ec6eebc9406193e9a86134bc494728a9a852666252e862c350cc031",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 29,
+        "raster_sha256": "3230f2ad5ed05a4c879f706d19d9296708c0941bbb8f274bbf6f031a7cd9c0a2",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 30,
+        "raster_sha256": "84bf601cf1407b22d4a322644381cde297aab833daa4e405631ce9deb5fcf58a",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 31,
+        "raster_sha256": "2e606aa1ebe03b0d74ee28b66a8ce3884858a6c4991c7df6f66a21e7ad1b0d34",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 32,
+        "raster_sha256": "e5cc6336c26c4bdc1e06065497364a2b9507595bdd70ae966d41e8b7b780d2f4",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 33,
+        "raster_sha256": "09e2406ee543f4f18ab169b078f6c52a87c9ac09ebc196296cb41aa8341cff9c",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 34,
+        "raster_sha256": "59c7bf863f8a580f0a60bed2ba4dae83b6664652c4f86ad254861a4b5c508f6c",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 35,
+        "raster_sha256": "980491e004a98c0c9595f4fd6c0e734e74e3db3ee769595d8f681e76cee7da43",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 36,
+        "raster_sha256": "33f7f5cea49da418d60af5c843b17339d57e00205aa605897ad849fbb65128ea",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 37,
+        "raster_sha256": "f065638d74e4ca05a0ef8f870bf8ea8c4a4925c6eef528966535389869ed2a94",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 38,
+        "raster_sha256": "8e9d91defbdfe981f39e6f00adc91df165311543f37efacb2bc5320cf62e8b62",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 39,
+        "raster_sha256": "59b3d0912c3a2f9e82f5b7e751f717e6302b9651b118418ccfe7e0c83cbb2a66",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 40,
+        "raster_sha256": "a5c44877b455d08a5abef46c14a85f5c4d37f4a682f6388764a1d4c281be1dcd",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 41,
+        "raster_sha256": "e776bf5a65fb822a7a91061ad40dd92dbb3883a6d5b1873d115e1ae7cee683a6",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 42,
+        "raster_sha256": "a7fd1d355f78035586b189e6802ef8c4c1a069e9e529847cc0bce541fc60bd79",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 43,
+        "raster_sha256": "5941b5c1692357c9282f1646b627a782a54e0658f074ee956842e08c7f8d6673",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 44,
+        "raster_sha256": "290b488ab6ff4112889a2b98500c411361dd029c574dcf1b840fc123a45851d1",
+        "text_characters": 0
+      }
+    ],
+    "path": ".planning/quick/260717-patent-generic-family-82951912/source-review/US-20230098359-A1-official.pdf",
+    "publication_id": "US-20230098359-A1",
+    "sha256": "d007ba4e830884445e3e7b839c7395f2af582ced1a83e2e71d2d4a51d248844d",
+    "specification_and_claim_pdf_pages": [
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44
+    ]
+  },
+  "schema_version": 1,
+  "visual_review": {
+    "all_official_pages_contact_reviewed": true,
+    "cross_publication_numeric_borrowing": false,
+    "drawing_panel_label_on_b2_pdf_page_5": "FIG. 1C",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "ordered_surface_prescription_observed": false,
+    "source_label_discrepancy_recorded": true,
+    "tables_are_mechanical_angle_and_clearance_only": true,
+    "textual_figure_label_in_html_and_b2_pdf_page_39": "FIG. 10"
+  }
+}

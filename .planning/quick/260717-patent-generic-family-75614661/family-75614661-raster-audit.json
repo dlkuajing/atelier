@@ -1,0 +1,330 @@
+{
+  "contact_sheet": {
+    "bytes": 748796,
+    "path": ".planning/quick/260717-patent-generic-family-75614661/source-review/US-20260063874-A1-contact.png",
+    "sha256": "9a88760fcefbe4b6161a0db49c3aad38d1540233333e0df6febcb07330a2fb1b"
+  },
+  "critical_pages": [
+    {
+      "extracted_png": {
+        "bytes": 67583,
+        "path": ".planning/quick/260717-patent-generic-family-75614661/source-review/US-20260063874-A1-page-8.png",
+        "sha256": "18a84d1c4a5149d700231094c030a1a1cbd626f588ee047e274e7180632f2bb2"
+      },
+      "official_page_raster_sha256": "fdbc41b85b34abd8ae0c665ecd005440cac17de952ac3f7cc52292d5b888e39c",
+      "page": 8,
+      "role": "FIG. 7 fourth-example layout"
+    },
+    {
+      "extracted_png": {
+        "bytes": 172586,
+        "path": ".planning/quick/260717-patent-generic-family-75614661/source-review/US-20260063874-A1-page-18.png",
+        "sha256": "5484200445d58dafebd8f4a27b4c36d889d9d8760b71cf4d16b38e3e401c398e"
+      },
+      "official_page_raster_sha256": "fc71edbc98e7ac23144fc5a2b67e305d1c0e530d7bd4c43b2dc366e533060839",
+      "page": 18,
+      "role": "TABLES 5-6 third-example conflict"
+    },
+    {
+      "extracted_png": {
+        "bytes": 152557,
+        "path": ".planning/quick/260717-patent-generic-family-75614661/source-review/US-20260063874-A1-page-19.png",
+        "sha256": "b7993b8acd1aece8a25a918ffdab2ed2bba2725e052c05b5fc9dde214e20df4b"
+      },
+      "official_page_raster_sha256": "0528f9022ed66a3c0bf885d1d6d6c78cb7ee5d14ebc39fb1bca12c2a6f564e5c",
+      "page": 19,
+      "role": "TABLES 7-8 coincident-stop example"
+    },
+    {
+      "extracted_png": {
+        "bytes": 216096,
+        "path": ".planning/quick/260717-patent-generic-family-75614661/source-review/US-20260063874-A1-page-21.png",
+        "sha256": "80454b5057388092116250372396a07737da9a1f8ecd7039318242f5507a6f44"
+      },
+      "official_page_raster_sha256": "6f2df3fc1636b13a3cc5b6ef66df52233191a650c7ab1bf6ef78300ed7b1dfc9",
+      "page": 21,
+      "role": "TABLES 11-12 system metadata and conditions"
+    }
+  ],
+  "family_id": "75614661",
+  "official_pdf": {
+    "bytes": 1015681,
+    "decoded_raster_set_sha256": "b4ec8ca0f2646e208ddf6c2978af4083a289a4ee55a5478c459cddcb324f31df",
+    "page_count": 22,
+    "pages": [
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 1,
+        "raster_sha256": "dd6d353442d06c737e239185f7994b8c9b000a116bd0623c1565a9de0da82b5c",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 2,
+        "raster_sha256": "af87c7a515573459b925f2f057aef10aec5fd74aad4bce59b7a78909636ede99",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 3,
+        "raster_sha256": "dd832a0d948a16ab9728358f629d0057c4389660e8afa67565bd037e00df1c50",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 4,
+        "raster_sha256": "83b37767bc27a571312ab11dbc1c8b291a6cc651451194e780370d9c1ff9904b",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 5,
+        "raster_sha256": "b125f331a821aad2c78c05bf3a9068b02f07b410beb7c53cc3b52d9c91f916fd",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 6,
+        "raster_sha256": "c7a5ee2cc123f8fe3a31876034fadf043410f7f1ea57f7421b84cfcc0b58c412",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 7,
+        "raster_sha256": "37d0e7d5ea7958106ce5d24ab5033b760409ca0d13d25aaa5cfcd6384715349a",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 8,
+        "raster_sha256": "fdbc41b85b34abd8ae0c665ecd005440cac17de952ac3f7cc52292d5b888e39c",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 9,
+        "raster_sha256": "762522c372b60171bca288b189822a871b1371b07b9a0d8de33c5f7e4e1aa0f7",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 10,
+        "raster_sha256": "4ae645cb49d15d20b62cb84df03abe6dd7542648e6fb453f4f77e13089c7dff3",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 11,
+        "raster_sha256": "5e48261ea43517d5af316bc5ae09697318b48976c3d2a9b584a17e4e018ed5aa",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 12,
+        "raster_sha256": "f4d3e4f65cd788f8ac1fd4167c354c72dab1454a446acb32c920dc6cf52a8992",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 13,
+        "raster_sha256": "219a0990c16c0a90e4af9e7d8ca1f2af694e22e829402f33aa2b1fef60da7c3d",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2550,
+          3300
+        ],
+        "image_count": 1,
+        "page": 14,
+        "raster_sha256": "a2d57b02b14b8c1457faff7da8ed0feb1014bde82d854db661461ef0955d4b77",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2550,
+          3300
+        ],
+        "image_count": 1,
+        "page": 15,
+        "raster_sha256": "11238ab34a8b78bdfe64fb6e0dfc669747c8e6447396f897b83d2ea24e599b96",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 16,
+        "raster_sha256": "a7f68326f8cc5b6b72de0c31d0b0b8fb3ee3adef289d5b85461e973ff3af4580",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 17,
+        "raster_sha256": "5dd0e55f79413ed36f56ca950f884b0ef36ffacae47e3bbc1ccc123c643a4d84",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 18,
+        "raster_sha256": "fc71edbc98e7ac23144fc5a2b67e305d1c0e530d7bd4c43b2dc366e533060839",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 19,
+        "raster_sha256": "0528f9022ed66a3c0bf885d1d6d6c78cb7ee5d14ebc39fb1bca12c2a6f564e5c",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 20,
+        "raster_sha256": "c4a5f19756892da343031998cf01a7ccae87997a54d7ea943023b869b1061853",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 21,
+        "raster_sha256": "6f2df3fc1636b13a3cc5b6ef66df52233191a650c7ab1bf6ef78300ed7b1dfc9",
+        "text_characters": 0
+      },
+      {
+        "decoded_raster_size": [
+          2560,
+          3300
+        ],
+        "image_count": 1,
+        "page": 22,
+        "raster_sha256": "47b1381e881e8595796cd996d9ddbc4192148e3311e17b10782189fe315a0b4e",
+        "text_characters": 0
+      }
+    ],
+    "path": ".planning/quick/260717-patent-generic-family-75614661/source-review/US-20260063874-A1-official.pdf",
+    "sha256": "1b9ea49592409781f767062c27fdb9eb4412e90d6f3eff6d11f4d91d49517c31",
+    "source_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20260063874"
+  },
+  "page_classes": {
+    "cover": [
+      1
+    ],
+    "description_and_claims": [
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22
+    ],
+    "drawing_sheets": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "numeric_table_pages": [
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ]
+  },
+  "publication_id": "US-20260063874-A1",
+  "schema_version": 1,
+  "visual_review": {
+    "cross_publication_numeric_borrowing": false,
+    "drawing_transcription": false,
+    "example_4_stop_is_on_table_7_surface_s6": true,
+    "example_5_stop_is_on_table_9_surface_s6": true,
+    "html_stop_wrap_checked_against_pdf": true,
+    "numeric_derivation_from_rasters": false,
+    "table_5_and_table_6_radius_conflict_visually_confirmed": true
+  }
+}

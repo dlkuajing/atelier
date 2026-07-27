@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "family_id": "64459548",
+  "root_ids": ["US-20210373283"],
+  "publication_id": "US-20210373283-A1",
+  "application_number": "17/344651",
+  "title": "IMAGING LENS UNIT AND METHOD FOR MANUFACTURING THE SAME",
+  "assignee": "KANTATSU CO., LTD.",
+  "inventor": "Nobuyuki Kasama",
+  "filing_date": "2021-06-10",
+  "publication_date": "2021-12-02",
+  "legal_status": "abandoned",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "parent_application_cross_check_publications": 1,
+    "explicit_embodiments": 2,
+    "lens_elements_per_embodiment": 5,
+    "description_paragraphs": 190,
+    "drawing_declarations": 11,
+    "figure_panels": 23,
+    "source_tables": 0,
+    "claims": 14,
+    "classification_pdf_pages": 21,
+    "classification_drawing_sheets": 11,
+    "terminal_items": 2
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f12d20d6c4a675d5/US-20210373283-A1.html",
+    "bytes": 67735,
+    "raw_document_sha256": "f12d20d6c4a675d50fe7245fcda60aea7eb19389bfb0ca7cc314868053203431",
+    "normalized_characters": 55162,
+    "normalized_text_sha256": "71dc0a85845c6862c52dad4c4a2d0e42f1a6441e7bc4cc20a65954fc80333861",
+    "section_markers": {
+      "abstract": "Abstract",
+      "technical_field": "TECHNICAL FIELD",
+      "background_art": "BACKGROUND ART",
+      "summary": "SUMMARY OF INVENTION",
+      "brief": "BRIEF DESCRIPTION OF DRAWINGS",
+      "embodiments": "DESCRIPTION OF EMBODIMENTS",
+      "first_embodiment": "First Embodiment",
+      "second_embodiment": "Second Embodiment",
+      "reference_signs": "REFERENCE SIGNS LIST",
+      "claims": "Claims 1 . An imaging lens unit comprising:"
+    },
+    "section_positions": {
+      "abstract": 301,
+      "technical_field": 1341,
+      "background_art": 1470,
+      "summary": 2251,
+      "brief": 9009,
+      "embodiments": 10374,
+      "first_embodiment": 10800,
+      "second_embodiment": 35586,
+      "reference_signs": 47810,
+      "claims": 49186
+    },
+    "section_sha256": {
+      "abstract": "b68ac90c4d716b93e34d181fe945b3c3fe325ed96fef42b9567ba088be152204",
+      "technical_field": "3182671afc95726eb661239f6e4920f6facecbfb52ed6e5737bb16e094ba9605",
+      "background_art": "2fcf8bae6302a7fe37298a61c1407881cba8c368f82228785883540dc6adfcf4",
+      "summary": "75524b36f074efba0bc0b769abf7d7a65ff8e4c13f7ade2cbc67176dfa2797d9",
+      "brief": "01640ba28a181f85fb5131aab9e0e7cbd2cf253fbeac4d411926dddf7774c6f4",
+      "embodiments": "104a64ef717ad296c97dc64223e3ca81d1542c5afaa07932782a6a5cb8e8c05e",
+      "first_embodiment": "805ff0673e9743b6e0d195e800a75b9dc4eed754b2cfcfc9a20b17358bc6c77f",
+      "second_embodiment": "aec1e1d20905d5108b9513e607b828673a2c50c94bd0c339f95bf781ac658ee8",
+      "reference_signs": "693905ce22aacddf85a164d1df656cc33247e816d86a1899fb6c88053778c257",
+      "claims": "830eb05651865a7361fc49c30300398de5c9ba4c82af0c5f6a31d095ad93022f"
+    },
+    "paragraph_ranges": {
+      "technical_field": [1, 1],
+      "background_art": [2, 3],
+      "summary": [4, 15],
+      "brief": [16, 26],
+      "embodiments": [27, 27],
+      "first_embodiment": [28, 117],
+      "second_embodiment": [118, 152],
+      "reference_signs": [153, 190]
+    },
+    "paragraph_range_sha256": {
+      "technical_background_summary_1_15": "88dc0d0ff07de899b8122ca4afc0de7a06b27d1d5acf2e8910362cb850fbd137",
+      "brief_drawings_16_26": "e6cf0f665185f5571a25393ba4fe9e7b65375cd3076a9e2aff6812cea3a66272",
+      "embodiment_intro_27": "1c54c74115c66ccf0feb560cf948da3325f804b9ad4ff337d41e5a712b50e6cb",
+      "first_embodiment_28_117": "ca9242e4589b3317f72b08d46ef293496f428e401bc76adbf7c67f8c62988ac7",
+      "second_embodiment_and_conclusion_118_152": "5f15cb26f851ba4477de6f90771509b83f6458ca02421489db0774789e5da508",
+      "reference_signs_153_190": "a27f3f88d67e1e7a7107e83ffb2d6c8e720aebeb6f8ccde6ac1fb532813f2d45"
+    },
+    "drawing_declarations": [
+      {"paragraph": 16, "panels": ["1"]},
+      {"paragraph": 17, "panels": ["2A", "2B"]},
+      {"paragraph": 18, "panels": ["3"]},
+      {"paragraph": 19, "panels": ["4"]},
+      {"paragraph": 20, "panels": ["5A", "5B", "5C", "5D"]},
+      {"paragraph": 21, "panels": ["6A", "6B", "6C", "6D"]},
+      {"paragraph": 22, "panels": ["7A", "7B"]},
+      {"paragraph": 23, "panels": ["8"]},
+      {"paragraph": 24, "panels": ["9"]},
+      {"paragraph": 25, "panels": ["10A", "10B", "10C", "10D"]},
+      {"paragraph": 26, "panels": ["11A", "11B"]}
+    ],
+    "claim_count": 14,
+    "table_count": 0
+  },
+  "embodiments": [
+    {
+      "embodiment_number": 1,
+      "paragraph_range": [28, 117],
+      "figure_panels": ["1", "2A", "2B", "3", "4", "5A", "5B", "5C", "5D", "6A", "6B", "6C", "6D", "7A", "7B"],
+      "architecture": "five resin lens elements, lens barrel, contact/edge/coating geometry, vacuum-ultraviolet surface modification, press fitting, heating, and assembly",
+      "lens_shape_disclosure": [
+        "L1 convex on object and image sides",
+        "L2 convex object side and concave image side",
+        "L3 concave near the optical axis on both sides and both sides aspherical",
+        "L4 concave object side and convex image side",
+        "L5 convex object side and concave near the optical axis on the image side and both sides aspherical"
+      ]
+    },
+    {
+      "embodiment_number": 2,
+      "paragraph_range": [118, 152],
+      "figure_panels": ["8", "9", "10A", "10B", "10C", "10D", "11A", "11B"],
+      "architecture": "the same five-lens assembly with a changed lens barrel, rear annular fixing member, contact geometry, and manufacturing sequence",
+      "lens_shape_disclosure": "reuses the first-embodiment lens assembly"
+    }
+  ],
+  "source_scope_phrase_counts": {
+    "First Embodiment": 9,
+    "Second Embodiment": 8,
+    "imaging lens unit": 75,
+    "lens barrel": 97,
+    "lens element": 249,
+    "surface modification portion": 81,
+    "vacuum ultraviolet": 29,
+    "press fitting": 14,
+    "heating": 19,
+    "resin material": 13,
+    "edge portion": 57,
+    "coating region": 12,
+    "non-coating region": 7,
+    "light shielding plate": 16,
+    "rear light shielding ring": 24,
+    "bonding step": 12,
+    "surface modification step": 11,
+    "heating step": 7,
+    "optical axis": 40,
+    "convex surface": 4,
+    "concave surface": 4,
+    "aspherical surfaces": 2
+  },
+  "optical_boundary": {
+    "absent_marker_counts": {
+      "focal length": 0,
+      "effective focal length": 0,
+      "F-number": 0,
+      "FNO": 0,
+      "field of view": 0,
+      "FOV": 0,
+      "radius of curvature": 0,
+      "curvature radius": 0,
+      "Abbe": 0,
+      "aspheric surface": 0,
+      "surface number": 0,
+      "optical prescription": 0,
+      "lens prescription": 0,
+      "surface prescription": 0,
+      "refractive index": 0,
+      "thickness": 0
+    },
+    "ordered_surface_prescription_published": false,
+    "surface_radii_spacings_materials_and_asphere_coefficients_published": false,
+    "system_efl_f_number_and_angular_field_published": false,
+    "image_only_prescription_found_in_pdf": false,
+    "terminal_reason_code": "confirmed_no_prescription.lens_barrel_surface_modification_and_manufacturing_architecture_only"
+  },
+  "family_relationships": {
+    "parent_application": "US15/996142",
+    "parent_publication": "US-20180348479-A1",
+    "continuation_application": "US17/344651",
+    "same_family_country_publication": "CN-108983383-A",
+    "priority_applications": ["JP2017-110499", "JP2018-086565"]
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-64459548/family-64459548-raster-audit.json",
+    "sha256": "bc84a57ee2fe97a0d47347e191c33775dfc47c0295347356e1a2b7e6344a9983"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-64459548/family-64459548-external-family-members.json",
+    "sha256": "b464d6312b3e7ed46460558e8a0fac5995c88358ffff20795ffc8e7022c9ed03"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-64459548/family-64459548-replay-determinism.json",
+    "sha256": "e67cbb5c0b1c108bf11022cfdcaf9f7ba5c5a530aaea18fc8d2d1aa7ddc8df13"
+  }
+}

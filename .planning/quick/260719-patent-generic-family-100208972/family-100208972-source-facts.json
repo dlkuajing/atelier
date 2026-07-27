@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "family_id": "100208972",
+  "root_id": "US-12663617",
+  "publication_id": "US-12663617-B2",
+  "application_number": "18/786504",
+  "content_authority": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/7659bdaf0b85b075/US-12663617-B2.html",
+    "bytes": 170886,
+    "sha256": "7659bdaf0b85b0754e4d388e51a81dcb525e8048781ce1855007962f0927e696",
+    "normalized_characters": 67058,
+    "normalized_sha256": "109c17a4cb24af11db088fc0240f171f67a1336c533be419e0219954c8c22921"
+  },
+  "derived_exact_profile": {
+    "path": ".planning/quick/260719-patent-generic-family-100208972/source-review/derived-source-profile.json",
+    "bytes": 23047,
+    "sha256": "f0d483aa0f3620417439986e4faf111e989e8728c0d6d69abcb1d14d7d626c4a"
+  },
+  "sections": [
+    {"name": "abstract", "sha256": "cfbc386733c9abd3ea13dd4a5fc29c0a798e8da1f8c88df8f5d5a3ac542aa26a"},
+    {"name": "cross_reference_background_summary", "source_paragraph_numbers": [1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "sha256": "433c7c3ddf49f0b043e6cc510516c2497a89297d09caaf7ea51907148bbbb0ef"},
+    {"name": "brief_description_of_drawings", "description_paragraphs": [1, 21], "sha256": "89ba471e6df986e7f582acb00f273b4ff3b754edd606899be84d07cbc39e36bf"},
+    {"name": "detailed_description", "description_paragraphs": [22, 107], "sha256": "bed41cc85e431e568cb375f019518b34f59ede9a7fcaba3958874209dc9ad5a8"},
+    {"name": "claims", "sha256": "2d6b31b71cfe161b30f82a6e23a46cdca9f43bc2d4e3b38dc9b126ee32ff17ee"}
+  ],
+  "description_paragraph_spans": [
+    {"paragraphs": [1, 21], "role": "declared_figure_panels", "sha256": "bbf85750f57b1c49accbb1b12b1f58cf9d9e837bc05ecd791784b0fa84765c8d"},
+    {"paragraphs": [22, 53], "role": "folded_camera_geometry_and_known_context", "sha256": "d0727c8793e6870de8e8409602897cbd5317b43cb7b8ceb7dfb65487a32103be"},
+    {"paragraphs": [54, 70], "role": "ten_example_definition_and_formulae", "sha256": "f2ae5b1a8efe95019ac8f8b2643e7f4098b1478f24a3da70e9a69291ce4a7921"},
+    {"paragraphs": [71, 100], "role": "ten_three_table_example_blocks", "sha256": "b3fa75ebc8e0d6fa3f74540029fc1074388cef73a42223edc998472ae59ec0a2"},
+    {"paragraphs": [101, 104], "role": "comparison_and_characteristic_tables", "sha256": "9d9405713fbf98f2ce760e10080c495568b748e3efdc6ae69724553d0c808c57"},
+    {"paragraphs": [105, 107], "role": "closing_context", "sha256": "2e788dcf47b9acc868272094dda4e956795e0ea7f94259a55b64712d8605fe83"}
+  ],
+  "declared_figures": {
+    "description_paragraph_range": [2, 21],
+    "panel_labels": ["1A", "1B", "1C", "1D", "2A", "2B", "3A", "3B", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14A", "14B"],
+    "panel_count": 20
+  },
+  "claims": {
+    "source_number_sequence": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+    "independent_claim_numbers": [1],
+    "section_sha256": "2d6b31b71cfe161b30f82a6e23a46cdca9f43bc2d4e3b38dc9b126ee32ff17ee"
+  },
+  "mathml": {
+    "object_count": 9,
+    "object_sha256": [
+      "72bce3401f35e88dcda14eda8681746ef1c8d2e0469b5634f354401fdac2a00d",
+      "d7cd6f59060efd130b496adee922a6d32cd8550a0c4f5f673d1988c3d3b8d743",
+      "edc84a5914102ed2b75ec1f1c8730dafc04e7a53b54820a4a019c093af26a738",
+      "6cae3028444760d5bcdcad1d5267a2230ba64226c6be5ed34878308ece785567",
+      "19162d3ff528576d8aa980c5034e76eae8bbab31ad3c5e216fd142ea1aa79a07",
+      "68cc6c1def9d17b009be23b12b9f3d6a9f27037384179aec59b67e7d4534efbc",
+      "b95a8d73acbf36e9e60c53711f459efbb5d3a5b3f008268751f5e485ab53dbff",
+      "f9588aeb5e4ff6b9704c91d8656ebbd9a78c46cadaf743b8ecbd9c6e9ca1aa34",
+      "60e87c780798655e2bd36ca45d08154d1c69dd77ec0d2d2fe51ace7420eef534"
+    ],
+    "qed_type_1_defined_orders": [0, 1, 2, 3, 4, 5],
+    "even_asphere_defined_orders": [1, 2, 3, 4, 5, 6, 7],
+    "external_basis_imported": false,
+    "formula_substitution_used": false
+  },
+  "tables": {
+    "object_count": 33,
+    "table_hashes_and_token_counts": "derived_exact_profile.table_payload_sha256 and table_payload_token_counts",
+    "example_triplets": {
+      "1": [1, 2, 3], "2": [4, 5, 6], "3": [7, 8, 9], "4": [10, 11, 12], "5": [13, 14, 15],
+      "6": [16, 17, 18], "7": [19, 20, 21], "8": [22, 23, 24], "9": [25, 26, 27], "10": [28, 29, 30]
+    },
+    "triplet_roles": ["direct_system_summary", "ordered_surface_table", "asphere_coefficient_table"],
+    "comparison_and_characteristic_tables": [31, 32, 33]
+  },
+  "prescription_facts": [
+    {"example": 1, "paragraphs": [71, 73], "figures": ["2A", "2B"], "tables": [1, 2, 3], "ordered_surface_rows": 12, "coefficient_rows": 8, "coefficient_basis": "even_A1_A7", "efl_mm": 13.809, "ttl_mm": 13.612, "f_number": 2.735, "sdl_over_2_mm": 2.930, "bfl_mm": 4.932, "explicit_stop": false},
+    {"example": 2, "paragraphs": [74, 76], "figures": ["6"], "tables": [4, 5, 6], "ordered_surface_rows": 14, "coefficient_rows": 10, "coefficient_basis": "qed_type_1_Q0_Q5_A0_A5", "efl_mm": 15.001, "ttl_mm": 14.472, "f_number": 2.727, "sdl_over_2_mm": 2.930, "bfl_mm": 7.617, "explicit_stop": true},
+    {"example": 3, "paragraphs": [77, 79], "figures": ["7"], "tables": [7, 8, 9], "ordered_surface_rows": 14, "coefficient_rows": 10, "coefficient_basis": "qed_type_1_Q0_Q5_A0_A5", "efl_mm": 10.911, "ttl_mm": 10.585, "f_number": 2.819, "sdl_over_2_mm": 2.620, "bfl_mm": 5.000, "explicit_stop": true},
+    {"example": 4, "paragraphs": [80, 82], "figures": ["8"], "tables": [10, 11, 12], "ordered_surface_rows": 14, "coefficient_rows": 10, "coefficient_basis": "qed_type_1_Q0_Q5_A0_A5", "efl_mm": 12.166, "ttl_mm": 11.856, "f_number": 2.704, "sdl_over_2_mm": 2.620, "bfl_mm": 6.382, "explicit_stop": true},
+    {"example": 5, "paragraphs": [83, 85], "figures": ["9"], "tables": [13, 14, 15], "ordered_surface_rows": 14, "coefficient_rows": 10, "coefficient_basis": "qed_type_1_Q0_Q5_A0_A5", "efl_mm": 12.020, "ttl_mm": 11.216, "f_number": 2.671, "sdl_over_2_mm": 2.620, "bfl_mm": 6.412, "explicit_stop": true},
+    {"example": 6, "paragraphs": [86, 88], "figures": ["10"], "tables": [16, 17, 18], "ordered_surface_rows": 14, "coefficient_rows": 10, "coefficient_basis": "qed_type_1_Q0_Q5_A0_A5", "efl_mm": 15.000, "ttl_mm": 14.507, "f_number": 2.727, "sdl_over_2_mm": 2.930, "bfl_mm": 6.750, "explicit_stop": true},
+    {"example": 7, "paragraphs": [89, 91], "figures": ["11"], "tables": [19, 20, 21], "ordered_surface_rows": 14, "coefficient_rows": 8, "coefficient_basis": "qed_type_1_Q0_Q5_A0_A5", "efl_mm": 16.142, "ttl_mm": 14.963, "f_number": 2.612, "sdl_over_2_mm": 2.930, "bfl_mm": 7.459, "explicit_stop": true},
+    {"example": 8, "paragraphs": [92, 94], "figures": ["12"], "tables": [22, 23, 24], "ordered_surface_rows": 14, "coefficient_rows": 8, "coefficient_basis": "qed_type_1_Q0_Q5_A0_A5", "efl_mm": 14.955, "ttl_mm": 14.056, "f_number": 2.690, "sdl_over_2_mm": 2.930, "bfl_mm": 6.566, "explicit_stop": true},
+    {"example": 9, "paragraphs": [95, 97], "figures": ["13"], "tables": [25, 26, 27], "ordered_surface_rows": 11, "coefficient_rows": 8, "coefficient_basis": "even_A1_A7", "efl_mm": 11.190, "ttl_mm": 11.135, "f_number": 2.590, "sdl_over_2_mm": 2.620, "bfl_mm": 4.303, "explicit_stop": false},
+    {"example": 10, "paragraphs": [98, 100], "figures": ["14A", "14B"], "tables": [28, 29, 30], "ordered_surface_rows": 13, "coefficient_rows": 10, "coefficient_basis": "even_A1_A7", "efl_mm": 7.970, "ttl_mm": 7.780, "f_number": 2.148, "sdl_over_2_mm": 2.930, "bfl_mm": 3.266, "explicit_stop": false}
+  ],
+  "items": [
+    {"number": 1, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent"},
+    {"number": 2, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 3, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 4, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 5, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 6, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 7, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 8, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_angular_field_absent"},
+    {"number": 9, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent"},
+    {"number": 10, "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.system_stop_and_prescription_specific_angular_field_absent"}
+  ],
+  "angular_field_boundary": {
+    "numeric_hfov_occurrences": 0,
+    "degrees_occurrences": 0,
+    "field_of_view_phrase_occurrences": 2,
+    "fov_token_occurrences": 5,
+    "relational_wide_tele_language_only": true,
+    "sdl_over_2_and_efl_derivation_used": false
+  },
+  "exclusions": {
+    "known_context_camera_100": true,
+    "known_context_dual_camera_170": true,
+    "geometry_definition_figures": ["3A", "3B", "4", "5"],
+    "reason": "all context is mapped but none is an additional lens example beyond the ten explicitly enumerated in paragraph 54"
+  },
+  "conversion_policy": {
+    "angular_field_derived": false,
+    "system_stop_synthesized": false,
+    "drawing_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "related_family_numeric_borrowing_used": false
+  }
+}

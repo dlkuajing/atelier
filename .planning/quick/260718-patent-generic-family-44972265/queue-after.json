@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "a009a80acf52d659fcd8573370dbe7e433094d7f53a5cf2e980b368291481875",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 91,
+      "affected_items": 91
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "77292582",
+    "root_ids": [
+      "US-20230090281"
+    ],
+    "publication_ids": [
+      "US-20230090281-A1"
+    ],
+    "application_number": "17/798838",
+    "title": "Panoramic camera system for enhanced sensing",
+    "applicant": "Circle Optics, Inc.",
+    "assignee": null,
+    "layout_signature": "47e7cc4e752d976ce84eb570f2ad8f451a7ead80846f9db627cd1be1f6a5aa35",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 4,
+      "full_field": 153,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/6150d268fd1a6db6/US-20230090281-A1.html",
+      "sha256": "6150d268fd1a6db65c9e1cd5bb9e467b9c90ee4151a8e4653835e20f8b78a792"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

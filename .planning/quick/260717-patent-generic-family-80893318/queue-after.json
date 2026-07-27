@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "8537d6a5f8f863c11725d848467d218c472535e4117dddeec7228ee44647da30",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 118,
+      "affected_items": 118
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "63246213",
+    "root_ids": ["US-20230333291"],
+    "publication_ids": ["US-20230333291-A1"],
+    "application_number": "18/337142",
+    "title": "LIGHT BLOCKING SHEET, OPTICAL LENS SET, IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "layout_signature": "2f9a0c99c6cd55c2d5f51debdc3c4491d7a54f33817799ab2d14f3a633531804",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 170,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 12,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/e8753c9f075c7149/US-20230333291-A1.html",
+      "sha256": "e8753c9f075c714919b3115bbed61303b0670f742d157cdae1f91b58058774c1"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

@@ -1,0 +1,441 @@
+{
+  "schema_version": 1,
+  "family_id": "94115759",
+  "root_id": "US-12560789",
+  "publication_id": "US-12560789-B2",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_numbered_occurrences": 4,
+    "summary_numbered_occurrences": 23,
+    "detailed_numbered_occurrences": 131,
+    "numbered_specification_occurrences": 158,
+    "distinct_numbered_specification_labels": 149,
+    "summary_detailed_overlapping_labels": 9,
+    "brief_figure_declarations": 18,
+    "claims": 14,
+    "independent_claim_families": 1,
+    "declared_textual_figure_panels": 18,
+    "flattened_tables": 32,
+    "mathml_objects": 1,
+    "source_disclosed_optical_prescriptions": 8,
+    "source_disclosed_device_wrappers": 1,
+    "source_disclosed_items": 9,
+    "metadata_unpublished_items": 8,
+    "confirmed_no_prescription_items": 1,
+    "official_pdf_fetches": 2,
+    "official_pdf_unique_pages": 38,
+    "retained_original_page_rasters": 38,
+    "official_drawing_sheets": 18,
+    "official_table_pages": 15,
+    "unmapped_numbered_specification_occurrences": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "items": [
+    {
+      "item": 1,
+      "label": "NEWMAX three-lens varifocal folded optical assembly first embodiment",
+      "paragraphs": [
+        19,
+        43
+      ],
+      "paragraph_span_sha256": "4d07091c81b68444a9d9b558f8ddd57e32ee09609b03d0b2a7ed7385359592eb",
+      "tables": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 20,
+      "surface_index_range": [
+        0,
+        19
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 19.31,
+          "epd_mm": 10.0,
+          "full_fov_deg": 50.42
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 20.9,
+          "epd_mm": 10.0,
+          "full_fov_deg": 52.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 2,
+      "label": "NEWMAX three-lens varifocal folded optical assembly second embodiment",
+      "paragraphs": [
+        44,
+        57
+      ],
+      "paragraph_span_sha256": "b1adafbaf5ad4dcaa385204439762aacd2ce1e03364980d25b18e6dcc7aaf6cf",
+      "tables": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 20,
+      "surface_index_range": [
+        0,
+        19
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 19.93,
+          "epd_mm": 10.0,
+          "full_fov_deg": 49.22
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 21.18,
+          "epd_mm": 10.0,
+          "full_fov_deg": 52.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 3,
+      "label": "NEWMAX three-lens varifocal folded optical assembly third embodiment",
+      "paragraphs": [
+        58,
+        71
+      ],
+      "paragraph_span_sha256": "a1598e5eb8f62f12d83f894fbe19965d7c6e4407a20a6a638c7509f63be01c26",
+      "tables": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 23,
+      "surface_index_range": [
+        0,
+        22
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 18.93,
+          "epd_mm": 10.0,
+          "full_fov_deg": 49.51
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 20.55,
+          "epd_mm": 10.0,
+          "full_fov_deg": 52.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 4,
+      "label": "NEWMAX three-lens varifocal folded optical assembly fourth embodiment",
+      "paragraphs": [
+        72,
+        85
+      ],
+      "paragraph_span_sha256": "4d04fcdcdfbb2dcf7646f99f1abec68014815002021be41824e2a9a1719a9226",
+      "tables": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 19,
+      "surface_index_range": [
+        0,
+        18
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 18.23,
+          "epd_mm": 10.0,
+          "full_fov_deg": 50.03
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 19.85,
+          "epd_mm": 10.0,
+          "full_fov_deg": 54.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 5,
+      "label": "NEWMAX three-lens varifocal folded optical assembly fifth embodiment",
+      "paragraphs": [
+        86,
+        99
+      ],
+      "paragraph_span_sha256": "104f81fb59f3228550be05755fdfbc69b8fee4b71da509ba244f79d358cff60e",
+      "tables": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 19,
+      "surface_index_range": [
+        0,
+        18
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 21.44,
+          "epd_mm": 10.0,
+          "full_fov_deg": 45.61
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 21.12,
+          "epd_mm": 10.0,
+          "full_fov_deg": 52.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 6,
+      "label": "NEWMAX three-lens varifocal folded optical assembly sixth embodiment",
+      "paragraphs": [
+        100,
+        113
+      ],
+      "paragraph_span_sha256": "88b7e0776ff5444b1342ac0f1d022f039eece975cc04e300b4825c0441d3ee76",
+      "tables": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 21,
+      "surface_index_range": [
+        0,
+        20
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 18.81,
+          "epd_mm": 10.0,
+          "full_fov_deg": 50.8
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 20.77,
+          "epd_mm": 10.0,
+          "full_fov_deg": 52.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 7,
+      "label": "NEWMAX three-lens varifocal folded optical assembly seventh embodiment",
+      "paragraphs": [
+        114,
+        127
+      ],
+      "paragraph_span_sha256": "3c45b569227e1b3c22414b4c63ed892f3455a0b8b56b02af08cf9799afcb1c80",
+      "tables": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 21,
+      "surface_index_range": [
+        0,
+        20
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 17.33,
+          "epd_mm": 10.0,
+          "full_fov_deg": 51.92
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 18.61,
+          "epd_mm": 10.0,
+          "full_fov_deg": 56.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 8,
+      "label": "NEWMAX three-lens varifocal folded optical assembly eighth embodiment",
+      "paragraphs": [
+        128,
+        145
+      ],
+      "paragraph_span_sha256": "acbe593d4d8955b379a3a98b8a358f5e1b7a7298a23d83a9c2731f6d2a67bf55",
+      "tables": [
+        29,
+        30,
+        31,
+        32
+      ],
+      "physical_lens_count": 3,
+      "optical_path_representation": "multipass_folded_source_order_retained",
+      "ordered_surface_rows": 21,
+      "surface_index_range": [
+        0,
+        20
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "near": {
+          "focal_length_label": "f_N",
+          "focal_length_mm": 18.79,
+          "epd_mm": 10.0,
+          "full_fov_deg": 53.87
+        },
+        "far": {
+          "focal_length_label": "f_F",
+          "focal_length_mm": 19.77,
+          "epd_mm": 10.0,
+          "full_fov_deg": 56.0
+        },
+        "reference_wavelength_nm": 555,
+        "system_f_number": null,
+        "image_height_mm": null
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_and_image_height_absent"
+    },
+    {
+      "item": 9,
+      "label": "NEWMAX head-mounted electronic-device wrapper",
+      "paragraphs": [
+        146,
+        149
+      ],
+      "paragraph_span_sha256": "e757cd99f3ce5936eb56c70e9d46da025f9453c49ca52e8c2d42ff93c028657c",
+      "tables": [],
+      "figures": [
+        "9"
+      ],
+      "claims": [],
+      "classification": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "shared_claim_family": {
+    "claims": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "independent_claim": 1,
+    "dependent_claims": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "device_wrapper_claims": []
+  },
+  "required_metadata_boundary": {
+    "direct_system_f_number_values": 0,
+    "direct_image_height_values": 0,
+    "derived_f_over_epd_values_permitted": false,
+    "derived_f_times_tan_half_fov_values_permitted": false
+  },
+  "reconciliation": {
+    "unmapped_numbered_specification_occurrences": [],
+    "unmapped_claims": [],
+    "unmapped_declared_figures": [],
+    "unmapped_tables": [],
+    "unmapped_mathml_objects": [],
+    "unmapped_source_items": []
+  }
+}

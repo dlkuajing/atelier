@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/root/publication order",
+  "result_set_sha256": "ea8fc0b5206bd7667a0b52b784cddde69f22b59d453f2cfd984e0fe6fca1e840",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 98, "affected_items": 98},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "89620688",
+    "root_ids": ["US-20240272407"],
+    "publication_ids": ["US-20240272407-A1"],
+    "application_number": "18/642968",
+    "title": "OPTICAL IMAGING MODULE AND ELECTRONIC DEVICE",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "layout_signature": "3b048f720ae661f83d62ed9e481baa02acb4c8c7537b70fc17e7a1b6b7d470e2",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 82, "example_anchor": 0, "f_number": 0, "full_field": 2, "half_field": 0},
+    "table_count": 3,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/91eafa8d92396242/US-20240272407-A1.html",
+      "sha256": "91eafa8d923962424abb898086549ed7e7b7b26048ea6757de282b39409dc8d9"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

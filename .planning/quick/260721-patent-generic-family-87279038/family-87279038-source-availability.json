@@ -1,0 +1,114 @@
+{
+  "schema_version": "patent-family-source-availability/v1",
+  "family_id": "87279038",
+  "root_id": "US-20250155675",
+  "publication_id": "US-20250155675-A1",
+  "exact_source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/3ee42e192dfcd1f2/US-20250155675-A1.html",
+    "bytes": 80610,
+    "sha256": "3ee42e192dfcd1f207594337705a223136d2fd9781918c42eff4d4d32bd6206a"
+  },
+  "lineage_available_in_exact_source": {
+    "application_number": "18/728486",
+    "pct_application": "PCT/JP2023/000159",
+    "pct_filed": "2023-01-06",
+    "foreign_priority_application": "JP 2022-004493",
+    "foreign_priority_date": "2022-01-14",
+    "priority_confirmation_paragraph": 141
+  },
+  "ordered_prescriptions": [
+    {
+      "source_item": 1,
+      "label": "Example 1",
+      "description_range": [75, 96],
+      "surface_table": 1,
+      "asphere_table": 2,
+      "figures": ["1", "2A", "2B", "2C", "2D"]
+    },
+    {
+      "source_item": 2,
+      "label": "Example 2",
+      "description_range": [97, 100],
+      "surface_table": 3,
+      "asphere_table": 4,
+      "figures": ["3", "4A", "4B", "4C", "4D"]
+    },
+    {
+      "source_item": 3,
+      "label": "Example 3",
+      "description_range": [101, 104],
+      "surface_table": 5,
+      "asphere_table": 6,
+      "figures": ["5", "6A", "6B", "6C", "6D"]
+    },
+    {
+      "source_item": 4,
+      "label": "Example 4",
+      "description_range": [105, 109],
+      "surface_table": 7,
+      "asphere_table": 8,
+      "figures": ["7", "8A", "8B", "8C", "8D"]
+    },
+    {
+      "source_item": 5,
+      "label": "Example 5",
+      "description_range": [110, 113],
+      "surface_table": 9,
+      "asphere_table": 10,
+      "figures": ["9", "10A", "10B", "10C", "10D"]
+    },
+    {
+      "source_item": 6,
+      "label": "Example 6",
+      "description_range": [114, 118],
+      "surface_table": 11,
+      "asphere_table": 12,
+      "figures": ["11", "12A", "12B", "12C", "12D"]
+    }
+  ],
+  "directly_published_for_each_example": [
+    "sixteen ordered S1-S16 coordinate rows",
+    "two distinct Iris rows S7 and S8 between L3 and L4",
+    "curvature radius and sequential thickness for every row",
+    "eight Nd/Abbe material rows including the 0.020 mm cement layer",
+    "K and A4-A16 for S5, S6, S13 and S14",
+    "exact F-number",
+    "exact whole angular field",
+    "exact focal length",
+    "exact total track length"
+  ],
+  "shared_direct_source": {
+    "system_table": 13,
+    "temperature_focus_shift_table": 14,
+    "focal_length_and_total_track_reference_wavelength_nm": 550,
+    "paragraphs_with_direct_half_angle": [92, 100, 104, 109, 113, 117]
+  },
+  "required_but_unpublished_for_each_example": [
+    "which physical Iris row, S7 or S8, is the prescription stop coordinate",
+    "an absolute image height in length units"
+  ],
+  "not_source_available": [
+    "a direct S7 (STOP), S8 (STOP), or equivalent surface-number binding",
+    "a direct numeric sensor height, image semi-height or image diagonal",
+    "permission to derive image height from focal length and whole or half angular field",
+    "an independent ordered prescription for the camera-module, in-vehicle-system or vehicle wrapper"
+  ],
+  "repair_policy": {
+    "iris_row_selected": false,
+    "image_height_derived": false,
+    "whole_angle_recomputed_from_half_angle": false,
+    "img_surface_label_reinterpreted": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "pdf_raster_numeric_transcription_used": false,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "conclusion": {
+    "source_items": 9,
+    "ordered_prescriptions": 6,
+    "complete_source_bound_prescriptions": 0,
+    "metadata_unpublished_items": 6,
+    "confirmed_no_prescription_items": 3,
+    "reason_code": "metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent"
+  }
+}

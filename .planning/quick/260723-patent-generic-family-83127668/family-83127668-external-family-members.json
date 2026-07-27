@@ -1,0 +1,85 @@
+{
+  "schema_version": "patent-family-external-members/v1",
+  "family_id": "83127668",
+  "retained_publication": {
+    "publication_id": "US-12656577-B2",
+    "application_number": "17/932095",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/22a1ecf1cfcd0cdc/US-12656577-B2.html",
+    "sha256": "22a1ecf1cfcd0cdcf385cfcbb0325631dc463439a97feb83b1908fad8bd12e00"
+  },
+  "source_disclosed_lineage": [
+    {
+      "record_type": "prior_us_publication",
+      "identifier": "US-20230418027-A1",
+      "published": "2023-12-28",
+      "evidence": "official B2 Prior Publication Data"
+    },
+    {
+      "record_type": "china_priority_application",
+      "identifier": "202210709577.4",
+      "filed": "2022-06-22",
+      "evidence": "official B2 Foreign Application Priority Data and CROSS-REFERENCE paragraph"
+    }
+  ],
+  "same_layout_distinct_families_excluded": [
+    {
+      "family_id": "93669750",
+      "root_id": "US-20260093094",
+      "publication_id": "US-20260093094-A1",
+      "application_number": "18/970923",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/3798985c70ea18a8/US-20260093094-A1.html",
+      "sha256": "3798985c70ea18a8695a2793322a49179f5e4bcccce493c0d1ab59cf644a8db1"
+    },
+    {
+      "family_id": "81109544",
+      "root_id": "US-20260110881",
+      "publication_id": "US-20260110881-A1",
+      "application_number": "19/317878",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/474fb77e050321fc/US-20260110881-A1.html",
+      "sha256": "474fb77e050321fcd8adf4cd16b6c59c08757b7bb51fec4162bfa993888c83ba"
+    },
+    {
+      "family_id": "59207246",
+      "root_id": "US-20260147189",
+      "publication_id": "US-20260147189-A1",
+      "application_number": "19/452411",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0b18a2304890cf1a/US-20260147189-A1.html",
+      "sha256": "0b18a2304890cf1a1bab3f94aae0135f9e79529c3f0f2ea9c601140af3750b52"
+    },
+    {
+      "family_id": "81110170",
+      "root_id": "US-20260169260",
+      "publication_id": "US-20260169260-A1",
+      "application_number": "19/370790",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/e338a627054e622b/US-20260169260-A1.html",
+      "sha256": "e338a627054e622bdbc59c7ef899fc7bcdb1c62bb42cd88bcc2c71f0f68f2d4a"
+    },
+    {
+      "family_id": "94589695",
+      "root_id": "US-20260169264",
+      "publication_id": "US-20260169264-A1",
+      "application_number": "19/034561",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/fcf8c1d717e8d81f/US-20260169264-A1.html",
+      "sha256": "fcf8c1d717e8d81f4617ac2e8e667c1e904cbe9d16de243598b77f90e0be22c2"
+    },
+    {
+      "family_id": "75814376",
+      "root_id": "US-20260169267",
+      "publication_id": "US-20260169267-A1",
+      "application_number": "19/351312",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/acd675d2fa1773a5/US-20260169267-A1.html",
+      "sha256": "acd675d2fa1773a55594c3132b04c3572a09ea6202cc90434e7fb9fdbf1f6119"
+    },
+    {
+      "family_id": "94742160",
+      "root_id": "US-20260177783",
+      "publication_id": "US-20260177783-A1",
+      "application_number": "19/054915",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2033debe04d6132a/US-20260177783-A1.html",
+      "sha256": "2033debe04d6132a8a686dbd1fc7f07c75d66bc9bb336f29fce4770e54d32fd0"
+    }
+  ],
+  "classification_source": "US-12656577-B2 only",
+  "numeric_borrowing_from_lineage_or_same_layout_families": false,
+  "note": "The prior publication, priority record and seven same-layout residual families are bibliography/exclusion evidence only; no value, source-item boundary or outcome is borrowed from them."
+}

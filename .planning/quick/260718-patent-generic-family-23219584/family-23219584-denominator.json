@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "family_id": "23219584",
+  "application_number": "09/314343",
+  "root_ids": [
+    "US-6292306"
+  ],
+  "publication_ids": [
+    "US-6292306-B1"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 10,
+    "description_numbered_paragraphs": 19,
+    "total_numbered_paragraphs": 29,
+    "claims": 17,
+    "declared_textual_figures": 5,
+    "located_raster_figures": 5,
+    "tagged_html_tables": 0,
+    "flattened_optical_tables": 2,
+    "mathml_objects": 0,
+    "html_image_tags": 0,
+    "source_disclosed_items": 1,
+    "primary_numerical_zoom_systems": 1,
+    "qualitative_dependent_variants": 5,
+    "zoom_states": 4,
+    "ordered_radius_rows": 27,
+    "glass_element_thickness_material_rows": 17,
+    "published_variable_group_spacing_columns": 3,
+    "unpublished_required_fixed_air_gaps": 8,
+    "metadata_unpublished_items": 1,
+    "replayed_ledger_items": 1,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 7,
+    "retained_page_rasters": 7,
+    "retained_drawing_sheets": 2,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "background_summary": [
+      1,
+      10
+    ],
+    "drawing_declarations": "description prefix before paragraph 1",
+    "apparatus_description": [
+      1,
+      11
+    ],
+    "prescription_and_zoom_tables": [
+      12,
+      17
+    ],
+    "closing_and_variants": [
+      18,
+      19
+    ]
+  },
+  "figure_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "table_mapping": {
+    "lens_table": {
+      "description_paragraph": 14,
+      "official_pdf_pages": [
+        5,
+        6
+      ]
+    },
+    "magnification_table": {
+      "description_paragraph": 16,
+      "official_pdf_page": 6
+    }
+  },
+  "claim_mapping": {
+    "claims": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Optical Gaging Products telecentric zoom prescription and variants",
+      "description_paragraphs": [
+        1,
+        19
+      ],
+      "figures": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "tables": [
+        "LENS TABLE",
+        "MAGNIFICATION TABLE"
+      ],
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.required_fixed_air_spacings_asphere_coefficients_and_system_focal_length_field_absent"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": true,
+    "surface_radii_published": true,
+    "glass_element_thickness_and_material_published": true,
+    "four_state_variable_group_spacings_published": true,
+    "stop_diameters_published": true,
+    "required_fixed_air_spacings_published": false,
+    "aspheric_surface_identity_published": true,
+    "aspheric_conic_and_coefficients_published": false,
+    "effective_focal_length_published": false,
+    "f_number_published": true,
+    "prescription_specific_angular_field_published": false,
+    "image_height_published": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  },
+  "terminal_outcome": {
+    "status": "metadata_unpublished",
+    "reason_code": "metadata_unpublished.required_fixed_air_spacings_asphere_coefficients_and_system_focal_length_field_absent",
+    "item_count": 1,
+    "unmapped_source_items": 0
+  }
+}

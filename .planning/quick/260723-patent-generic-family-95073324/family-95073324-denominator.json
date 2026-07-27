@@ -1,0 +1,647 @@
+{
+  "schema_version": 1,
+  "family_id": "95073324",
+  "root_id": "US-20260147257",
+  "publication_id": "US-20260147257-A1",
+  "application_number": "19/450317",
+  "title": "IMAGING LENS ASSEMBLY, CAMERA MODULE, AND IMAGING DEVICE",
+  "applicant": "GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP., LTD.",
+  "inventors": [
+    "KATSURAGI; Daigo"
+  ],
+  "publication_date": "2026-05-28",
+  "filing_date": "2026-01-15",
+  "lineage": {
+    "relationship": "continuation",
+    "parent_application": "PCT/CN2023/119853",
+    "parent_filing_date": "2023-09-19",
+    "numeric_values_imported_from_parent_or_peer": false
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/32fba3c3e5d4aeb7/US-20260147257-A1.html",
+    "raw_bytes": 117393,
+    "raw_characters": 116326,
+    "raw_sha256": "32fba3c3e5d4aeb736896604e6feddee077b8cc13b4d7f52fcff31fea9fe5026",
+    "normalized_characters": 94046,
+    "normalized_sha256": "30721c69736e6659886f44be73cffca671f1e5e6ec7b074f9ede7bc83a700dbb",
+    "layout_signature": "f049d4d2ee7a5e46a0656e442156cafbb11facf47e3209535e08a4087f614c3e",
+    "sections": {
+      "abstract": "4da6e4a7b2ed8b2218f45f75de80f32c92355cdc90d2f2a33013a285e392ae1b",
+      "background_summary": "55737600ca2e2f1fe1e59c105aa2684a444df37c1caf107cdb1cd26d4cb72ccb",
+      "description": "05a03158b21ac29872446d5f732db69ff1c9c36ade1b853efd701debb502bd20",
+      "claims": "53d7de18a72047a2578fc2d88add4d4f2cb58189b8ad2c9fd724dabebe6d5de2"
+    },
+    "paragraphs": {
+      "background_summary": [
+        1,
+        9
+      ],
+      "description": [
+        10,
+        111
+      ],
+      "consecutive": true,
+      "span_sha256": {
+        "1-9": "c725e2f0b9d4af1dbce377cf9fa82625a199410adbf23b13e5eda77b7979e40e",
+        "10-30": "511428a26ce2e906ec6c50b34ac68d52b8a71c9f42bf432c48e3f608a2706e3f",
+        "31-75": "d93f427934d0713fe4d3d6f7571d38cb1346ca72a3f6090c6d0ee90ce07ccf81",
+        "76-80": "36c473d28dde21426d876e4e585685f3325c39ad745884f46dc8b2d1d47fc338",
+        "81-85": "9903775d13657c32feef21224876e0d1b501174044d96221a2a6d54d70667e00",
+        "86-90": "310d8dfa45923a9d02b5e4e25ff5e251ec9539bde67ee611eedba5863138091d",
+        "91-94": "5921ab7ef46562f1e4f3da5414a12260cac762aa83d4212167f2787baabdbfcd",
+        "95-98": "9d913d547507f30ede158338fceead298a0efbff4a2e5541839fd0b0c659f772",
+        "99-111": "e659fdf5dad068afa490377ca4f716415df06dca539c06c1e1786ac2c1354638"
+      }
+    },
+    "claims": {
+      "numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "independent": [
+        1,
+        15,
+        19
+      ],
+      "dependencies": {
+        "2": 1,
+        "3": 1,
+        "4": 1,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1,
+        "12": 11,
+        "13": 1,
+        "14": 1,
+        "16": 15,
+        "17": 15,
+        "18": 15,
+        "20": 19
+      },
+      "ordered_blocks_sha256": "13c1878b99a4bd198683675f7c536c02c124fcb937c19adc3da97e2c08d8cbeb"
+    },
+    "figures": {
+      "declared_panels": [
+        "1",
+        "2",
+        "3A",
+        "3B",
+        "3C",
+        "3D",
+        "4",
+        "5",
+        "6A",
+        "6B",
+        "7A",
+        "7B",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+      ],
+      "declared_panel_count": 20,
+      "figref_occurrences": 62,
+      "ordered_figref_json_sha256": "0f5f6b28c10a697dbf2dcdbd6983115dcae62efa88b6ec628335bf91fb5db5bc"
+    },
+    "mathml": {
+      "ordered_ids": [
+        "MATH-US-00001",
+        "MATH-US-00002",
+        "MATH-US-00003",
+        "MATH-US-00004",
+        "MATH-US-00005",
+        "MATH-US-00006",
+        "MATH-US-00007",
+        "MATH-US-00008",
+        "MATH-US-00009",
+        "MATH-US-00010",
+        "MATH-US-00011",
+        "MATH-US-00012",
+        "MATH-US-00013",
+        "MATH-US-00014",
+        "MATH-US-00015",
+        "MATH-US-00016",
+        "MATH-US-00017",
+        "MATH-US-00018"
+      ],
+      "ordered_id_json_sha256": "841861484f5c5115e1a6ff26b884a20e138b2190f0a8175bb41e8443183eeb53"
+    },
+    "tables": {
+      "count": 25,
+      "groups": [
+        {
+          "example": 1,
+          "paragraph": 78,
+          "numbers": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "example": 2,
+          "paragraph": 84,
+          "numbers": [
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        {
+          "example": 3,
+          "paragraph": 89,
+          "numbers": [
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        {
+          "example": 4,
+          "paragraph": 93,
+          "numbers": [
+            16,
+            17,
+            18,
+            19,
+            20
+          ]
+        },
+        {
+          "example": 5,
+          "paragraph": 97,
+          "numbers": [
+            21,
+            22,
+            23,
+            24,
+            25
+          ]
+        }
+      ],
+      "role_cycle": [
+        "ordered surface prescription",
+        "element focal lengths",
+        "system metadata",
+        "inequality evaluation",
+        "asphere coefficients"
+      ],
+      "normalized_payload_sha256": [
+        "4b09dc5f457d19b567509ebe03f1874d9282d5f87fe3c2b8b9f6a6a98c7c9d75",
+        "b216642dec1fb261856a37fcc4493b7f4d86cd68a2615cb2f255034d57a7ad49",
+        "0fb745331dd4e52e197d6a7e8298843ef53dbc846112381a2afad0c834c0b913",
+        "d14c1a598e2660ac42d7d865ad651aaa0abed491fa1aeab67ee773e1d322a217",
+        "cc91f905bcf39e6be3a3e03c779258c1defac9041b1fe2937dbfb0136264abf4",
+        "5a1fc0c17dced25d14c5f3ba8ac171d7083f12a71814cce36f0d65b2a8d3305a",
+        "d2d00fbf7df6feee4c23ba83003b0d2f26f75f8bab99f084a17479df4b6a2a7b",
+        "54aedf11c353a81df417f6da352f4214f92c29aaea813ef8031dc167d345c35a",
+        "c09769a32ea162b01bd567fc24a060f913f56eaf5f2aa66a958fa7cf4eb8a92a",
+        "6201004f7054b28d545394dfbe3b2ff0b54008591d24752d6c21e75163c34139",
+        "9dbbfcc0165ed0fbbad11e376b6069775ea74423449fcc718d4ce03cd19901ec",
+        "ca2b59c6263fde4a0fba24f5765cce4b1f62c0f93b1c4374a8159f3e7f4469f7",
+        "b4936f24a9a6311293dab91ae3aae63ce1413a174a819583ebcc39e4a7fe0ae7",
+        "c8a3a069fdc2411ab8248000462bb0f56d07353ffb0804c21cb11c7a35c44f2d",
+        "f15a213001f713baf4ecbfb8962abe1a4f291c8508dfde63e5bedb86e90485db",
+        "8dedf32c048a2a564dfc2f3be7e7bc3ef3311c8fc78f8a6dfe2c179fe3acb9ba",
+        "6805b3d85940b3e33f699175d89f24ada22b37369ca8b6f95ef3009ad2d4f175",
+        "22f91207dedfb2972fdd4443b1f07a8f76bb5e2b9393a983d5b5aef6226204cb",
+        "107ebe8f4250a3636af53b8ea61501fca1a3a09302225ee3e88ee31b284b7a6a",
+        "7424fdaeaba70710f8123c763974fcd0da6fb7d3360aa11e3efdc0902a1c281b",
+        "72bc263a61cf88962a1e7dee1695d0f6387d1c74e35d7e721ee6978eda979b26",
+        "c1c7f054de1914ed0f94570cb0d88343d91304fc6bb381f0e02cba9807f894e5",
+        "0ced10a9e7582e5c61899fa4a3ff8ad63d5963c8765cc389a4c0cedc67b0b0d6",
+        "cb7f54a1dd71acdacb29de8851733a0a18642d77514a9377cd1ca55a5bfc3c25",
+        "5757bf0984be8d830bf82aa946ad5a273c75f1bf561ccabcde877830ac2870a9"
+      ],
+      "normalized_payload_token_counts": [
+        141,
+        29,
+        43,
+        6,
+        492,
+        155,
+        25,
+        21,
+        9,
+        423,
+        140,
+        27,
+        20,
+        6,
+        471,
+        140,
+        27,
+        20,
+        6,
+        472,
+        138,
+        25,
+        20,
+        6,
+        423
+      ]
+    }
+  },
+  "prescription_boundary": {
+    "source_formula": "Z=C*h^2/{1+sqrt(1-K*C^2*h^2)}+sum(A_n*h^n), n>=3",
+    "distance_definition": "Di is the optical-axis distance from surface i to surface i+1 in millimetres",
+    "material_definition": "Ndi and vdi are at d-line wavelength 587.6 nm",
+    "source_item_count": 8,
+    "optical_prescription_items": 6,
+    "wrapper_items": 2,
+    "figure_3_panels_are_shared_prism_surface_alternatives": true,
+    "dependent_claim_variants_are_not_separate_prescriptions": true,
+    "source_items": [
+      {
+        "item_number": 1,
+        "label": "OPPO resin-prism example 1 WIDE",
+        "example": 1,
+        "mode": "WIDE",
+        "paragraphs": [
+          76,
+          80
+        ],
+        "figure_panels": [
+          "6A",
+          "7A"
+        ],
+        "tables": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "published_metadata": {
+          "f_mm": 16.3,
+          "f_number": 2.396,
+          "full_field_deg": 37.032,
+          "hfov_deg": 18.516,
+          "total_distance_mm": 34.5,
+          "image_height_mm": 5.32,
+          "D6_mm": 6.834,
+          "D13_mm": 4.134,
+          "D17_mm": 1.941
+        },
+        "published_surface_rows_including_image": 20,
+        "asphere_surface_count": 16,
+        "nonzero_odd_asphere_terms": [],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "Table 1 directly publishes aperture-stop D7=-1.000 in source surface order; the current safe sequential conversion contract rejects negative thickness and reordering the stop would synthesize a coordinate system"
+      },
+      {
+        "item_number": 2,
+        "label": "OPPO resin-prism example 1 TELE",
+        "example": 1,
+        "mode": "TELE",
+        "paragraphs": [
+          76,
+          80
+        ],
+        "figure_panels": [
+          "6B",
+          "7B"
+        ],
+        "tables": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "published_metadata": {
+          "f_mm": 27.22,
+          "f_number": 3.48,
+          "full_field_deg": 22.228,
+          "hfov_deg": 11.114,
+          "total_distance_mm": 34.5,
+          "image_height_mm": 5.32,
+          "D6_mm": 2.052,
+          "D13_mm": 1.388,
+          "D17_mm": 9.468
+        },
+        "published_surface_rows_including_image": 20,
+        "asphere_surface_count": 16,
+        "nonzero_odd_asphere_terms": [],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "Table 1 directly publishes aperture-stop D7=-1.000 in source surface order; the current safe sequential conversion contract rejects negative thickness and reordering the stop would synthesize a coordinate system"
+      },
+      {
+        "item_number": 3,
+        "label": "OPPO resin-prism example 2 fixed focus",
+        "example": 2,
+        "mode": "fixed",
+        "paragraphs": [
+          81,
+          85
+        ],
+        "figure_panels": [
+          "8",
+          "9"
+        ],
+        "tables": [
+          6,
+          7,
+          8,
+          9,
+          10
+        ],
+        "published_metadata": {
+          "f_mm": 29.767,
+          "f_number": 3.884,
+          "full_field_deg": 23.495,
+          "hfov_deg": 11.7475,
+          "total_distance_mm": 42.833,
+          "image_height_mm": 6.23
+        },
+        "published_surface_rows_including_image": 22,
+        "asphere_surface_count": 14,
+        "nonzero_odd_asphere_terms": [
+          "S14:A5=0.00006963582923375940",
+          "S15:A5=0.00008231789632482670",
+          "S14:A7=0.00000512013042946213",
+          "S15:A7=-0.00000400437121285043",
+          "S14:A9=-0.00000032083623686730",
+          "S15:A9=-0.00000000471780563744",
+          "S14:A11=0.00000002357883272874"
+        ],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "Table 10 directly publishes nonzero odd-power radial asphere coefficients on L6 surfaces 14 and 15; current PatentSurface/CODE V XASPHERE mapping supports even radial powers only"
+      },
+      {
+        "item_number": 4,
+        "label": "OPPO resin-prism example 3 fixed focus",
+        "example": 3,
+        "mode": "fixed",
+        "paragraphs": [
+          86,
+          90
+        ],
+        "figure_panels": [
+          "10",
+          "11"
+        ],
+        "tables": [
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "published_metadata": {
+          "f_mm": 32.8,
+          "f_number": 3.766,
+          "full_field_deg": 17.452,
+          "hfov_deg": 8.726,
+          "total_distance_mm": 32.8,
+          "image_height_mm": 5.161
+        },
+        "published_surface_rows_including_image": 20,
+        "asphere_surface_count": 16,
+        "nonzero_odd_asphere_terms": [
+          "S14:A5=0.00023832660264804000",
+          "S15:A5=0.00020078985028485100",
+          "S14:A7=0.00002870469995018090",
+          "S15:A7=-0.00002649789722407710",
+          "S14:A9=-0.00000160146958448191",
+          "S15:A9=0.00000310620674859950",
+          "S14:A11=-0.00000005985112259001"
+        ],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "Table 15 directly publishes nonzero odd-power radial asphere coefficients on L6 surfaces 14 and 15; current PatentSurface/CODE V XASPHERE mapping supports even radial powers only"
+      },
+      {
+        "item_number": 5,
+        "label": "OPPO resin-prism example 4 fixed focus",
+        "example": 4,
+        "mode": "fixed",
+        "paragraphs": [
+          91,
+          94
+        ],
+        "figure_panels": [
+          "12",
+          "13"
+        ],
+        "tables": [
+          16,
+          17,
+          18,
+          19,
+          20
+        ],
+        "published_metadata": {
+          "f_mm": 32.0,
+          "f_number": 3.9,
+          "full_field_deg": 18.35,
+          "hfov_deg": 9.175,
+          "total_distance_mm": 35.615,
+          "image_height_mm": 5.35
+        },
+        "published_surface_rows_including_image": 20,
+        "asphere_surface_count": 16,
+        "nonzero_odd_asphere_terms": [
+          "S14:A5=0.00010921083650086700",
+          "S15:A5=0.00002186745242761260",
+          "S14:A7=0.00001222603700556130",
+          "S15:A7=-0.00001428288740788180",
+          "S14:A9=-0.00000056798536721777",
+          "S15:A9=-0.00000028553966867978",
+          "S14:A11=-0.00000018872448763357"
+        ],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "Table 20 directly publishes nonzero odd-power radial asphere coefficients on L6 surfaces 14 and 15; current PatentSurface/CODE V XASPHERE mapping supports even radial powers only"
+      },
+      {
+        "item_number": 6,
+        "label": "OPPO resin-prism example 5 fixed focus",
+        "example": 5,
+        "mode": "fixed",
+        "paragraphs": [
+          95,
+          98
+        ],
+        "figure_panels": [
+          "14",
+          "15"
+        ],
+        "tables": [
+          21,
+          22,
+          23,
+          24,
+          25
+        ],
+        "published_metadata": {
+          "f_mm": 32.0,
+          "f_number": 3.925,
+          "full_field_deg": 18.454,
+          "hfov_deg": 9.227,
+          "total_distance_mm": 36.5,
+          "image_height_mm": 5.35
+        },
+        "published_surface_rows_including_image": 20,
+        "asphere_surface_count": 14,
+        "nonzero_odd_asphere_terms": [
+          "S14:A5=0.00010173728215338900",
+          "S15:A5=0.00004239239356688480",
+          "S14:A7=0.00001257097386458910",
+          "S15:A7=-0.00001647650240267330",
+          "S14:A9=-0.00000048808532490981",
+          "S15:A9=-0.00000022061354071493",
+          "S14:A11=-0.00000016114070599575"
+        ],
+        "ledger_state": "parser_review_required",
+        "reason_code": "parser_review_required.deterministic_parser_rejected",
+        "detail": "Table 25 directly publishes nonzero odd-power radial asphere coefficients on L6 surfaces 14 and 15; current PatentSurface/CODE V XASPHERE mapping supports even radial powers only"
+      },
+      {
+        "item_number": 7,
+        "label": "OPPO resin-prism camera module wrapper",
+        "paragraph_ranges": [
+          [
+            32,
+            32
+          ],
+          [
+            50,
+            50
+          ],
+          [
+            71,
+            71
+          ]
+        ],
+        "figure_panels": [
+          "1"
+        ],
+        "claims": [
+          15,
+          16,
+          17,
+          18
+        ],
+        "ledger_state": "terminal",
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.camera_module_wrapper_only",
+        "detail": "The camera-module disclosure adds the optical filter and image sensor around the disclosed imaging lens assembly but no new optical surface prescription"
+      },
+      {
+        "item_number": 8,
+        "label": "OPPO resin-prism imaging device wrapper",
+        "paragraph_ranges": [
+          [
+            32,
+            33
+          ],
+          [
+            43,
+            49
+          ],
+          [
+            71,
+            71
+          ]
+        ],
+        "figure_panels": [
+          "2",
+          "4",
+          "5"
+        ],
+        "claims": [
+          19,
+          20
+        ],
+        "ledger_state": "terminal",
+        "terminal_status": "confirmed_no_prescription",
+        "reason_code": "confirmed_no_prescription.imaging_device_wrapper_only",
+        "detail": "The imaging-device disclosure adds a housing, OIS and lens drivers around the camera module but no new optical surface prescription"
+      }
+    ],
+    "conversion_boundary": "Items 1-2 retain source-order negative aperture-stop thickness; items 3-6 retain nonzero odd-power radial aspheres. Neither may be silently reordered, dropped, approximated or mapped into the current even-power sequential contract. All six therefore remain precise nonterminal parser-review items.",
+    "coordinate_values_synthesized": 0,
+    "related_publication_numeric_values_imported": false,
+    "raster_numeric_values_transcribed": false
+  },
+  "official_pdf": {
+    "audit_path": ".planning/quick/260723-patent-generic-family-95073324/official/pdf-raster-audit.json",
+    "page_count": 36,
+    "drawing_pages": [
+      2,
+      18
+    ],
+    "drawing_sheet_count": 17,
+    "specification_pages": [
+      19,
+      34
+    ],
+    "claim_pages": [
+      35,
+      36
+    ],
+    "canonical_raster_set_sha256": "351e901e52200b2977524874b6993bf2ab076a3d1e5463b750e11310bb6a280a",
+    "reviewed_original_pages": [
+      22,
+      23
+    ],
+    "review_scope": "topology only; no OCR, enhancement, measurement, numeric transcription or inference"
+  },
+  "ledger_denominator": {
+    "frozen_cohort_roots": 1,
+    "disclosed_items": 8,
+    "optical_prescription_items": 6,
+    "parser_review_required_items": 6,
+    "wrapper_items": 2,
+    "terminal_items": 2,
+    "replayed_items": 8,
+    "root_state": "mixed_nonterminal",
+    "replay_attempts": [
+      2,
+      3
+    ],
+    "replay_semantic_sha256": "f583e01f7378fe046dd31e0f2f754115c2a2c9679321f0b59e2484d20521bd3a",
+    "candidate_zmx": 0,
+    "formal_intake_items": 0,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "codev_calls": 0
+  }
+}

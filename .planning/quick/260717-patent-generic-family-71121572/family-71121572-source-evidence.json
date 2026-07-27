@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "family_id": "71121572",
+  "title": "Camera optical lens",
+  "applicant": "AAC Optics Solutions Pte. Ltd.",
+  "root_ids": ["US-11467375"],
+  "publication_id": "US-11467375-B2",
+  "application_number": "16/675252",
+  "priority": [
+    {"application_number": "CN201811614496.6", "date": "2018-12-27"},
+    {"application_number": "CN201811616007.0", "date": "2018-12-27"}
+  ],
+  "prior_publication": {
+    "publication_id": "US-20200209560-A1",
+    "publication_date": "2020-07-02",
+    "cohort_membership": "outside_frozen_619_root_cohort"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_cross_check_publications": 1,
+    "official_b2_pdf_pages": 18,
+    "drawing_sheets": 7,
+    "figures": 12,
+    "exact_prescription_embodiments": 3,
+    "surfaces_per_embodiment": 18,
+    "asphere_surfaces_per_embodiment": 14,
+    "source_tables": 13,
+    "description_paragraphs": 147,
+    "claims": 19,
+    "terminal_items": 3,
+    "trace_failed_items": 3
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/d06dcb7578f86ca8/US-11467375-B2.html",
+    "raw_document_sha256": "d06dcb7578f86ca8533ef6858e662c4b2bca133a9e0813636b2362182baecd40",
+    "normalized_text_sha256": "f362e26c2d8805be302eba9e6aa51bc253df1e7746c932a9dd244715b41e0117",
+    "layout_signature": "152637cef9849f0d3ae21f666b8437b583d7d9e5af4ad3206d29b63b387dbe95",
+    "section_markers": {
+      "background": "Background/Summary TECHNICAL FIELD (1)",
+      "brief": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+      "detailed": "DESCRIPTION OF EMBODIMENTS (14)",
+      "claims": "Claims 1. A camera optical lens, comprising,"
+    },
+    "section_sha256": {
+      "background": "be9272d04802ed90867bf58a533bc9c433dfef0930a2779820c33ef362f99dc0",
+      "brief": "3d9a72a4323bd5e5b897d52bbf1e74efd13971ff59fee2c7bb519887f93b301f",
+      "detailed": "4d7d7b924674d4dad1457e4c1c457265da006753fc8b28b5714898788f8f8bca",
+      "claims": "1c89035c081fdc942601f1eab067bf71f17ec8fc1d8d5e3a13a804813b1d76d4"
+    },
+    "paragraph_ranges": {
+      "background": [1, 2],
+      "brief": [1, 13],
+      "detailed": [14, 147]
+    },
+    "claim_range": [1, 19],
+    "figure_range": [1, 12],
+    "table_block_sha256": [
+      "02bc7ff3cc4a1cb56dba7a19319473b5592388c3e5769cb396e6cbf8f852c133",
+      "03b6f07c8062bcadc37b7002a48df85634dc32dcd43ee3b10def102cdc5b268d",
+      "408f8868a2d07245b56b8974a0bd601af02aeefae56dded1cbde592d404bf4b1",
+      "83a7afcc51cdec21278d5391bf474fcd2ea8c8ae86b8d80c01595a5afb3742f4",
+      "58b3719d8e991f3ad0780dd30ec9a412d6b7c1eea3161262f56ec6a76447fe26",
+      "390756f3665025fa9ce9c1d73dddddb8b6966369442aaa02630effc3c2b955ca",
+      "53a29dcfdc4c3b03248b6f4d8e52ade3e058582ead75502d200bcd4b495afaa7",
+      "389405950a3ce8a64a9fc78a868550ff90b2303245a8bef717b8c81946fee8bb",
+      "ca3b9b61b2fea0c51a899e9b837c90820e2bfdbb4311dc654eddf10a05317d73",
+      "5c9bb7c4875a850bed6a49a692206200f051b714fbbf5b646c45798d3ea84955",
+      "fe2bd09902739db8074f405237bc6888849675c57d96384c834cea1c77a24b50",
+      "a5d43d5038238107475ab31ada61bba017a439d0f64be7049264a3631adefcc3",
+      "135181ca837bb78996b737aa148414298d0706eae50f6c6b49dc4674930da69e"
+    ],
+    "formal_table_sha256": [
+      "9a53f6fcc69dafe221d32e8c4f474d5917f2922758b3e2c70a90e6bf55257627",
+      "300f25e7246deeed19958853192b029ee731e58c6585ebe492b697de8a113cbf",
+      "8f5f5e1644d88d58caf966bf3b6c6640c0d827c62958e2b01b91a2a340fd26a6",
+      "629ca2aef058fe8034b4bc93bc12cc461a2e9b23e3f106f0cf7196d2e8e93956",
+      "6c60e045d4979b89b0f871db61cfed2a57a870869e674dc0a35e56f03c96200f",
+      "b6bd1f4b97a7f7b7e7f7eac7cab7b6dbf374d23e5294c516816e731dd3b95150",
+      "f0efb6c42bbb639aef2eadcc60110d344fca4532e53e550c326a36d5eaf50d3c",
+      "e0deb809d69bd35615974f903f8cebaa497f31a524e7e5169f1c27fd375f443f",
+      "08f674d29a9df87795d58306e5b4b7a419237ad32b3714979f1a1cb3abb17bf7",
+      "686d32a6de3d5ce76902a2a5bfa66228d77da3482bc20d0bd8b9f46b25926308",
+      "938c801fd86a0af719399b976c1de652d405b453e14dfe07dc0a06275ef48c4f",
+      "56863afcb922893ed60cdea338df2fe7206011ee2d4885b9c06bdbb54260e243",
+      "33fd2a7c17638f25c63c6680cae3cec20a0b4340404b15252867cec9589dd5c6"
+    ]
+  },
+  "table_roles": [
+    {"embodiment": 1, "surface_table": 1, "asphere_table": 2, "inflexion_table": 3, "arrest_table": 4},
+    {"embodiment": 2, "surface_table": 5, "asphere_table": 6, "inflexion_table": 7, "arrest_table": 8},
+    {"embodiment": 3, "surface_table": 9, "asphere_table": 10, "inflexion_table": 11, "arrest_table": 12},
+    {"embodiments": [1, 2, 3], "system_and_condition_table": 13}
+  ],
+  "embodiments": [
+    {
+      "number": 1,
+      "focal_length_mm": 4.925,
+      "f_number": 1.55,
+      "full_fov_deg": 77.08,
+      "hfov_deg": 38.54,
+      "entrance_pupil_diameter_mm": 3.177,
+      "image_height_mm": 4.0,
+      "published_aperture_thickness_mm": -0.552,
+      "prescription_fingerprint": "70caae14a7653f68",
+      "outcome": "trace_failed"
+    },
+    {
+      "number": 2,
+      "focal_length_mm": 4.762,
+      "f_number": 1.55,
+      "full_fov_deg": 78.86,
+      "hfov_deg": 39.43,
+      "entrance_pupil_diameter_mm": 3.072,
+      "image_height_mm": 4.0,
+      "published_aperture_thickness_mm": -0.513,
+      "prescription_fingerprint": "8cf47e69f12717a1",
+      "outcome": "trace_failed"
+    },
+    {
+      "number": 3,
+      "focal_length_mm": 4.981,
+      "f_number": 1.55,
+      "full_fov_deg": 76.65,
+      "hfov_deg": 38.325,
+      "entrance_pupil_diameter_mm": 3.213,
+      "image_height_mm": 4.0,
+      "published_aperture_thickness_mm": -0.546,
+      "prescription_fingerprint": "ab1d414097059056",
+      "outcome": "trace_failed"
+    }
+  ],
+  "source_boundary": {
+    "surface_order": "Stop, fourteen lens surfaces, two optical-filter surfaces, Image",
+    "material_order": ["Glass", "Glass", "Plastic", "Plastic", "Plastic", "Plastic", "Plastic", "Filter"],
+    "reference_wavelength_um": 0.5876,
+    "aperture_thickness_policy": "preserve the directly published negative d0 values without correction or surface reordering",
+    "canonical_parser_payload_sha256": "a6f737dda646a564b1b45e0dcbf20a4861f1069d486e29732322db4ad8fa8286",
+    "conversion_result": "all three full-field real-ray traces failed before candidate ZMX emission; this classifies replay behavior and does not constitute an expert optical-quality verdict"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-71121572/family-71121572-raster-audit.json",
+    "sha256": "e4adfd5c37f39adab96b6d6accfb7ccb11eacfe8c275341308ec996ec233d198"
+  }
+}

@@ -1,0 +1,284 @@
+{
+  "schema_version": 1,
+  "family_id": "61244801",
+  "root_ids": [
+    "US-11287601"
+  ],
+  "publication_id": "US-11287601-B2",
+  "application_number": "16/483973",
+  "title": "Imaging lens assembly",
+  "applicant": "Snap Inc.",
+  "assignee": "Snap Inc.",
+  "inventors": [
+    "Robert Matthew Bates"
+  ],
+  "priority_and_relationship_records": {
+    "filed": "2018-02-07",
+    "pct_application": "PCT/US2018/017252",
+    "pct_publication": "WO2018/148301",
+    "prior_us_publication": "US 20200096726 A1",
+    "provisional_application": "US 62455983"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "outside_cohort_family_and_related_publications": 10,
+    "background_summary_paragraphs": 6,
+    "brief_description_paragraphs": 7,
+    "detailed_description_paragraphs": 80,
+    "claims": 18,
+    "source_declared_examples": 37,
+    "source_named_sample_designs": 2,
+    "figure_numbers": 8,
+    "drawing_sheets": 8,
+    "formal_html_tables": 0,
+    "image_data_tables": 5,
+    "classification_pdf_pages": 19,
+    "ledger_items": 3,
+    "parser_review_items": 2,
+    "terminal_items": 1
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/7910d5bca19dc438/US-11287601-B2.html",
+    "bytes": 67313,
+    "raw_characters": 66769,
+    "raw_document_sha256": "7910d5bca19dc438a5ca8b159eb45327adc1e3aff91670babfde68745c4e8fd3",
+    "parser_normalized_characters": 55558,
+    "parser_normalized_sha256": "4497cba87ce78fa7f83faa22ec8f5dc5eb03cd5a0b08ba3766a93c71a34c0a56",
+    "pdf_recovery_normalized_characters": 55558,
+    "pdf_recovery_normalized_sha256": "d675c20e5301723fb831bf0f842f66eabf5d210da4d28336e1a7413a5f1e1e63",
+    "section_positions": {
+      "background_summary": 4043,
+      "brief_description": 8205,
+      "detailed_description": 9456,
+      "claims": 46720
+    },
+    "section_lengths": {
+      "background_summary": 4162,
+      "brief_description": 1251,
+      "detailed_description": 37264,
+      "claims": 8838
+    },
+    "section_sha256": {
+      "background_summary": "07a6a280a41ba266a6658838fab14c2ce617112e7fc46a201180861cafb6c256",
+      "brief_description": "fd4c69521ac3c8516c4017d1dd46f588a8e1ec8c8fc3bc8b6bbdbbd631bf0d92",
+      "detailed_description": "99a04e2c683920b2f36c590e5ce61b97e13505ee2986dda618a76f2391be50f6",
+      "claims": "fe21b454dadb02043cdd8ba450c1d843f120542f177c79b693592841cba9d353"
+    }
+  },
+  "prescription_boundary": {
+    "sample_design_1": {
+      "lens_element_count": 5,
+      "source_figures": [
+        4,
+        5
+      ],
+      "surface_number_range": [
+        1,
+        15
+      ],
+      "filter_present": true,
+      "asphere_surfaces": [
+        1,
+        2,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ],
+      "coefficient_terms": [
+        "k",
+        "A4",
+        "A6",
+        "A8",
+        "A10",
+        "A12",
+        "A14"
+      ],
+      "expected_exponent_coefficient_cells": 60,
+      "google_text_exponent_markers": 51,
+      "rapidocr_exponent_markers": 51,
+      "rapidocr_joined_multi_cell_tokens": 15,
+      "direct_design_specific_system_metadata_present": false,
+      "state": "parser_review_required"
+    },
+    "sample_design_2": {
+      "lens_element_count": 6,
+      "source_figures": [
+        6,
+        7
+      ],
+      "surface_number_range": [
+        1,
+        15
+      ],
+      "filter_present": true,
+      "asphere_surface_count": 10,
+      "coefficient_terms": [
+        "k",
+        "A4",
+        "A6",
+        "A8",
+        "A10",
+        "A12"
+      ],
+      "expected_exponent_coefficient_cells": 50,
+      "google_text_exponent_markers": 48,
+      "rapidocr_exponent_markers": 33,
+      "rapidocr_joined_multi_cell_tokens": 10,
+      "direct_system_metadata": {
+        "effective_focal_length_mm": 1.57,
+        "assembly_length_mm": 6.71,
+        "diagonal_field_of_view_deg": 115.0,
+        "image_circle_field_of_view_deg": 120.0,
+        "maximum_half_field_deg": 57.5,
+        "f_number": 2.4,
+        "image_height_mm": 1.98
+      },
+      "state": "parser_review_required"
+    },
+    "mobile_device_wrapper": {
+      "source_figure": 8,
+      "source_example": 37,
+      "additional_ordered_prescription": false,
+      "state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    "coordinate_repair_performed": false,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "cross_publication_values_borrowed": false
+  },
+  "retained_pdf_recovery": {
+    "official_pdf": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF/3e877c2310492125/US-11287601-B2.pdf",
+      "bytes": 1413764,
+      "sha256": "3e877c2310492125466e8bfe6be4869dc1c59a94ea09d4f9b76900399f2bc8c0"
+    },
+    "pixel_equal_google_pdf": {
+      "path": "data/patent-lake/uspto-ppubs-html/GOOGLE-OCR-PDF/a404b17068ef00c6/US-11287601-B2.pdf",
+      "bytes": 1925106,
+      "sha256": "a404b17068ef00c677def8ffcad8cd5be1c1acdbd0b54efab8ccd1c5378e0307"
+    },
+    "source_pin": {
+      "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-SOURCE-PIN/US-11287601-B2.json",
+      "bytes": 675,
+      "sha256": "0c6b81634852b3f8a4c8d7db74547954ebea823624ce17e8e800613e4732e0d5"
+    },
+    "parser_inputs": [
+      {
+        "use": "attempts 2-3, retained append-only evidence",
+        "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-JSON/85df373fd74fbb30/US-11287601-B2.json",
+        "bytes": 44076,
+        "sha256": "85df373fd74fbb30dc6c2c8fdf69bdc4788ae038386f0149d39ae31a539cc1b5"
+      },
+      {
+        "use": "attempts 4-5, final three-item denominator",
+        "path": "data/patent-lake/uspto-ppubs-html/USPTO-PDF-OCR-JSON/be9e0b989e8b021b/US-11287601-B2.json",
+        "bytes": 44898,
+        "sha256": "be9e0b989e8b021b3f408851d0a0c1db860deb7b0c09a3c13f128b2ac7d67ec5"
+      }
+    ],
+    "manifests": [
+      {
+        "use": "attempts 2-3",
+        "path": "data/patent-lake/uspto-ppubs-html/fulltext-recovery/054b9edc7d20c14c/US-11287601-B2--official-pdf-ocr.json",
+        "bytes": 3099,
+        "sha256": "054b9edc7d20c14cffa14987a4edc1c6dba2537d5df660f7958b6bae511ba6ed"
+      },
+      {
+        "use": "attempts 4-5",
+        "path": "data/patent-lake/uspto-ppubs-html/fulltext-recovery/e7b64e6388abe448/US-11287601-B2--official-pdf-ocr.json",
+        "bytes": 3099,
+        "sha256": "e7b64e6388abe44853be58b0e264c5c68b82d9cf7d314acb44c76214096974ec"
+      }
+    ]
+  },
+  "root_outcome": {
+    "root_state": "mixed_nonterminal",
+    "reason_code": "mixed_nonterminal.multiple_item_states",
+    "parser_review_items": 2,
+    "terminal_items": 1,
+    "conversion_workers": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "formal_library_matches": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "34dc2a55b427fa8b75525be4a86a312a65599663a0ac3083cf81415b0fb7a864",
+    "summary_sha256": "870f3e8dc9df1d983827474e6dc8f0631d4c9262b042326254559bc17075d86f",
+    "report_sha256": "26ffe1fdb0dfd1e988d58e5f4ffc32122bd781196af8bae5ce79fa47e4e840b0",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 146,
+      "parser_review_required": 320,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 128
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 551,
+      "parser_review_required": 1404,
+      "terminal": 1099
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/generic-residual-before-133.json",
+      "sha256": "3d201d88347b39c0770e6e04115fecccef086c553904cbadc10afb421817a379",
+      "affected_roots": 133,
+      "affected_items": 133
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/generic-residual-after-1.json",
+      "sha256": "cc6bd6ecfb513873ae7b079b45187b44607ef9732b510e3eed62c72844f449d1",
+      "affected_roots": 132,
+      "affected_items": 132
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/generic-residual-after-2.json",
+      "sha256": "cc6bd6ecfb513873ae7b079b45187b44607ef9732b510e3eed62c72844f449d1",
+      "affected_roots": 132,
+      "affected_items": 132
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/queue-after.json",
+      "sha256": "a03416e84aff22b8422e4be9912cdca21c1b2898b9947e3354cb8790c0da82df"
+    }
+  },
+  "audits": {
+    "source_audit": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/family-61244801-source-audit.md",
+      "sha256": "ea7ebd6ada9b0ddbe0ddcb617c9902cd6b649f3e4644fcaf9a7be2765eaa520f"
+    },
+    "example_denominator": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/family-61244801-example-denominator.json",
+      "sha256": "3839f0087e52da82f3196d69b00e5862b5e2e30ec6b3f54b4e85306d4554842e"
+    },
+    "official_pdf": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/family-61244801-raster-audit.json",
+      "sha256": "023d58eda7bcc3f1a6158a0c45844477618130fd1068c8fbe26ea84080764d74"
+    },
+    "external_family_queue": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/family-61244801-external-family-members.json",
+      "sha256": "b47be8861c087f71dd4c629071ac4f8e15bbd1b1e4cf8681a13e72fd91418c30"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/family-61244801-replay-determinism.json",
+      "sha256": "5bbcb313b97a26dc3899a7d7c9552645796c9483088733b97435304493e85797"
+    }
+  },
+  "saturation_boundary": "The document-level generic failure is resolved into two exact parser reviews and one device-wrapper terminal. Coordinate recovery, conversion, intake, the 132-root generic bucket, other parser buckets, global source exhaustion, independent review, PR and CI remain open."
+}

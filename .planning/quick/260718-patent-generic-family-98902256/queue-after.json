@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "43f504d428bcb42f3f7c579cd304097d2588f6385824c68b79145949615182da",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 84,
+      "affected_items": 84
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "97524399",
+    "root_ids": ["US-20260147219"],
+    "publication_ids": ["US-20260147219-A1"],
+    "application_number": "19/052311",
+    "title": "OPTICAL LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "first_inventor": "HUANG; Ching-Yun",
+    "applicant": "NEWMAX TECHNOLOGY CO., LTD.",
+    "assignee": null,
+    "layout_signature": "5cd8602188b9adf5b9fa961372643148bc385ce0e8bea064d788c91b283bc75a",
+    "marker_counts": {
+      "effective_focal_length": 6,
+      "embodiment_anchor": 69,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 32,
+      "half_field": 0
+    },
+    "table_count": 24,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/08078faa3d16975e/US-20260147219-A1.html",
+      "sha256": "08078faa3d16975e12990aad5bcfbd922e0d95b0263040261b19a2e6d06abf72"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

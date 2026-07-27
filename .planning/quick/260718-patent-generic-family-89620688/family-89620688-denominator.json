@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "family_id": "89620688",
+  "application_number": "18/642968",
+  "root_ids": ["US-20240272407"],
+  "publication_ids": ["US-20240272407-A1"],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 7,
+    "description_numbered_paragraphs": 94,
+    "total_numbered_paragraphs": 101,
+    "claims": 12,
+    "declared_textual_figure_panels": 31,
+    "located_raster_figure_panels": 31,
+    "tagged_html_tables": 3,
+    "mathml_objects": 4,
+    "source_disclosed_items": 9,
+    "light_blocking_structure_examples": 6,
+    "device_wrappers": 3,
+    "mechanical_structure_tables": 3,
+    "optical_prescription_tables": 0,
+    "ordered_optical_surface_rows": 0,
+    "confirmed_no_prescription_items": 9,
+    "replayed_ledger_items": 9,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 40,
+    "retained_page_rasters": 40,
+    "retained_drawing_sheets": 31,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "related_applications": [1, 1],
+    "field": [2, 2],
+    "related_art": [3, 4],
+    "summary": [5, 7],
+    "brief_drawings": [8, 39],
+    "common_detailed_description": [40, 58],
+    "first_embodiment": [59, 69],
+    "second_embodiment": [70, 77],
+    "third_embodiment": [78, 82],
+    "fourth_embodiment": [83, 92],
+    "fifth_embodiment": [93, 96],
+    "sixth_embodiment": [97, 100],
+    "closing": [101, 101]
+  },
+  "figure_labels": [
+    "1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I",
+    "1J", "1K", "1L", "2A", "2B", "2C", "2D", "2E", "2F",
+    "3A", "3B", "3C", "3D", "4A", "4B", "4C", "4D", "4E",
+    "5", "6A", "6B", "6C"
+  ],
+  "table_payloads": [
+    {"table": 1, "item": 1, "N1": 2, "N2S": 360, "N2T": 720, "N1_plus_N2T": 722},
+    {"table": 2, "item": 2, "N1": 2, "N2S": 720, "N2T": 1440, "N1_plus_N2T": 1442},
+    {"table": 3, "item": 5, "N1": 4, "N2S": 85, "N2T": 340, "N1_plus_N2T": 344}
+  ],
+  "claim_mapping": {
+    "optical_imaging_module_architecture": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "electronic_device_wrapper": [12]
+  },
+  "items": [
+    {"embodiment_number": 1, "description_paragraphs": [59, 65], "figures": ["1A", "1B", "1C", "1D", "1E", "1F"], "tables": [1], "reason_code": "confirmed_no_prescription.first_embodiment_first_light_blocking_structure_example_only"},
+    {"embodiment_number": 2, "description_paragraphs": [66, 67], "figures": ["1G", "1H", "1I"], "tables": [2], "reason_code": "confirmed_no_prescription.first_embodiment_second_light_blocking_structure_example_only"},
+    {"embodiment_number": 3, "description_paragraphs": [68, 69], "figures": ["1J", "1K", "1L"], "tables": [], "reason_code": "confirmed_no_prescription.first_embodiment_third_light_blocking_structure_example_only"},
+    {"embodiment_number": 4, "description_paragraphs": [70, 74], "figures": ["2A", "2B", "2C", "2D"], "tables": [], "reason_code": "confirmed_no_prescription.second_embodiment_first_light_blocking_structure_example_only"},
+    {"embodiment_number": 5, "description_paragraphs": [75, 77], "figures": ["2A", "2B", "2E", "2F"], "tables": [3], "reason_code": "confirmed_no_prescription.second_embodiment_second_light_blocking_structure_example_only"},
+    {"embodiment_number": 6, "description_paragraphs": [78, 82], "figures": ["3A", "3B", "3C", "3D"], "tables": [], "reason_code": "confirmed_no_prescription.third_embodiment_light_blocking_structure_example_only"},
+    {"embodiment_number": 7, "description_paragraphs": [83, 92], "figures": ["4A", "4B", "4C", "4D", "4E"], "tables": [], "reason_code": "confirmed_no_prescription.fourth_embodiment_multi_camera_smartphone_wrapper_only"},
+    {"embodiment_number": 8, "description_paragraphs": [93, 96], "figures": ["5"], "tables": [], "reason_code": "confirmed_no_prescription.fifth_embodiment_folded_telephoto_smartphone_wrapper_only"},
+    {"embodiment_number": 9, "description_paragraphs": [97, 100], "figures": ["6A", "6B", "6C"], "tables": [], "reason_code": "confirmed_no_prescription.sixth_embodiment_vehicle_camera_placement_wrapper_only"}
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": false,
+    "surface_radii_published": false,
+    "surface_spacing_published": false,
+    "optical_materials_published": false,
+    "refractive_indices_published": false,
+    "abbe_numbers_published": false,
+    "stop_location_published": false,
+    "effective_focal_length_published": false,
+    "f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "image_height_published": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

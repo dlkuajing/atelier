@@ -1,0 +1,56 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "81139502",
+  "root_id": "US-20260172701",
+  "publication_id": "US-20260172701-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20260172701/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "0c745c2329beebcd3fd586629bb637e9e1a46c813d3da8ef075644785d14f7f8",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "14729ab495f96fd039f735f4e85c7dcbc027cce76827db30f3b1d0308f46d815"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260172701/attempt-0002/result.json",
+      "bytes": 6553,
+      "sha256": "fae676eb4ed4ee003081b3710fb7a73dfad66da06677e6a9ebe27bc99e358057",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "231d564b57da2dcec8dcacc641669e4fef17bdf06b6227d12b3bf78dd402d7b1"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260172701/attempt-0003/result.json",
+      "bytes": 6553,
+      "sha256": "82c2445589caacf0bcaade11086cf241b4c90ea241bbe58f1ea27b7d7d782015",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "231d564b57da2dcec8dcacc641669e4fef17bdf06b6227d12b3bf78dd402d7b1"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "231d564b57da2dcec8dcacc641669e4fef17bdf06b6227d12b3bf78dd402d7b1",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.full_light_field_camera_architecture_only",
+    "terminal.confirmed_no_prescription.full_light_field_imaging_method_only",
+    "terminal.confirmed_no_prescription.ground_glass_full_light_field_device_architecture_only",
+    "terminal.confirmed_no_prescription.microscopy_full_light_field_device_architecture_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

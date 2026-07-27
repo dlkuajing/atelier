@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "family_id": "90454980",
+  "current_frozen_cohort_roots": [
+    "US-12669686"
+  ],
+  "same_application_publications": [
+    {
+      "publication_id": "US-20240094515-A1",
+      "application_number": "18/370671",
+      "disposition": "audited_same_root_cross_check_only"
+    },
+    {
+      "publication_id": "US-12669686-B2",
+      "application_number": "18/370671",
+      "disposition": "current_frozen_cohort_root_publication"
+    }
+  ],
+  "provider_grouping_note": "The retained PPUBS B2 source reports Family ID 90454980. The Google A1 page reports its own Family ID 90244971. The identifiers are retained in their provider namespaces and are not asserted to be equal.",
+  "external_family_members": [
+    {
+      "publication_id": "KR20240039985A",
+      "application_number": "10-2022-0153925",
+      "relationship": "priority application publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "WO2024063547A1",
+      "application_number": "PCT/KR2023/014316",
+      "relationship": "related parent PCT publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "EP4535806A1",
+      "application_number": "EP23868599.4A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "EP4535806A4",
+      "application_number": "EP23868599.4A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN119908121A",
+      "application_number": "CN202380066819.5A",
+      "relationship": "also published as",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "cross_check_source": {
+    "url": "https://patents.google.com/patent/US20240094515A1/en",
+    "observed_fields": [
+      "US application 18/370671",
+      "KR priority applications 10-2022-0118722 and 10-2022-0153925",
+      "PCT/KR2023/014316 and WO2024063547A1",
+      "EP23868599.4A with EP4535806A1 and EP4535806A4",
+      "CN202380066819.5A with CN119908121A"
+    ]
+  }
+}

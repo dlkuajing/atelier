@@ -202,7 +202,7 @@ def _durable_move(source: Path, destination: Path, *, replace: bool) -> None:
 
 def _atomic_json(path: Path, payload: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f"{path.name}.tmp-{uuid4().hex}")
+    temporary = path.with_name(f".tmp-{uuid4().hex}")
     with temporary.open("xb") as handle:
         handle.write(_canonical_bytes(payload))
         handle.flush()
@@ -212,7 +212,7 @@ def _atomic_json(path: Path, payload: object) -> None:
 
 def _exclusive_json(path: Path, payload: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f".{path.name}.exclusive-{uuid4().hex}.tmp")
+    temporary = path.with_name(f".exclusive-{uuid4().hex}.tmp")
     with temporary.open("xb") as handle:
         handle.write(_canonical_bytes(payload))
         handle.flush()

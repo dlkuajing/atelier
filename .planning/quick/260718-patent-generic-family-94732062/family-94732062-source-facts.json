@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "family_id": "94732062",
+  "publication_id": "US-20260181269-A1",
+  "application_number": "19/545464",
+  "title": "ELECTRONIC DEVICE COMPRISING PLURALITY OF CAMERAS, AND OPERATING METHOD THEREOF",
+  "inventors": [
+    "PARK; Kyoungkeun",
+    "OH; Byungil",
+    "KIM; Bosung",
+    "KIM; Jihyun",
+    "PARK; Minyoung",
+    "JEONG; Jaeoh"
+  ],
+  "applicant": "Samsung Electronics Co., Ltd.",
+  "filing_date": "2026-02-20",
+  "publication_date": "2026-06-25",
+  "priority_and_lineage": [
+    {
+      "jurisdiction": "KR",
+      "application_number": "10-2023-0108976",
+      "date": "2023-08-21"
+    },
+    {
+      "jurisdiction": "KR",
+      "application_number": "10-2023-0158179",
+      "date": "2023-11-15"
+    },
+    {
+      "jurisdiction": "PCT",
+      "application_number": "PCT/KR2024/007723",
+      "date": "2024-06-05",
+      "relationship": "continuation"
+    }
+  ],
+  "source_hashes": {
+    "raw_document_sha256": "33fcb6ace32ad6347fa9dbf5d07b48e00dfbdbf52dfe4123715c373678239c19",
+    "normalized_text_sha256": "bc0c653fbae8ad73fddc2357c5a6e5d804c9f154997f5045836dc4abdb12782f",
+    "section_sha256": {
+      "preamble": "dd77c1530ddbf93d545c82090230205016e7b15fae17b4709f803de9ca2a14c4",
+      "abstract": "c4a77ae169a30f6240a570d758b36b918562395607115fcbe20ca1ad03e21bf9",
+      "background": "a130e83871a0db56a66c05d38740529529d243e5193eb43c78c2a47a2bdb4bda",
+      "description": "62f0e721cf973f2021a30379249781e8943f8855468850e1996c32a0c655e6d8",
+      "claims": "9fd418bd60624f3c77e3e57ae1679b315ec297a7d2dad7ddf3fed4c8dd67ed44"
+    },
+    "paragraph_span_sha256": {
+      "1-1": "dc1dc45773cce6a6ffcda6846f6f717f78c1d80ccb9efdf48a8a11be3a1fa8a9",
+      "2-2": "3a14ea905d7ee6c2b9a3cbd14144f15d04aa7da54acad6081b072086406eac62",
+      "3-6": "b624d941bcae8c93c4413e0dadaaa8532e913e3a485772023fd4e27a2d29139d",
+      "7-12": "9f663d52dada611eed62e945c7cb0d0cf1438efccbe1e7b1780769b2135ae0d0",
+      "13-33": "08ba2f82d56c4c9fb04f0ed810fc36b9aeff30e3bfba8d0841b19031034f6d9f",
+      "34-42": "0fad9480bf096b3afe6a9253780288c98dc21d108fe835fb5f9129bb0f0fdc2e",
+      "43-67": "7a52ff7901351bbad0a26f5dbb812ceedec5ba1b435c66bb7b794f2c200f76c8",
+      "68-90": "50130acd9f06dcf9d98f1aad77c8d4ac44475dc0e771a897f3418b20359bcea7",
+      "91-114": "12b05bfcbfe460f9544ebae542911d0f236df4d4e8422cc957dd6af256e78ec7",
+      "115-127": "d8a6d943a607158a192f8aa00f9fbaa373239f3a555ecd1e8dda4f7ba0c237b6",
+      "128-138": "4603caefa3a874417d38af4d70459bd47fe98b765f1666d78e8a199cd5e6e811",
+      "139-145": "1c9db61accdf7ea5f200a4b6a416810124e851d29ff77d58ecff34513c897457",
+      "146-165": "df171addfe2c68a0675a0542203ccecda1f08945c86d3221c33dbfff17f7c0d7",
+      "166-183": "8d52185f769d250e3db96e01f87775030df7ed7915b99f37268047a15b5bc764",
+      "184-208": "4917fe4fc8e91035fa8a17250f9c9528f3d958f9792b60c63d36351fd1764139",
+      "209-220": "e6e59ce4f04e78d4489db0247386dfc959268281972838c48db734caae47a758",
+      "221-230": "986e10ee2cd4fa3332ebf61b319805de2b41bb771db99e76f8480739b7713563",
+      "231-236": "cd9c4c65eeba46ed6ae014258fcc662f80f3acba49cba702d49d001110c71ef7",
+      "237-240": "60f4a5dbaeb8c1d769cb71016a2f2938942ffb66e66aa522de2e643ea2d054a5",
+      "241-251": "d6855ab0f34b7a6b8cc4975f2a7564e7a1ae54c000a645fb1e3cde6733bddda5",
+      "252-255": "8cc1ff1b1fe8fb66a21fc6d0c020d635ce7f675899f3861209e96b5d085867de",
+      "256-259": "ce45ac0b7f437752406f3d39d43c6b132c5e987537fe269d4a57188ec9dfe4ea",
+      "260-288": "e207a112704673fe17050a613733a08e8df9ddd78a70395d0bfd0d8aeff9329d",
+      "289-294": "7f0a3a9bb9cff47be01cee21ae0f9eb57e2cdc3e5bf282bb5bc8779d3265d65c",
+      "295-305": "f22b3dfe624967122a2048d51a9006caef29cdd48dd52e36fdc48da973c144ce",
+      "306-314": "5ef288812038170300e6b19844b92d17ae6081efe3c0c7b6001ecdf0d0a192c0",
+      "315-320": "fd61d94f62551d93ca3559008a9b12609dbfea823af98d5d80b5ed6caeaa62c5"
+    },
+    "brief_drawings_sha256": "22c2ab6afda5ea91026d43f6f5527d623ee7b2f024fc1731ea7cbb9c7941b865",
+    "claim_sha256": [
+      "c3c87694c022da27d6b0364667d61653b6f0603ce27930400eb4f5676b5ac935",
+      "734521646f2b1351ae926818bc7fee341c8d522fcf5e492b0aeae7e89f007437",
+      "27bd2811ac98dd7e4adf0bb893ee437ed4f9b4b1088c21e7f1efdb669260c851",
+      "90eeb1dc9f5ada213ff809054b275baa4649e5dfc7845ffa28b4d4a93be4f828",
+      "ea87cb6a5f1bc00a3ad22c31b245b92f0b1ff0839c1b657c15c769a4c6a80ca2",
+      "3404375575aae929e03563ef34ca223ebc84436228c746301dbe107b12ba91cd",
+      "a2104ce973bf7a209fb33587e3d030cb84a73e6c9b21a7108886c78cc6091254",
+      "116ee4c6181c649748c6c03818a9ac7070cdceaa36a242b28fe911ce796298ee",
+      "17d0f11c4a2875bb3917b0e74e189028ad10109d19a55396559ffaf2d99dd62e",
+      "152b581bd68bd296bae49abfc0830ccad91035a0588c3c25d7136b4b174dc02b",
+      "9af0e8b6fc20b3e95a342a059432c7a7f0b792cec7031ee03641cd6d38d49ac5",
+      "4600b9f4d20993b20d0aaa6255b5e22e94bf789edfb23a2b189cae5cbb724299",
+      "1ab8198dd18556cf53a781a4ed986c9261f4d3f332dfe5b0e1bd4b625dbedd57",
+      "8431d4fd08a0b2d0658587688dc7bc8b84b528b92605c0fa24f5efaa89335f54",
+      "d83f82a546fd531339270b1f39b2190f2268545a45bc021db05ab5c4de3889fe",
+      "68eb639cecb5ce315d0cc80f21f826147b6c618df674a1b34a4a6960416686cc",
+      "d5914880eba11dccce7e08f2ba89d59255ff7a391aab6cf6eeaf208d3f84bed9",
+      "1e988da1239034ace4bb84e19cf766b0afcd93fa3832accf832b57b79a0fce49",
+      "3ec9f4f9e6933557f5daf7fc0dc4f4a8aa4017e5207cae52ce2ea640baf1e50a",
+      "b4edf027f28249adee68d527d1c5cb6e21c3d5a17cc8d137bac0a037f502c166"
+    ]
+  },
+  "source_phrase_counts": {
+    "lens": 38,
+    "lens assembly": 18,
+    "camera module": 149,
+    "image sensor": 706,
+    "focal length": 3,
+    "f-number": 1,
+    "field of view": 7,
+    "radius": 0,
+    "thickness": 0,
+    "aperture": 0,
+    "asphere": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "conic": 0,
+    "optical zoom": 1,
+    "exposure value": 311,
+    "framerate": 17,
+    "time stamp": 195,
+    "effective focal length": 0
+  },
+  "optical_context": {
+    "paragraph_47": "display member may contain generic lenses or a waveguide",
+    "paragraphs_49_62": "multiple camera modules may have overlapping or nonoverlapping fields of view and generic wide-angle or telephoto roles",
+    "paragraphs_80_89": "generic camera lens assembly, optical-axis motion, focal length and maximum magnification only",
+    "paragraphs_289_294": "generic camera-module appendix and lens-property examples including field of view, focal length, autofocus, F-number and optical zoom",
+    "ordered_optical_surface_prescription_found": false,
+    "prescription_specific_numeric_optical_metadata_found": false
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Samsung multi-camera timing and exposure-control electronic device architecture",
+      "summary_paragraphs": [9, 9],
+      "description_paragraphs": [43, 305],
+      "claims": [1, 10],
+      "reason_code": "confirmed_no_prescription.multi_camera_timing_exposure_control_electronic_device_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Samsung multi-camera timing and exposure-control operating method",
+      "summary_paragraphs": [10, 10],
+      "description_paragraphs": [306, 314],
+      "claims": [11, 19],
+      "reason_code": "confirmed_no_prescription.multi_camera_timing_exposure_control_operating_method_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Samsung multi-camera timing and exposure-control computer-readable medium wrapper",
+      "summary_paragraphs": [11, 11],
+      "description_paragraphs": [315, 319],
+      "claims": [20, 20],
+      "reason_code": "confirmed_no_prescription.multi_camera_timing_exposure_control_computer_readable_medium_wrapper_only",
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": false,
+    "surface_radii_published": false,
+    "surface_spacing_published": false,
+    "optical_materials_published": false,
+    "refractive_indices_published": false,
+    "abbe_numbers_published": false,
+    "conic_or_asphere_coefficients_published": false,
+    "stop_location_published": false,
+    "effective_focal_length_published": false,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "image_height_published": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

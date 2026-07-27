@@ -1,0 +1,274 @@
+{
+  "schema_version": 1,
+  "family_id": "51743335",
+  "publication_id": "US-9360657-B2",
+  "rapidocr_version": "1.4.4",
+  "pypdf_version": "6.14.2",
+  "source_raster_set_sha256": "1876cabda170446490b897f726323f5891e1616b0515247b7525ceb51685b7aa",
+  "pages": [
+    {
+      "page_number": 5,
+      "role": "first_surface",
+      "official_raster_sha256": "f4ae747f9b12d19673ed3d47dd645c3d2c5b91bdd09fb9a374d586f50605317b",
+      "rotation": "clockwise_90",
+      "scale": 0.75,
+      "token_count": 67,
+      "high_confidence_token_count": 66,
+      "high_confidence_numeric_token_count": 31,
+      "token_payload_sha256": "73b11069922a1c468408d34954b45293a5f8912c4681ebefe7eed007d48b11f4",
+      "required_normalized_labels": [
+        "RADIUSOF",
+        "CURVATURE",
+        "THICKNESS",
+        "REFRACTIVE",
+        "INDEX",
+        "ABBE"
+      ],
+      "observed_required_normalized_labels": [
+        "RADIUSOF",
+        "CURVATURE",
+        "THICKNESS",
+        "REFRACTIVE",
+        "INDEX",
+        "ABBE"
+      ],
+      "mirror_text_characters": 0
+    },
+    {
+      "page_number": 6,
+      "role": "first_asphere",
+      "official_raster_sha256": "e2648befa24181d2f03f416a42e6b4612a99e6fd1047558cd58a50ae48d81563",
+      "rotation": "clockwise_90",
+      "scale": 0.75,
+      "token_count": 106,
+      "high_confidence_token_count": 103,
+      "high_confidence_numeric_token_count": 72,
+      "token_payload_sha256": "eae2d0e14658acb3b4ef00aed39069af9216128c050a5efdcac004a357570f98",
+      "required_normalized_labels": [
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "observed_required_normalized_labels": [
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "mirror_text_characters": 0
+    },
+    {
+      "page_number": 10,
+      "role": "second_surface",
+      "official_raster_sha256": "6d29e01f7a70d93a95d9d30dc68db1caba44a8d406ea3bba09acd85eea6d4665",
+      "rotation": "clockwise_90",
+      "scale": 0.75,
+      "token_count": 67,
+      "high_confidence_token_count": 66,
+      "high_confidence_numeric_token_count": 32,
+      "token_payload_sha256": "f6f266c2310f1a000257373ac13f2413c4aa73f20c1865283cf79f74a09e12a3",
+      "required_normalized_labels": [
+        "RADIUSOF",
+        "CURVATURE",
+        "THICKNESS",
+        "REFRACTIVE",
+        "INDEX",
+        "ABBE"
+      ],
+      "observed_required_normalized_labels": [
+        "RADIUSOF",
+        "CURVATURE",
+        "THICKNESS",
+        "REFRACTIVE",
+        "INDEX",
+        "ABBE"
+      ],
+      "mirror_text_characters": 103
+    },
+    {
+      "page_number": 11,
+      "role": "second_asphere",
+      "official_raster_sha256": "46bd446350c1115ed9d62b670a41be5390b1138054f3a6eb49f322ba8fbd2a3a",
+      "rotation": "clockwise_90",
+      "scale": 0.75,
+      "token_count": 101,
+      "high_confidence_token_count": 99,
+      "high_confidence_numeric_token_count": 68,
+      "token_payload_sha256": "144337ec3f074d404e60915ae7a479a31ee7e67d087fce4cf57bf7b4448c67b9",
+      "required_normalized_labels": [
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "observed_required_normalized_labels": [
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "mirror_text_characters": 0
+    },
+    {
+      "page_number": 15,
+      "role": "third_surface",
+      "official_raster_sha256": "d6961627a0e5df52a30e78b1d5a856f31a88fbac15cb910dc419ce5e8f5940dd",
+      "rotation": "clockwise_90",
+      "scale": 0.75,
+      "token_count": 77,
+      "high_confidence_token_count": 74,
+      "high_confidence_numeric_token_count": 36,
+      "token_payload_sha256": "024370d57a8a87c699d4160ebcdf0493f4a92ae4acfe0e0acb2c93b5c32ae8d5",
+      "required_normalized_labels": [
+        "RADIUSOF",
+        "CURVATURE",
+        "THICKNESS",
+        "REFRACTIVE",
+        "INDEX",
+        "ABBE"
+      ],
+      "observed_required_normalized_labels": [
+        "RADIUSOF",
+        "CURVATURE",
+        "THICKNESS",
+        "REFRACTIVE",
+        "INDEX",
+        "ABBE"
+      ],
+      "mirror_text_characters": 56
+    },
+    {
+      "page_number": 16,
+      "role": "third_asphere",
+      "official_raster_sha256": "98f0a323e646a010a73ef4074654d2ca51090e42051e4f050320fe709ec60030",
+      "rotation": "clockwise_90",
+      "scale": 0.75,
+      "token_count": 102,
+      "high_confidence_token_count": 100,
+      "high_confidence_numeric_token_count": 69,
+      "token_payload_sha256": "a2f352b6032afa0d04f3cadcf971ef9ee7dd09cd824ee63657cc302f35968aae",
+      "required_normalized_labels": [
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G"
+      ],
+      "observed_required_normalized_labels": [
+        "K",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+      ],
+      "mirror_text_characters": 83
+    },
+    {
+      "page_number": 17,
+      "role": "three_embodiment_system_meta",
+      "official_raster_sha256": "32908feadc6750c5327eb57138ff7faf0599c9b09017758c885893a93fb7bea3",
+      "rotation": "clockwise_90",
+      "scale": 0.75,
+      "token_count": 80,
+      "high_confidence_token_count": 78,
+      "high_confidence_numeric_token_count": 51,
+      "token_payload_sha256": "fea8397681381ea69984efce7790fee7dbc7c7cb80caed5dab3c75ec19f49e57",
+      "required_normalized_labels": [
+        "PARAMETERS",
+        "TL",
+        "DG",
+        "F",
+        "CT1",
+        "CT2",
+        "CT3",
+        "CT4",
+        "TLDG",
+        "TLF",
+        "ND2",
+        "ND3",
+        "VD2",
+        "VD3"
+      ],
+      "observed_required_normalized_labels": [
+        "PARAMETERS",
+        "TL",
+        "DG",
+        "F",
+        "CT1",
+        "CT2",
+        "CT3",
+        "CT4",
+        "TLDG",
+        "TLF",
+        "ND2",
+        "ND3",
+        "VD2",
+        "VD3"
+      ],
+      "mirror_text_characters": 31
+    }
+  ],
+  "absent_label_counts": {
+    "FNO": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "F-number": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "F/#": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "HFOV": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "FOV": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "field of view": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "angle of view": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "image height": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    },
+    "viewing angle": {
+      "rapidocr": 0,
+      "google_text_layer": 0
+    }
+  },
+  "classification_use": "independent label-absence corroboration after official/Google decoded-raster equality",
+  "numeric_cells_transcribed": false,
+  "numeric_derivation_used": false
+}

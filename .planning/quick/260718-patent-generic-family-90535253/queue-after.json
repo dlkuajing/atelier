@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "1b9794864254687a10fc20b29307e6a071d1a3d0355c3674fd57c39911c73973",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 87,
+      "affected_items": 87
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "98695135",
+    "root_ids": ["US-20260086429"],
+    "publication_ids": ["US-20260086429-A1"],
+    "application_number": "19/333463",
+    "title": "IMAGING LENS DRIVING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "first_inventor": "SU; Heng-Yi",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": null,
+    "layout_signature": "53f2233bcf64e5fc13f11327c22c752c370f2b115e6501ccc0ec7134842bb92d",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 58,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 4,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2d0745df79927e89/US-20260086429-A1.html",
+      "sha256": "2d0745df79927e892aab44144dcff53fd384f2f7fb1d290ec9ad81dabb6cfece"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

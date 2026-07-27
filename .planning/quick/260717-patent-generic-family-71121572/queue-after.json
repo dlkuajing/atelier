@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "result_set_sha256": "1d1abad32b40d72d8db88191553adb69fe344c413e50d4bd40a886d633d34d43",
+  "ordering": [
+    "nonterminal_root_count_desc",
+    "item_count_desc",
+    "parser_layout_family_signature_ascending"
+  ],
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 140,
+      "affected_items": 140
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "64459548",
+    "root_id": "US-20210373283",
+    "publication_id": "US-20210373283-A1",
+    "layout_signature": "18f601741e46968dd9aa08221b03b91587e37313eeac6ae406034b44be026e21",
+    "raw_document_sha256": "f12d20d6c4a675d50fe7245fcda60aea7eb19389bfb0ca7cc314868053203431",
+    "title": "IMAGING LENS UNIT AND METHOD FOR MANUFACTURING THE SAME",
+    "affected_roots": 1,
+    "affected_items": 1
+  }
+}

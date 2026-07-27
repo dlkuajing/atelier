@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "family_id": "71121572",
+  "current_frozen_cohort_roots": [
+    "US-11467375"
+  ],
+  "current_publication": "US-11467375-B2",
+  "discovery": {
+    "source_url": "https://patents.google.com/patent/US11467375B2/en",
+    "country_status": ["US", "JP", "WO"],
+    "same_application_publication_count": 2
+  },
+  "us_application_status": "active_grant",
+  "external_family_members": [
+    {
+      "publication_id": "US-20200209560-A1",
+      "country": "US",
+      "relationship": "same application prior publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP-2020106789-A",
+      "country": "JP",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "JP-6805300-B2",
+      "country": "JP",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "WO-2020134286-A1",
+      "country": "WO",
+      "relationship": "family publication",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN-109839722-A",
+      "country": "CN",
+      "relationship": "priority application publication CN201811616007.0A",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN-109839722-B",
+      "country": "CN",
+      "relationship": "priority application grant CN201811616007.0A",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN-109828350-A",
+      "country": "CN",
+      "relationship": "priority application publication CN201811614496.6A",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "CN-109828350-B",
+      "country": "CN",
+      "relationship": "priority application grant CN201811614496.6A",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "source_note": "Google Patents publication, priority, family, country-status, and also-published-as metadata cross-check only; no external numeric value is borrowed into the retained B2 parser."
+}

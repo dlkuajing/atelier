@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260720-patent-generic-family-59685373/generic-residual-after-2.json",
+  "result_set_sha256": "7ceb486beba9ba9e58d20a5059e4c635734b6f4f560291bfd875c03139e59b4c",
+  "generic_residual_roots": 52,
+  "generic_residual_items": 52,
+  "next_exact_group": {
+    "family_id": "53214261",
+    "root_ids": [
+      "US-9618727"
+    ],
+    "publication_ids": [
+      "US-9618727-B2"
+    ],
+    "application_number": "14/832479",
+    "title": "Imaging lens assembly",
+    "first_inventor": "Jang; Issac",
+    "applicant": "Jang; Issac; Park; Jay",
+    "assignee": "AAC TECHNOLOGIES PTE. LTD.",
+    "layout_signature": "9b48861ebc833e7b1be143eceeb2d50fb97d5e6f6dd8198fbcc623ce681d0603",
+    "layout_signature_count": 1,
+    "table_count": 5,
+    "marker_counts": {
+      "effective_focal_length": 2,
+      "embodiment_anchor": 8,
+      "example_anchor": 0,
+      "f_number": 2,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/db0e5d448f3107df/US-9618727-B2.html",
+      "sha256": "db0e5d448f3107df967d4c6b637fd035971b62dadfb78f27de889b9d5a0ab6a6"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

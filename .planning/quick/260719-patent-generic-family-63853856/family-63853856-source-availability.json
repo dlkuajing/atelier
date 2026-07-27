@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "family_id": "63853856",
+  "root_id": "US-10514523",
+  "publication_id": "US-10514523-B2",
+  "application_number": "15/671765",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/0c93198ad6094f80/US-10514523-B2.html",
+    "bytes": 187057,
+    "characters": 185228,
+    "normalized_characters": 168959,
+    "sha256": "0c93198ad6094f8057d5df45a399a8bbd615f6286790c5a87632a1447a81b902",
+    "normalized_sha256": "364862001802743e678893603c8985b69a128ce8c810324a64cfac7ddb8b8303",
+    "flattened_tables": 28,
+    "formal_optical_tables": 12,
+    "inline_formula_processing_instructions": 2,
+    "embedded_img_tags": 3,
+    "html_table_tags": 0,
+    "mathml_objects": 0
+  },
+  "official_pdf_fetches": [
+    {
+      "path": ".planning/quick/260719-patent-generic-family-63853856/source-review/US-10514523-B2-official-1.pdf",
+      "bytes": 3785664,
+      "container_sha256": "52d8bf06234a9042a59ab92b686b85ae63999e8c285285eb935a92d4b6bae6da",
+      "page_count": 63,
+      "single_raster_pages": 63,
+      "text_layer_characters": 0,
+      "decoded_raster_set_sha256": "57db7ce6fcff8f685ee7221895aaefb2294fff589f6a23381288aec4ae4a60f4"
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-63853856/source-review/US-10514523-B2-official-2.pdf",
+      "bytes": 3785664,
+      "container_sha256": "903ec3f725c4a6eddb2a191f4b2a2a4be2065aaf35e0f4d41b4125330f31836b",
+      "page_count": 63,
+      "single_raster_pages": 63,
+      "text_layer_characters": 0,
+      "decoded_raster_set_sha256": "57db7ce6fcff8f685ee7221895aaefb2294fff589f6a23381288aec4ae4a60f4"
+    }
+  ],
+  "bibliography": {
+    "title": "Optical image capturing system and electronic device",
+    "inventors": [
+      "Lai; Chien-Hsun",
+      "Chang; Yeong-Ming",
+      "Tsai; Chen-Hung",
+      "Chen; Ying-Jung",
+      "Liu; Yao-Wei",
+      "Yang; Hui-Hsuan"
+    ],
+    "applicant": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO.LTD.",
+    "assignee": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO. LTD.",
+    "filed": "2017-08-08",
+    "patent_date": "2019-12-24"
+  },
+  "lineage": {
+    "same_application_prior_us_publication": {
+      "publication_id": "US-20180307000-A1",
+      "publication_date": "2018-10-25"
+    },
+    "priority_applications": [
+      {
+        "country": "TW",
+        "application": "106113530 A",
+        "date": "2017-04-21"
+      }
+    ],
+    "related_family_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_b2_html_is_numeric_authority": true,
+    "official_pdfs_used_for_layout_and_token_corroboration_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "undefined_rep_repaired_to_hep": false,
+    "published_internal_lexical_normalizations_are_exact_and_narrow": true
+  }
+}

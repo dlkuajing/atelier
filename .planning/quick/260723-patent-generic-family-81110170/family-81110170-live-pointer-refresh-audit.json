@@ -1,0 +1,1188 @@
+{
+  "schema_version": "patent-live-pointer-refresh-audit/v1",
+  "family_id": "81110170",
+  "previous_result_set_sha256": "c617985cd94eeeb87a921cd86d43e6fcb47d7cfc0419c4a380c5926d7f18c1f8",
+  "new_result_set_sha256": "3f73270ebc7a95c5fc950d174251c0d9c5d5715fa2423ec49522b723b6bd93c9",
+  "live_summary": {
+    "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+    "bytes": 55975,
+    "sha256": "ec5415c7d0442e914369bc2c663057140d6861429c479ed76b06d370ffa4bd82"
+  },
+  "live_report": {
+    "path": ".planning/loop/patent-local-replay-report.md",
+    "bytes": 58031,
+    "sha256": "451837185ac48ce4bc1e4027a73fd58c1a0ba00e3e43f9c5816154f3c70da80c"
+  },
+  "changed_manifests": 103,
+  "changed_leaf_counts": {
+    "summary_sha256": 106,
+    "report_sha256": 106,
+    "current_result_set": 20,
+    "legacy_hash_only": 2
+  },
+  "total_changed_leaves": 234,
+  "historical_census_queue_replay_attempt_fields_changed": false,
+  "records": [
+    {
+      "path": ".planning/quick/260717-patent-generic-family-100037253/family-100037253-source-evidence.json",
+      "before_bytes": 5417,
+      "before_sha256": "a598b3d06b072cc5087400bf9eea399e75571e9525db05a7cb746a4d5ec8016d",
+      "after_bytes": 5417,
+      "after_sha256": "2d19698d9caf829d20e5a34237f3af63e162b9138525c8cc16c6a9eac40f263e",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-38997638/family-38997638-source-evidence.json",
+      "before_bytes": 5759,
+      "before_sha256": "7b5b9875a36fa6bae96c2ecf0a5359e5a3120d6f311f357ff5afbbe4791dca5a",
+      "after_bytes": 5759,
+      "after_sha256": "b1ab513da406e713280f3b52b18f84a046f86172b1d8585ce57b0811426c4e21",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-48982045/family-48982045-source-evidence.json",
+      "before_bytes": 4705,
+      "before_sha256": "2aa1fb5af454e8b5c0feb4b43acddb080faa07b8a984c3af7b5e2feee51c2c06",
+      "after_bytes": 4705,
+      "after_sha256": "70ddec3d815cc0e63402bf2bf0f516de61e0f9e753a8f85933bb011dcc3dc4c4",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-56417699/family-56417699-source-evidence.json",
+      "before_bytes": 2890,
+      "before_sha256": "46f855b0f08663d5d06568f354285d04438f38486773af34c6f642cf9b0b0163",
+      "after_bytes": 2890,
+      "after_sha256": "8aff11905266877d67e6a71c50ecd836f114d5bf1b55c1bc4cb9423ebcda72cc",
+      "changed_leaf_paths": [
+        "replay_report.sha256",
+        "replay_summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-63246213/family-63246213-source-evidence.json",
+      "before_bytes": 5833,
+      "before_sha256": "5e6ac7a9b070405dcf8734dfc70d4a8c187f3bd42deb098f6d166e11e90c1181",
+      "after_bytes": 5833,
+      "after_sha256": "6969c43987b16574155d14024ef29453c93a24d2e7742aaabcac90ef81c88b64",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-65528235/family-65528235-source-evidence.json",
+      "before_bytes": 5909,
+      "before_sha256": "78142af420df577b3dae1ea5c83a12308d4423712e2e411b3e94d709a0391fda",
+      "after_bytes": 5909,
+      "after_sha256": "f8817a5542ed921bf3ecb6dd118bfe65e036a9b9af6e70b071cdad622a72dbdd",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-74036960/family-74036960-source-evidence.json",
+      "before_bytes": 5956,
+      "before_sha256": "9e36bb54dc667b26f3401d0e0bf50daa9418082f32d389c5d29828984ddc9aa8",
+      "after_bytes": 5956,
+      "after_sha256": "2d22f83fe045713df5bf2240ca25552f5af0c6d268a8a5e950b594692461ecab",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-75614661/family-75614661-source-evidence.json",
+      "before_bytes": 6660,
+      "before_sha256": "4bdc617e4340c3d8a76d9feeb049d527e7073edfd0ba49aebda395046c59f635",
+      "after_bytes": 6660,
+      "after_sha256": "b2bf7fb53601cc6d83c638b202eb8033e6c6f58aa84b98506b78c2f0386baa11",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-76444624/family-76444624-source-evidence.json",
+      "before_bytes": 6086,
+      "before_sha256": "10f5f86d400eae81ff0c10890edc3d1ff5aa0f108e36fa5d40cd05d1afe7a5d5",
+      "after_bytes": 6086,
+      "after_sha256": "5b3a5e736f03658f88457cb8c69f23d07b8c7917962289eafce918a87dd7381d",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-78342471/family-78342471-source-evidence.json",
+      "before_bytes": 4756,
+      "before_sha256": "f35bace210e1c4d3da6f9bd186350530b0c0b81f2f75d07123fb10a65e75a325",
+      "after_bytes": 4756,
+      "after_sha256": "01385b53aff41eecf7681328c5836be8296a8b4f8ee812638b257e53e7d0428f",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-80893318/family-80893318-source-evidence.json",
+      "before_bytes": 5312,
+      "before_sha256": "b55ae52f9dcc997984a548010dcfd9b0a7ad2c546abbf0bb70423d9f4ea61ef8",
+      "after_bytes": 5312,
+      "after_sha256": "f1ed929c5dee036d174a4b5354dda1f7ca6be8b8d3e64b64a67b4b5f2ab8a69d",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-82951912/family-82951912-source-evidence.json",
+      "before_bytes": 5263,
+      "before_sha256": "f80fb67fd86117322a6731d0344368b5385af7f7a21822b7b5316087b09b4ddd",
+      "after_bytes": 5263,
+      "after_sha256": "f8fcd7435f7830f480da4f92746d4399be50e174dbb994a1c29cc598cd34a083",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-89620713/family-89620713-source-evidence.json",
+      "before_bytes": 5932,
+      "before_sha256": "52054092e3f797f668ab6144b34d2c8d13361268a7aa5b7712191dc518104f44",
+      "after_bytes": 5932,
+      "after_sha256": "71f28ddcf77e9273da0eac266132babb2145c469f0b079720b24b02429a3bcb7",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-92714478/family-92714478-source-evidence.json",
+      "before_bytes": 2963,
+      "before_sha256": "2c934e3752c2ed48e6c1e56964cd722dce4ca73cc5c9f151a7cea7fab0e5f18f",
+      "after_bytes": 2963,
+      "after_sha256": "a2123b93f78a0deeb48e255e63e9d709c953bd5a8d8d3a5e0c4018c1039f45fe",
+      "changed_leaf_paths": [
+        "replay_report.sha256",
+        "replay_summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-95155833/family-95155833-source-evidence.json",
+      "before_bytes": 6317,
+      "before_sha256": "4afb6ccbeed10f70e66e81f23e12617eda48742cf4b9f481d389b960e4579dfd",
+      "after_bytes": 6317,
+      "after_sha256": "ff1aa75596427d6fe5d6bff71945f11afe787d97c43a65c3d989c7ff7ed262db",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-97107726/family-97107726-source-evidence.json",
+      "before_bytes": 4992,
+      "before_sha256": "630c1eb9db3c0a6341032a0a9df5f4a242c39835cb6f10a3b5b50682c16161be",
+      "after_bytes": 4992,
+      "after_sha256": "d96367b598012134522c3c04bf02d8883d33c19a297ba5866b908ac260c5c603",
+      "changed_leaf_paths": [
+        "replay_state.report.sha256",
+        "replay_state.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-97917964/family-97917964-source-evidence.json",
+      "before_bytes": 4483,
+      "before_sha256": "66b216b91761f9ad2c1cb140f571873e82e1d88a385c102a14e78e9e948f48ed",
+      "after_bytes": 4483,
+      "after_sha256": "175fdd3c0ac9dfadecee73d622298329e315cddd2125a2c61247725a12417107",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-98774980/family-98774980-source-evidence.json",
+      "before_bytes": 4785,
+      "before_sha256": "220a580d0038fe534a49c5ce101e505a5b024b72623fb33589219fd933b5c431",
+      "after_bytes": 4785,
+      "after_sha256": "607d05fa3d1dda85c886a9037d2cac745b020a6f82b03ea477ad66b7386e3571",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260717-patent-generic-family-99480653/family-99480653-source-evidence.json",
+      "before_bytes": 4768,
+      "before_sha256": "1c710b93793f336e68e984cf4be0498f81981e03c571ffd2ba3ce1b4efcf6cb8",
+      "after_bytes": 4768,
+      "after_sha256": "6ca7159376d5502b0fe4d9bfebcaf0922f26676f7acf643e204d05536dce0178",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-21816074/family-21816074-source-evidence.json",
+      "before_bytes": 6388,
+      "before_sha256": "9077ba99ba7996f3ba5a27ebc448483e1e75b19670e953c7efce9c4a80574d6f",
+      "after_bytes": 6388,
+      "after_sha256": "fd069e5ad883ea8219c6a0b9afb609d4b77b18c67d88908268db50101e6afbf1",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-23219584/family-23219584-source-evidence.json",
+      "before_bytes": 7837,
+      "before_sha256": "bddc3f775ca24cefe929f68db460229f8e1f4ad9316bdc8b326c2d0e4c638b2c",
+      "after_bytes": 7837,
+      "after_sha256": "d392168962ebe979b8a2706a8cff63c9a581eb3bb4a8598011286b778ed00e43",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-44259669/family-44259669-source-evidence.json",
+      "before_bytes": 19343,
+      "before_sha256": "2ebae7ddf60efdaac62cbc54483fc1f86b8143399b7e6d32c5c0bc9e861df0a4",
+      "after_bytes": 19343,
+      "after_sha256": "32b16624055ec4513769fdf6d1d5fde6a0e00a9f59b9b2bfce7cf099a126f7a3",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-44972265/family-44972265-source-evidence.json",
+      "before_bytes": 9672,
+      "before_sha256": "b5dee786a7c0e8e93d1b9ef493787ab7aa21e648470dff422e9d55d10b116e62",
+      "after_bytes": 9672,
+      "after_sha256": "5c84687b2bd55ff6a7109613350a2edc0a91bc530a9335cca5dcafc0db9bfa6d",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-51743335/family-51743335-source-evidence.json",
+      "before_bytes": 6143,
+      "before_sha256": "837b2d92535a3f40450d6a28af588e25025e9bf834e108f8355c08655918191f",
+      "after_bytes": 6143,
+      "after_sha256": "6a2e646320f987151812db1627672335f4c28d4133a8b4434d9d61c0fc619de8",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-56417699-root-20180003862/family-56417699-root-US-20180003862-source-evidence.json",
+      "before_bytes": 5638,
+      "before_sha256": "f7af2d0e6f6b35fd29879f6ff0d350db77732d6cd6020222e3d79ea510a044cf",
+      "after_bytes": 5638,
+      "after_sha256": "2d55b0d53fc8464d73e116bb8a5c50ae3da1593ce46d5e0b3b50cf045e86734e",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-65634646/family-65634646-source-evidence.json",
+      "before_bytes": 5757,
+      "before_sha256": "4e13aff8209bafeeac227ea4c1fc75a0173181a4fde98a42ed248a52df9cda2e",
+      "after_bytes": 5757,
+      "after_sha256": "40451928675bfbda5ec94b2824ee6d15149c702d0a145ba2615c522a669abc6e",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-75907839/family-75907839-source-evidence.json",
+      "before_bytes": 6454,
+      "before_sha256": "356f6b00a6b7ccc77e6a5a5678ae8b03ed51332f2856ea8489852669ba213efb",
+      "after_bytes": 6454,
+      "after_sha256": "41e3b7229d438746f86d4a707fac43f726279f240217c2b797ba2a253dc13d4e",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-77292582/family-77292582-source-evidence.json",
+      "before_bytes": 10367,
+      "before_sha256": "63a3cb30bb60d48442da18a04f6ca1d21709a3af37415cd0da55cd5d378bb539",
+      "after_bytes": 10367,
+      "after_sha256": "903065470cda5ecef544c65830555fcb32a98234c096a9db71bd05b56e4dd208",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-78471711/family-78471711-source-evidence.json",
+      "before_bytes": 6475,
+      "before_sha256": "887b4d5f7a12965d25c3ffea8487ee1b46bff19ef7fc3f9c817024669c0b9fdb",
+      "after_bytes": 6475,
+      "after_sha256": "027b8eaae8ba23c27c42739fc636d9ef35804d80f42ff168bd5cfe492dbcce99",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-78957411/family-78957411-source-evidence.json",
+      "before_bytes": 10907,
+      "before_sha256": "17bc6fb1953d35da6d362ffacd240a5eaa46863eeb0229f0166bc30ae769bfe6",
+      "after_bytes": 10907,
+      "after_sha256": "e766e62b290532cff569c4fb2b7ff51e59be0d76a2766d84cbd21f05e4924f92",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-81258214/family-81258214-source-evidence.json",
+      "before_bytes": 13928,
+      "before_sha256": "9e66680da99e2e5b8a482ba9f747d6fbc95ecaee6ba0c9e70ed1864a852a1d02",
+      "after_bytes": 13928,
+      "after_sha256": "9b0ed7c65ad1e2123357d9cfb5f4d1d2805fde2aa1ae0b1a654d785c7b43a295",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82219880/family-82219880-source-evidence.json",
+      "before_bytes": 5751,
+      "before_sha256": "0e26d1ba7d720993ee00b4e66253decfea00f8765c021adddfea4fc01e9ca143",
+      "after_bytes": 5751,
+      "after_sha256": "3cb7488072a1d970b3c473fb1c557090d2ab37935e858279d361202c2cea589a",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818661/family-82818661-source-evidence.json",
+      "before_bytes": 5995,
+      "before_sha256": "6cef1305ebfe1270bc5cb472485d8fad09870a65ec99ba579b0cbfb16c0a4b25",
+      "after_bytes": 5995,
+      "after_sha256": "d74a051b62fddf7ec55bbc88441e0e6b3eaf8ee5b15cb467f720a32103858911",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-82818949/family-82818949-source-evidence.json",
+      "before_bytes": 5886,
+      "before_sha256": "1a3394cd7befcb9a1c07ef251ee2148b8e31e0ec81915ecf59647f4f0b9b1ea9",
+      "after_bytes": 5886,
+      "after_sha256": "ca91d5615b45f3918a13153afdf92e5d0f7fa3c13facc91504c81f1f10a462ea",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-84322717/family-84322717-source-evidence.json",
+      "before_bytes": 27621,
+      "before_sha256": "6ff146f3af09ef92fe2affc416be3abbe8e4aaedf5e41ff551ccebc6d6f3f50d",
+      "after_bytes": 27621,
+      "after_sha256": "b73dc671c7ecce2cbddf9257868a980d5755aa2370878b17d98b7d45a637fc8f",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-84785926/family-84785926-source-evidence.json",
+      "before_bytes": 5723,
+      "before_sha256": "90f96c344962490b0f6a7ce3db01b7c7db09514d8c8af90bc4163260f7f7e355",
+      "after_bytes": 5723,
+      "after_sha256": "caec314b27573c76a2089ce0ebd0eea60d733d91e039b55ff0af8e5b95667bae",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-85177416/family-85177416-source-evidence.json",
+      "before_bytes": 10484,
+      "before_sha256": "213b680df2c6a2457d17db8abc41b118ffa24da4db453a9fb6e8e19ca8935187",
+      "after_bytes": 10484,
+      "after_sha256": "434e33ee7d12c148851b4904e5077ac79c783a0653e602537088484ada5d419a",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-86240812/family-86240812-source-evidence.json",
+      "before_bytes": 11574,
+      "before_sha256": "4fdf6bcee51cc18953d2e50f41c05fbf78ca3e98c3b3707dd0f51f81c02f7b32",
+      "after_bytes": 11574,
+      "after_sha256": "471d46fdc892d6a04d94a229aa931737674c43a80cb4dd5bd8da1e6120cb1237",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-86451284/family-86451284-source-evidence.json",
+      "before_bytes": 6773,
+      "before_sha256": "5acc81aaaaba5ba00152e92ec1952225614eb50ebff1d5bcdb03d99d563c8953",
+      "after_bytes": 6773,
+      "after_sha256": "7ca5296e64cfc27915586d96d0113e2215badcdebf7ac7e3e2698cf97a07b3ea",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-89620688/family-89620688-source-evidence.json",
+      "before_bytes": 5821,
+      "before_sha256": "548a119d1b2376adbc9911b77a7cb6f96b27153b362eb4e4d37393f8a6587b7a",
+      "after_bytes": 5821,
+      "after_sha256": "dd24e89af19ee6fd2634adbe1d903b43e11aff6ad0dc0f447f99e17bb7448b63",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-90535253/family-90535253-source-evidence.json",
+      "before_bytes": 9146,
+      "before_sha256": "0fcdb41fe77d4608ac549798e12bdcbb90959631e3c7962f046d06aaf99f0a1b",
+      "after_bytes": 9146,
+      "after_sha256": "fef4d018fec2d439e55252dff3a0bc35034acc9b9d8bf416c15a80e1e237e8b4",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-92715390/family-92715390-source-evidence.json",
+      "before_bytes": 6216,
+      "before_sha256": "94fde68735a4ad1f7f26ddb220e2052b40a7d0f1d3d0efc37ae02524d3f99494",
+      "after_bytes": 6216,
+      "after_sha256": "a13d3e9b150c1329528575cf401cf6880c7cab5e1742380809496bd376cd2d61",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94658603/family-94658603-source-evidence.json",
+      "before_bytes": 5333,
+      "before_sha256": "0f3d7093e5ab89d41047d0a0e6532b6b8cf5d58965ce45c80501927fc439a6e1",
+      "after_bytes": 5333,
+      "after_sha256": "a81e42759544c8e3dfd110ac28098f0f213397377719021864499283e1e28e4f",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94732062/family-94732062-source-evidence.json",
+      "before_bytes": 7340,
+      "before_sha256": "8da93aa8af0aa506334c96d97e4412fc4aa5d062c45117655154d8c2d6c3f008",
+      "after_bytes": 7340,
+      "after_sha256": "e2b5eaf218fc7e1aab26fb33c2f46493257d3bc8a0685aa96a2c8fd88b5fb3e3",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-94819907/family-94819907-source-evidence.json",
+      "before_bytes": 8510,
+      "before_sha256": "5f9a51ef0d5724620cf7ffee6b27b4a0b31885789b4314c3c70f5462aef23c21",
+      "after_bytes": 8510,
+      "after_sha256": "004fe76286dfb1f40e79efa0c74be341782b17ec10b732d0c5aa42b36dbba403",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-97226532/family-97226532-source-evidence.json",
+      "before_bytes": 6341,
+      "before_sha256": "17ad01ef33328acd20009b1e98f9db805be6bcf2d25a8689a01d2e7fc55f15af",
+      "after_bytes": 6341,
+      "after_sha256": "0cfbcb9c834c09be55aa18726d6ff5b18b946693b51c0fe1131b97d12747cf3b",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-97524399/family-97524399-source-evidence.json",
+      "before_bytes": 9905,
+      "before_sha256": "7a537cf28347e3c46294040e65829a9166122702b96209d60444c4ace1f4f0f4",
+      "after_bytes": 9905,
+      "after_sha256": "3e274056cf56126d48e4719e885399393aa53c01e67003fc818cff877721f7c5",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-98695135/family-98695135-source-evidence.json",
+      "before_bytes": 9268,
+      "before_sha256": "5ecf488e1988f6217bc7959abd75f9a1aa23ae06009e7b6fd0cef3cf3a8f2100",
+      "after_bytes": 9268,
+      "after_sha256": "ea71cedbe71c1a0209b2070bc0904a375913764c3b66737d8dee6283fd8d1fe9",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260718-patent-generic-family-98902256/family-98902256-source-evidence.json",
+      "before_bytes": 8932,
+      "before_sha256": "06c4c8a24d54a9516f02ac7c8da9a038e7d69df5377dfee600b5c012a25d0fcf",
+      "after_bytes": 8932,
+      "after_sha256": "813056f1dba1cc36bba454a3d3f5a8d3b8a95a8857f3d9c17b55656b3f496dc6",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-100208972/family-100208972-source-evidence.json",
+      "before_bytes": 8103,
+      "before_sha256": "bf9828aead472abddeb3df3377939f8ab0c2600922e52495b4900403fc8584b6",
+      "after_bytes": 8103,
+      "after_sha256": "7baa45babc393330179f8c97fb083f1c013f163bdc37d8a62ff8245e65e55c52",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-63165840/family-63165840-source-evidence.json",
+      "before_bytes": 14170,
+      "before_sha256": "612e61fbd473cf3b5857f5f5713f0c0e0f72f92b4de31e3271288d2e095061ba",
+      "after_bytes": 14170,
+      "after_sha256": "10dc01739469a7eaf4f3eb3e7242d175e34d29b67648399512d5d3703862733f",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-63853856/family-63853856-source-evidence.json",
+      "before_bytes": 36399,
+      "before_sha256": "6047672cdf8ed2d1a3286161b81fea7edde4d5d2196f3e65a03f9813d48d96e9",
+      "after_bytes": 36399,
+      "after_sha256": "642e239ab3892b4fbbe53b81118416723d2b6cb57f9e443262e4264e4a204e13",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-66532282/family-66532282-source-evidence.json",
+      "before_bytes": 6608,
+      "before_sha256": "a32b633fdb7a27df98c7f067dbfdb168a63744426ef766e26459588a9625a94d",
+      "after_bytes": 6608,
+      "after_sha256": "2e78d2de97e6d1f2a583cb3cfe214ec28637fcb687c6fd83ba70ee14ddf13b67",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-66534470/family-66534470-source-evidence.json",
+      "before_bytes": 8083,
+      "before_sha256": "b633b0ba423ec79ccd5952f557e33e215b11e7c285faa3db0f6dcdbf2982a3f4",
+      "after_bytes": 8083,
+      "after_sha256": "7bc3e81ab32101760c91ca143b157daa361067388522a477217de9e52db49f33",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-67207110/family-67207110-source-evidence.json",
+      "before_bytes": 6858,
+      "before_sha256": "7f58467d2ffad5612167772ab11c8c3f7431bc8d00baa7fb3d72b398dcd5c641",
+      "after_bytes": 6858,
+      "after_sha256": "af478787657836c4af33c736b2e51ded8741cb7f2d645170359517b6ed38dbd2",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-84189606/family-84189606-source-evidence.json",
+      "before_bytes": 7129,
+      "before_sha256": "e250b3446584dfdf166b4cac781bedfb91f8971f7b140589f416b17bb9f4c384",
+      "after_bytes": 7129,
+      "after_sha256": "452e161f15cb6e231c39add26176ad3fb3ef6476ded526b6d8b757975633b6db",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-85177416-root-20230048740/family-85177416-root-US-20230048740-source-evidence.json",
+      "before_bytes": 6754,
+      "before_sha256": "1cae04328530c4d2aa56b7962ddb9740c66a4f779116cf5fa19404939a74cc95",
+      "after_bytes": 6754,
+      "after_sha256": "d6cb0438176fe45b88a69961f3fee2efc4597cf8c68839d7b1eaf68fc507f405",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-88793298/family-88793298-source-evidence.json",
+      "before_bytes": 7493,
+      "before_sha256": "a4d276a6821ad229287e980e01dcbc68d642b3e3732a242ec80f7874cf8cd464",
+      "after_bytes": 7493,
+      "after_sha256": "1d2a1c7555e1c16cad7c1cb432d96dbca6117843c74891ff2ecf0d594bed5b46",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-90040108/family-90040108-source-evidence.json",
+      "before_bytes": 8082,
+      "before_sha256": "5acfde47338646e6c005c1ed8b92a7e8db67422174233ccce49ef27dca08f7cb",
+      "after_bytes": 8082,
+      "after_sha256": "38051f394aa435c850e502cea75180585ebec849d9d141d93ba859ed1fcff541",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-90360259/family-90360259-source-evidence.json",
+      "before_bytes": 5976,
+      "before_sha256": "cc081c194a0f1def5e1c252f420a815312cd05a1e8782cab39846c30d33c13af",
+      "after_bytes": 5976,
+      "after_sha256": "0462be39f2e677ce2b21a133021cb6f3dc2fb44400396a614678790c0ee07d1b",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94115759/family-94115759-source-evidence.json",
+      "before_bytes": 7579,
+      "before_sha256": "f8dcaa7766013deb9ea8b300ea956c42ec7a2d40f28f0bb6aa3c524d3c1c2540",
+      "after_bytes": 7579,
+      "after_sha256": "494c0abbfba4d0e4b199c4ef12ea08cbf428019033c05132c9c566135f3d7731",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94801574/family-94801574-source-evidence.json",
+      "before_bytes": 10261,
+      "before_sha256": "af8108eaf234d0fd4c8ce8897b59c02a1f1d56d01155c8bf4c27868bf278964c",
+      "after_bytes": 10261,
+      "after_sha256": "9c47594d153d210a79c3f5f03c767f29e20e1268c215f3242bc560419549a71f",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-96807780/family-96807780-source-evidence.json",
+      "before_bytes": 6692,
+      "before_sha256": "f6fca351b3a408a0a6c1a9cf0b50d9dffa6386ff46f79a5df94955448afa2f28",
+      "after_bytes": 6692,
+      "after_sha256": "629beadfd3c48379529688d0349761af778a68cc063c375ac9b89fc32caf3f49",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-97232688/family-97232688-source-evidence.json",
+      "before_bytes": 7896,
+      "before_sha256": "1de9c11b911ae2c8b15f085010db7362ba3a442b4f327cd571245ae660cbfc5e",
+      "after_bytes": 7896,
+      "after_sha256": "979ab1235df2930c4d79f95c37a99c83db2cea0ac093c9ff200d62a4f748cafb",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-99635674/family-99635674-source-evidence.json",
+      "before_bytes": 7956,
+      "before_sha256": "5bd42db32b1b3d57246f45ab1ab9daac5c5d9a86ed50019c14b148c3d01a8237",
+      "after_bytes": 7956,
+      "after_sha256": "24078abc29d3943b57e09dc12a57ea217ceba54ea8bb4bd40fe3ccc8332a27d6",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260720-patent-generic-family-59685373/family-59685373-source-evidence.json",
+      "before_bytes": 12028,
+      "before_sha256": "762ae603a6630c6e12b7b52574aaefc04bd93a6fa11308553bc970b21a03f680",
+      "after_bytes": 12028,
+      "after_sha256": "96b88a1c5e74219dec696e949939130f44b9e0030fa2f54909d79d2809e75d2f",
+      "changed_leaf_paths": [
+        "shared_ledger.report.sha256",
+        "shared_ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260720-patent-generic-family-63252479/family-63252479-source-evidence.json",
+      "before_bytes": 6426,
+      "before_sha256": "c03c6e04b07beadf6223cc9e54f3ccd16d6e4eb31c1f1e8215a9665b8edcfeca",
+      "after_bytes": 6426,
+      "after_sha256": "97eb22f8b9b2e1459a177487bd4f4c9cd6e9246d95e132b7dcb3635d46e42cb0",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260720-patent-generic-family-66892676/family-66892676-source-evidence.json",
+      "before_bytes": 7690,
+      "before_sha256": "2cea71dd24a64a90e8d9c570b6a25cc7988d9fffbe81603ea7e4b751143e7bf8",
+      "after_bytes": 7690,
+      "after_sha256": "baeb258c399e8ca02c85ace44c5e5ca2a1a7c0a4b7cf7fb1697f8d836a80246a",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260720-patent-generic-family-71123577/family-71123577-source-evidence.json",
+      "before_bytes": 15378,
+      "before_sha256": "0f695f741d31522e334b8ded3fdf69a63e5b30e09ddb414b8e954a7d46312687",
+      "after_bytes": 15378,
+      "after_sha256": "950a7f7f9c6a6369e1fa70de960b49063e12c14302f49f1d961e3e7166f5b229",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260720-patent-generic-family-89536570/family-89536570-source-evidence.json",
+      "before_bytes": 14789,
+      "before_sha256": "9bd1f33554dee56a72caa3a60a90061fd02dc62177b7a76b3df1621eb4c4c3ce",
+      "after_bytes": 14789,
+      "after_sha256": "8668934ef97b2844c1bea8a296baa05f392fee7458c1b4107787e6c08e6a7782",
+      "changed_leaf_paths": [
+        "ledger.report.sha256",
+        "ledger.result_set_sha256",
+        "ledger.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260720-patent-generic-family-93648264/family-93648264-source-evidence.json",
+      "before_bytes": 10666,
+      "before_sha256": "fad47faaa731d96425b22f4822259811a9a2e1f2891897834f485a8fab928b23",
+      "after_bytes": 10666,
+      "after_sha256": "c78111ba7b9c93f9d9d1313de285f1ef5d91ade649d5e42437164d6cd5fae095",
+      "changed_leaf_paths": [
+        "replay_state.report_sha256",
+        "replay_state.summary_sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-40641507/family-40641507-source-evidence.json",
+      "before_bytes": 7416,
+      "before_sha256": "5a1628054cdfc65d9a593f2c5b9eef4d6e32afdf2356c571dd98634233800a84",
+      "after_bytes": 7416,
+      "after_sha256": "2fea3d5a1ea1a5b3ea1298b786833a557f1b354311efd2b525a7442ccce43675",
+      "changed_leaf_paths": [
+        "live_shared_outputs.replay_report.sha256",
+        "live_shared_outputs.replay_summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-source-evidence.json",
+      "before_bytes": 10648,
+      "before_sha256": "1a8fd8d61a3bc8cd2e37e0f8995846936f85a75a9015913bf491f0940bf5c7e2",
+      "after_bytes": 10648,
+      "after_sha256": "0f236eacf4e5e896758ffdf9bc377411d658ef3d47db927fdaeea5aeca04c973",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-50551137/family-50551137-source-evidence.json",
+      "before_bytes": 11620,
+      "before_sha256": "cb74971be86f91777bf768b27f0e4f789d04623beb96fbbd5541b3b1cf999efa",
+      "after_bytes": 11620,
+      "after_sha256": "b94a0143890bfbb1c47461998f5ff0f66da6c5a78ff3fd1672a8afd0576a73d3",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-53214261/family-53214261-source-evidence.json",
+      "before_bytes": 9880,
+      "before_sha256": "c6840eac3c09e62bbfa02df3ed9043caf12acd1b799974e0119f37923ece1ac4",
+      "after_bytes": 9880,
+      "after_sha256": "4eab67f49b623bed3911048ba39c9f06c676865dd832f64012d9fdd86e62e822",
+      "changed_leaf_paths": [
+        "shared_outputs.report.sha256",
+        "shared_outputs.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-60048601/family-60048601-source-evidence.json",
+      "before_bytes": 12188,
+      "before_sha256": "52c98c02d61289d819959214caaab4e729d16dee88a9f592481b7d4bcf408725",
+      "after_bytes": 12188,
+      "after_sha256": "4ae5c29089bdc5d637f5cd9a8c4e90e30b6e4d7493a50bae9f86727a60035b14",
+      "changed_leaf_paths": [
+        "shared_outputs.report.sha256",
+        "shared_outputs.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-61278233/family-61278233-source-evidence.json",
+      "before_bytes": 10914,
+      "before_sha256": "b0d89043b8e3e0a064c15943ee649e04df821a1688b611811e064ac10bea6b35",
+      "after_bytes": 10914,
+      "after_sha256": "ea0c7989a7d8929ac642cb458c1c5cfbc1488df8c7abd6704b6d2256f1c67a02",
+      "changed_leaf_paths": [
+        "shared_outputs.report.sha256",
+        "shared_outputs.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-69060231/family-69060231-source-evidence.json",
+      "before_bytes": 14672,
+      "before_sha256": "e9d36641e384a33ee3688eb8f6c2a431f520c8e6a0e408fb8e1aff1ffdb293c6",
+      "after_bytes": 14672,
+      "after_sha256": "a380b38f10a152aa325dfac5ecf3a7667f916dafc6429034ff4c03d279629295",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-84563102/family-84563102-source-evidence.json",
+      "before_bytes": 17967,
+      "before_sha256": "280be323442b35b500869d81ef0d88d11127bb7498871d90b5af4973e3794e3c",
+      "after_bytes": 17967,
+      "after_sha256": "74c0971bcdcc64829c253657884fb98adb43a488590450e34ccdeaf2a9c46a5e",
+      "changed_leaf_paths": [
+        "shared_outputs.report.sha256",
+        "shared_outputs.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-87279038/family-87279038-source-evidence.json",
+      "before_bytes": 14612,
+      "before_sha256": "5d31056c3ff5830826556e1f44dfd7db47a71635e471984c3a9ed87bf7bb7285",
+      "after_bytes": 14612,
+      "after_sha256": "486e9c96ca134c9539d6a792fb6aaee85b7c554ec633426679b7c7e648b4d50b",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-87845869/family-87845869-source-evidence.json",
+      "before_bytes": 16705,
+      "before_sha256": "1edc155b275d3c8705357a5b6da74bbcdf2133f456e05ef6be26d2065b899ffc",
+      "after_bytes": 16705,
+      "after_sha256": "d51fc0dd918135c7534b58797376d089328dfb55d6c59e526aae6fb863e8ea52",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-89511297/family-89511297-source-evidence.json",
+      "before_bytes": 14635,
+      "before_sha256": "1e45ac045fd7a0fda8102602d0cc63117b47d9770a5d8427541b2372540b93b8",
+      "after_bytes": 14635,
+      "after_sha256": "58a1a145e114ae4673c07f6ed1dfdf14e13c385fdfaf497a7073b65ea8881545",
+      "changed_leaf_paths": [
+        "shared_outputs.report.sha256",
+        "shared_outputs.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95563451/family-95563451-source-evidence.json",
+      "before_bytes": 18270,
+      "before_sha256": "b2d5be0371af17fd775387920f4bad5cdf651a4fb8fdb72037ca4ce0abf6d895",
+      "after_bytes": 18270,
+      "after_sha256": "0712de2a2c6b0a2092826c007552751169307cf74b2d2ae031c476ccca01faae",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-95825866/family-95825866-source-evidence.json",
+      "before_bytes": 15559,
+      "before_sha256": "5a997e7df68ac53d7298de05df7db482d2ff3a533d60eabcb32946fbd9079b8e",
+      "after_bytes": 15559,
+      "after_sha256": "af54cd3fd8c7cf623f82e13bb3398b9f5b046e3c2f94e8dc19e52009fddbb273",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-97226661/family-97226661-source-evidence.json",
+      "before_bytes": 26959,
+      "before_sha256": "d45c41937143c186dddbacbc49bf34299af1c9f37a7c86b9384cc69d03309419",
+      "after_bytes": 26959,
+      "after_sha256": "8e7d76c2e8e7f8a2daff957ff60c7b68e61f4764d3b906ef8dddf9dac583fcae",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/family-97520644-source-evidence.json",
+      "before_bytes": 13695,
+      "before_sha256": "fde965af7e8e8c856d142b23bf3ea8431089a90ae282e0dd0de83f0eca26d34b",
+      "after_bytes": 13695,
+      "after_sha256": "893eee5fde89555de118431c710c4130242edfe0df0deb022a66647cdc6ee5d9",
+      "changed_leaf_paths": [
+        "shared_outputs.report.sha256",
+        "shared_outputs.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-74143231/family-74143231-source-evidence.json",
+      "before_bytes": 17410,
+      "before_sha256": "39212ec5bf998841cd22c0e7d887daafe3d240ebb82bf95c196d9362cc2943e8",
+      "after_bytes": 17410,
+      "after_sha256": "ebfde0335a07253fc083301907e5ffbdf7bb7d75c8ca289443751b83a872c8be",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-76895572/family-76895572-source-evidence.json",
+      "before_bytes": 17795,
+      "before_sha256": "b71d6e8d6aa86c7d1abbb6c1f95627847d58a370885d8f5781e7306c992661c9",
+      "after_bytes": 17795,
+      "after_sha256": "6b95689c4c6ec1b29145d40d61d7c45beb99ce51f8f1033618364330ba6e15c2",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-78617163/family-78617163-source-evidence.json",
+      "before_bytes": 15848,
+      "before_sha256": "45ee68c0e78d847ef1f6888ec3b4b5c04b6856d0728c1b978412973e665349f9",
+      "after_bytes": 15848,
+      "after_sha256": "c25f88c3f14da2f338b56fc8ee930bc9d6593af0cf48381251cfe94dba7bb9fe",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-81111812/family-81111812-source-evidence.json",
+      "before_bytes": 24861,
+      "before_sha256": "58561dee473149af12edbba805dc5a0ec1e6ad44cabff926f531f8222817d2de",
+      "after_bytes": 24861,
+      "after_sha256": "77e55a6d4307bf44562c5ed924562ef22bedc02769df367c5a203b4b1ec9ad1c",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-81328003/family-81328003-source-evidence.json",
+      "before_bytes": 14526,
+      "before_sha256": "5677e432c3bc358d087e678669d311366d35ab90c0baa9f0bfd89ec05981825b",
+      "after_bytes": 14526,
+      "after_sha256": "c63ec08324df7c2350e3305260dee7d2a99e39814932f05f845a136267327ec6",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-83049877/family-83049877-source-evidence.json",
+      "before_bytes": 17521,
+      "before_sha256": "54c4e38ea410238eb77c66d43765e64ecd3210f688348829e7b285e59463bb08",
+      "after_bytes": 17521,
+      "after_sha256": "e5607226373f677b07108e3fc865950542e5c7f8a2dae6179815bf223d7b8fdf",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-85505687/family-85505687-source-evidence.json",
+      "before_bytes": 15362,
+      "before_sha256": "6378c6c2a1f82cc5c527816ae20ae8f95154a894a373f6c79f93a69b8eefa4d9",
+      "after_bytes": 15362,
+      "after_sha256": "7f938b7a0ae78461ffbcf352ed416ff173a1a57b5f48926281474bf5c9071cb6",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-86539672/family-86539672-source-evidence.json",
+      "before_bytes": 31623,
+      "before_sha256": "244dde5ef430137c41e3422078de2fbf0f971ebac91bdd6f160246d3eab1f4b3",
+      "after_bytes": 31623,
+      "after_sha256": "3102bac02699f5db695689ddd3f55c7ed135ea099f536eb741c511efc8ad4ae3",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-90627383/family-90627383-source-evidence.json",
+      "before_bytes": 12958,
+      "before_sha256": "6a1647cdf39be6b84f7222a6ff7715b77352af860b0b175914dbdae8be721bb0",
+      "after_bytes": 12958,
+      "after_sha256": "bff003389dea8ca5c27d6a2dabbd8a74d628208294158bfe9e8e94358d1581b5",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-93632445/family-93632445-source-evidence.json",
+      "before_bytes": 21207,
+      "before_sha256": "2e29a2473d392eb9c4674f13b3a4990d4353dd718171e2ad2050708ee5f467ec",
+      "after_bytes": 21207,
+      "after_sha256": "28646952bfed04fba9c88d428bf04889100d7373df78f85f0e40fe617fc8d38f",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260722-patent-generic-family-97520240/family-97520240-source-evidence.json",
+      "before_bytes": 22361,
+      "before_sha256": "55f7d8e63ce6096c758b7b587026fec403010316bdca64a3dcb6fda83bbe00bc",
+      "after_bytes": 22361,
+      "after_sha256": "28720decf3edcae1fc145b3a894580b1e9e0310001b93ad7b2cf1f9bcad8429c",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-100084534/family-100084534-source-evidence.json",
+      "before_bytes": 41693,
+      "before_sha256": "764c12473254ebba344cb2297bfbf2fe28ea775153e5899edd71a814920d552a",
+      "after_bytes": 41693,
+      "after_sha256": "6ec05e89dc5ee8b96f97bec709857a2a406109703daa0ca7b0a09dce5c9415a5",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-83127668/family-83127668-source-evidence.json",
+      "before_bytes": 18781,
+      "before_sha256": "1b19582b4bfef14e6e0337bd6beb0bc6b31d58291affc711694c686006423e8e",
+      "after_bytes": 18781,
+      "after_sha256": "7455a0d5aa3979010bb23c6388e58ae42a335526f0c3529308bf283ea05c4cf5",
+      "changed_leaf_paths": [
+        "live_shared_outputs.replay_report.sha256",
+        "live_shared_outputs.replay_summary.sha256",
+        "live_shared_outputs.result_set_sha256",
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-83457080/family-83457080-source-evidence.json",
+      "before_bytes": 30922,
+      "before_sha256": "d545fb9bca14066942ed769d85f555b69836671a1e86317d4f87404dbf476fa0",
+      "after_bytes": 30922,
+      "after_sha256": "d9e9fab1ede0d094e34a14cf362c7c864455ef1ff5353143c9a6f3af980a505e",
+      "changed_leaf_paths": [
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-93669750/family-93669750-source-evidence.json",
+      "before_bytes": 20929,
+      "before_sha256": "05275b41e25565f273221fc55c16a706520149f06b6fe495db52945df8636fe2",
+      "after_bytes": 20929,
+      "after_sha256": "a0ee615599b090d2e3a6876b0e6e7fd15091a9a23cfb2103f1e4d2a5a014e249",
+      "changed_leaf_paths": [
+        "live_shared_outputs.replay_report.sha256",
+        "live_shared_outputs.replay_summary.sha256",
+        "live_shared_outputs.result_set_sha256",
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-81109544/family-81109544-source-evidence.json",
+      "before_bytes": 25203,
+      "before_sha256": "fc88d7504f7ad37f6d218575a44dd201d505d1edcfc01f4a97591475b87b8bb9",
+      "after_bytes": 25203,
+      "after_sha256": "a40b8e6f9ce0470701ad695b2bd9b01659676098c5c48abde0099986f7a19175",
+      "changed_leaf_paths": [
+        "live_shared_outputs.replay_report.sha256",
+        "live_shared_outputs.replay_summary.sha256",
+        "live_shared_outputs.result_set_sha256",
+        "replay.report.sha256",
+        "replay.summary.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260723-patent-generic-family-59207246/family-59207246-source-evidence.json",
+      "before_bytes": 29270,
+      "before_sha256": "3bb0a775dab5fcab2ada36029ee31e480b2eb7fe7b0b0465f2a916f5503cec48",
+      "after_bytes": 29270,
+      "after_sha256": "c476fcf2fdaa17ba5a1c57157b5d66c12ebf052bed73798b84109306b768b1e9",
+      "changed_leaf_paths": [
+        "replay.summary.sha256",
+        "replay.report.sha256",
+        "live_shared_outputs.result_set_sha256",
+        "live_shared_outputs.replay_summary.sha256",
+        "live_shared_outputs.replay_report.sha256"
+      ]
+    }
+  ]
+}

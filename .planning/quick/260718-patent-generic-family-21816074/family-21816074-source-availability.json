@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "family_id": "21816074",
+  "application_number": "06/023591",
+  "primary_publication_id": "US-4249805-A",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/25b5e668414a45ca/US-4249805-A.html",
+    "bytes": 82047,
+    "characters": 82047,
+    "sha256": "25b5e668414a45ca2afcd5251205e28833c0c09fa1808779a96cc11fdd16cdb1",
+    "normalized_characters": 73418,
+    "normalized_sha256": "ec7b8a9b40a335f210d7f70ee5216074a84dbe0d3aa964450dcfe98ffafb7e3d"
+  },
+  "endpoint_checks": [
+    {
+      "authority": "USPTO Patent Public Search image service",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/4249805",
+      "publication_id": "US-4249805-A",
+      "request_authentication": "anonymous",
+      "http_status": 200,
+      "content_type": "application/pdf",
+      "path": "data/patent-lake/uspto-ppubs-pdf/bf50e985949b792d/US-4249805-A.pdf",
+      "bytes": 1468403,
+      "container_sha256": "bf50e985949b792dbff17d239823a1555bb8fb64d1b60077d3b0ca92d292185d",
+      "page_count": 22,
+      "single_raster_pages": 22,
+      "text_layer_characters": 0,
+      "decoded_raster_set_sha256": "d665607f33310bce89d9af0681f6d6a6aeb2de373d22f72ad07c9d0aac5b5687",
+      "retained": true
+    }
+  ],
+  "publication_reconciliation": {
+    "classification_source_count": 1,
+    "certificate_of_correction_bound": true,
+    "correction_certificate_date": "July 21, 1981",
+    "family_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO A HTML plus retained official 22-page decoded-raster set and its correction certificate",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "missing_image_height_repaired_by_inference": false,
+    "nominal_media_format_used_as_image_height": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

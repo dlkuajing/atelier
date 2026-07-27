@@ -1,0 +1,380 @@
+{
+  "schema_version": "patent-family-computed-facts/v1",
+  "family_id": "68161657",
+  "root_id": "US-12140783",
+  "publication_id": "US-12140783-B2",
+  "application_number": "18/307881",
+  "filed": "2023-04-27",
+  "patent_date": "2024-11-12",
+  "prior_publication": "US-20230358926-A1",
+  "prior_publication_date": "2023-11-09",
+  "title": "Optical image lens assembly, imaging apparatus and electronic device",
+  "applicant": "LARGAN PRECISION CO., LTD.",
+  "classification_source": "exact retained US-12140783-B2 only",
+  "raw_document": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/2b14911bed237f43/US-12140783-B2.html",
+    "bytes": 125539,
+    "sha256": "2b14911bed237f438c89d6939266d6262be6a24a1dc664dc48c84a23ccaa9780"
+  },
+  "normalized_document": {
+    "characters": 111108,
+    "sha256": "f74499c6aa07988728ae047d00871119592ec51dab90b04cc34555d095403b8e"
+  },
+  "headings": [
+    "Abstract",
+    "Prior Publication Data",
+    "Foreign Application Priority Data",
+    "Related U.S. Application Data",
+    "Publication Classification",
+    "Field of Classification Search",
+    "References Cited",
+    "Background/Summary",
+    "Description",
+    "Claims"
+  ],
+  "identity_marker_counts": {
+    "Family ID: 68161657": 1,
+    "Appl. No.: 18/307881": 1,
+    "Filed: April 27, 2023": 1,
+    "US 20230358926 A1 Nov. 09, 2023": 1,
+    "TW 108111397 Mar. 29, 2019": 1,
+    "continuation parent-doc US 17140171 20210104 US 11675113 child-doc US 18307881": 1,
+    "continuation parent-doc US 16378709 20190409 US 10921496 20210216 child-doc US 17140171": 1,
+    "us-provisional-application US 62655863 20180411": 1,
+    "LARGAN PRECISION CO., LTD.": 2,
+    "Huang; Yeo-Chih": 2,
+    "Chang; Pei-Chi": 1,
+    "Teng; Chun-Hung": 1,
+    "Date of Patent November 12, 2024": 1
+  },
+  "sections": {
+    "background_summary": {
+      "raw_characters": 6400,
+      "raw_sha256": "cc1d06d096846866427db22853db29011e4e37d441ece9c722274f96403229cd",
+      "normalized_characters": 6042,
+      "normalized_sha256": "8faaa996ef0a1b6da561fca08799130fc82a1bf8c545a410a9e2ee71da2b87f8"
+    },
+    "description": {
+      "raw_characters": 101201,
+      "raw_sha256": "b8cf241d06f5679f8f95eb2615045fea6e0568b6e38759af624f4df7c7af5c7b",
+      "normalized_characters": 97542,
+      "normalized_sha256": "e6ce20877961a44425aa135ce20d9b2e75b6d2a8341b9763fab5adbca71e11d8"
+    },
+    "claims": {
+      "raw_characters": 6812,
+      "raw_sha256": "6cb2e51c80c32a25a9d671c3003aa0e8d3469adc81ab0189f38f25fa6a171c46",
+      "normalized_characters": 5066,
+      "normalized_sha256": "3eab46feacf855bf7219a6d834e7eb970671b71c198faa754d7d9f5f98211fdf"
+    }
+  },
+  "section_paragraph_counts": {
+    "background_summary_scoped_numbered_paragraphs": 11,
+    "description_numbered_paragraphs": 163,
+    "claims": 15
+  },
+  "background_number_sequence": [
+    1,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "paragraph_span_sha256": {
+    "common_11_61": "e961e58b101f8587d7643c06b103d9695f9fe3b00341e683622eac7e15777df0",
+    "numbered_1": "8fc1380d17d85e809f5598fed22a4a61c73cbc1f4ce06237a143d805e2e4b1fd",
+    "numbered_2": "4c5df9b389f43e9524360e5b53158b80b113b94699945b9b3eaa94c56710a2ba",
+    "comparative_1": "ae62e7dae5401459789fa6a4960300421d2c3a4dfe6316fab1be29a1a02b7004",
+    "comparative_2": "5e4d3c3e2a40a33967896d1ef41a6248fe9cb90af0646ebf8acc097856e40a9b",
+    "numbered_3": "df98d5d1c81af301a0fd0ff0f3668e4b8d77ed847129fe93b7e7cb458231d43d",
+    "numbered_4": "f6ba8206313989c1ed6b464b3bb77d51deb05a4bc2bdf5b651e8654e710985d3",
+    "numbered_5": "036e6bf811b8a818d18d93ce89d2a3859e20ec2ff8a55151ecdc0b0f9ef727f5",
+    "numbered_6": "e36597d55d243e7821529d17c6cdf9bd01422feb66a75f72bac945c5f80a0d93",
+    "numbered_7": "61b94a6b5eb0380d585f7edb3675b89ae59c84a7545f91917830736139b40ffb",
+    "numbered_8": "b3b4ae414796071c96434eb7124f19798bc340e1f5724229f9f7d242ff40bb41",
+    "numbered_9": "3d474eda2787d51c4de0465ec3dbd4b096242c1ed1ca216f07fb0d7f874abcfb",
+    "numbered_10": "73aee3121c6af8ce2068aa64e3336cdd9e97b022930a8a7fa3af6d76c4976528",
+    "numbered_11": "cbf41181b9fefd2eb77edb4ed591b8eaeb468c0e32a22dec83218206f481b73c",
+    "numbered_12": "869c093bbe1866f189fb23541df88534613a53c47113716a646d576693152ea5",
+    "numbered_13": "c94db06d07e4290622fc0d1e81fcc4ad990065f199dca795f7708220fc30cdc7",
+    "numbered_14": "e203d559efeb0521fc805f0a05b9e24ebb0de47ed88c89fb39636e092607c036",
+    "numbered_15": "4ff4f87bdeea8cb0638df7ab3c646badf60672e04b51a16c9d229caea8d00e1e"
+  },
+  "claims": {
+    "count": 15,
+    "independent_claims": [
+      1,
+      14,
+      15
+    ],
+    "dependent_claims": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "claim_sha256": [
+      "813dec3295b3edc37f7aff74b011d91473672c547f4a6d716ab66ac88ea296ce",
+      "55a970fbb390d3de93fdbbe6f1c378ac65ddf754ae20a5f1895c08752533e71b",
+      "1ddac83d2936e02d4a5309bea1b0759b031e69bb3de44522697ad860da22e224",
+      "bc5b2a9d2f9a9b63c8df06eadcc4a42fa8360362928fbd63c8fdb48d473f9840",
+      "dc47c2d385de606e2dccbff646874b3b356dd248c6190897bbf5b3f1fe17465d",
+      "c946bececef9403795ae87dd5a2198e8edd68fd54bdc2a31b812e39e9a53f583",
+      "22384d4c67667b28af514a8174315188ee9baef9949d64559d81eb961c5a6cb7",
+      "ea054a5467b39238e5885acc3333915b0f9221b96e9dbb1515569a9dd01083c1",
+      "ccbecd9ae096d5285535f6228e9edade81f0a6975ca1038b8095379904098d08",
+      "fdcc6a2437cb584c25ff9ed74333476481d51ba0b5bd08788f0e5053d5a2bc2c",
+      "091aedcede10688ab34cf65728909974580721d42cbbb7ee43c575fc08edd368",
+      "cf1ca5ad3ed89d6aece89c66579845662dc15775f05cff23674ef941e39ce556",
+      "7e8c91872ed6fec62187f5d9181b3a9b83318c6667b7eba2317213d600a46e0f",
+      "2b6b0968634cfdcd47779dd3e0bcfae055e17137ab3f4b81af963f8549cac8fd",
+      "f425e647666b4825e4f14d94b63d6ded524c8fa98446d2039090bdec14da2de5"
+    ],
+    "claim_set_sha256": "08647c83b72ddc62754a5a2243628c0e1e04af5cd48ecae41e9ca4d20e6bb70c"
+  },
+  "declared_figures": [
+    "1",
+    "2",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "4",
+    "5",
+    "6"
+  ],
+  "declared_figure_set_sha256": "815090e8ee97488fd539e7658ace2a08988f837e5708b57819b2ee711177d619",
+  "tables": [
+    {
+      "block_number": 1,
+      "paragraph": 73,
+      "payload_chars": 823,
+      "payload_sha256": "9353d5fdd3b370b49c71b9dc489da934d7bd64ab380bb5b92faca5e6e5bce92c"
+    },
+    {
+      "block_number": 2,
+      "paragraph": 89,
+      "payload_chars": 949,
+      "payload_sha256": "493912fc2228711b2d2dadadf2fe97f7802cb7b1d0306a6efbb4cd42f2551b63"
+    },
+    {
+      "block_number": 3,
+      "paragraph": 96,
+      "payload_chars": 1063,
+      "payload_sha256": "206f47cfc71d41e22ae90dac9c39673f14a345b88a12ba988591442aad11e1c3"
+    },
+    {
+      "block_number": 4,
+      "paragraph": 98,
+      "payload_chars": 252,
+      "payload_sha256": "83f7848b5c754b48e85f5ce9c8afbe351bb4e8c16c79f2c2a5ea2a300e7ae817"
+    },
+    {
+      "block_number": 5,
+      "paragraph": 101,
+      "payload_chars": 1326,
+      "payload_sha256": "833f50ffbda35e3bf8d9bcbb71422958466b6082a9da8fcd585a68ca2ee61429"
+    },
+    {
+      "block_number": 6,
+      "paragraph": 104,
+      "payload_chars": 1057,
+      "payload_sha256": "745c1ed27a41ee79688bf6b86984654c3d7146e0ae2b794d28d54291e87def26"
+    },
+    {
+      "block_number": 7,
+      "paragraph": 106,
+      "payload_chars": 369,
+      "payload_sha256": "77882e635c997817ba7919142453aee8920559cf0fd763af5abc58c16c4fd94e"
+    },
+    {
+      "block_number": 8,
+      "paragraph": 110,
+      "payload_chars": 1058,
+      "payload_sha256": "11863b237951e4634619fa0cc8a42132fd5bbc7527388d9351f9b499c79db81a"
+    },
+    {
+      "block_number": 9,
+      "paragraph": 112,
+      "payload_chars": 365,
+      "payload_sha256": "e559cd0e072c009a83394f414d9b7676467ac963a6d6c314ca81caf88ae52b71"
+    },
+    {
+      "block_number": 10,
+      "paragraph": 116,
+      "payload_chars": 1052,
+      "payload_sha256": "eea2375313d36be96924f50ad7a19376e555db732a152de9a148f771926077b6"
+    },
+    {
+      "block_number": 11,
+      "paragraph": 118,
+      "payload_chars": 373,
+      "payload_sha256": "24228d6740c7bb9a719e5020a2108ea5281d4402b29d60394a2d41e49d8401e5"
+    },
+    {
+      "block_number": 12,
+      "paragraph": 122,
+      "payload_chars": 1076,
+      "payload_sha256": "e97c6ccd7d3a28c436efa318bf7aae464e2f1b616d040372d21f8384d6432946"
+    },
+    {
+      "block_number": 13,
+      "paragraph": 124,
+      "payload_chars": 331,
+      "payload_sha256": "b94c833e81fd0d4b6e795ab1cb92c4805901490a9b88cb9b0b15a3c8deca120d"
+    },
+    {
+      "block_number": 14,
+      "paragraph": 128,
+      "payload_chars": 1063,
+      "payload_sha256": "1d731db1fe12c81046e4da1010074f20a476a7546cfd757fb789add211818809"
+    },
+    {
+      "block_number": 15,
+      "paragraph": 130,
+      "payload_chars": 585,
+      "payload_sha256": "203ac91f438bf7c382c3920099c0e0ceea2c8d5b95af661d1243f4876b804f2b"
+    },
+    {
+      "block_number": 16,
+      "paragraph": 134,
+      "payload_chars": 1078,
+      "payload_sha256": "86cfff0218fc645e137078847ea73d66ff011b8b04ec367839c9d3bb30e50b53"
+    },
+    {
+      "block_number": 17,
+      "paragraph": 136,
+      "payload_chars": 331,
+      "payload_sha256": "a7fda73efeff5114e50822e6f272665917114e56c0512cd7c9fe559174cfaa56"
+    },
+    {
+      "block_number": 18,
+      "paragraph": 140,
+      "payload_chars": 1308,
+      "payload_sha256": "57f8ecbe0b79f5c6a7966668fe88787a6874aa7f2f3df025242d38ff91e6f3e0"
+    },
+    {
+      "block_number": 19,
+      "paragraph": 142,
+      "payload_chars": 135,
+      "payload_sha256": "5516094b99423a21c4368d74d069ac74a5add9147efda44fd2ca5bb5b1bb4d3b"
+    },
+    {
+      "block_number": 20,
+      "paragraph": 145,
+      "payload_chars": 1313,
+      "payload_sha256": "4bbfb842412dcac351ddd93648464bf23497ff26e09418a3061d4069efcc2fff"
+    },
+    {
+      "block_number": 21,
+      "paragraph": 147,
+      "payload_chars": 137,
+      "payload_sha256": "65e98a943b1d9b8edd1d90d4ef4fcba4ef13403636d3c194b584aad075f66c81"
+    },
+    {
+      "block_number": 22,
+      "paragraph": 150,
+      "payload_chars": 1313,
+      "payload_sha256": "5ccf053428c86102f366a7bc7d0bdbf191009d29d974f98055efc3fd57fee114"
+    },
+    {
+      "block_number": 23,
+      "paragraph": 152,
+      "payload_chars": 123,
+      "payload_sha256": "5daae576eb4bf9f7e58f103627d374dc59653a6045810cf3b333580d6d3a5a4d"
+    }
+  ],
+  "table_set_sha256": "a1812f96d1884337156b4758c4eb8553653a56f428d5803f7d6b5de9c878d316",
+  "table_topology": {
+    "chief_ray_path_blocks": [
+      1,
+      2
+    ],
+    "raw_spectral_blocks": [
+      3,
+      5,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20,
+      22
+    ],
+    "computed_spectral_blocks": [
+      4,
+      7,
+      9,
+      11,
+      13,
+      15,
+      17,
+      19,
+      21,
+      23
+    ],
+    "named_tables": 13
+  },
+  "prescription_marker_counts": {
+    "radius": 0,
+    "curvature": 1,
+    "thickness": 1,
+    "surface_spacing": 0,
+    "spacing": 0,
+    "focal_length": 4,
+    "effective_focal_length": 0,
+    "f_number": 1,
+    "image_height": 1,
+    "max_image_height": 1,
+    "conic": 0,
+    "aspheric_coefficient": 0,
+    "r_row": 0,
+    "s_row": 0,
+    "lens_data": 0,
+    "field_of_view": 6,
+    "half_field": 0,
+    "full_field": 0,
+    "aperture_stop": 18,
+    "refractive_index": 2,
+    "abbe_number": 4
+  },
+  "raw_container_counts": {
+    "paragraph_tags": 27,
+    "figref": 32,
+    "table_us": 23,
+    "maths": 0,
+    "math": 0,
+    "inline_formula": 0,
+    "formula_pi_lead": 14,
+    "formula_pi_tail": 14,
+    "native_table": 0,
+    "custom_img": 0
+  },
+  "source_item_partition": {
+    "total": 17,
+    "lens_architecture_and_chief_ray_path": 2,
+    "light_absorbing_material_spectral": 11,
+    "electronic_device_wrappers": 4,
+    "ordered_optical_prescriptions": 0
+  },
+  "numeric_inference_from_rasters": false,
+  "numeric_transcription_from_rasters": false,
+  "ocr_used": false,
+  "source_repair_used": false,
+  "lineage_value_borrowing": false
+}

@@ -84,6 +84,8 @@ loop 路径没有传参口子。
 
 ## 数据资产
 
-- `app/data/optical_cases/`：39 个案例 seed（17 真实设计 + 22 专利 seed）
-- `data/zmx/`：39 颗 ZMX 原文件
-- `lens-data-staging/`（109 颗手机镜头 zmx）在另一台电脑，尚未同步进本仓库
+- `app/data/optical_cases/`：442 个正式案例（17 个原始真实设计 + 425 个专利设计）
+- `data/zmx/`：442 颗正式 ZMX
+- `data/patents/`：714 条 USPTO 发现元数据；不是全文专利湖
+- `data/patent-ledger/`：专利饱和 snapshot/audit（必须由脚本重算，不以手写摘要为真值）
+- `lens-data-staging/` 的 109 颗外部 ZMX 不可得（主公 2026-07-05 裁定），不得当作当前可用资产

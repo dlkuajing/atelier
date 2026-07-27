@@ -1,0 +1,69 @@
+{
+  "attempts": [
+    {
+      "result_attempt": 3,
+      "result_sha256": "271c1346137142e5993fc3181f051f4f8b9508f2527b6489c8b333f5b1086a58",
+      "semantic_sha256": "fbdc95ccdfddadb296c5d4c2eb21fc72d4387d9590da2dfc8d71fd92c5f6fafd"
+    },
+    {
+      "result_attempt": 4,
+      "result_sha256": "7d840acfad8b70d97170128b3e0984c6b8b0f225a17527ebae0db14b3e18241b",
+      "semantic_sha256": "fbdc95ccdfddadb296c5d4c2eb21fc72d4387d9590da2dfc8d71fd92c5f6fafd"
+    }
+  ],
+  "embodiments": {
+    "10": {
+      "candidate_zmx_sha256": null,
+      "prescription_fingerprint": "1631a5013b56c93a",
+      "receipt_semantic_sha256": "c4d1d02bab036daa7d84b6786d0c512f1b6f8dfd0a6f0da367596dea6d90b128",
+      "receipt_sha256_by_result_attempt": {
+        "3": "1882530e0ac0740467c12cb4f9b812d78179121da7323d142aa8d62b1a1ae556",
+        "4": "91cf0ab763a93bb810363580cbd24cf9006403a15eec9fba1f393bd82f382169"
+      },
+      "request_sha256": "0dc4eb28a084a80cdcc41d0b470546e09c7b5c0321abe204315609d010e1d0ce",
+      "worker_response_sha256": "d6a3b0aa5994dc30774a5208ab238377d7d61745c47aa33ad605152a7107f836"
+    },
+    "4": {
+      "candidate_zmx_sha256": "8a24f5c8ed0da05ed42457b4caf67e39f94fe7b3b01e220fb8c94fd0b22a9760",
+      "prescription_fingerprint": "69a550ed936b1d8e",
+      "receipt_semantic_sha256": "d11975bc2a965c727b8e28419f6c606acdb86b3e2db4304ab9da1469669aab92",
+      "receipt_sha256_by_result_attempt": {
+        "3": "7756e9bf42d6b531923583c39f32a5523c9230f5d85f55a8fa2cf5ee9bb0160d",
+        "4": "e961a155b63c007d847501aeb8703d0a461755c89f16e4f2e710f14e5afc3486"
+      },
+      "request_sha256": "4157e70853860fedfdc127e6e12627eaa76e450732e21242187331c399d56dca",
+      "worker_response_sha256": "2494c287d93c07d545f75d1015e904c80cb09883d028645c895f35f268ebb47b"
+    },
+    "6": {
+      "candidate_zmx_sha256": null,
+      "prescription_fingerprint": "406386102f953286",
+      "receipt_semantic_sha256": "98a189decc6994d50cf6f4936b996fafd96de103af87a6e9a8c48436ae559b82",
+      "receipt_sha256_by_result_attempt": {
+        "3": "ce41627576e5d571ca9d3339176bf082435e87bb961a3485ccc7ab957448ff6b",
+        "4": "12a03e33748549abfc6857966a3c21856a27b35e073ca25fccd7426897116591"
+      },
+      "request_sha256": "ebb568e5c06c0d6470f38c63b851b250a11b24354cbeaba3b11996966d937079",
+      "worker_response_sha256": "36d634a645e8491137f512232a5490476971b47dcde394fd6ddf1191bb00388c"
+    }
+  },
+  "excluded_receipt_fields": [
+    "attempt_id",
+    "candidate_zmx_path",
+    "elapsed_seconds",
+    "receipt_path",
+    "request_path",
+    "response_path",
+    "retry_number",
+    "stderr_path",
+    "stdout_path"
+  ],
+  "excluded_result_fields": [
+    "result_attempt",
+    "items[].conversion_attempt_id",
+    "items[].evidence[patent_conversion_receipt].path",
+    "items[].evidence[patent_conversion_receipt].sha256"
+  ],
+  "receipt_semantic_replacement_field": "items[].evidence[patent_conversion_receipt].receipt_semantic_sha256",
+  "root_id": "US-12591118",
+  "schema_version": 1
+}

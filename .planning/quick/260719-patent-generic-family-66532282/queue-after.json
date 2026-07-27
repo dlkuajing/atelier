@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-66532282/generic-residual-after-2.json",
+  "result_set_sha256": "f3a45532e5d3a0db66ee445fac9113a19c269d9edd2b71ba8a3d12a0eb65ab7b",
+  "generic_residual_roots": 64,
+  "generic_residual_items": 64,
+  "next_exact_group": {
+    "family_id": "84189606",
+    "root_ids": [
+      "US-12474548"
+    ],
+    "publication_ids": [
+      "US-12474548-B2"
+    ],
+    "application_number": "17/892929",
+    "title": "Optical lens assembly and a head-mounted electronic device",
+    "first_inventor": "Chen; Po-Yu",
+    "applicant": "NEWMAX TECHNOLOGY CO., LTD.",
+    "assignee": null,
+    "layout_signature": "7bc869ff04ed105ee7e4cfdaa9dc8db1bc1e4d5d94322ae9d87e750c08509349",
+    "layout_signature_count": 1,
+    "table_count": 32,
+    "marker_counts": {
+      "effective_focal_length": 50,
+      "embodiment_anchor": 103,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 9,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/9150ac618c445ef8/US-12474548-B2.html",
+      "sha256": "9150ac618c445ef863b8a6cf72adecd1697d576eba139bb638da0a161fa8bd88"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

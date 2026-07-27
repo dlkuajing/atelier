@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "selection_policy": "generic bucket before AAC Raytech/Sunny; then minimum layout signature and root-first stable grouping",
+  "result_set_sha256": "12c3080c61c9de456501a0c92126a2bee874fda912582d4bf991156cc1103a01",
+  "generic_residual_roots": 77,
+  "generic_residual_items": 77,
+  "next_exact_group": {
+    "family_id": "86240812",
+    "root_ids": ["US-20260129276"],
+    "publication_ids": ["US-20260129276-A1"],
+    "application_number": "19/439370",
+    "title": "COMPACT DOUBLE FOLDED TELE CAMERAS",
+    "assignee": "Corephotonics Ltd.",
+    "layout_signature": "66e3492e7c1eca35e349bfca7afb05c37ed6dedd620ac31ec71e736faad49155",
+    "layout_signature_count": 1,
+    "marker_counts": {
+      "effective_focal_length": 62,
+      "embodiment_anchor": 1,
+      "example_anchor": 5,
+      "f_number": 27,
+      "full_field": 7,
+      "half_field": 10
+    },
+    "table_count": 13,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/6ba8e50cc7143544/US-20260129276-A1.html",
+      "sha256": "6ba8e50cc7143544b238cab4cb0aa74be777228a2795532b4d1be529aacba0fb"
+    }
+  },
+  "saturation_complete": false
+}

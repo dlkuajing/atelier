@@ -1,0 +1,761 @@
+{
+  "schema_version": 1,
+  "publication_id": "US-12560789-B2",
+  "family_id": "94115759",
+  "application_number": "18/465987",
+  "raw_document": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/bf9bd6013b3118d1/US-12560789-B2.html",
+    "bytes": 115279,
+    "sha256": "bf9bd6013b3118d153420f9942f11d057cb2bdcfce65550683fdf5680b9aa561",
+    "text_characters": 113559
+  },
+  "normalized_text": {
+    "characters": 96969,
+    "sha256": "c85e39ac6d956b39bd51449d43cb25bde8ac73b669662673dc8197216dff52b0"
+  },
+  "layout_signature": "83fa195a53c2afaf1f9a4e36a2a627409d3212d03966359958cc930bbaae7637",
+  "identity_marker_counts": {
+    "Optical lens assembly and electronic device": 2,
+    "Chen; Ping-Yi": 2,
+    "Tsai; Fei-Hsin": 1,
+    "Ge; Cong": 1,
+    "Applicant: NEWMAX TECHNOLOGY CO., LTD.": 1,
+    "Assignee:": 0,
+    "Family ID: 94115759": 1,
+    "Appl. No.: 18/465987": 1,
+    "Filed: September 13, 2023": 1,
+    "Date of Patent February 24, 2026": 1,
+    "US 20250013025 A1 Jan. 09, 2025": 1,
+    "TW 112124850 Jul. 04, 2023": 1
+  },
+  "section_markers": {
+    "preamble": "US-12560789-B2 - Patent Public Search | USPTO",
+    "abstract": "Abstract An optical lens assembly includes",
+    "background": "Background/Summary BACKGROUND",
+    "summary": "SUMMARY",
+    "brief": "BRIEF DESCRIPTION OF THE DRAWINGS",
+    "detailed": "DETAILED DESCRIPTION",
+    "claims": "Claims 1 ."
+  },
+  "section_starts": {
+    "preamble": 0,
+    "abstract": 261,
+    "background": 2119,
+    "summary": 3424,
+    "brief": 12118,
+    "detailed": 14929,
+    "claims": 91489
+  },
+  "section_sha256": {
+    "preamble": "61b03e89836327a49c2734a9f38f685ecaba2af0e9b6d6c6c0e3bef48d75d61d",
+    "abstract": "9081df96f41f23f3fe3b355bd53472b100cd765bf3254c4e94e44baacead52e6",
+    "background": "fc433f9891aa37ecbc2c2748df753b827df75bbcdf4a2094049c8080c751c9ef",
+    "summary": "42ed1ad93cbcb34d1c6765b60a28e3b24193dd62083d54e9e2d0393d2fa6041c",
+    "brief": "d4b31172a50e2eaf8f31c09aea2d3624f148802d7c71fe56321444f299f49766",
+    "detailed": "b33b4f2a43734961fd5e9d9ba418687ae7a188b845a081b840fb2bfd10189f63",
+    "claims": "8e697b8535aaeac7191a516f18bd4320e7846a294b3d7f98205ced49497ee982"
+  },
+  "paragraph_denominator": {
+    "background_occurrences": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "summary_occurrences": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ],
+    "brief_figure_declarations": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "detailed_occurrences": [
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93,
+      94,
+      95,
+      96,
+      97,
+      98,
+      99,
+      100,
+      101,
+      102,
+      103,
+      104,
+      105,
+      106,
+      107,
+      108,
+      109,
+      110,
+      111,
+      112,
+      113,
+      114,
+      115,
+      116,
+      117,
+      118,
+      119,
+      120,
+      121,
+      122,
+      123,
+      124,
+      125,
+      126,
+      127,
+      128,
+      129,
+      130,
+      131,
+      132,
+      133,
+      134,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      141,
+      142,
+      143,
+      144,
+      145,
+      146,
+      147,
+      148,
+      149
+    ],
+    "numbered_specification_occurrences": 158,
+    "distinct_numbered_specification_labels": 149,
+    "summary_detailed_overlapping_labels": [
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27
+    ]
+  },
+  "items": [
+    {
+      "item": 1,
+      "paragraphs": [
+        19,
+        43
+      ],
+      "paragraph_span_sha256": "4d07091c81b68444a9d9b558f8ddd57e32ee09609b03d0b2a7ed7385359592eb",
+      "tables": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    {
+      "item": 2,
+      "paragraphs": [
+        44,
+        57
+      ],
+      "paragraph_span_sha256": "b1adafbaf5ad4dcaa385204439762aacd2ce1e03364980d25b18e6dcc7aaf6cf",
+      "tables": [
+        5,
+        6,
+        7,
+        8
+      ]
+    },
+    {
+      "item": 3,
+      "paragraphs": [
+        58,
+        71
+      ],
+      "paragraph_span_sha256": "a1598e5eb8f62f12d83f894fbe19965d7c6e4407a20a6a638c7509f63be01c26",
+      "tables": [
+        9,
+        10,
+        11,
+        12
+      ]
+    },
+    {
+      "item": 4,
+      "paragraphs": [
+        72,
+        85
+      ],
+      "paragraph_span_sha256": "4d04fcdcdfbb2dcf7646f99f1abec68014815002021be41824e2a9a1719a9226",
+      "tables": [
+        13,
+        14,
+        15,
+        16
+      ]
+    },
+    {
+      "item": 5,
+      "paragraphs": [
+        86,
+        99
+      ],
+      "paragraph_span_sha256": "104f81fb59f3228550be05755fdfbc69b8fee4b71da509ba244f79d358cff60e",
+      "tables": [
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "item": 6,
+      "paragraphs": [
+        100,
+        113
+      ],
+      "paragraph_span_sha256": "88b7e0776ff5444b1342ac0f1d022f039eece975cc04e300b4825c0441d3ee76",
+      "tables": [
+        21,
+        22,
+        23,
+        24
+      ]
+    },
+    {
+      "item": 7,
+      "paragraphs": [
+        114,
+        127
+      ],
+      "paragraph_span_sha256": "3c45b569227e1b3c22414b4c63ed892f3455a0b8b56b02af08cf9799afcb1c80",
+      "tables": [
+        25,
+        26,
+        27,
+        28
+      ]
+    },
+    {
+      "item": 8,
+      "paragraphs": [
+        128,
+        145
+      ],
+      "paragraph_span_sha256": "acbe593d4d8955b379a3a98b8a358f5e1b7a7298a23d83a9c2731f6d2a67bf55",
+      "tables": [
+        29,
+        30,
+        31,
+        32
+      ]
+    },
+    {
+      "item": 9,
+      "paragraphs": [
+        146,
+        149
+      ],
+      "paragraph_span_sha256": "e757cd99f3ce5936eb56c70e9d46da025f9453c49ca52e8c2d42ff93c028657c",
+      "tables": []
+    }
+  ],
+  "tables": [
+    {
+      "number": 1,
+      "role": "surface_prescription",
+      "payload_sha256": "0d7946d63dc0172815cfc15d743f3ac5da4d649291fe4ac6d7691ec39cc249d2"
+    },
+    {
+      "number": 2,
+      "role": "asphere_coefficients",
+      "payload_sha256": "9c47ae69d917c34a3223cf64c654c26d0caa7ecca1f341163fa9c09c5e9bb6d1"
+    },
+    {
+      "number": 3,
+      "role": "system_parameters",
+      "payload_sha256": "20919d290464fdcdb3d2c5003899c6062a4400a781e2a492a4c0d0d687c229d2"
+    },
+    {
+      "number": 4,
+      "role": "condition_values",
+      "payload_sha256": "a52ff94e728183a997564a2d253b055d128920ab72c03b1d2a83cdca499c1d0f"
+    },
+    {
+      "number": 5,
+      "role": "surface_prescription",
+      "payload_sha256": "f00c68d1157d20dd079583d2ff8219e119069329b7375b19f454de34c8948b35"
+    },
+    {
+      "number": 6,
+      "role": "asphere_coefficients",
+      "payload_sha256": "e9ecdab7c1675df9371586548567eda09d0803e2b7f92b5985c659d12654a637"
+    },
+    {
+      "number": 7,
+      "role": "system_parameters",
+      "payload_sha256": "75d4ccf3003d688e946c569761d1849e9fd86d71d1ddd58fd946e381750bbe01"
+    },
+    {
+      "number": 8,
+      "role": "condition_values",
+      "payload_sha256": "0b97c6c8d3d62f2816b5b0cb3347c3d062d8f0ef9f1dd299218bb12d40f1412f"
+    },
+    {
+      "number": 9,
+      "role": "surface_prescription",
+      "payload_sha256": "1bc5036088a41477453ab2770cc7d59e7eddd1a6899b6e516b7318079f7d8e53"
+    },
+    {
+      "number": 10,
+      "role": "asphere_coefficients",
+      "payload_sha256": "5025882fb10e4e95eed8237e0f8787f5f2c769bf1e595e31c448d2e287d6e47b"
+    },
+    {
+      "number": 11,
+      "role": "system_parameters",
+      "payload_sha256": "310e5f9fc5810ed265c698c2f5faebb79c1ff06840861abc2e773a893eae3801"
+    },
+    {
+      "number": 12,
+      "role": "condition_values",
+      "payload_sha256": "9191d046a925d91932f00236152d161f71a977a9c5bf80008927a8becd3b2e5a"
+    },
+    {
+      "number": 13,
+      "role": "surface_prescription",
+      "payload_sha256": "7282c51f07ce7f05094b535ce8b2b1a825161738c77080acb1d7a35b10f39e9b"
+    },
+    {
+      "number": 14,
+      "role": "asphere_coefficients",
+      "payload_sha256": "7ad7e737b6f7e06a4cf4e13ecaa6fb35ffe4b99f298e2576930ec084a92f04b9"
+    },
+    {
+      "number": 15,
+      "role": "system_parameters",
+      "payload_sha256": "30cae685c3017ba63d876e2703a5a5852e7c07ad03c2e179d1e3c794d254ca8d"
+    },
+    {
+      "number": 16,
+      "role": "condition_values",
+      "payload_sha256": "11fb926a64e812f8373bad4cb068f1428bbdc379759fc8d92ecb3d9833254f95"
+    },
+    {
+      "number": 17,
+      "role": "surface_prescription",
+      "payload_sha256": "5220a1ab2e5c2eed2d3175fac819b2952d467ce5f668186911535a59e5582915"
+    },
+    {
+      "number": 18,
+      "role": "asphere_coefficients",
+      "payload_sha256": "7b9683b5a74ea2f1a8c8a9509e60bbfc9556aa5a5dedab3ef616d295bd0c23fd"
+    },
+    {
+      "number": 19,
+      "role": "system_parameters",
+      "payload_sha256": "944b1f75d7c7ef229cb9d5770a22215ceff8eb9c00e510810bbbc14454281918"
+    },
+    {
+      "number": 20,
+      "role": "condition_values",
+      "payload_sha256": "ff9dbc69c00ca2ebb73c14999d6cbcbf85de880458f559efc257eaff8241b15e"
+    },
+    {
+      "number": 21,
+      "role": "surface_prescription",
+      "payload_sha256": "c1bd6e90e841afce5cd44fc1cca06d72d64d1e35e323a9bac38d98df5e565381"
+    },
+    {
+      "number": 22,
+      "role": "asphere_coefficients",
+      "payload_sha256": "81b6f2c2d2f0d356e02d8bd290edef8d245917fca4b17976e4c2ac00453fadbd"
+    },
+    {
+      "number": 23,
+      "role": "system_parameters",
+      "payload_sha256": "b08226432fba0cf8728de04a1cbd42117139b7113665ff17d2014cfc01b2e304"
+    },
+    {
+      "number": 24,
+      "role": "condition_values",
+      "payload_sha256": "33dbe7177c556a1838f0cd7cad1adfbd29bb58faef7eb27d1ab46da69a9ec3c8"
+    },
+    {
+      "number": 25,
+      "role": "surface_prescription",
+      "payload_sha256": "dcbf0fc4766ffaadd3a1589cdf5c51bdedc6c9e8cf8dedbaddb9e6b69a56219f"
+    },
+    {
+      "number": 26,
+      "role": "asphere_coefficients",
+      "payload_sha256": "b466ce87c18f7600eb46fd66747d4cc1cc52c836e9d41343849ad12868d693ea"
+    },
+    {
+      "number": 27,
+      "role": "system_parameters",
+      "payload_sha256": "7716201476ce7974c81cd618af5236cd5671d8618f90b40cfc7c90ac606ae9b3"
+    },
+    {
+      "number": 28,
+      "role": "condition_values",
+      "payload_sha256": "4b60f191ba072fc239eb1a1d1e9a6d8b533779e15d0c95e8e480d5435ab86c27"
+    },
+    {
+      "number": 29,
+      "role": "surface_prescription",
+      "payload_sha256": "26ccc35dde2248a5d8f8b156624d06bd196fd60836d28cdf6599e215a413ba96"
+    },
+    {
+      "number": 30,
+      "role": "asphere_coefficients",
+      "payload_sha256": "d6a9691a97bdc4592033aee9ff21a961d89fecc66f16d3b6c102b6cc3275d686"
+    },
+    {
+      "number": 31,
+      "role": "system_parameters",
+      "payload_sha256": "17ff4e85cc696f2bf8502eeb1a8855c3df1a250ee38cc044cb7e20689511d5a3"
+    },
+    {
+      "number": 32,
+      "role": "condition_values",
+      "payload_sha256": "3c57ddc52eaf020dacb1e0fd347dd3d705bd7e525414993e16ad982213383ede"
+    }
+  ],
+  "table_payload_sha256": [
+    "0d7946d63dc0172815cfc15d743f3ac5da4d649291fe4ac6d7691ec39cc249d2",
+    "9c47ae69d917c34a3223cf64c654c26d0caa7ecca1f341163fa9c09c5e9bb6d1",
+    "20919d290464fdcdb3d2c5003899c6062a4400a781e2a492a4c0d0d687c229d2",
+    "a52ff94e728183a997564a2d253b055d128920ab72c03b1d2a83cdca499c1d0f",
+    "f00c68d1157d20dd079583d2ff8219e119069329b7375b19f454de34c8948b35",
+    "e9ecdab7c1675df9371586548567eda09d0803e2b7f92b5985c659d12654a637",
+    "75d4ccf3003d688e946c569761d1849e9fd86d71d1ddd58fd946e381750bbe01",
+    "0b97c6c8d3d62f2816b5b0cb3347c3d062d8f0ef9f1dd299218bb12d40f1412f",
+    "1bc5036088a41477453ab2770cc7d59e7eddd1a6899b6e516b7318079f7d8e53",
+    "5025882fb10e4e95eed8237e0f8787f5f2c769bf1e595e31c448d2e287d6e47b",
+    "310e5f9fc5810ed265c698c2f5faebb79c1ff06840861abc2e773a893eae3801",
+    "9191d046a925d91932f00236152d161f71a977a9c5bf80008927a8becd3b2e5a",
+    "7282c51f07ce7f05094b535ce8b2b1a825161738c77080acb1d7a35b10f39e9b",
+    "7ad7e737b6f7e06a4cf4e13ecaa6fb35ffe4b99f298e2576930ec084a92f04b9",
+    "30cae685c3017ba63d876e2703a5a5852e7c07ad03c2e179d1e3c794d254ca8d",
+    "11fb926a64e812f8373bad4cb068f1428bbdc379759fc8d92ecb3d9833254f95",
+    "5220a1ab2e5c2eed2d3175fac819b2952d467ce5f668186911535a59e5582915",
+    "7b9683b5a74ea2f1a8c8a9509e60bbfc9556aa5a5dedab3ef616d295bd0c23fd",
+    "944b1f75d7c7ef229cb9d5770a22215ceff8eb9c00e510810bbbc14454281918",
+    "ff9dbc69c00ca2ebb73c14999d6cbcbf85de880458f559efc257eaff8241b15e",
+    "c1bd6e90e841afce5cd44fc1cca06d72d64d1e35e323a9bac38d98df5e565381",
+    "81b6f2c2d2f0d356e02d8bd290edef8d245917fca4b17976e4c2ac00453fadbd",
+    "b08226432fba0cf8728de04a1cbd42117139b7113665ff17d2014cfc01b2e304",
+    "33dbe7177c556a1838f0cd7cad1adfbd29bb58faef7eb27d1ab46da69a9ec3c8",
+    "dcbf0fc4766ffaadd3a1589cdf5c51bdedc6c9e8cf8dedbaddb9e6b69a56219f",
+    "b466ce87c18f7600eb46fd66747d4cc1cc52c836e9d41343849ad12868d693ea",
+    "7716201476ce7974c81cd618af5236cd5671d8618f90b40cfc7c90ac606ae9b3",
+    "4b60f191ba072fc239eb1a1d1e9a6d8b533779e15d0c95e8e480d5435ab86c27",
+    "26ccc35dde2248a5d8f8b156624d06bd196fd60836d28cdf6599e215a413ba96",
+    "d6a9691a97bdc4592033aee9ff21a961d89fecc66f16d3b6c102b6cc3275d686",
+    "17ff4e85cc696f2bf8502eeb1a8855c3df1a250ee38cc044cb7e20689511d5a3",
+    "3c57ddc52eaf020dacb1e0fd347dd3d705bd7e525414993e16ad982213383ede"
+  ],
+  "claims": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "independent_claims": [
+      1
+    ],
+    "claims_depending_on_claim_1": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "claim_one_dependency_count": 13,
+    "section_sha256": "8e697b8535aaeac7191a516f18bd4320e7846a294b3d7f98205ced49497ee982"
+  },
+  "figures": {
+    "labels": [
+      "1A",
+      "1B",
+      "1C",
+      "2A",
+      "2B",
+      "3A",
+      "3B",
+      "4A",
+      "4B",
+      "5A",
+      "5B",
+      "6A",
+      "6B",
+      "7A",
+      "7B",
+      "8A",
+      "8B",
+      "9"
+    ],
+    "declared_panels": 18,
+    "figref_tag_count": 44,
+    "official_drawing_sheets": 18
+  },
+  "mathml": {
+    "objects": 1,
+    "ids": [
+      "MATH-US-00001"
+    ],
+    "ordered_id_sha256": "c8872af95e14c097274ff344b09170e35d18acfe6e4358a3190bcb388781e802",
+    "object_sha256": [
+      "62bdf7d7fa0af6c62f86c1b882a6bd04a62cd13ca1a7d4c9f99e17baee963f74"
+    ]
+  },
+  "exact_required_metadata_absence_pattern_counts": {
+    "f_number": {
+      "\\bF\\s*[- ]?number\\b": 0,
+      "\\bFNO\\b": 0,
+      "\\bF\\s*/\\s*(?:#|No\\.?|Number|\\d)": 0,
+      "\\baperture\\s+number\\b": 0,
+      "\\bnumerical\\s+aperture\\b": 0
+    },
+    "image_height": {
+      "\\bIMH\\b": 0,
+      "\\bImgH\\b": 0,
+      "\\bimage\\s+height\\b": 0
+    }
+  },
+  "source_anomalies_retained_verbatim": [
+    {
+      "location": "Table 17 embodiment 5 direct headers",
+      "source_values": {
+        "near_f_N_mm": 21.44,
+        "far_f_F_mm": 21.12
+      },
+      "repair_or_reordering_applied": false
+    }
+  ],
+  "official_pdf": {
+    "fetches": [
+      {
+        "path": ".planning/quick/260719-patent-generic-family-94115759/source-review/US-12560789-B2-official-1.pdf",
+        "bytes": 1935543,
+        "sha256": "963a8b2b2b7fd1bca1091e70f338a1ded494731f0ca9db139df0dcaa6aaec12f",
+        "pages": 38,
+        "single_raster_pages": 38,
+        "text_layer_characters": 0
+      },
+      {
+        "path": ".planning/quick/260719-patent-generic-family-94115759/source-review/US-12560789-B2-official-2.pdf",
+        "bytes": 1935543,
+        "sha256": "963a8b2b2b7fd1bca1091e70f338a1ded494731f0ca9db139df0dcaa6aaec12f",
+        "pages": 38,
+        "single_raster_pages": 38,
+        "text_layer_characters": 0
+      }
+    ],
+    "canonical_raster_set_sha256": "ff0b03a4501ad28406ea61c2d2daacea775d49cbf9cf46f07919ff5a5808e44b",
+    "page_roles": {
+      "front_page": [
+        1
+      ],
+      "drawing_sheets": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "specification_pages": [
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "table_pages": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37
+      ],
+      "claims_pages": [
+        37,
+        38
+      ]
+    }
+  }
+}

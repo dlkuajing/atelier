@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260721-patent-generic-family-97520644/generic-residual-after-2.json",
+  "result_set_sha256": "5e4d4510925e95a2c35cef792579241649c9c2cf4e91ee005e3605fe29fc5185",
+  "generic_residual_roots": 46,
+  "generic_residual_items": 46,
+  "next_exact_group": {
+    "family_id": "95563451",
+    "root_ids": ["US-20250264785"],
+    "publication_ids": ["US-20250264785-A1"],
+    "application_number": "19/049057",
+    "title": "LIGHT-FOLDED CAMERA MODULE AND ELECTRONIC DEVICE",
+    "inventors": [
+      "CHANG; Lin-An",
+      "TSENG; Te-Sheng",
+      "HSU; Wen-Hung",
+      "CHOU; Ming-Ta"
+    ],
+    "applicant": "LARGAN DIGITAL CO., LTD.",
+    "assignee": null,
+    "layout_signature": "9d568ec9f9878464c424c2d110bc7ee796384fd3bfd3f989e92f270b24d72fd5",
+    "layout_signature_count": 1,
+    "table_count": 6,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 94,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/1b0e6abd455cb701/US-20250264785-A1.html",
+      "bytes": 96057,
+      "sha256": "1b0e6abd455cb701636c8f649b1f35f6de1fd5cd13961cb2ec5aa98fe345e3b0"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

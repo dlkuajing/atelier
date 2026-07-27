@@ -1,0 +1,57 @@
+{
+  "after_census": {
+    "affected_items": 183,
+    "affected_roots": 183,
+    "artifact_sha256": "ed3e4ee5c3e6fb12e4a565d224e5fb0b4b6042aa51bda2f395da23091ead88ce",
+    "result_set_sha256": "450f7be019a47b6492afd0fc0849b2036d1f5071a452b386453cc3b76c47259f"
+  },
+  "before_census": {
+    "affected_items": 186,
+    "affected_roots": 186,
+    "artifact_sha256": "f47b2a27a052dcb21ffab70975f1c5e7ae7e32aa80c16c47ed4aabfb1b32106d",
+    "result_set_sha256": "dbf8a68e115fc09d2ffe5ad90e4118548360869c528c43f1f1cec8988790469a"
+  },
+  "cohort_sha256": "e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b",
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "roots": {
+    "US-20080198482": [
+      {
+        "attempt": 2,
+        "result_sha256": "c14a8fe0179ff1a34ead38e436e72f31df42500aca0e1445fe0f3c2082c1b121",
+        "semantic_sha256": "fcc5f3e0c004781955b3c264ff5eb70a2c8e5f32d974ca456d1da345c763deaa"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "7a99d5952a59b557ece4d91fb13144e2702fc975a3d1dea7f312c559c9f31a82",
+        "semantic_sha256": "fcc5f3e0c004781955b3c264ff5eb70a2c8e5f32d974ca456d1da345c763deaa"
+      }
+    ],
+    "US-7365917": [
+      {
+        "attempt": 2,
+        "result_sha256": "c5423d616a314fb19c4b9328a68180fe9d523d63b7a2c9945be673d3ed286439",
+        "semantic_sha256": "8d8d909d1a8248e9b907a19d53857d4fe0c211da26f19812087df477197b84e6"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "ac350030191d2aa2e95a81fc9e75ed62633e1633eeaac6079b32eaa9b43bc385",
+        "semantic_sha256": "8d8d909d1a8248e9b907a19d53857d4fe0c211da26f19812087df477197b84e6"
+      }
+    ],
+    "US-7859769": [
+      {
+        "attempt": 2,
+        "result_sha256": "cebbbbda8f47a9345d004fe43192c25d93c26c1bbc6ce744c0c09a047a69c274",
+        "semantic_sha256": "2bb80d133b45e9dc7b00673387e09b8257249ad0293ed6d76ccf0cdc9f26ce17"
+      },
+      {
+        "attempt": 3,
+        "result_sha256": "b956a902102833f28beab57602271a9f70ac4230a60cc89a7fc981baab919324",
+        "semantic_sha256": "2bb80d133b45e9dc7b00673387e09b8257249ad0293ed6d76ccf0cdc9f26ce17"
+      }
+    ]
+  },
+  "schema_version": 1
+}

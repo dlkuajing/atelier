@@ -1,0 +1,62 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "81111812",
+  "root_id": "US-12474541",
+  "publication_id": "US-12474541-B2",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-12474541/attempt-0001/result.json",
+    "bytes": 1272,
+    "sha256": "bf5d24f88ae5828647c2360dd77ae3192a22bcfa802b8360294346cc1125a2c6",
+    "result_attempt": 1,
+    "root_state": "parser_review_required"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12474541/attempt-0002/result.json",
+      "bytes": 22718,
+      "result_attempt": 2,
+      "file_sha256": "b9e469364baef76abe7217b96b48b0ac8f569d5b00e09e0f3835fce6842bc471",
+      "semantic_sha256": "ccf6452b95edbd693ddba771af3707d3b0132b8b6cdb43a358e41460d070f1a1"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12474541/attempt-0003/result.json",
+      "bytes": 22718,
+      "result_attempt": 3,
+      "file_sha256": "0c36a7d3a1d746f59d943332a0f64b7ca36cc7a995d13c817b053f6a514a8f3c",
+      "semantic_sha256": "ccf6452b95edbd693ddba771af3707d3b0132b8b6cdb43a358e41460d070f1a1"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "ccf6452b95edbd693ddba771af3707d3b0132b8b6cdb43a358e41460d070f1a1",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_driving_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.imaging_lens_assembly_light_folding_and_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.camera_module_light_folding_and_light_blocking_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

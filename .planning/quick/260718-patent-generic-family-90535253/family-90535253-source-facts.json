@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "family_id": "90535253",
+  "publication_id": "US-20240118520-A1",
+  "application_number": "18/306676",
+  "title": "IMAGING LENS SYSTEM AND ELECTRONIC DEVICE HAVING THE SAME",
+  "inventors": [
+    "CHO; Yongsik"
+  ],
+  "applicant": "SAMSUNG ELECTRONICS CO., LTD.",
+  "filing_date": "2023-04-25",
+  "publication_date": "2024-04-11",
+  "priority_and_lineage": [
+    {
+      "jurisdiction": "KR",
+      "application_number": "10-2022-0127936",
+      "date": "2022-10-06"
+    }
+  ],
+  "source_hashes": {
+    "raw_document_sha256": "f72e752aba1ccbdb0fcc09e45ecd23dbea549b6d39f677ed0d466d21b2c7e96e",
+    "normalized_text_sha256": "c7b46ad834d5adacc69bab9eeea1f2353cbb7ef93317f12a92ec56f6ec63cf75",
+    "section_sha256": {
+      "preamble": "529cd812a81282e8d975d6b1c84ffa307307f8df8d76ea4dd936dd62e9f88502",
+      "abstract": "f7f87539ec8f92b27966feb1536a2c8c7888d566c20635d29e5f4cdfe820451c",
+      "background": "722c981cbd3fdccc7868b73f34cd53139f09d03418d2cfd79ff485d4b0e95a92",
+      "description": "1252edf6c21994bda4ab34b5148059f28d65e497cbc5eb3d24c4274bf7e1fd5b",
+      "claims": "7e364831ef589e6411959a219801386b8b9dfbfb2b985bc62b055eaf91d751e0"
+    },
+    "paragraph_span_sha256": {
+      "1-1": "10ae861b07ccc8c2d3f004eb817e035db8be2c2a93c38729635a685405585e5f",
+      "2-7": "42d4cb4f6ab5ecce6eeba3180ca7aecedac53fd87528e6bee4807255d382e608",
+      "8-17": "c4fabb04e780492f0fee5296fd91c57771414e1ab77370f60495fb5cfdb12b1b",
+      "18-41": "118b23abca1abb7abefd52a2c0fce169f558163255d472214ca35a67e7949aea",
+      "42-49": "dfc1ad08828d9b166cb76bf407e1bd974854c96c381902046e82037b12f75d0b",
+      "50-54": "ba246ed0628d6f4eaf61b7c748efe134ca2c3801e7f3ac902beaa8054e9d4a5f",
+      "55-59": "be130499a38d809ce494a40ff938079e5f1d29eb9d9b016ce1fbb260501b24bd",
+      "60-68": "413274c1e979d3a2555a68631a6991b49de8dc649385a2a8f576d2d7e8dd7cbd",
+      "69-93": "916ab9c218924ea4ac039f46b3010440f188201dd48a572ef444e58bdc9b9431",
+      "94-100": "d26e0e798f2dc819814f49469e52a3dfe502abf147eea4911aeb3b5225a9ec7b"
+    },
+    "brief_drawings_sha256": "09beae49618828c291a3a879e35618532a391b5ad70de7eef8db5a4068fe6b48",
+    "claim_sha256": [
+      "58371f219f170e9f2c886cef80b2b744a16ec3eb226599119cb1c5217a7ffde4",
+      "e934fc5181597e7a9723a3c5a35f824b4d822b11e7cb1e7ef101a8e86e068b68",
+      "58c051bcdf45c982b532b7ae002226b5cd757b4526d9d762271abddae278f630",
+      "fe90b7d5e130c9a0f2eedb1f44197bc432e054d92bf78fe3ced396e3318093f4",
+      "a8dd6cfaf5cc8a55a68f4bd3256a9ba635578ebd244b8cfc43a843a9e67cf814",
+      "15370c0fe61c2ccd3363808d94aa7e617061eb71474a374425fd47d6befc3c77",
+      "42f47cd8ca64c0125a0813a7c6bae27a9c061cc719c882f2615dd9d5a2919ef4",
+      "c1ae4808b8774efabc5523fd26146c188316d26dab6f78d89cf28b8cc59e3d36",
+      "7df9760bd5a26a50b6fdc1138979fdadee70e9fe99a7572eee51b995fbe8658f",
+      "e9f31d93b8fdf149e40fa28f6fa4995a51cdff98112f84e0498f92bcb07ca966",
+      "cfdc3aed895cbeb898758046424307b2787ebfcb6bf2eb094f93547ce89dd279",
+      "2e37fd067dbec9b9e205a04f7924a5c2c4929885a77bdf16ff15983d271f5dbd",
+      "a439dc49914162f62e4f426c2c022786fc73796763c687908c6540ba6c68673d",
+      "2d5307d1ab66c92ca8f56cc86edd1e13eea5e8cea5398e54c16cbc9a7e2793c4",
+      "9d2aec5accdb649bc8caff0606ae93e5609e3fe276585018ec66d813439ebc02",
+      "09d082d1d031317cf94a7678dcf76f5edcaf6026dfcd8539316b6e3fcbc57109",
+      "cfc0130fcc5e05343a078affd92e6f252f20ef23210c6f4d2ddd6970cec881f0",
+      "767bf841219e4dc20e3a4830d6f6aa05a0d2c6bb00b683cf588294acc6037fc8",
+      "3a5bf8a84ef3b5ae6b54ce8c59cd95bbbfe9509162eb1a12135001d3a983a8d6",
+      "c11a7c5fb44667b37af3b22e1621a72fb20e253228313a3694280409e1cdaf50"
+    ],
+    "table_payload_sha256": [
+      "f86cdf86d32d1ff7d7becee747cb62137bdd654be9c94629051046d1d4c1028f",
+      "8093c619558722253f25ce03ff6e60397698f3441a07d5c7a490e71d1e84e080",
+      "490992b10180a8a2bf59083a95b4515f0d7b33f67300e5db3e0a42e2dad4221f",
+      "d56623cc83bfd20be01afa1ed0b9c6ecfb892998afba1ffd66228a36e6bb8c25",
+      "8b87e93bf5432eae8533aab83ffb551d0fd178a150c8deafdb3a40165b980c28",
+      "be770b668bdd14dd8a1e652bd5d36c318cf9eedf56bd4712a8af2ee761e15f1f",
+      "a763fb7e76ad1dc63916c878a6a1b46a326a80318ad672064774975bcdf37978",
+      "b34843e201708c0cade3d46edf2a707d291d4bac7af8463dfb7f7d855bf1c593",
+      "b636046aa4fb256c31057a228dcf0e6fdc6cf1e0dd119f66f541ae85e69365c2",
+      "1d9ba79f29fb688d2acd5978bd580ac3143fc98ff370403f4f54cb7594f01ed4",
+      "1d421ec786e154b582c6faed5c25b0dfac053017a01af31c0c36b74c651409df",
+      "accb38496db3d3b0895ec397509cbb4aeb1525923548afe547f8744ecdec8103",
+      "9ebca4e821a1e1aadba50d2946f10aae3bac14e8edbd86f12e5076237be918ae",
+      "805132be7cbaa47df31b1965b00b4f4e526fde75cd0707c8ed8fb5eb07a70037",
+      "0d38ee549e7bdc7a5ec5b3c1567b70d7b2874860f496e5c2703631e5301bc0f2",
+      "6c2ed4457905996a7192e1ad8be1aee42d423a431d6d5f1b7d849ce498501a3d",
+      "244daa5fc69a904f6bd58df7ab15dd58b46cf5cece266b4ce68cf23e17120497",
+      "aa0c142fc5a4127469492657616108e1ecdb350366a88e387ee9660040a6109a",
+      "adf056f5eac0c3a1a2377579f79ff2a6d57e7fb9047b41e28f11350037670ea4",
+      "8fa1c55b3837ab1d08dbe828cfc68923f1dd648aad7056b65f73bcd66c386a49",
+      "dc956cc18f7ff3e71b6ccd104ee9ff1b62494462ad0f9a2d18b97243b9efc898"
+    ]
+  },
+  "formula_denominator": {
+    "mathml_objects": 1,
+    "mathml_equation_labels": [4],
+    "inline_formula_processing_instructions": 6,
+    "inline_equation_labels": [1, 2, 3]
+  },
+  "prescription_tables": [
+    {
+      "embodiment_number": 2,
+      "system": "100a",
+      "figure": "2",
+      "lens_count": 7,
+      "surface_table": 1,
+      "surface_rows": 16,
+      "asphere_table": 2,
+      "asphere_rows": 17,
+      "system_table": 3,
+      "focal_length_table": 4,
+      "comparison_table": 5,
+      "efl_mm": 6.6857208,
+      "f_number": 1.95,
+      "hfov_deg": 46.5,
+      "two_times_image_height_mm": 14.3,
+      "ttl_mm": 7.9,
+      "fbl_mm": 0.75,
+      "stop_axial_coordinate_published": false
+    },
+    {
+      "embodiment_number": 3,
+      "system": "100b",
+      "figure": "3",
+      "lens_count": 7,
+      "surface_table": 6,
+      "surface_rows": 16,
+      "asphere_table": 7,
+      "asphere_rows": 17,
+      "system_table": 8,
+      "focal_length_table": 9,
+      "comparison_table": 10,
+      "efl_mm": 6.1,
+      "f_number": 1.9,
+      "hfov_deg": 46.378623,
+      "two_times_image_height_mm": 13.096,
+      "ttl_mm": 7.15,
+      "fbl_mm": 0.75,
+      "stop_axial_coordinate_published": false
+    },
+    {
+      "embodiment_number": 4,
+      "system": "100c",
+      "figure": "4",
+      "lens_count": 8,
+      "surface_table": 11,
+      "surface_rows": 18,
+      "asphere_table": 12,
+      "asphere_rows": 16,
+      "system_table": 13,
+      "focal_length_table": 14,
+      "comparison_table": 15,
+      "efl_mm": 7.7056185,
+      "f_number": 1.95,
+      "hfov_deg": 46.105066,
+      "two_times_image_height_mm": 16.332,
+      "ttl_mm": 8.8,
+      "fbl_mm": 0.85,
+      "stop_axial_coordinate_published": false
+    },
+    {
+      "embodiment_number": 5,
+      "system": "100d",
+      "figure": "5",
+      "lens_count": 7,
+      "surface_table": 16,
+      "surface_rows": 16,
+      "asphere_table": 17,
+      "asphere_rows": 17,
+      "system_table": 18,
+      "focal_length_table": 19,
+      "comparison_table": 20,
+      "additional_comparison_table": 21,
+      "efl_mm": 5.8550914,
+      "f_number": 1.9,
+      "hfov_deg": 45.658282,
+      "two_times_image_height_mm": 12.258,
+      "ttl_mm": 6.8,
+      "fbl_mm": 0.75,
+      "stop_axial_coordinate_published": false
+    }
+  ],
+  "stop_evidence": {
+    "normalized_source_stop_word_count": 0,
+    "normalized_source_diaphragm_word_count": 0,
+    "table_stop_rows": 0,
+    "claim_stop_coordinates": 0,
+    "figure_1_through_5_stop_or_sto_labels": 0,
+    "y_aperture_interpretation": "per-surface effective aperture, not an axial stop coordinate",
+    "f_number_determines_unique_stop_coordinate": false
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Samsung generic seven-lens imaging architecture (FIG. 1)",
+      "paragraphs": [18, 41],
+      "claims": [1, 10],
+      "reason_code": "confirmed_no_prescription.generic_seven_lens_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Samsung imaging lens system 100a (FIG. 2)",
+      "paragraphs": [42, 49],
+      "tables": [1, 2, 3, 4, 5],
+      "reason_code": "metadata_unpublished.imaging_lens_100a_stop_axial_coordinate_absent",
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Samsung imaging lens system 100b (FIG. 3)",
+      "paragraphs": [50, 54],
+      "tables": [6, 7, 8, 9, 10],
+      "reason_code": "metadata_unpublished.imaging_lens_100b_stop_axial_coordinate_absent",
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Samsung imaging lens system 100c (FIG. 4)",
+      "paragraphs": [55, 59],
+      "tables": [11, 12, 13, 14, 15],
+      "reason_code": "metadata_unpublished.imaging_lens_100c_stop_axial_coordinate_absent",
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Samsung imaging lens system 100d (FIG. 5)",
+      "paragraphs": [60, 68],
+      "tables": [16, 17, 18, 19, 20, 21],
+      "reason_code": "metadata_unpublished.imaging_lens_100d_stop_axial_coordinate_absent",
+      "terminal_status": "metadata_unpublished"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Samsung generic eight-lens imaging architecture",
+      "paragraphs": [32, 32],
+      "claims": [11, 15],
+      "reason_code": "confirmed_no_prescription.generic_eight_lens_architecture_only",
+      "terminal_status": "confirmed_no_prescription"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Samsung electronic-device and multi-camera-module wrapper",
+      "paragraphs": [69, 93],
+      "claims": [16, 20],
+      "reason_code": "confirmed_no_prescription.electronic_device_multi_camera_module_wrapper_only",
+      "terminal_status": "confirmed_no_prescription"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": true,
+    "surface_radii_published": true,
+    "surface_spacing_published": true,
+    "refractive_indices_published": true,
+    "abbe_numbers_published": true,
+    "conic_or_asphere_coefficients_published": true,
+    "stop_location_published": false,
+    "effective_focal_length_published": true,
+    "prescription_specific_f_number_published": true,
+    "prescription_specific_angular_field_published": true,
+    "image_height_published": true,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

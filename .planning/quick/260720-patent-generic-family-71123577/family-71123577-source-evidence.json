@@ -1,0 +1,389 @@
+{
+  "schema_version": 1,
+  "family_id": "71123577",
+  "title": "Camera optical lens comprising seven lenses of +--++--, ++-+++- or ++--++- refractive powers",
+  "applicant": "AAC Optics Solutions Pte. Ltd.",
+  "root_ids": [
+    "US-11137579"
+  ],
+  "publication_id": "US-11137579-B2",
+  "application_number": "16/675251",
+  "priority": [
+    {
+      "application_number": "CN201811614499.X",
+      "date": "2018-12-27"
+    },
+    {
+      "application_number": "CN201811616005.1",
+      "date": "2018-12-27"
+    }
+  ],
+  "prior_publication": {
+    "publication_id": "US-20200209559-A1",
+    "publication_date": "2020-07-02",
+    "cohort_membership": "outside_frozen_619_root_cohort",
+    "claim_count": 20,
+    "numeric_content_borrowed": false
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_cross_check_publications": 1,
+    "official_b2_pdf_pages": 16,
+    "same_application_a1_pdf_pages": 17,
+    "drawing_sheets": 7,
+    "figures": 12,
+    "exact_prescription_embodiments": 3,
+    "device_wrapper_items": 0,
+    "published_surface_rows_per_embodiment": 17,
+    "modeled_surfaces_per_embodiment": 18,
+    "published_surface_rows_total": 51,
+    "modeled_surfaces_total": 54,
+    "asphere_surfaces_per_embodiment": 14,
+    "asphere_coefficient_cells_total": 336,
+    "source_tables": 13,
+    "description_paragraphs": 96,
+    "claims": 19,
+    "inline_formula_pairs": 1,
+    "mathml_elements": 0,
+    "conversion_items": 3,
+    "converted_pending_intake_items": 3,
+    "candidate_zmx": 3,
+    "staging_zmx": 3,
+    "formal_intake_items": 0
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/4be2295462a55907/US-11137579-B2.html",
+    "bytes": 54961,
+    "raw_document_sha256": "4be2295462a5590711d3b293a93b928c16e2ca0ec4085b9555dbe63aa71bdd7c",
+    "normalized_text_sha256": "5c681b26b0bbbb4d65da7aac503d26ffd507a4a248b12a34008a740071cd50d2",
+    "layout_signature": "920f3e7c460ca677111ad215558e5185a95b5fca222c4a147cccc08d45c12533",
+    "section_markers": {
+      "background": "Background/Summary TECHNICAL FIELD (1)",
+      "brief": "Description BRIEF DESCRIPTION OF DRAWINGS (1)",
+      "detailed": "DESCRIPTION OF EMBODIMENTS (14)",
+      "claims": "Claims 1. A camera optical lens, comprising,"
+    },
+    "section_sha256": {
+      "background": "be9272d04802ed90867bf58a533bc9c433dfef0930a2779820c33ef362f99dc0",
+      "brief": "3d9a72a4323bd5e5b897d52bbf1e74efd13971ff59fee2c7bb519887f93b301f",
+      "detailed": "2639fefeca0c6ce5dedd814dd9727d0df59ac92f460b8d35a3bece1de3d5cd86",
+      "claims": "c845a98f1a3750f7dc0d36f901340cd3cf22648fc062abccf575ad128cce999d"
+    },
+    "paragraph_ranges": {
+      "background": [
+        1,
+        2
+      ],
+      "brief": [
+        1,
+        13
+      ],
+      "detailed": [
+        14,
+        94
+      ]
+    },
+    "claim_range": [
+      1,
+      19
+    ],
+    "figure_range": [
+      1,
+      12
+    ],
+    "table_block_sha256": [
+      "c8379558384a81e8c48bea5a5521260e6b62ae44cefc0911fe60545d5bd8aa15",
+      "d8c38f9d0b841100446d1a73b2f2f9bb3765e5de677010c18e41b7b1c46efab2",
+      "79a140bace7f91bb29358871e8514711bc5b05474ad3221078beafc627fb6e44",
+      "7bf9c53ad6c87a813962ae5caec89aee14f7f1277b231dd13b0aa57bd48f36b9",
+      "3f422b35d7f9a6aac07e2045756c45b8c44a1bc1ed50b42c5c7bbfe5625d3c73",
+      "f465297d5a9c82c6ae11b60e49a96a286da8076b0c930349e53b324afcab5d76",
+      "d7903767335003587ead705dd0b33c047ef81ae1064d841b4ec0a5f2ab824e3b",
+      "c8a193e01cf2cac151b67c3470e8ac94c1478fe1c83eecab398f7344af5c3e0d",
+      "578d3b9b94a968e0e3320903072b62091b667434da7ef8f9153cc8d2ee123f77",
+      "b2a21f1423f6398cf2e18445da65b765b08278a848099ab7d60c7cddce54e332",
+      "41c9702b82ea8b339332fa8da47254216be76ef434dc1c383481dbe41339f9d9",
+      "f104ecc591ee1c33c5555283505a11dde6f5ce06b4207a51e0b713638a13fdee",
+      "df8eaf37291fc64bf51867e5c3622e5d6a3122f11494daf499d09bdb82d1f5c7"
+    ],
+    "formal_table_sha256": [
+      "e9b979713cdcf27af7907c38d97d38acd27418f5814baa2f38198a6e024c670e",
+      "beff0d44150972b713d5fb81a20d737c15487c6802c3b18764a1c94ea2cdc1e7",
+      "b76ea7d3367c7ffede1089c41cf70937bbd35ec0b43c61abdfbc91c5bb75791a",
+      "087fe144bbe99486a8db5c8b6e430bbdc67c1a3b1adc756d464de12dcfd80a9e",
+      "e53cbe60eebfb53da983fb18898b5048d8a23f1f60b1aac1392444e5e6623297",
+      "438b928f3d11db33087a23b94a51db522362dfdfccaa037718b1059edd6b3a1a",
+      "a2981b9bb34214703c22c5c1441e7fc0d2fc617e961027a0e06d715c5737f128",
+      "20b65f10a2ca8976341cc455a1fddaf9d82b307cd687c42c79d9d6594ff91489",
+      "a2774a9a2113b2647cf9e2191b3287e6fe01c64c9181ebaca650cfdf823ae0d7",
+      "b96bcd42a21b75c9a7005e4b9934c071755d4b3890daeeed4bccb6ef96fc118b",
+      "2e6adcd94c26a159ddef1dffad94b012a33b917c92fbd44cd2edbb4d2c99a578",
+      "ab54daa607ea0e68721157c7686bff6b3371200abd5926694d5ce6feb4c939c9",
+      "28b1e490cbaf78c6d952777e7957fc6f4cfb5f72119f64e3b4f8424fb0806e02"
+    ]
+  },
+  "table_roles": [
+    {
+      "embodiment": 1,
+      "surface_table": 1,
+      "asphere_table": 2,
+      "inflexion_table": 3,
+      "arrest_table": 4
+    },
+    {
+      "embodiment": 2,
+      "surface_table": 5,
+      "asphere_table": 6,
+      "inflexion_table": 7,
+      "arrest_table": 8
+    },
+    {
+      "embodiment": 3,
+      "surface_table": 9,
+      "asphere_table": 10,
+      "inflexion_table": 11,
+      "arrest_table": 12
+    },
+    {
+      "embodiments": [
+        1,
+        2,
+        3
+      ],
+      "system_and_condition_table": 13
+    }
+  ],
+  "embodiments": [
+    {
+      "number": 1,
+      "focal_length_mm": 4.065,
+      "f_number": 1.78,
+      "full_fov_deg": 75.99,
+      "hfov_deg": 37.995,
+      "entrance_pupil_diameter_mm": 2.88,
+      "image_height_mm": 4.0,
+      "published_aperture_thickness_mm": -0.33,
+      "derived_d1_d16_spacing_sum_mm": 5.76,
+      "prescription_fingerprint": "88bc5b25c7ceafa8",
+      "coverage": {
+        "aperture_interpolated_surfaces": "none",
+        "asphere_surfaces": 14,
+        "d": "18/18",
+        "f_mm": 4.065,
+        "f_number": 1.78,
+        "finite_final_rays": "5/5",
+        "hfov_deg": 37.995,
+        "nd_vd": "8/18",
+        "r": "18/18",
+        "real_image_height_mm": 3.2038575636751077,
+        "reference_wavelength_um": 0.5876,
+        "sanity_image_height_mm": 3.1753548377805623,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
+        "surfaces": 18
+      },
+      "conversion_request_sha256": "3eaf9f014d0cf7d9f8c42ed557061fec8ecb0479aeec6abd19acee52cdc46c15",
+      "receipt": {
+        "evidence_type": "patent_conversion_receipt",
+        "path": "data/patent-conversion-attempts/local-replay/US-11137579-B2-AAC-seven-lens-camera-optical-lens-embodiment-1-3eaf9f014d0cf7d9/attempt-0002/receipt.json",
+        "sha256": "2be7838f1e7ff65588ef0f4078ba1a16cbcde068b4f73f5cdf56bf9abd1a2426"
+      },
+      "candidate_and_staging_zmx": {
+        "evidence_type": "staging_zmx",
+        "path": "data/zmx-staging/patent-local-replay/US-11137579-B2-e1.zmx",
+        "sha256": "4312c399cc38d6f3b68ce0e5ad55558ffaaf29d5039a9644c7a01711b7a57933"
+      },
+      "outcome": "converted_pending_intake"
+    },
+    {
+      "number": 2,
+      "focal_length_mm": 3.872,
+      "f_number": 1.78,
+      "full_fov_deg": 82.89,
+      "hfov_deg": 41.445,
+      "entrance_pupil_diameter_mm": 2.175,
+      "image_height_mm": 3.715,
+      "published_aperture_thickness_mm": -0.295,
+      "derived_d1_d16_spacing_sum_mm": 5.635,
+      "prescription_fingerprint": "c6a9237de97207e8",
+      "coverage": {
+        "aperture_interpolated_surfaces": "none",
+        "asphere_surfaces": 14,
+        "d": "18/18",
+        "f_mm": 3.872,
+        "f_number": 1.78,
+        "finite_final_rays": "4/5",
+        "hfov_deg": 41.445,
+        "nd_vd": "8/18",
+        "r": "18/18",
+        "real_image_height_mm": 3.488304216196363,
+        "reference_wavelength_um": 0.5876,
+        "sanity_image_height_mm": 3.419035666657304,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
+        "surfaces": 18
+      },
+      "conversion_request_sha256": "2537663ed70d375a32df747ca25ea5cd3dcfa238a989826513d6856d9bd9ec1c",
+      "receipt": {
+        "evidence_type": "patent_conversion_receipt",
+        "path": "data/patent-conversion-attempts/local-replay/US-11137579-B2-AAC-seven-lens-camera-optical-lens-embodiment-2-2537663ed70d375a/attempt-0002/receipt.json",
+        "sha256": "31ef2b7981fa0bbd9ed1268bcac00f104c61ec5bfef73195e5309c800e05a524"
+      },
+      "candidate_and_staging_zmx": {
+        "evidence_type": "staging_zmx",
+        "path": "data/zmx-staging/patent-local-replay/US-11137579-B2-e2.zmx",
+        "sha256": "9949beafeb20024b5ce26b9a0329e3391d1bedebe9aaa5532fa8d13d6d04a8a9"
+      },
+      "outcome": "converted_pending_intake"
+    },
+    {
+      "number": 3,
+      "focal_length_mm": 3.72,
+      "f_number": 1.78,
+      "full_fov_deg": 85.18,
+      "hfov_deg": 42.59,
+      "entrance_pupil_diameter_mm": 2.09,
+      "image_height_mm": 3.715,
+      "published_aperture_thickness_mm": -0.224,
+      "derived_d1_d16_spacing_sum_mm": 5.699,
+      "prescription_fingerprint": "328cc0b2c6646a3a",
+      "coverage": {
+        "aperture_interpolated_surfaces": "none",
+        "asphere_surfaces": 14,
+        "d": "18/18",
+        "f_mm": 3.72,
+        "f_number": 1.78,
+        "finite_final_rays": "4/5",
+        "hfov_deg": 42.59,
+        "nd_vd": "8/18",
+        "r": "18/18",
+        "real_image_height_mm": 3.48064845699538,
+        "reference_wavelength_um": 0.5876,
+        "sanity_image_height_mm": 3.419517287910065,
+        "semi_diameter_policy": "Optiland real-ray surface envelope; interpolated only when no finite ray reached a surface",
+        "surfaces": 18
+      },
+      "conversion_request_sha256": "b1508f5f6437c7f807a449d099232fc246b513f2a6877b69039d752b5197758b",
+      "receipt": {
+        "evidence_type": "patent_conversion_receipt",
+        "path": "data/patent-conversion-attempts/local-replay/US-11137579-B2-AAC-seven-lens-camera-optical-lens-embodiment-3-b1508f5f6437c7f8/attempt-0002/receipt.json",
+        "sha256": "7730e2dcb2861e0c068ba61790619363dbd8c2e6cd16d27b74fffbaa3989a017"
+      },
+      "candidate_and_staging_zmx": {
+        "evidence_type": "staging_zmx",
+        "path": "data/zmx-staging/patent-local-replay/US-11137579-B2-e3.zmx",
+        "sha256": "63de3fda1aa8ed5ef48115179d20ee7dcb42e938ad1d2b0c9998ca0c3ba15e58"
+      },
+      "outcome": "converted_pending_intake"
+    }
+  ],
+  "source_boundary": {
+    "surface_order": "Stop, fourteen lens surfaces, two optical-filter surfaces, Image",
+    "material_order": [
+      "Plastic",
+      "Plastic",
+      "Plastic",
+      "Plastic",
+      "Plastic",
+      "Glass",
+      "Plastic",
+      "Filter"
+    ],
+    "reference_wavelength_um": 0.5876,
+    "aperture_thickness_policy": "preserve directly published signed d0 values without correction or surface reordering",
+    "full_field_policy": "halve only the directly published full diagonal FOV for the parser HFOV field",
+    "ttl_policy": "no exact TTL metadata is published; d1-d16 sums are derived validation checks only and are not substituted for TTL",
+    "abbe_symbol_anomaly": "TABLE 1 fourth-lens row prints Latin v while all other material rows print Greek nu; preserve without repair",
+    "table_13_ratio_layout": "the label (R13 + R14)/(R13 - R14) is split around its three published values; preserve the source order",
+    "paragraph_47_typo": "the source says the focal length of seventh lens L7 is P, while the following condition uses f7/f; preserve without repair",
+    "canonical_parser_payload_sha256": "1f552365eaeeb3c2d7e54507ba0877b6ac2a67a8de1217fc2fb9bfe6783fdde9",
+    "conversion_result": "all three source-locked prescriptions produced process-isolated staging candidates; this is not formal intake or an expert optical-quality verdict"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260720-patent-generic-family-71123577/family-71123577-raster-audit.json",
+    "bytes": 24777,
+    "sha256": "4c3bfb659143c31b5b8cedefeaf0334f316d1826bbe7f957b6b39daa69bb1348"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260720-patent-generic-family-71123577/family-71123577-replay-determinism.json",
+    "bytes": 8069,
+    "sha256": "2250c312029af28dd04680da23d2d40815e5f32376f9738599bdfd0b55c79f44"
+  },
+  "semantic_replay_sha256": "961f0a409e5eddde096c826c0bfc475df8da53ed761003bbf8d03bd68d9c0af4",
+  "external_family_members": {
+    "path": ".planning/quick/260720-patent-generic-family-71123577/family-71123577-external-family-members.json",
+    "bytes": 2210,
+    "sha256": "a75986850912ea89dea2389d55c1bfeafa3b483e5d43063fedfe633592231379"
+  },
+  "ledger": {
+    "strict_roots_with_results": 619,
+    "strict_roots_total": 619,
+    "missing": 0,
+    "corrupt": 0,
+    "result_set_sha256": "d0b165d96a6fc2a0fa9505f812d430b4979e4cd92880324b9629dd8634a6559d",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    },
+    "generic_before": {
+      "path": ".planning/quick/260720-patent-generic-family-71123577/generic-residual-before-55.json",
+      "bytes": 34210,
+      "sha256": "0d8b685bc0f188f2bfa4cf1de39e9867363da4d1de6d465eaf34985a37c0fdc3"
+    },
+    "generic_after_1": {
+      "path": ".planning/quick/260720-patent-generic-family-71123577/generic-residual-after-1.json",
+      "bytes": 33585,
+      "sha256": "4f7a3c89816933a2dd19723e414f467cbe8f23f02d5c06f5a35843243a0dfdf1"
+    },
+    "generic_after_2": {
+      "path": ".planning/quick/260720-patent-generic-family-71123577/generic-residual-after-2.json",
+      "bytes": 33585,
+      "sha256": "4f7a3c89816933a2dd19723e414f467cbe8f23f02d5c06f5a35843243a0dfdf1"
+    }
+  },
+  "conversion_outputs": {
+    "worker_requests": 3,
+    "worker_receipts": 3,
+    "prescription_fingerprints": 3,
+    "candidate_zmx": 3,
+    "staging_zmx": 3,
+    "formal_intake": 0,
+    "codev_calls": 0
+  },
+  "next_exact_group": {
+    "family_id": "89536570",
+    "root_ids": [
+      "US-20260029620"
+    ],
+    "publication_ids": [
+      "US-20260029620-A1"
+    ],
+    "application_number": "18/993007",
+    "title": "IMAGING LENS SYSTEM, CAMERA MODULE, IN-VEHICLE SYSTEM, AND VEHICLE",
+    "first_inventor": "SHIMOEDA; Yukihiro",
+    "applicant": "Maxell, Ltd.",
+    "assignee": "Maxell, Ltd.",
+    "layout_signature": "925ec854f290ca2fe8603f5fe7a2a96962c85ad3ef408f36773d3b185d660840",
+    "layout_signature_count": 1,
+    "table_count": 10,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 9,
+      "example_anchor": 59,
+      "f_number": 12,
+      "full_field": 0,
+      "half_field": 2
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/5bfe5e9cc6c4dee6/US-20260029620-A1.html",
+      "sha256": "5bfe5e9cc6c4dee627a45e3bfcfd3c5f61725e3fe00155c487b6cc56b47196da"
+    }
+  },
+  "saturation_complete": false
+}

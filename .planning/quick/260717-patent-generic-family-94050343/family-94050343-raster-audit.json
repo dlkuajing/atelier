@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "publication_id": "US-20260072245-A1",
+  "page_count": 31,
+  "cover_pages": [1],
+  "drawing_pdf_pages": [2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "drawing_sheet_count": 9,
+  "specification_pdf_pages": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+  "raster_only": true,
+  "embedded_images_per_page": 1,
+  "containers": {
+    "official_1": {
+      "path": ".planning/quick/260717-patent-generic-family-94050343/source-review/US-20260072245-A1-official-1.pdf",
+      "bytes": 2002673,
+      "sha256": "6eb9372714c7efd6f23c37366b83c4093d3f4c65b560c939a16ebd2ab23b5f30"
+    },
+    "official_2": {
+      "path": ".planning/quick/260717-patent-generic-family-94050343/source-review/US-20260072245-A1-official-2.pdf",
+      "bytes": 2002673,
+      "sha256": "34ecf1b67dcb12944e08b94fc62f44eff4c889a80d6010681f4f9deb6b7cd4a4"
+    }
+  },
+  "canonical_raster_set_sha256": "4f9faea5cc5337619de54ae2a6feed4db2e8724a25408c3940ee8e89389d2b16",
+  "decoded_rasters_equal_between_containers": true,
+  "pages": [
+    {"page": 1, "shape": [3300, 2560], "sha256": "76af53bc586c5e4c1151e52f3ad9971a66c9eee165d1392f6193fab81f70ffec"},
+    {"page": 2, "shape": [3300, 2560], "sha256": "b0dc8e6271349228d86ec701c0f54498d3fa88976701a5cc73b6d5c5836ed041"},
+    {"page": 3, "shape": [3300, 2560], "sha256": "f6df5ed405cc3ef52f0c542bfd634cd886b37214a5af920188d1bd24b63e686b"},
+    {"page": 4, "shape": [3300, 2560], "sha256": "2f577f565a4c1ab440c57240173e2d63b3fcfea2e7caf6d558d6654d88e0d437"},
+    {"page": 5, "shape": [3300, 2560], "sha256": "63d6dcf4b4fb0a1a67a0d163bfe26b0e531a138d5a629dc40a3e2b27dd2fcd8f"},
+    {"page": 6, "shape": [3300, 2560], "sha256": "b1ccb5db35a95fe9b5fd4712cfef8c30acadcde9d6419415cbf0ffeb300a2271"},
+    {"page": 7, "shape": [3300, 2560], "sha256": "c4217ecd3076ba664f4132d844e207aafc05f4869782675878708eb97745a9b3"},
+    {"page": 8, "shape": [3300, 2560], "sha256": "0d2a6b198fc9369407fcc1cecf3a151684bb39649c373604013ebf99a4be4a30"},
+    {"page": 9, "shape": [3300, 2560], "sha256": "d5d2f5aa69801dc9a1648e88516afc3e190dabde5f0d82323f7faee9a33f3cd2"},
+    {"page": 10, "shape": [3300, 2560], "sha256": "b1ded360c174389aa71379d09dab60b074bc97f7eb78ef91a8b63ef35be16a0e"},
+    {"page": 11, "shape": [3300, 2560], "sha256": "3a92753a1af1bd8f0a53f4fc958a6eca78c22b805be939e7f78c75baf1c090dd"},
+    {"page": 12, "shape": [3300, 2560], "sha256": "005c78da944f2a04be415b16b88db4aedcbfa0881ccde8c5ba8d5140d0acce19"},
+    {"page": 13, "shape": [3300, 2560], "sha256": "60384d59eb7589cd7eea4f607d93636a418c62d7a9e2915f07db57c626ebe3ef"},
+    {"page": 14, "shape": [3300, 2560], "sha256": "be3f45c34e37917860bb1abafef5c637a412f83e262b1effbbf8d8034780976a"},
+    {"page": 15, "shape": [3300, 2560], "sha256": "aa0d84f28cfe7780eaaf3f08a16277a03d6848839e19c76065f438cb6856798e"},
+    {"page": 16, "shape": [3300, 2560], "sha256": "28b946f954d6503a7c186a1ddd619224746f4db74c073bfd7466542354fab32e"},
+    {"page": 17, "shape": [3300, 2560], "sha256": "17de517a2cf610778b3809d1156d203207a218078b5105a0ce718fbca6df97c2"},
+    {"page": 18, "shape": [3300, 2560], "sha256": "8116f837e1ab901c667c20efbb61e998055223a41a6fe09d00b5cbb9562d61e7"},
+    {"page": 19, "shape": [3300, 2550], "sha256": "0eca32b9bc9bbe62948b3ca011d0813a6721703db1c275dc9043764abb562164"},
+    {"page": 20, "shape": [3300, 2560], "sha256": "de3aa86f9c3b7514bfb39629ebeb57388418123443e33d5678287c379c22f90b"},
+    {"page": 21, "shape": [3300, 2560], "sha256": "7eec2aa4f28bcc825564cb9583b6548fe562ac39b06173f62744f4e12b0515ed"},
+    {"page": 22, "shape": [3300, 2560], "sha256": "81e587739cba06784045161128cce71da769acb74fe6af9ba0785586a0213de6"},
+    {"page": 23, "shape": [3300, 2560], "sha256": "272c40654ee821828b32df00c4f6d944669ffcc5fceb98a1516f10c11362777b"},
+    {"page": 24, "shape": [3300, 2560], "sha256": "4db64e6705312cd670b79d0435a720d02a0d7fc6db3ac061375146e650423fda"},
+    {"page": 25, "shape": [3300, 2560], "sha256": "6886261f269965f33f76c4bef9109aedde6f1425f58b4333a8787953ff6ed9e8"},
+    {"page": 26, "shape": [3300, 2560], "sha256": "f0a5779639fa2c2ed07fb088746da437967780c284984a1a4cf5288b4f7c154c"},
+    {"page": 27, "shape": [3300, 2560], "sha256": "28f0d38ade4922509beaf18093b1fa9aa8f78b9a39339aa7ba21b9b42e05ca34"},
+    {"page": 28, "shape": [3300, 2560], "sha256": "0b8a73b2f05ea75632a4d96dea3bfd3f1979fd4e53985803c046124c5663dc8d"},
+    {"page": 29, "shape": [3300, 2550], "sha256": "724c7dd6d163e392fd0d8eb9c66a7d73d09c5885d87ded283d3ffbc27f254cd1"},
+    {"page": 30, "shape": [3300, 2550], "sha256": "3b533890a5b2cfcdc5bca54257da59dde2ed1e384355ee6c47bde01da612de32"},
+    {"page": 31, "shape": [3300, 2550], "sha256": "a9182933da6612391ce4683b48e4559c6eaf2aa84347bda9d14be19b47939f8b"}
+  ],
+  "critical_review": {
+    "page_19": "TABLE 1a, TABLE 1b, paragraph 82 term definitions, visible sum limits i=3..20, and printed em dashes for surface 6/7 Y radii",
+    "pages_20_through_27": "TABLE 2a/2b through TABLE 8a/8b",
+    "page_28": "TABLE 9 cross-embodiment summary",
+    "pages_29_through_31": "claims 1-20"
+  },
+  "numeric_derivation_from_rasters": false
+}

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "family_id": "63252479",
+  "root_id": "US-20250284086",
+  "publication_id": "US-20250284086-A1",
+  "application_number": "19/218688",
+  "retained_official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/67c144ce4c85777e/US-20250284086-A1.html",
+    "bytes": 139856,
+    "characters": 138285,
+    "normalized_characters": 116920,
+    "sha256": "67c144ce4c85777eb2d938fb609997aa48742fb1247a2e8880321fb47492773d",
+    "normalized_sha256": "76be399fe0f40a3d37aa8da061fc0da06c7a1b07e743f3a4b656921b4224bcfe",
+    "flattened_table_us_objects": 8,
+    "mathml_objects": 2,
+    "embedded_img_tags": 0,
+    "html_table_tags": 0,
+    "content_authority": true
+  },
+  "retained_official_pdf_fetches": [
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/85eb58e3bd20b491/US-20250284086-A1.pdf",
+      "bytes": 2829592,
+      "sha256": "85eb58e3bd20b4913258ec21e8e2fb4001119b9e416b9f329d22de5a5bbedaf0"
+    },
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/66d8fbd505f61497/US-20250284086-A1.pdf",
+      "bytes": 2829592,
+      "sha256": "66d8fbd505f61497b1d7db82a6325b544256f03d1d7483a8bbde87155776ff5b"
+    }
+  ],
+  "pdf_reconciliation": {
+    "page_count": 47,
+    "single_raster_pages": 47,
+    "text_layer_characters": 0,
+    "container_sha256_equal": false,
+    "container_bytes_equal": true,
+    "decoded_page_rasters_equal": true,
+    "page_record_set_sha256": "8e1744589413cf0c3331483320106af0d764c021c989ab2e4421bbdddc7a6dd2",
+    "canonical_raster_hash_sequence_sha256": "a6cc57bb2e5f1c25fd5fbcbb1bc22269990007731d0b8c768bfe7c9f5580d7b8",
+    "content_authority": false,
+    "layout_and_printed_token_corroboration_only": true
+  },
+  "bibliography": {
+    "title": "FOLDED CAMERA LENS DESIGNS",
+    "inventors": [
+      "Shabtay; Gal",
+      "Goldenberg; Ephraim",
+      "Dror; Michael",
+      "Yedid; Itay",
+      "Bachar; Gil"
+    ],
+    "applicant": "Corephotonics Ltd.",
+    "filed": "2025-05-27",
+    "publication_date": "2025-09-11",
+    "status": "Pending"
+  },
+  "lineage": {
+    "continuation_parent_application": "18/314866",
+    "continuation_parent_patent": "US-12345943-B2",
+    "pct_application": "PCT/IB2018/050988",
+    "pct_publication": "WO-2018154421-A1",
+    "earliest_priority_date": "2017-02-23",
+    "related_application_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_html_is_content_authority": true,
+    "official_pdf_used_for_layout_and_printed_token_corroboration_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_application_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "angular_field_derivation_permitted": false,
+    "system_stop_synthesis_permitted": false
+  }
+}

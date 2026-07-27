@@ -1,0 +1,54 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "86539672",
+  "root_id": "US-20240352227",
+  "publication_id": "US-20240352227-A1",
+  "sections": {
+    "background_summary_paragraphs": 54,
+    "description_paragraphs": 178,
+    "numbered_paragraphs_total": 232,
+    "claims": 20,
+    "independent_claims": 3,
+    "flattened_tables": 2,
+    "custom_character_image_tokens": 17,
+    "declared_figures": 0,
+    "drawing_sheets": 0
+  },
+  "experiments": {
+    "examples": 14,
+    "comparative_examples": 2,
+    "formal_records": 16
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Mitsui resin-composition, molded-product and optical-component materials disclosure",
+      "paragraph_range": [
+        55,
+        232
+      ],
+      "formal_experiments": 16,
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.resin_composition_molded_product_and_optical_component_materials_only"
+    }
+  ],
+  "optical_interpretation": {
+    "ordered_surface_prescriptions": 0,
+    "f_value_occurrences": 1,
+    "f_value_role": "commercial camera evaluation setting in paragraph [0189], not a disclosed lens-system datum",
+    "refractive_index_role": "material plate measurement/threshold only",
+    "generic_lens_role": "possible molded-product shape/end use only",
+    "worker_authorized": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 1,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}

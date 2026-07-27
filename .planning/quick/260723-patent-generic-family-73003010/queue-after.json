@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-73003010/generic-residual-after-1.json",
+  "affected_roots": 7,
+  "affected_items": 7,
+  "result_set_sha256": "3fde6811376147492d444e6b2db11d0478d062881fa8a70afc4d326a225fc6dd",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "f049d4d2ee7a5e46a0656e442156cafbb11facf47e3209535e08a4087f614c3e",
+    "layout_signature_count": 1,
+    "family_id": "95073324",
+    "root_ids": [
+      "US-20260147257"
+    ],
+    "publication_ids": [
+      "US-20260147257-A1"
+    ],
+    "application_numbers": [
+      "19/450317"
+    ],
+    "title": "IMAGING LENS ASSEMBLY, CAMERA MODULE, AND IMAGING DEVICE",
+    "applicant": "GUANGDONG OPPO MOBILE TELECOMMUNICATIONS CORP., LTD.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/32fba3c3e5d4aeb7/US-20260147257-A1.html",
+      "sha256": "32fba3c3e5d4aeb736896604e6feddee077b8cc13b4d7f52fcff31fea9fe5026",
+      "bytes": 117393
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 7,
+      "full_field": 0,
+      "half_field": 4
+    },
+    "table_count": 25
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

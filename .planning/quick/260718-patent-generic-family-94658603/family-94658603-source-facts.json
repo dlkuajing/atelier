@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "family_id": "94658603",
+  "publication_id": "US-20260118635-A1",
+  "application_number": "19/281010",
+  "title": "OPTICAL LENS, IMAGE MODULE, AND TERMINAL DEVICE",
+  "inventors": [
+    "LAN; Binli",
+    "ZHU; Xingxing",
+    "ZENG; Han"
+  ],
+  "applicant": "Jiangxi OFLM Optical Co., Ltd.",
+  "filing_date": "2025-07-25",
+  "publication_date": "2026-04-30",
+  "foreign_priority": {
+    "jurisdiction": "CN",
+    "application_number": "202411545209.6",
+    "date": "2024-10-31"
+  },
+  "source_hashes": {
+    "raw_document_sha256": "3fe547f20905b87a7b338b6c45437edcfe8bf5649d00e3e8bb28a2174fff9c60",
+    "normalized_text_sha256": "bc78e256ea789a7bf9a5f0c9e39e6a5f970e0807703ad12d8fd6985c53d054aa",
+    "section_sha256": {
+      "abstract": "459f6ac310405c7973cfc806b39cc20c29831bb4f5246cee8faf0b707b592c30",
+      "background": "9675b883260b229e765e4289f9545f0353c00fd1fbdbc96f0582baf74ee12741",
+      "brief": "4bdc3f3f7d18bdc23777a5cf3193879e188d4950b5637fe6659dd2ebddc6fbb0",
+      "detailed": "b20040285d648dd2a1c0b9ba33602ae4e2c79a11784ad8af1325f23abf41abd1",
+      "claims": "32ef1141d9a0ac98837eb803b2164ec02c3a7c218882f91820f14a77fafce1be"
+    },
+    "paragraph_span_sha256": {
+      "24-77": "3adeb00c6b81114f8ed60cf226e7e8160dad1629506bca73ee72a69e72d1ecac",
+      "78-86": "814126855a373e32ed2b75b8d93adf42c72ab40536cd96369d45f5f5dbe3944f",
+      "87-91": "6cfd8063cbfd244dbbb64e99b092c8436abbcfae8bdaf2740c8bba83c4c8b07b",
+      "92-96": "01bb3a1e1098f981d6d28fe0794a8d43fc15dbf18e10672333421b69a7653ddc",
+      "97-101": "94080efb54672a991c1bab0a454ae22cc22348bfd740f9d5c44eadc4aca5a38b",
+      "102-106": "85f796941f98325d8fabe4a2590f4624c51bf9d4ac6178cef1edd41cc6590d27",
+      "107-111": "c5626ab02cfe82fc023287c22d6f585d5e7798874c28aa34bc510f6ce9660a06",
+      "112-112": "fe3bfa2de0abbcdd4c97c860f4a128b1c167b75b20bd57483b029fc6e69197ae",
+      "113-113": "00782097109e053814f2d72900e6428fd3ff5724b331871a80a443031dc4026b",
+      "114-114": "402ce9c609d1fc6a9833ef92a291344408748899bca9e6193f73a216cbe886a9",
+      "115-115": "474ad8ac0b75a614627824c69225b88b071ac2563291a92016cda80577b11b4b"
+    },
+    "table_payload_sha256": [
+      "51131cc1279468ce97de5ea1a92bb1305adb59072c4003cfd2df3ffc66fe0483",
+      "e4e108d0d277a34430bd9d3a9470893f4774bfdfecc44d05f15279ed0ca6110d",
+      "70d83d0272fbddbe838e5c6e69ebcdc5feb76f90f347a65a3deb0e011df7bf85",
+      "493a05a9460a4837b320690b5e4c68856a4de6e0909162b2f6f8e3019ecb64b4",
+      "646715ddad47261732e1e4ba1a26431ddd6768a5f18515be9624961e05ccaa24",
+      "6698f962c8c57ade30d91721f7a92ff83a61a3eedd8d0a2736e39bc4ff85bb91",
+      "545b014df6d353e109c97fcbe48913acff38a15e7e1d40fa1c34a456f14d2540",
+      "63ae5cda48ea37c7da576397ad1261bc72179eca97de51cdcb2a2eab01c187a9",
+      "025c88ee2a1d4d6154b9b5168e8e1e1325ee24e455dbe86d9831f09bde1d00b0",
+      "098a5a7d83365e0ed0b78c71c7ea2734826c21991e23c115e6afcaac97055e35",
+      "7f8b888c45184dd77d53594b95cd1e11c8932feaf0ed75ce41a69fddb901230a",
+      "61908d1f7f8dfaf8953500fca8c933ff2a2d3411c2ba0a9ae4927081d461c8d4",
+      "c5dcb765f31a8252c3f25bf992bbb3647d44e664680272f489917fa86345a265"
+    ],
+    "mathml_objects": 23
+  },
+  "table_reconciliation": [
+    {"table": "1a", "paragraphs": [78, 86], "ordered_rows": 19, "role": "first prescription and direct F/FNO/FOV"},
+    {"table": "1b", "paragraphs": [78, 86], "coefficient_rows": 8, "role": "first S13/S14 K and A4-A16"},
+    {"table": "2a", "paragraphs": [87, 91], "ordered_rows": 19, "role": "second prescription and direct F/FNO/FOV"},
+    {"table": "2b", "paragraphs": [87, 91], "coefficient_rows": 8, "role": "second S13/S14 K and A4-A16"},
+    {"table": "3a", "paragraphs": [92, 96], "ordered_rows": 19, "role": "third prescription and direct F/FNO/FOV; fourth-lens nd=1.437 and Vd=1.95"},
+    {"table": "3b", "paragraphs": [92, 96], "coefficient_rows": 8, "role": "third S13/S14 K and A4-A16"},
+    {"table": "4a", "paragraphs": [97, 101], "ordered_rows": 19, "role": "fourth prescription and direct F/FNO/FOV"},
+    {"table": "4b", "paragraphs": [97, 101], "coefficient_rows": 8, "role": "fourth S13/S14 K and A4-A16"},
+    {"table": "5a", "paragraphs": [102, 106], "ordered_rows": 19, "role": "fifth prescription and direct F/FNO/FOV"},
+    {"table": "5b", "paragraphs": [102, 106], "coefficient_rows": 8, "role": "fifth S13/S14 K and A4-A16"},
+    {"table": "6a", "paragraphs": [107, 111], "ordered_rows": 19, "role": "sixth prescription and direct F/FNO/FOV"},
+    {"table": "6b", "paragraphs": [107, 111], "coefficient_rows": 8, "role": "sixth S13/S14 K and A4-A16"},
+    {"table": 7, "paragraphs": [112, 112], "rows": 42, "role": "six-embodiment ratio comparison; no direct absolute image height"}
+  ],
+  "direct_system_values": {
+    "1": {"effective_focal_length_mm": 4.0546, "f_number": 1.63, "full_fov_degrees": 140.0},
+    "2": {"effective_focal_length_mm": 4.0406, "f_number": 1.64, "full_fov_degrees": 140.0},
+    "3": {"effective_focal_length_mm": 4.0459, "f_number": 1.64, "full_fov_degrees": 140.13},
+    "4": {"effective_focal_length_mm": 4.0363, "f_number": 1.63, "full_fov_degrees": 140.17},
+    "5": {"effective_focal_length_mm": 4.0367, "f_number": 1.63, "full_fov_degrees": 145.0},
+    "6": {"effective_focal_length_mm": 4.0472, "f_number": 1.64, "full_fov_degrees": 150.0}
+  },
+  "table_7_direct_rows": {
+    "FOV": ["140.0", "140.0", "140.1", "140.2", "145", "150"],
+    "TTL/F": ["7.3943", "7.4204", "7.4106", "7.4282", "7.4269", "7.4077"],
+    "TTL/ImgH": ["6.4843", "6.4685", "6.4732", "6.4690", "6.2813", "6.0816"],
+    "ImgH/F": ["1.1403", "1.1471", "1.1448", "1.1483", "1.1824", "1.2180"],
+    "FNO": ["1.63", "1.64", "1.64", "1.63", "1.63", "1.64"]
+  },
+  "source_discrepancies": [
+    "TABLE 3a directly publishes fourth-lens nd=1.437 and Vd=1.95. The value is outside the repository physical Vd range and is retained verbatim, not repaired or borrowed.",
+    "The first asphere MathML object and PDF page 18 visibly contain malformed summation typesetting; neither view is repaired or used for numeric inference.",
+    "Paragraph 38 and PDF page 12 visibly render a malformed TTL/CT4 inequality; no missing character or number is inferred."
+  ],
+  "items": [
+    {"embodiment_number": 1, "label": "OFLM seven-lens first embodiment", "description_paragraphs": [78, 86], "figures": [1, 2], "tables": ["1a", "1b"], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_absolute_image_height_absent"},
+    {"embodiment_number": 2, "label": "OFLM seven-lens second embodiment", "description_paragraphs": [87, 91], "figures": [3, 4], "tables": ["2a", "2b"], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_absolute_image_height_absent"},
+    {"embodiment_number": 3, "label": "OFLM seven-lens third embodiment", "description_paragraphs": [92, 96], "figures": [5, 6], "tables": ["3a", "3b"], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.absolute_image_height_absent_and_table3a_abbe_outside_physical_bounds"},
+    {"embodiment_number": 4, "label": "OFLM seven-lens fourth embodiment", "description_paragraphs": [97, 101], "figures": [7, 8], "tables": ["4a", "4b"], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_absolute_image_height_absent"},
+    {"embodiment_number": 5, "label": "OFLM seven-lens fifth embodiment", "description_paragraphs": [102, 106], "figures": [9, 10], "tables": ["5a", "5b"], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_absolute_image_height_absent"},
+    {"embodiment_number": 6, "label": "OFLM seven-lens sixth embodiment", "description_paragraphs": [107, 111], "figures": [11, 12], "tables": ["6a", "6b"], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.prescription_specific_absolute_image_height_absent"},
+    {"embodiment_number": 7, "label": "OFLM image-module wrapper", "description_paragraphs": [113, 113], "figures": [13], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.image_module_wrapper_only"},
+    {"embodiment_number": 8, "label": "OFLM terminal-device wrapper", "description_paragraphs": [114, 114], "figures": [14], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.terminal_device_wrapper_only"}
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": true,
+    "surface_radii_published": true,
+    "surface_spacing_published": true,
+    "complete_ordered_optical_material_sequence_published": true,
+    "refractive_indices_published": true,
+    "abbe_numbers_published": true,
+    "conic_or_asphere_coefficients_published": true,
+    "stop_location_published": true,
+    "effective_focal_length_published": true,
+    "prescription_specific_f_number_published": true,
+    "prescription_specific_angular_field_published": true,
+    "prescription_specific_absolute_image_height_published": false,
+    "image_height_ratio_derivation_used": false,
+    "malformed_formula_repair_used": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

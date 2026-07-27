@@ -28,6 +28,8 @@ dev = [
     "ruff>=0.7.0",
     "mypy>=1.13.0",
     "pytest-xdist>=3.8.0",
+    "pypdf[image]>=6.14.2",
+    "rapidocr-onnxruntime>=1.4.4",
 ]
 
 # Heavy optical libs live in optional groups so the Docker base image can

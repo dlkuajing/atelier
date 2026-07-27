@@ -1,0 +1,804 @@
+{
+  "raw_bytes": 96755,
+  "raw_document_sha256": "acd675d2fa1773a55594c3132b04c3572a09ea6202cc90434e7fb9fdbf1f6119",
+  "normalized_chars": 74761,
+  "normalized_text_sha256": "1df840c8cb9c73c1b57776c58b8cd21108bf4f446ca5eab73a5f324211c2fb67",
+  "identity_markers": {
+    "United States Patent Application Publication 20260169267": 1,
+    "Kind Code A1": 1,
+    "Publication Date June 18, 2026": 1,
+    "HSIEH; HUNG-CHIEN": 2,
+    "LIAN; JIALI": 1,
+    "ZHU; QINGZHI": 1,
+    "LIAO; HUABIN": 1,
+    "LIN; HAI": 1,
+    "Applicant: Genius Electronic Optical (Xiamen) Co., Ltd. (Xiamen, CN)": 1,
+    "Assignee: Genius Electronic Optical (Xiamen) Co., Ltd. (Xiamen, CN)": 1,
+    "Family ID: 75814376": 1,
+    "Appl. No.: 19/351312": 1,
+    "Filed: October 07, 2025": 1,
+    "CN 202110159404.5 Feb. 05, 2021": 1,
+    "parent US continuation 17211830 20210325": 1,
+    "parent-grant-document US 12461343": 1,
+    "child US 19351312": 1,
+    "U.S. application Ser. No. 17/211,830, filed on Mar. 25, 2021": 1
+  },
+  "raw_section_body_sha256": {
+    "background_summary": "9e5507177c21d580da37e6208becb7c19cca6a820d3f1eabc0a8c53f69c7f946",
+    "description": "105027de545a8c8199d56958708f7bba0d139d46950794f9e271f8272e03c124",
+    "claims": "3585201e3abc160d4c22f94b2769aad300f369a3039325216f67f2c27098316e"
+  },
+  "section_sha256": {
+    "background_summary": "5d8eb29b711d5196983d7c53e1cfb2b17340ca0eeea5c0af0c725973d1515a27",
+    "description": "4b496370f317d021a456a9f4cbc66f4b3d60939124368135d991cbd31766670b",
+    "claims": "59560940c56d91908991b001eb8508a5dfc179217899946355cdb7cbbd409d38"
+  },
+  "raw_paragraph_marker_ranges": {
+    "background_summary": [
+      1,
+      16
+    ],
+    "description": [
+      17,
+      158
+    ]
+  },
+  "raw_paragraph_marker_count": 158,
+  "raw_paragraph_span_sha256": {
+    "background_summary:1-16": "93e0089bfc75c8ddf55cb59aa112d8f2036fad6745303a52e5062941135f1557",
+    "description:17-81": "354281a21228af0ae4aefb611b75c264a6b57e099673e67869d36dca47b330f6",
+    "description:82-103": "a77d3945553568c005ee743bc755a0c804fb2e045543e6a711a1f61e43d1d64c",
+    "description:104-118": "1d592b9adcb2f40c3ca4bebac9d34a720931a48a2bbdac4b79e76ad69e43c650",
+    "description:119-120": "96ad53ce1c8d4666f9b32bc85c3320981cd1e4fb085bd152821fa1f64a6cd569",
+    "description:121-122": "05a1f8d7ac833b7bc1721e65f5d9f4a04cce7d2cefb0d9c3d3292de57a47c31c",
+    "description:123-124": "94d75fce6fdfadc09f6b1b1ac2e4df6889e99df408a11db65a8dec2258f40bb8",
+    "description:125-126": "73408afae30071bb9677ac68ebd7ac2cf4f3215214998ce21a7e0fc1c2571585",
+    "description:127-128": "ff737ff038d95044487760060fdd39413ad95f98e83f14fdb7bae2eef0ff2be3",
+    "description:129-130": "89b8e8d5cc83a672044739a1f0a863cd45c19b6bc5ac516bb56a7d94899db09a",
+    "description:131-132": "2266e5abfb860000dce522f649968ef8119d5e56c9ee85c0f3b3e49777f2c5c0",
+    "description:133-134": "76c1b1ba4e122010ce8e8903c00a2c19a9074e4db3bfc23f51b743198946d0c9",
+    "description:135-158": "e8c62d17ae4ad6dd2fe61f7e8c887b74a07242be8613bbed0805d4fb4d4ed79c"
+  },
+  "isolated_paragraph_span_sha256": {
+    "background_summary:1-16": "b59f7507f41058e95dcf329e8801b3a504ce8da756555850df44e75465558a60",
+    "description:17-81": "4dfa86569ca0b654759d3e96727fdb445f82f6cfcd535fa01809e875c12090bf",
+    "description:82-103": "18cd356e31e70252187f36e9b633dffa7eaeb0bfb7476b1fdc80a901a855e322",
+    "description:104-118": "803e45478561b51de97355aaa02973dacc71bd71314cbae635914a3c1c22b42e",
+    "description:119-120": "f4062959ae955e7522e0a9fd1659daef517654350c34a1349d62b07d7971a192",
+    "description:121-122": "c38dc99590cf42610b04632c9eeeb4fd53874703db03a498d75bb1daa6ec7422",
+    "description:123-124": "a0ab0321d8966e866c61e3e14944f73cfda4bb22999bd8da98bea70190e6e23b",
+    "description:125-126": "da10ac2c82f58dd50c158e6df261e3b8dc2949fa9c6a926e132587ec155b09ea",
+    "description:127-128": "c5bc82dcad0e417f08c7e15b95ae89514db86fdb18c321ee1610ead0fbd63054",
+    "description:129-130": "e0e99acc325318098d8ca8aadb184d733b92fa4ef822f76606cc003abb5eab44",
+    "description:131-132": "1f4349163bb6382b961fd48b0fba0276e263f3f51b22266ad32cd177ad4c5d12",
+    "description:133-134": "cfa04a7146daeeb59a067b7b7118f5782ae00d7caace47ef405e8eea2a79ae22",
+    "description:135-158": "6381a69faff82e00d06b1692d628dbcb3dae41abbd2357bbcb2b1bee9b68b7e3"
+  },
+  "normalization_anomalies": [
+    {
+      "raw_token": "EFL<Fno",
+      "raw_occurrences": 2,
+      "affected_following_paragraph_markers": [
+        12,
+        140
+      ],
+      "raw_marker_denominator_complete": true,
+      "whole_section_normalization_visible_markers_missing": [
+        12,
+        140
+      ],
+      "source_repair_performed": false,
+      "classifier_strategy": "split exact raw markers first; normalize each isolated paragraph only"
+    }
+  ],
+  "figref_count": 151,
+  "figref_ordered_text_sha256": "b77c25d88ab8a873df815c5d90575c2c0e9d7271dcfec9cd24b4aac3b4d81ded",
+  "figure_panels": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7A",
+    "7B",
+    "7C",
+    "7D",
+    "24",
+    "25",
+    "8",
+    "9A",
+    "9B",
+    "9C",
+    "9D",
+    "26",
+    "27",
+    "10",
+    "11A",
+    "11B",
+    "11C",
+    "11D",
+    "28",
+    "29",
+    "12",
+    "13A",
+    "13B",
+    "13C",
+    "13D",
+    "30",
+    "31",
+    "14",
+    "15A",
+    "15B",
+    "15C",
+    "15D",
+    "32",
+    "33",
+    "16",
+    "17A",
+    "17B",
+    "17C",
+    "17D",
+    "34",
+    "35",
+    "18",
+    "19A",
+    "19B",
+    "19C",
+    "19D",
+    "36",
+    "37",
+    "20",
+    "21A",
+    "21B",
+    "21C",
+    "21D",
+    "38",
+    "39",
+    "22",
+    "23A",
+    "23B",
+    "23C",
+    "23D",
+    "40",
+    "41",
+    "42"
+  ],
+  "declared_figure_panels": 69,
+  "drawing_sheets": 30,
+  "claim_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "independent_claim_numbers": [
+    1,
+    14
+  ],
+  "claim_dependencies": [
+    [],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [],
+    [
+      14
+    ],
+    [
+      14
+    ],
+    [
+      14
+    ],
+    [
+      14
+    ],
+    [
+      14
+    ],
+    [
+      14
+    ]
+  ],
+  "claim_hash_set_sha256": "469b3066aafe058d8f5c5893f85368bc71d22ca01f04005d77882b4f61df0790",
+  "raw_counts": {
+    "paragraph_tags": 23,
+    "figref": 151,
+    "table_us": 0,
+    "maths": 22,
+    "mathml": 22,
+    "native_html_table": 0,
+    "inline_formula_leads": 0,
+    "inline_formula_tails": 0,
+    "custom_character_image": 0
+  },
+  "maths_raw_hash_set_sha256": "a49fc7e33162f5a4c27a178059e62646e583a107de37ea62015e27aab1d3ca76",
+  "math_ids": [
+    "MATH-US-00001",
+    "MATH-US-00002",
+    "MATH-US-00002-2",
+    "MATH-US-00002-3",
+    "MATH-US-00002-4",
+    "MATH-US-00002-5",
+    "MATH-US-00002-6",
+    "MATH-US-00002-7",
+    "MATH-US-00002-8",
+    "MATH-US-00002-9",
+    "MATH-US-00002-10",
+    "MATH-US-00002-11",
+    "MATH-US-00002-12",
+    "MATH-US-00002-13",
+    "MATH-US-00002-14",
+    "MATH-US-00002-15",
+    "MATH-US-00002-16",
+    "MATH-US-00002-17",
+    "MATH-US-00002-18",
+    "MATH-US-00002-19",
+    "MATH-US-00002-20",
+    "MATH-US-00003"
+  ],
+  "phrase_counts": {
+    "focal length": 26,
+    "effective focal length": 11,
+    "F-number": 11,
+    "Fno": 32,
+    "field of view": 14,
+    "HFOV": 40,
+    "image height": 4,
+    "ImgH": 12,
+    "TTL": 31,
+    "aperture stop": 6,
+    "radius": 12,
+    "curvature": 76,
+    "asphere": 0,
+    "aspheric": 38,
+    "surface number": 0,
+    "thickness": 73,
+    "Abbe": 17,
+    "conic": 1,
+    "optical data": 34,
+    "aspherical data": 0,
+    "aspheric surface data": 18,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "refractive index": 4,
+    "lens element": 365
+  },
+  "items": [
+    {
+      "number": 1,
+      "label": "Genius four-lens optical imaging lens 1st embodiment",
+      "paragraph_range": [
+        104,
+        118
+      ],
+      "source_summary_paragraph": 105,
+      "figures": [
+        "6",
+        "7A",
+        "7B",
+        "7C",
+        "7D",
+        "24",
+        "25"
+      ],
+      "optical_table_figure": "24",
+      "asphere_table_figure": "25",
+      "direct_system_metadata_paragraph": 118,
+      "direct_system_metadata": {
+        "EFL": "0.375",
+        "HFOV": "43.900",
+        "TTL": "1.538",
+        "Fno": "2.000",
+        "ImgH": "0.271"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        4
+      ],
+      "optical_table_page": 13,
+      "asphere_table_page": 14
+    },
+    {
+      "number": 2,
+      "label": "Genius four-lens optical imaging lens 2nd embodiment",
+      "paragraph_range": [
+        119,
+        120
+      ],
+      "source_summary_paragraph": 119,
+      "figures": [
+        "8",
+        "9A",
+        "9B",
+        "9C",
+        "9D",
+        "26",
+        "27"
+      ],
+      "optical_table_figure": "26",
+      "asphere_table_figure": "27",
+      "direct_system_metadata_paragraph": 120,
+      "direct_system_metadata": {
+        "EFL": "0.318",
+        "HFOV": "64.088",
+        "TTL": "1.492",
+        "Fno": "1.796",
+        "ImgH": "0.325"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        5
+      ],
+      "optical_table_page": 15,
+      "asphere_table_page": 16
+    },
+    {
+      "number": 3,
+      "label": "Genius four-lens optical imaging lens 3rd embodiment",
+      "paragraph_range": [
+        121,
+        122
+      ],
+      "source_summary_paragraph": 121,
+      "figures": [
+        "10",
+        "11A",
+        "11B",
+        "11C",
+        "11D",
+        "28",
+        "29"
+      ],
+      "optical_table_figure": "28",
+      "asphere_table_figure": "29",
+      "direct_system_metadata_paragraph": 122,
+      "direct_system_metadata": {
+        "EFL": "0.361",
+        "HFOV": "70.000",
+        "TTL": "1.165",
+        "Fno": "2.000",
+        "ImgH": "0.300"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        6
+      ],
+      "optical_table_page": 17,
+      "asphere_table_page": 18
+    },
+    {
+      "number": 4,
+      "label": "Genius four-lens optical imaging lens 4th embodiment",
+      "paragraph_range": [
+        123,
+        124
+      ],
+      "source_summary_paragraph": 123,
+      "figures": [
+        "12",
+        "13A",
+        "13B",
+        "13C",
+        "13D",
+        "30",
+        "31"
+      ],
+      "optical_table_figure": "30",
+      "asphere_table_figure": "31",
+      "direct_system_metadata_paragraph": 124,
+      "direct_system_metadata": {
+        "EFL": "0.441",
+        "HFOV": "54.969",
+        "TTL": "1.191",
+        "Fno": "2.000",
+        "ImgH": "0.352"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        7
+      ],
+      "optical_table_page": 19,
+      "asphere_table_page": 20
+    },
+    {
+      "number": 5,
+      "label": "Genius four-lens optical imaging lens 5th embodiment",
+      "paragraph_range": [
+        125,
+        126
+      ],
+      "source_summary_paragraph": 125,
+      "figures": [
+        "14",
+        "15A",
+        "15B",
+        "15C",
+        "15D",
+        "32",
+        "33"
+      ],
+      "optical_table_figure": "32",
+      "asphere_table_figure": "33",
+      "direct_system_metadata_paragraph": 126,
+      "direct_system_metadata": {
+        "EFL": "0.176",
+        "HFOV": "54.180",
+        "TTL": "0.791",
+        "Fno": "2.000",
+        "ImgH": "0.150"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        8
+      ],
+      "optical_table_page": 21,
+      "asphere_table_page": 22
+    },
+    {
+      "number": 6,
+      "label": "Genius four-lens optical imaging lens 6th embodiment",
+      "paragraph_range": [
+        127,
+        128
+      ],
+      "source_summary_paragraph": 127,
+      "figures": [
+        "16",
+        "17A",
+        "17B",
+        "17C",
+        "17D",
+        "34",
+        "35"
+      ],
+      "optical_table_figure": "34",
+      "asphere_table_figure": "35",
+      "direct_system_metadata_paragraph": 128,
+      "direct_system_metadata": {
+        "EFL": "0.379",
+        "HFOV": "54.926",
+        "TTL": "1.271",
+        "Fno": "2.000",
+        "ImgH": "0.275"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        9
+      ],
+      "optical_table_page": 23,
+      "asphere_table_page": 24
+    },
+    {
+      "number": 7,
+      "label": "Genius four-lens optical imaging lens 7th embodiment",
+      "paragraph_range": [
+        129,
+        130
+      ],
+      "source_summary_paragraph": 129,
+      "figures": [
+        "18",
+        "19A",
+        "19B",
+        "19C",
+        "19D",
+        "36",
+        "37"
+      ],
+      "optical_table_figure": "36",
+      "asphere_table_figure": "37",
+      "direct_system_metadata_paragraph": 130,
+      "direct_system_metadata": {
+        "EFL": "0.440",
+        "HFOV": "64.707",
+        "TTL": "0.967",
+        "Fno": "2.000",
+        "ImgH": "0.285"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        10
+      ],
+      "optical_table_page": 25,
+      "asphere_table_page": 26
+    },
+    {
+      "number": 8,
+      "label": "Genius four-lens optical imaging lens 8th embodiment",
+      "paragraph_range": [
+        131,
+        132
+      ],
+      "source_summary_paragraph": 131,
+      "figures": [
+        "20",
+        "21A",
+        "21B",
+        "21C",
+        "21D",
+        "38",
+        "39"
+      ],
+      "optical_table_figure": "38",
+      "asphere_table_figure": "39",
+      "direct_system_metadata_paragraph": 132,
+      "direct_system_metadata": {
+        "EFL": "0.321",
+        "HFOV": "70.432",
+        "TTL": "1.609",
+        "Fno": "1.819",
+        "ImgH": "0.300"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        11
+      ],
+      "optical_table_page": 27,
+      "asphere_table_page": 28
+    },
+    {
+      "number": 9,
+      "label": "Genius four-lens optical imaging lens 9th embodiment",
+      "paragraph_range": [
+        133,
+        134
+      ],
+      "source_summary_paragraph": 133,
+      "figures": [
+        "22",
+        "23A",
+        "23B",
+        "23C",
+        "23D",
+        "40",
+        "41"
+      ],
+      "optical_table_figure": "40",
+      "asphere_table_figure": "41",
+      "direct_system_metadata_paragraph": 134,
+      "direct_system_metadata": {
+        "EFL": "0.129",
+        "HFOV": "60.154",
+        "TTL": "1.541",
+        "Fno": "1.286",
+        "ImgH": "0.090"
+      },
+      "common_table_reference_paragraph": 135,
+      "common_table_figures": [
+        "42"
+      ],
+      "published_numerical_prescription": true,
+      "machine_readable_numerical_prescription": false,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent",
+      "cross_section_and_aberration_pages": [
+        12
+      ],
+      "optical_table_page": 29,
+      "asphere_table_page": 30
+    }
+  ],
+  "official_pdf": {
+    "path": ".planning/quick/260723-patent-generic-family-75814376/source-review/US-20260169267-A1-official-1.pdf",
+    "bytes": 2721765,
+    "sha256": "c30677bc0d4a98523ff444e16fab175725f1d3100f41b636031d86eb819188f3",
+    "second_path": ".planning/quick/260723-patent-generic-family-75814376/source-review/US-20260169267-A1-official-2.pdf",
+    "second_bytes": 2721765,
+    "second_sha256": "4b9a714dc4e7f73c044fc3f4cb64d33222ad5525afbf08e54eb09d5c62ba1edb",
+    "page_count": 43,
+    "default_raster_dimensions": [
+      2560,
+      3300
+    ],
+    "exceptional_raster_dimensions": {
+      "32": [
+        2550,
+        3300
+      ],
+      "33": [
+        2550,
+        3300
+      ],
+      "37": [
+        2550,
+        3300
+      ]
+    },
+    "decoded_raster_set_sha256": "8ab3fbb9d29e39e6a61b49ee41a3bd137fa24ef976a6dbb244b8936e62022378",
+    "cover_pages": [
+      1
+    ],
+    "drawing_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31
+    ],
+    "specification_pages": [
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41
+    ],
+    "claim_pages": [
+      41,
+      42,
+      43
+    ],
+    "cross_section_and_aberration_pages": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "optical_table_pages": [
+      13,
+      15,
+      17,
+      19,
+      21,
+      23,
+      25,
+      27,
+      29
+    ],
+    "asphere_table_pages": [
+      14,
+      16,
+      18,
+      20,
+      22,
+      24,
+      26,
+      28,
+      30
+    ],
+    "common_table_pages": [
+      31
+    ]
+  }
+}

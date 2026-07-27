@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "5b4f099d2358c5979b03c112399cdf9c5d96fa03596e40ceb9ce1566f300a89e",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 108,
+      "affected_items": 108
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "99480653",
+    "root_ids": ["US-20260113525"],
+    "publication_ids": ["US-20260113525-A1"],
+    "application_number": "19/317450",
+    "title": "ANTENNA MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant": "WNC Corporation",
+    "layout_signature": "36dd9de558f5145f6ba0f0477792e739cd01e4dc1984c721ffff2a38ecd80261",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 12,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 1,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/870114a2e77a7d43/US-20260113525-A1.html",
+      "sha256": "870114a2e77a7d438bf07372a4d1cc73f576082bf2139507bb04abdb66e2e58e"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

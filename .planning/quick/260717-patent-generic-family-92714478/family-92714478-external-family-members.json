@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "family_id": "92714478",
+  "retained_classification_publications": [
+    {"publication_id": "US-12670673-B2", "application_number": "18/185364", "role": "frozen cohort source"}
+  ],
+  "same_application_publications_queue_only": [
+    {"publication_id": "US-20240312147-A1", "application_number": "18/185364", "role": "prior publication named by the B2 and independently retained as Google HTML/PDF evidence"}
+  ],
+  "source_named_related_applications_queue_only": [
+    {"application_number": "18/061203", "title_class": "gesture-based augmented/extended reality"},
+    {"application_number": "18/061226", "title_class": "gesture-based augmented/extended reality"},
+    {"application_number": "18/061257", "title_class": "gesture-based augmented/extended reality"},
+    {"application_number": "18/185362", "title_class": "ROI-based vision augmentation"},
+    {"application_number": "18/185366", "title_class": "ROI-based vision augmentation"}
+  ],
+  "google_same_application_graph_queue_only": [
+    {"publication_id": "US-20240312248-A1", "application_number": "18/185366", "relationship": "priority-linked sibling"},
+    {"publication_id": "US-20240312150-A1", "application_number": "18/501667", "relationship": "continuation child"},
+    {"publication_id": "US-20240311966-A1", "application_number": "18/613100", "relationship": "continuation-in-part child"}
+  ],
+  "graph_evidence": {
+    "path": ".planning/quick/260717-patent-generic-family-92714478/source-review/US-20240312147-A1-google.html",
+    "sha256": "f3ffd7f77ae92de414e8d9a6e5fd6fefd5db8be882e8c512ae84073fdae4bc03"
+  },
+  "numeric_borrowing": false,
+  "classification_note": "Only the frozen B2 is classified. The prior A1 and related/child applications remain queue evidence and supply no optical coordinates or metadata to the B2 result."
+}

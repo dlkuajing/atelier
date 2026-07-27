@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "family_id": "79728652",
+  "classification_publication": "US-12588309-B2",
+  "current_frozen_cohort_roots": [
+    "US-12588309"
+  ],
+  "source": {
+    "url": "https://patents.google.com/patent/US12588309B2/en",
+    "accessed_at": "2026-07-17",
+    "scope": "family applications and country status records only"
+  },
+  "external_family_members": [
+    {
+      "publication_id": "US-20230261018-A1",
+      "application_number": "18/005094",
+      "relationship": "same_application_prior_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "JP-2022021100-A",
+      "application_number": "JP2020124490A",
+      "relationship": "Japanese_priority_application_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "WO-2022018981-A1",
+      "application_number": "PCT/JP2021/021231",
+      "relationship": "PCT_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "CN-115803885-A",
+      "application_number": "CN202180040428.7A",
+      "relationship": "national_phase_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "DE-112021003874-T5",
+      "application_number": "DE112021003874.5T",
+      "relationship": "national_phase_publication",
+      "frozen_cohort_membership": false
+    },
+    {
+      "publication_id": "KR-20230041712-A",
+      "application_number": "KR1020237003042A",
+      "relationship": "national_phase_publication",
+      "frozen_cohort_membership": false
+    }
+  ],
+  "queue_policy": "Outside-cohort family records are retained for later family saturation and are not used to supply values to the frozen US B2 root."
+}

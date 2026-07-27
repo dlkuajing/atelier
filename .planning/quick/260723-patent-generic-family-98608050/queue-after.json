@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-98608050/generic-residual-after-1.json",
+  "affected_roots": 13,
+  "affected_items": 13,
+  "result_set_sha256": "98b493114a40cfcffc7e544e44c3a854ea77a33c03820d9e92685fca1b0469c8",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then stable root/publication order; exact family only",
+    "layout_signature": "dca51c30bd01b78412d940759c340660768152651a7a9e400cd7460ba448b243",
+    "layout_signature_count": 1,
+    "family_id": "89920741",
+    "root_ids": [
+      "US-20260003166"
+    ],
+    "publication_ids": [
+      "US-20260003166-A1"
+    ],
+    "application_numbers": [
+      "19/325083"
+    ],
+    "title": "Lens Assembly, Camera Module, and Electronic Device",
+    "applicant": "Huawei Technologies Co., Ltd.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b861d9e91e31544d/US-20260003166-A1.html",
+      "sha256": "b861d9e91e31544d157cf9f742cc00ab5ead972c0974b07c469fa003398c4a62",
+      "bytes": 278934
+    },
+    "marker_counts": {
+      "effective_focal_length": 23,
+      "embodiment_anchor": 166,
+      "example_anchor": 0,
+      "f_number": 38,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 0
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

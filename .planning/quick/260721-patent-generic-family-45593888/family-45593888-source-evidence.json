@@ -1,0 +1,288 @@
+{
+  "schema_version": "patent-family-source-evidence/v1",
+  "family_id": "45593888",
+  "root_id": "US-8218254",
+  "publication_id": "US-8218254-B2",
+  "application_number": "12/861419",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/a56aad055aba203f/US-8218254-B2.html",
+    "bytes": 43375,
+    "sha256": "a56aad055aba203f8b949688304cb62ce7a4e394b46866fe5e5376d7c55057f6",
+    "normalized_sha256": "6f83fd7401f7d630652508f6293f5d6269b6aeadaf30c35b1ff3b4d232d17ac2"
+  },
+  "bibliography": {
+    "title": "SOLID IMAGING OBJECTIVE AND ASSEMBLY TECHNIQUE FOR SMALL SCALE SENSOR APPLICATIONS",
+    "inventors": [
+      "Jane L. Bareau",
+      "James D. Milks",
+      "Nidia A. Alvez",
+      "Teresa M. Lupien"
+    ],
+    "assignee": "Gyrus ACMI, Inc.",
+    "filed": "2010-08-23",
+    "patent_date": "2012-07-10"
+  },
+  "lineage": {
+    "prior_publication": "US-20120044587-A1",
+    "prior_publication_date": "2012-02-23",
+    "related_application_data_printed": false,
+    "priority_claim_printed": false,
+    "cited_pct_report": "PCT/US2011/048390",
+    "cited_pct_is_not_treated_as_lineage": true
+  },
+  "source_denominator": {
+    "background_summary_lines": 12,
+    "description_lines": 44,
+    "brief_drawing_lines": 8,
+    "detailed_description_lines": 36,
+    "claims": 12,
+    "independent_claims": [
+      1,
+      4,
+      12
+    ],
+    "html_table_tags": 0,
+    "flattened_inline_tables": 1,
+    "mathml_objects": 0,
+    "figure_references": 17,
+    "declared_figures": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "drawing_sheets": 6,
+    "source_items": 4,
+    "ordered_prescriptions": 1,
+    "surface_rows": 18,
+    "unmapped_items": 0
+  },
+  "section_line_payload_sha256": {
+    "background_summary": "d00b19e31d3a8f01462d8ab8a06de55eaba09d27be3ceb7a4cabd2a68eb52965",
+    "description": "a1cb9fd5cea03ff29dec3ec939425425b6cbddef5028bc59a45d8e2cd77641cd",
+    "claims": "e03a458d428a4ba31318ab2cdf22afc0fced31da4c7862cf685d7f728a6b8caf",
+    "brief_1_8": "8dd62bc42e0f9f17a8090ed85a7a07bf46d1e86b6d8b4d5d71a4b5e77291e9d8",
+    "detailed_9_44": "0220e76b2c2cfea0dcdae2339a1c929064f142dd570aa354815eefb3ce3a6528",
+    "method_11_38": "a637dffbce26e51433a0630d297c6367861d097cca502d0392aa0239a88ba304",
+    "example_40_44": "358bd6f46674c54e367da0a87c38d3486f736bd90eddf468e05a1b3a757eb61a"
+  },
+  "inline_prescription": {
+    "table_identifier": "TABLE-US-00001",
+    "table_sha256": "1a2ea9588bf924b24c9ff9a016a6db9fdf53a350c0b6633efb06a457812b6ae5",
+    "row_labels": [
+      "OBJ",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "STO",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14",
+      "15",
+      "16",
+      "IMA"
+    ],
+    "row_sha256": [
+      "3ebc5a453296c35d99c0b68568f8f978a86660d313fb733c1828f668ee2e875d",
+      "a715104794c4232ff7cc37a2721a56133beb5f145f949aee8573dcaee232369d",
+      "8ff1561f4f721e9e1a316c57d3fda651e5328e8c733ce2016cc4c902a2e41f05",
+      "7d90b7bb0e80c3ea6d4fab4520f669fc30f12e42a9a466f34b6594d2587a9060",
+      "43c21111f7b1907c15b62702630bd1f7bc0796538db896f8c6671143151ec04d",
+      "fbc0035624289bfb829bf3da94dc14d42d6b19abf79233878f2797789f8cc44f",
+      "970329f3e5f5afed525c6eb4132eea34900968fef3a505b3e5ba71a0964d0083",
+      "8cba6c241e94be3bda24b3d9a5c09069c80e9c7ad6f36eafc78fe08249af38e5",
+      "744c4aedf8ea8f4319c220f3f2bc0aa6ae787f5bc45de49e214ea7b83ca3efec",
+      "6cfcb7f6f0ab1daaf1156e11056d16378a8c7d54441ef36431403019d9efe24a",
+      "4fb80b48c2c58bfba5223fe93426fcf8dfe03ecbf148f20c34c63293acddf0ee",
+      "e3f5250ea1c9b5ccdd24f39b3e60fc86490535fa89edd233cbd23e23f79c2533",
+      "5523cb524464e4b9a418819204b0cde48bad14e678c04c19954cce99572f8ac0",
+      "29a628b8daa4f301ff78df78652a74477d723a1cd557a1ced69b7ce019618f34",
+      "af4d11015dd306db65bb857cdf47ec5a8c07b228ec99c83f56343ed1743259c4",
+      "189e50808a466dd649a6e18a06f8250de4f4dd2e0a5792d6dbfc58fbd0cd36bf",
+      "6611e1aef03272cecbfca04bc68a658c7d0f3d7a84c5fbe44fe4302c3e79c9ae",
+      "6e5d15b18bbcdeb8a31804389cf98a5c6ef1dca2ef94ce9d189328728ccd3dea"
+    ],
+    "directly_published_columns": [
+      "Surface",
+      "Radius",
+      "Thickness",
+      "Glass",
+      "Diameter"
+    ],
+    "required_metadata_absent": [
+      "effective focal length",
+      "F-number",
+      "numeric angular field",
+      "numeric image height"
+    ],
+    "ima_diameter_treated_as_image_height": false
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Gyrus small-scale imaging-optic architecture",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.generic_small_scale_imaging_optic_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Gyrus optical alignment and assembly method",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.optical_alignment_and_assembly_method_only"
+    },
+    {
+      "number": 3,
+      "label": "Gyrus endoscope wrapper",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.endoscope_wrapper_only"
+    },
+    {
+      "number": 4,
+      "label": "Gyrus Example 1 finite-object prescription",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_efl_f_number_angular_field_and_image_height_absent"
+    }
+  ],
+  "official_pdf": {
+    "pinned_download_1": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/9c627c32c68c36c1/US-8218254-B2.pdf",
+      "bytes": 775186,
+      "sha256": "9c627c32c68c36c1ac02e41df5088939c52965201f47e0a1adf038c77b3c30bb"
+    },
+    "download_2": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/source-review/US-8218254-B2-official-2.pdf",
+      "bytes": 775186,
+      "sha256": "68a328c14241baa895847d60ccef6986312249181930a9c03dbb59d472affa8d"
+    },
+    "page_count": 12,
+    "text_layer_characters": 0,
+    "embedded_page_mode": "1-bit",
+    "raster_dimensions": [
+      2560,
+      3300
+    ],
+    "raster_set_sha256": "2de83d8f97132a3699cea6678e1993500b56b52ed1e94134b9dd448ce9195330"
+  },
+  "replay": {
+    "attempt_2": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-8218254/attempt-0002/result.json",
+      "bytes": 5234,
+      "sha256": "27e54b88aa7def102aebed9bdb4ef0b25f6b0ca0eb6f7b509da2022fa7fb08f9"
+    },
+    "attempt_3": {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-8218254/attempt-0003/result.json",
+      "bytes": 5234,
+      "sha256": "ec9703bb6d431389979648468f05c3a4ccc77e6ca09edb92d20d1e729ce39411"
+    },
+    "semantic_equal": true,
+    "semantic_sha256": "c7cdd8ae14113f175a0c491d9e51c84db9cd318b6bfe5878c8c6a7b038195eab",
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    },
+    "strict_audit": {
+      "roots_with_results": 619,
+      "expected_roots": 619,
+      "missing_results": 0,
+      "corrupt_results": 0
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-before-40.json",
+      "bytes": 24730,
+      "sha256": "e04294185d1c20d8834aeb46b3bdfcc19303a5da579ebe6e7ec57e7d2e063614"
+    },
+    "after_1": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-after-1.json",
+      "bytes": 24111,
+      "sha256": "dc9bd2907f473468777fc7953a9937049e796e595bbddeb1be60b1518653fdd5"
+    },
+    "after_2": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/generic-residual-after-2.json",
+      "bytes": 24111,
+      "sha256": "dc9bd2907f473468777fc7953a9937049e796e595bbddeb1be60b1518653fdd5"
+    },
+    "before_roots": 40,
+    "after_roots": 39,
+    "result_set_sha256": "dd52fecc4dc1b51a85b8680fbe96b50abc8f7195c9401c8d3551dd71cd4bc7c0"
+  },
+  "supporting_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-source-audit.md",
+      "bytes": 3173,
+      "sha256": "a33ded6f1869f5021edaf43351f9528a603f8bd9765843b06d1450629a0ecbc9"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-raster-audit.json",
+      "bytes": 5516,
+      "sha256": "3dbf57d32d4313ca0481c834172c0c6218170c05c4cf7fa31ac17bac01857515"
+    },
+    "source_availability": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-source-availability.json",
+      "bytes": 2757,
+      "sha256": "dc39209223a2c5694318edadd469bf0f0ad43fc33949c0a257528fbe88afd6ae"
+    },
+    "denominator": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-denominator.json",
+      "bytes": 4478,
+      "sha256": "57cc39920475c3b125ce8b5ac3ae1a2ff8319402baa8d63bfb481ad8c47e7462"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/family-45593888-replay-determinism.json",
+      "bytes": 1599,
+      "sha256": "0036c782ea3797ecb06cce28d3893843b7e460b75e2634ce1856f8c5dda0255d"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/queue-after.json",
+      "bytes": 1326,
+      "sha256": "262c3a6b54fae9f1aa3c8510b16c9e43436022064bc46104d780f1e6b258fe01"
+    },
+    "roots": {
+      "path": ".planning/quick/260721-patent-generic-family-45593888/roots.txt",
+      "bytes": 11,
+      "sha256": "53546a9e2c2536800436c2fd7ef056d8238268b8d3278bf4889fcaf50be53659"
+    }
+  },
+  "review_policy": {
+    "source_typography_repaired": false,
+    "numeric_derivation_used": false,
+    "image_diameter_halving_used": false,
+    "finite_object_to_infinity_substitution_used": false,
+    "raster_numeric_transcription_used": false,
+    "drawing_measurement_used": false,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  },
+  "next_exact_group": {
+    "family_id": "87279038",
+    "root_id": "US-20250155675",
+    "publication_id": "US-20250155675-A1",
+    "layout_signature": "ba0eebe2bf6869af6594b480f6059bad42582863b96360cc021689239954e04e"
+  },
+  "saturation_complete": false
+}

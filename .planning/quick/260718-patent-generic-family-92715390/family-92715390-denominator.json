@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "family_id": "92715390",
+  "root_id": "US-12663695",
+  "publication_id": "US-12663695-B2",
+  "identity": {
+    "application_number": "18/587176",
+    "title": "Camera module",
+    "applicant": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "assignee": "Samsung Electro-Mechanics Co., Ltd.",
+    "filed": "2024-02-26",
+    "patent_date": "2026-06-23",
+    "kind_code": "B2",
+    "prior_publication": {"publication": "US 20240310694 A1", "date": "2024-09-19"},
+    "priority_applications": [
+      {"application": "KR 10-2023-0034108", "date": "2023-03-15"},
+      {"application": "KR 10-2023-0117213", "date": "2023-09-04"}
+    ],
+    "pct_application": null
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/344973b24234452b/US-12663695-B2.html",
+    "bytes": 144586,
+    "raw_characters": 144312,
+    "raw_sha256": "344973b24234452b0a0178358d493bac58dfa26f48b5b7281f52d296782fd19e",
+    "normalized_characters": 119486,
+    "normalized_sha256": "98e14b06e59e9f83872ced3317013cc8575d844e0b858dcd13188d663c445c81"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "cross_reference_numbered_paragraphs": 1,
+    "field_and_background_numbered_paragraphs": 7,
+    "summary_numbered_paragraphs": 26,
+    "brief_drawing_numbered_paragraphs": 30,
+    "figure_declaration_paragraphs": 29,
+    "detailed_numbered_paragraphs": 348,
+    "total_numbered_paragraphs": 412,
+    "claims": 22,
+    "claim_families": 3,
+    "declared_textual_figures": 30,
+    "located_raster_figures": 30,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 6,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 6,
+    "replayed_ledger_items": 6,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 43,
+    "retained_page_rasters": 43,
+    "retained_drawing_sheets": 24,
+    "unmapped_source_items": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_claims": 0
+  },
+  "paragraph_spans": {
+    "background_summary": [
+      {"range": [1, 1], "role": "Korean priority binding and field heading"},
+      {"range": [2, 8], "role": "field and background"},
+      {"range": [9, 25], "role": "first general camera-module aspect"},
+      {"range": [26, 30], "role": "second general camera-module aspect"},
+      {"range": [31, 33], "role": "third general camera-module aspect"},
+      {"range": [34, 34], "role": "summary closing"}
+    ],
+    "description": [
+      {"range": [1, 29], "role": "30 figure declarations; paragraph 29 declares FIGS. 29 and 30"},
+      {"range": [30, 30], "role": "drawing-scale disclaimer"},
+      {"range": [31, 45], "role": "detailed-description preamble and initial figure references"},
+      {"range": [46, 178], "role": "first camera-module and aperture-module architecture"},
+      {"range": [179, 308], "role": "camera-actuator, lens-barrel and lens-motion architecture"},
+      {"range": [309, 334], "role": "first connection-substrate support architecture"},
+      {"range": [335, 368], "role": "second dual-extension aperture-substrate and RF-PCB architecture"},
+      {"range": [369, 372], "role": "FIG. 29 split support-bridge variant"},
+      {"range": [373, 377], "role": "FIG. 30 crossed coupling-layout variant"},
+      {"range": [378, 378], "role": "closing boilerplate"}
+    ]
+  },
+  "figures": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30"],
+  "claim_families": [
+    {"range": [1, 14], "role": "camera, aperture, lens-motion, bonding and connection-substrate architecture"},
+    {"range": [15, 19], "role": "moving/fixed/support connection-substrate architecture"},
+    {"range": [20, 22], "role": "camera module with movable aperture and two-sided substrate connection"}
+  ],
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Samsung first camera-module aperture architecture",
+      "description_paragraphs": [46, 178],
+      "claim_context": [[1, 14]],
+      "status": "confirmed_no_prescription",
+      "reason_code": "first_camera_module_aperture_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Samsung camera-actuator lens-motion architecture",
+      "description_paragraphs": [179, 308],
+      "claim_context": [[1, 14], [15, 19], [20, 22]],
+      "status": "confirmed_no_prescription",
+      "reason_code": "camera_actuator_lens_motion_architecture_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Samsung first connection-substrate support architecture",
+      "description_paragraphs": [309, 334],
+      "claim_context": [[1, 14], [15, 19]],
+      "status": "confirmed_no_prescription",
+      "reason_code": "first_connection_substrate_support_architecture_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Samsung dual-extension aperture-substrate RF-PCB architecture",
+      "description_paragraphs": [335, 368],
+      "claim_context": [[1, 14], [15, 19], [20, 22]],
+      "status": "confirmed_no_prescription",
+      "reason_code": "dual_extension_aperture_substrate_rf_pcb_architecture_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Samsung split support-bridge connection-substrate variant",
+      "description_paragraphs": [369, 372],
+      "claim_context": [[1, 5], [15, 19], [20, 22]],
+      "status": "confirmed_no_prescription",
+      "reason_code": "split_support_bridge_connection_substrate_variant_only"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Samsung crossed coupling connection-substrate variant",
+      "description_paragraphs": [373, 377],
+      "claim_context": [[1, 5], [15, 19], [20, 22]],
+      "status": "confirmed_no_prescription",
+      "reason_code": "crossed_coupling_connection_substrate_variant_only"
+    }
+  ],
+  "prescription_marker_census": {
+    "focal length": 0,
+    "F-number": 0,
+    "field of view": 0,
+    "angle of view": 0,
+    "aspheric": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "conic": 0,
+    "coefficient": 0,
+    "image height": 0,
+    "optical prescription": 0,
+    "lens element": 0,
+    "aperture stop": 0,
+    "millimetre token": 0,
+    "nanometre token": 0,
+    "radius": 5,
+    "curvature": 10,
+    "thickness": 1
+  },
+  "optical_scope": {
+    "at_least_one_lens_occurrences": 1,
+    "lens_barrel_occurrences": 36,
+    "lens_module_occurrences": 130,
+    "aperture_module_occurrences": 90,
+    "connection_substrate_occurrences": 53,
+    "image_sensor_occurrences": 20,
+    "magnet_portion_occurrences": 31,
+    "coil_portion_occurrences": 30,
+    "rolling_portion_occurrences": 14,
+    "interpretation": "camera aperture, lens-holder, actuator, moving-support and printed-circuit architecture only",
+    "ordered_surface_prescriptions": 0
+  },
+  "non_prescription_numeric_contexts": [
+    {
+      "values": ["rotating radius", "curvature radius"],
+      "location": "detailed-description paragraphs 90 and 168",
+      "meaning": "rotating-body and guide-groove mechanics, not lens-surface radii"
+    },
+    {
+      "values": ["curvature"],
+      "location": "summary, detailed-description paragraphs 334/368 and claims 4/16",
+      "meaning": "connection-substrate support and bent-portion geometry"
+    },
+    {
+      "values": ["thickness"],
+      "location": "detailed-description paragraph 193",
+      "meaning": "support-protrusion thickness relative to a bonding groove"
+    },
+    {
+      "values": ["at least one lens", "a plurality of lenses"],
+      "location": "detailed-description paragraph 186",
+      "meaning": "generic lens-barrel contents without any ordered optical surface data"
+    }
+  ],
+  "forbidden_substitutions": [
+    "rotating or guide-groove radius for an optical surface radius",
+    "support or bent-substrate curvature for lens curvature",
+    "bonding-groove support thickness for axial optical thickness",
+    "generic lens count, lens barrel or lens-module wording for a surface prescription",
+    "drawing coordinates or component shapes for missing optical values",
+    "prior-publication, priority or related-family values for absent source data"
+  ]
+}

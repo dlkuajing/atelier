@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family/root/publication order",
+  "result_set_sha256": "d6f7f079db46225c64cff3a464f42ae718627642a1d20b4eda8235b42cd34f17",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 95,
+      "affected_items": 95
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "23219584",
+    "root_ids": [
+      "US-6292306"
+    ],
+    "publication_ids": [
+      "US-6292306-B1"
+    ],
+    "application_number": "09/314343",
+    "title": "Telecentric zoom lens system for video based inspection system",
+    "applicant": "Optical Gaging Products, Inc.",
+    "layout_signature": "437fa2555cbad39206a20353ea2dc5e5c7dba01ccf65749ed1c49baa7cfdaa4b",
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 1,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/79baca6bd83e0d39/US-6292306-B1.html",
+      "sha256": "79baca6bd83e0d395aedfb916b7af7afa388706a6030b2706f6ef1c112430ba6"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

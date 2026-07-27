@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "family_id": "63165840",
+  "root_id": "US-10197774",
+  "publication_id": "US-10197774-B1",
+  "application_number": "15/864483",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/1887b838473fcde0/US-10197774-B1.html",
+    "bytes": 56298,
+    "characters": 54727,
+    "normalized_characters": 41072,
+    "sha256": "1887b838473fcde0aa10edc6b1d88235c8fa194523749ff63dbe3e68deb1a696",
+    "normalized_sha256": "ac350ae7365778dbb2e1299283667b9f999d9a66160133863e47b7c00c287cff",
+    "flattened_tables": 13,
+    "inline_formula_pairs": 22,
+    "embedded_img_tags": 0,
+    "html_table_tags": 0,
+    "maths_tags": 0
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/caa2faf6a6f9b710/US-10197774-B1.pdf",
+    "bytes": 893622,
+    "container_sha256": "caa2faf6a6f9b7109d9838667b0da40142f4c51d5e7e2280094e78db7403ffcb",
+    "page_count": 16,
+    "single_raster_pages": 16,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "1d4172fe2cb85efd4166a362b90f4dbb39fd88dbdf5d3c20d8ed72e1aef76c61"
+  },
+  "bibliography": {
+    "title": "Camera optical lens",
+    "inventors": [
+      "Teraoka; Hiroyuki",
+      "Zhang; Lei",
+      "Wang; Yanmei",
+      "Zhang; Yang"
+    ],
+    "applicant": "AAC Technologies Pte. Ltd.",
+    "assignee": "AAC TECHNOLOGIES PTE. LTD.",
+    "filed": "2018-01-08",
+    "patent_date": "2019-02-05"
+  },
+  "lineage": {
+    "same_application_prior_us_publication": null,
+    "priority_applications": [
+      {
+        "country": "CN",
+        "application": "2017 1 1151223",
+        "date": "2017-11-18"
+      },
+      {
+        "country": "CN",
+        "application": "2017 1 1151235",
+        "date": "2017-11-18"
+      }
+    ],
+    "related_family_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_b1_html_is_numeric_authority": true,
+    "official_pdf_used_for_layout_and_printed_conflict_confirmation_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "detailed_surface_tables_precede_conflicting_summary_rows": true,
+    "published_internal_exceptions_are_explicit_and_narrow": true
+  }
+}

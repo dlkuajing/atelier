@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260721-patent-generic-family-60048601/generic-residual-after-2.json",
+  "result_set_sha256": "25c5f521790dc510eb4ac6e0e1962973d90205649534cd43869846647c1a5a99",
+  "generic_residual_roots": 49,
+  "generic_residual_items": 49,
+  "next_exact_group": {
+    "family_id": "84563102",
+    "root_ids": [
+      "US-20260086334"
+    ],
+    "publication_ids": [
+      "US-20260086334-A1"
+    ],
+    "application_number": "19/409065",
+    "title": "IMAGING LENS SYSTEM",
+    "first_inventor": "JUNG; Jin Hwa",
+    "applicant": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "assignee": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "layout_signature": "9c6054e21b843532df89290eb03ffb348789239fe95fb43167d9a7ab3a844482",
+    "layout_signature_count": 1,
+    "table_count": 16,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 1,
+      "full_field": 7,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a105d7ac7697b802/US-20260086334-A1.html",
+      "sha256": "a105d7ac7697b802df58d94dd93fd1902e0409c3577bbfbdc5e6e09d7fd21883"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

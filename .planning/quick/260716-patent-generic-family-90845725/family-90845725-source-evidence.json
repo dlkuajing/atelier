@@ -1,0 +1,64 @@
+{
+  "application_number": "18/731404",
+  "family_id": "90845725",
+  "foreign_priority": {
+    "application_number": "CN202410202541.6",
+    "date": "2024-02-23"
+  },
+  "google_patents": {
+    "retrieved_date": "2026-07-16",
+    "status": "Pending",
+    "url": "https://patents.google.com/patent/US20250271635A1/en",
+    "us_publication_count": 1
+  },
+  "official_html": {
+    "normalized_sha256": "f0f9d8e1b241c27ff4508d009b9eb09b76e0bb320ce28f3e34b8de59e9730d9d",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/36dafd2330f06072/US-20250271635-A1.html",
+    "sha256": "36dafd2330f060721180c55b169135401815d1dc73e39af434b2912e2037957b"
+  },
+  "publication_id": "US-20250271635-A1",
+  "publication_status": "Patent Application Publication",
+  "required_system_metadata": {
+    "direct_numeric_efl_count": 0,
+    "direct_numeric_f_number_count": 0,
+    "embodiment_1": {
+      "enpd_mm": 4.0,
+      "fov_deg": 89.94,
+      "image_height_mm": 11.5
+    },
+    "embodiment_2": {
+      "enpd_mm": 4.0,
+      "fov_deg": 94.95,
+      "image_height_mm": 11.2
+    }
+  },
+  "schema_version": 1,
+  "table_count": 5,
+  "tables": [
+    {
+      "number": 1,
+      "role": "first-embodiment folded surface/path prescription",
+      "sha256": "2c140f7f09f7682a8af8222c16de017e947e28f7e59ac0a63eee93701b633ca5"
+    },
+    {
+      "number": 2,
+      "role": "first-embodiment R1-R6 conic and A4-A16 coefficients",
+      "sha256": "59a67c7de41f031e7a222765812e2bc0aaae6ad19bf6c60f819299153f4390ec"
+    },
+    {
+      "number": 3,
+      "role": "second-embodiment folded surface/path prescription",
+      "sha256": "3bcbcd7bfbdab7ffa7c6eadcff3e84bc918fe6211c7d9806b0c8897d0ece1ba2"
+    },
+    {
+      "number": 4,
+      "role": "second-embodiment R1-R6 conic and A4-A16 coefficients",
+      "sha256": "8aed7f63acf17d7709f125eaceca961ca4e92bcac16424cb97ef49cbf9d02ac9"
+    },
+    {
+      "number": 5,
+      "role": "two-embodiment ratios, track lengths, image heights, and FOV values",
+      "sha256": "594c0f8f23883467efe88f08f5451e399a442841c1aa6afcd9a5cc1105b3b71f"
+    }
+  ]
+}

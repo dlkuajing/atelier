@@ -1,0 +1,447 @@
+{
+  "schema_version": 1,
+  "family_id": "97520644",
+  "root_id": "US-20260086330",
+  "publication_id": "US-20260086330-A1",
+  "application_number": "19/091567",
+  "title": "IMAGING LENS SYSTEM",
+  "identity": {
+    "inventors": [
+      "JO; Ju Yeon",
+      "SON; Ju Hwa"
+    ],
+    "applicant": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "assignee": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "publication_date": "2026-03-26",
+    "filing_date": "2025-03-26",
+    "foreign_priority_application": "KR 10-2024-0128342",
+    "foreign_priority_date": "2024-09-23",
+    "parent_applications_listed_by_exact_a1": [],
+    "other_pregrant_publications_listed_by_exact_a1": []
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f75c482ad2f0af84/US-20260086330-A1.html",
+    "bytes": 67679,
+    "sha256": "f75c482ad2f0af84f8b2c744a1261bdce9790723188a0b17ad762fea0db05e40",
+    "normalized_characters": 50074,
+    "normalized_sha256": "d7462ed9f68cc4a762e829a58bad5566ebebceaae7527b9104a11e8614b8829a",
+    "layout_signature": "9d0f7e70b5b57c0d001ed0c62c7ede14b7c3b56dc9f2f7009e17a0e0ab289ebd",
+    "content_authority": "exact retained official USPTO PPUBS A1 HTML plus official decoded A1 raster layout checks"
+  },
+  "denominator": {
+    "background_summary_paragraphs": 26,
+    "brief_drawing_paragraphs": 11,
+    "detailed_description_paragraphs": 59,
+    "description_paragraphs_total": 70,
+    "claims": 20,
+    "independent_claims": 2,
+    "source_tables": 12,
+    "mathml_objects": 19,
+    "figref_tags": 35,
+    "figures": 10,
+    "drawing_sheets": 10,
+    "source_items": 5,
+    "ordered_optical_prescriptions": 5,
+    "ordered_non_object_surface_rows": 79,
+    "asphere_surface_rows": 40,
+    "asphere_numeric_cells": 400
+  },
+  "sections": {
+    "preamble": {
+      "normalized_sha256": "7ee62aa6276a41727cbe3666eb8052d0b7936520e3461f83839b70eecf73271c"
+    },
+    "abstract": {
+      "normalized_sha256": "6a4ecb5dd73b67f55d37f8518fcca2aad33095eb48a463b08d795d854af9aaf0"
+    },
+    "background": {
+      "normalized_sha256": "7de2c4aa0b3de69200e616347d16ab6bb34ba134e70e9eeaf4aac1fe328e1abc"
+    },
+    "description": {
+      "normalized_sha256": "a42c1fcd0c48a53faab0bf8e9cfde7d4800080ee66187a3a5bdfaf7c28d93c20"
+    },
+    "claims": {
+      "normalized_sha256": "dab12e00068e39a07927b5a51da450ec771c391cd06ec709c03dce8282bfe696"
+    }
+  },
+  "paragraph_spans": [
+    {
+      "paragraph_range": [
+        1,
+        26
+      ],
+      "payload_sha256": "676d666ceb4e18cef1ad41429b07d4b856c812cb3b44e9fea380404e97d18c12"
+    },
+    {
+      "paragraph_range": [
+        27,
+        37
+      ],
+      "payload_sha256": "46ea6d855945b95b3e26c70874cd5cd6bb036953e66e35c567d1febdae1c3e09"
+    },
+    {
+      "paragraph_range": [
+        38,
+        69
+      ],
+      "payload_sha256": "35ff1a3dc82008fc8dc6996f4e866b3ff1eb0f0eb403bdefe153dd1ef638d68f"
+    },
+    {
+      "paragraph_range": [
+        70,
+        74
+      ],
+      "payload_sha256": "09792a83a8464e3ded8db21296107d1c72cb89b08a26539eaef51db988473809"
+    },
+    {
+      "paragraph_range": [
+        75,
+        79
+      ],
+      "payload_sha256": "dd78b7023b277dc1b5982a987d10230aa1063aed032898d0bf2ac3c0a9aa04f5"
+    },
+    {
+      "paragraph_range": [
+        80,
+        84
+      ],
+      "payload_sha256": "2e75ea98ce2b7f0684d13c54d19099c636b39c0bc833346e00a620d41e0a5e24"
+    },
+    {
+      "paragraph_range": [
+        85,
+        89
+      ],
+      "payload_sha256": "e0654c16d74c3ae1dc443963f73eeff655702023d8ba431281b3aff12a85eca8"
+    },
+    {
+      "paragraph_range": [
+        90,
+        95
+      ],
+      "payload_sha256": "9c1c5d991912dbd25ed8123c4a2dab8ac237d3250f8bed9baa99bb012cac011b"
+    },
+    {
+      "paragraph_range": [
+        96,
+        96
+      ],
+      "payload_sha256": "b5891ad286938d09e0afdc9f66376f5e2a6df9736e23b6cd6323255760d5eb18"
+    }
+  ],
+  "claim_groups": [
+    {
+      "claim_range": [
+        1,
+        9
+      ],
+      "payload_sha256": "6bc3b7ad2a8e6f02fa4aa53439256e0eb3715daee76a29caafeedf53f2c134f4"
+    },
+    {
+      "claim_range": [
+        10,
+        20
+      ],
+      "payload_sha256": "51be39a9b20e0d4292f3211a0fac60581856306064e2e6814c4b2c3681151d4d"
+    }
+  ],
+  "tables_and_equation": {
+    "formal_table_sha256": [
+      "94707c3e43f0438ea526ac8e4a6fbde3a8d4576fce0c904d404a410177bad0f9",
+      "a02f40f58b01ebd1c12f8796ce711e3621e950f44473c15bd6703c9743bc625c",
+      "066005949c17420c6bcb6ab893af7f41063acb3b7903ba344ff211823fd24e8e",
+      "83cb0289b64217c0f0ac57bff4e5a847a3ebe55d8ad136e3b92f0ee7f81fb285",
+      "835b20bf59ee0452fd8d12ac84d03c151dd62925a1ce0217e44698fcf457ce05",
+      "1d01a1f1f3befd48960f30e413c70bed1384abf7329255a7958c4a0a77718f53",
+      "6ffad226b2985da991a24a8ce330920076ccc15779c1897c69ea44aaec11b585",
+      "23b4096920ae98cd4d5afe7a3975ae6a1c337dc42cff1ee67950a9fd7c5a7976",
+      "08cc2c1c522a9bdbf84d7d77a16813edc957ae726123c42975c612c9d9214dc3",
+      "05c1679e0db19508e760fc8474a81e43459e3accf06cc8d62a5b4fe558f32149",
+      "e8cc83a312fbe500e17d3aa2f5adc49ac792a85b2c832ab346c66a556789b654",
+      "31fc86265dab5688aa10c7c357134d1bee4b100c99f1c6f431af49c5bb2f44ce"
+    ],
+    "ordered_math_object_sha256": "8d514541b1234817085f4fe65bd23c75806ba5fa8adde87d45194f5f6332167f",
+    "equation_1_sha256": "a22f5c8556f89f9affd9f9b8d5cc08bd42f03a7c9350feb8a24d5e6e62e04867",
+    "equation_1_mapping": "A-H/J multiply r4/r6/r8/r10/r12/r14/r16/r18/r20"
+  },
+  "source_items": [
+    {
+      "item_number": 1,
+      "label": "Samsung finite-object five-lens embodiment 1",
+      "paragraphs": [
+        70,
+        74
+      ],
+      "tables": [
+        1,
+        2
+      ],
+      "figures": [
+        1,
+        2
+      ],
+      "surface_sequence": "S0-S16",
+      "object_distance_mm": 580,
+      "stop_surface": "S3",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.angular_field_half_full_semantics_absent"
+    },
+    {
+      "item_number": 2,
+      "label": "Samsung finite-object five-lens embodiment 2",
+      "paragraphs": [
+        75,
+        79
+      ],
+      "tables": [
+        3,
+        4
+      ],
+      "figures": [
+        3,
+        4
+      ],
+      "surface_sequence": "S0-S16",
+      "object_distance_mm": 580,
+      "stop_surface": "S3",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.angular_field_half_full_semantics_absent"
+    },
+    {
+      "item_number": 3,
+      "label": "Samsung finite-object five-lens embodiment 3",
+      "paragraphs": [
+        80,
+        84
+      ],
+      "tables": [
+        5,
+        6
+      ],
+      "figures": [
+        5,
+        6
+      ],
+      "surface_sequence": "S0-S15",
+      "object_distance_mm": 600,
+      "stop_surface": null,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.angular_field_half_full_semantics_and_exact_stop_coordinate_absent"
+    },
+    {
+      "item_number": 4,
+      "label": "Samsung finite-object five-lens embodiment 4",
+      "paragraphs": [
+        85,
+        89
+      ],
+      "tables": [
+        7,
+        8
+      ],
+      "figures": [
+        7,
+        8
+      ],
+      "surface_sequence": "S0-S16",
+      "object_distance_mm": 580,
+      "stop_surface": "S3",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.angular_field_half_full_semantics_absent"
+    },
+    {
+      "item_number": 5,
+      "label": "Samsung finite-object five-lens embodiment 5",
+      "paragraphs": [
+        90,
+        95
+      ],
+      "tables": [
+        9,
+        10
+      ],
+      "figures": [
+        9,
+        10
+      ],
+      "surface_sequence": "S0-S16",
+      "object_distance_mm": 600,
+      "stop_surface": "S3",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.angular_field_half_full_semantics_absent"
+    }
+  ],
+  "published_metadata": {
+    "f_mm": [
+      4.4485,
+      4.4398,
+      4.3612,
+      4.4336,
+      4.476
+    ],
+    "ttl_mm": [
+      7.7138,
+      7.75,
+      7.4912,
+      7.75,
+      7.75
+    ],
+    "f_number": [
+      2.0,
+      2.0,
+      2.0,
+      2.0,
+      2.0
+    ],
+    "imght_mm": [
+      2.3,
+      2.264,
+      2.3,
+      2.3,
+      2.3
+    ],
+    "fov_degrees": [
+      57.5,
+      56.6,
+      57.6,
+      57.5,
+      57.4
+    ],
+    "fov_half_or_full_semantics_published": false,
+    "fov_division_or_angular_derivation_used": false,
+    "finite_object_to_infinity_substitution_used": false,
+    "stop_synthesis_used": false
+  },
+  "official_pdf_sources": {
+    "pinned": {
+      "path": "data/patent-lake/uspto-ppubs-pdf/66cc1a4fb61eb887/US-20260086330-A1.pdf",
+      "bytes": 968559,
+      "sha256": "66cc1a4fb61eb887bb9cba02d60352fdec76f9ea3fc751bce415dd5e194449ac"
+    },
+    "download_1": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/source-review/US-20260086330-A1-official-1.pdf",
+      "bytes": 968559,
+      "sha256": "66cc1a4fb61eb887bb9cba02d60352fdec76f9ea3fc751bce415dd5e194449ac"
+    },
+    "download_2": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/source-review/US-20260086330-A1-official-2.pdf",
+      "bytes": 968559,
+      "sha256": "b16dfff2f6587182e632f50ca69544b50e57fdd6ccba64d2695a21101091656a"
+    },
+    "page_count": 21,
+    "text_layer_characters": 0,
+    "raster_set_sha256": "99e11db3aaeb7740f5d4023eab505030d024c8aa7c1d7da0bf4b6e8a5989654f"
+  },
+  "replay_state": {
+    "attempts": [
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-20260086330/attempt-0002/result.json",
+        "bytes": 6342,
+        "sha256": "f51e67a2f7826b7b59d974cb97ebdb40795be22f75a6b837cc8da5441d5f030c"
+      },
+      {
+        "path": "data/patent-ledger/replay/local-uncovered/results/US-20260086330/attempt-0003/result.json",
+        "bytes": 6342,
+        "sha256": "8852740bc60c6d93de48eeaf6392dce5a496538cb7584606ecb46ae13c50034a"
+      }
+    ],
+    "semantic_sha256": "224836da14c0308aa7732fd84a0f26136eab694484f9b58e52cbbfcbdf12aa43",
+    "strict_roots_with_results": 619,
+    "strict_expected_roots": 619,
+    "strict_missing_results": 0,
+    "strict_corrupt_results": 0
+  },
+  "generic_census": {
+    "before": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/generic-residual-before-47.json",
+      "bytes": 29189,
+      "sha256": "543c911c95030082cf2ee5372b8f867743bd65e5c63bd25e62e9886409055fb2"
+    },
+    "after_1": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/generic-residual-after-1.json",
+      "bytes": 28548,
+      "sha256": "0c19b294d05b80dac22e92049cea660412e69fabbc83f4fa77a1afcde6cc8f94"
+    },
+    "after_2": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/generic-residual-after-2.json",
+      "bytes": 28548,
+      "sha256": "0c19b294d05b80dac22e92049cea660412e69fabbc83f4fa77a1afcde6cc8f94"
+    },
+    "before_roots": 47,
+    "after_roots": 46,
+    "result_set_sha256": "e2a1e5960a20d5cbdc26597ed1bc42d8689f1266f9f99f15e1803b25f8c0da64"
+  },
+  "shared_outputs": {
+    "summary": {
+      "path": "data/patent-ledger/replay/local-uncovered/summary.json",
+      "bytes": 60514,
+      "sha256": "89bec00701bf2efd6e71523254623af10697c319e79652636eed7b7ccf1c9f52"
+    },
+    "report": {
+      "path": ".planning/loop/patent-local-replay-report.md",
+      "bytes": 62687,
+      "sha256": "700d3bee968ac7841184cde650d48b59fad40db640680d0b8e03b1e6c17ae900"
+    }
+  },
+  "audit_artifacts": {
+    "source_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/family-97520644-source-audit.md",
+      "bytes": 4053,
+      "sha256": "61bfe0ce110dd25d5c2d7a6aaa2630ed6baca4467229771ee232559461d7d973"
+    },
+    "raster_audit": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/family-97520644-raster-audit.json",
+      "bytes": 7015,
+      "sha256": "691694db531570c4de288420399aa8d45e7bfa9d31ac10fe1129ea9fa7855303"
+    },
+    "external_family_members": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/family-97520644-external-family-members.json",
+      "bytes": 779,
+      "sha256": "6cb5f05b105716df8d255ebfea79c4d11bfabf3b0e037286f7ce673aa1aab289"
+    },
+    "denominator": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/family-97520644-denominator.json",
+      "bytes": 3412,
+      "sha256": "21ed7dd44a1e6a1e7fb01bcdbe9e0ee24d934e40b1aae647a0e4805a7d51f6d7"
+    },
+    "replay_determinism": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/family-97520644-replay-determinism.json",
+      "bytes": 1582,
+      "sha256": "434d7f458d4e185f315be0d675cbc68d5e091fd1c3e7f736bd71d918eabba0ec"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/queue-after.json",
+      "bytes": 1474,
+      "sha256": "9172e497371c365993e7572344fa7caeb7adb9d907ea375b6ccc197440640116"
+    },
+    "roots": {
+      "path": ".planning/quick/260721-patent-generic-family-97520644/roots.txt",
+      "bytes": 15,
+      "sha256": "68f1e6e0f00a8e818dec504b7876f211de406729398acd047c94364eb3faa8e4"
+    }
+  },
+  "terminal_outcome": {
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  },
+  "formal_outputs": {
+    "optical_case_created": false,
+    "zmx_created": false,
+    "formal_intake_changed": false
+  },
+  "next_exact_group": {
+    "family_id": "95563451",
+    "root_ids": [
+      "US-20250264785"
+    ],
+    "publication_ids": [
+      "US-20250264785-A1"
+    ]
+  },
+  "saturation_complete": false
+}

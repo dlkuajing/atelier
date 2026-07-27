@@ -1,0 +1,355 @@
+{
+  "schema_version": 1,
+  "publication_id": "US-20230048740-A1",
+  "family_id": "85177416",
+  "application_number": "17/813265",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/048729a45c619311/US-20230048740-A1.html",
+    "bytes": 84154,
+    "characters": 80500,
+    "sha256": "048729a45c61931128bc183893d588fc871cf608c69fb2ea08e98fced1e84f6b",
+    "normalized_characters": 67902,
+    "normalized_sha256": "ba5ebe24a3f30d5e27f0507039ab3e1e62db574a6c39761383095c33eee3e5ee"
+  },
+  "sections": {
+    "preamble": {
+      "marker": "US-20230048740-A1 - Patent Public Search | USPTO",
+      "characters": 270,
+      "sha256": "2ad55300b7136854091f005caa53c282a767d85f7057c14319b1402e31d46879"
+    },
+    "abstract": {
+      "marker": "Abstract Disclosed is a small lens system",
+      "characters": 1232,
+      "sha256": "16bad8431e475d5fc040c0a588fa77b45f9c725467bd1302808459d6e0e38f22"
+    },
+    "background": {
+      "marker": "Background/Summary CROSS REFERENCE TO RELATED APPLICATION",
+      "characters": 6233,
+      "sha256": "9ae15f8e2b75639f47b538ba8281144f56f16b73ce2941257059930c9f37eb6a"
+    },
+    "description": {
+      "marker": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+      "characters": 57572,
+      "sha256": "6e1dad892685c0e16c023a90fefa7d2cb8b35bf089afe15ebf8cd4143795080a"
+    },
+    "claims": {
+      "marker": "Claims 1 . A small lens system comprising",
+      "characters": 2595,
+      "sha256": "1263691f13ba12ba0cdf71d8c44cf3f5ef60e9f6e27db3a9d4c6630d0e32483c"
+    }
+  },
+  "background_summary_paragraph_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19
+  ],
+  "background_summary_span_sha256": {
+    "1-1": "d0498014724831228bc6e8f6e74db1e4568e7eab5e47b375df8f57d209d12b98",
+    "2-11": "b06007c476faa0b03600b68900c66c350b82c51c596a4008f90f0a20f1990870",
+    "12-19": "d1fe9061a3dac01678f105f95c1d6b7c8817c665175760924e6d447cade9a06a"
+  },
+  "description_paragraph_numbers": [
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123
+  ],
+  "description_span_sha256": {
+    "20-31": "ee304885766abdec0752c0db7e3c569b7c1435505b680d2844146c88986fee1b",
+    "32-53": "b20d159f617bc07f17946a90f7898005d7ce54a5e2b31aa5ca8091b0d3215ec6",
+    "54-67": "ca8d341b27124f14acd310124b48d6050832765fe6293d53a697bee58acfd5f4",
+    "68-80": "71426d4f5a4dc78f6e5418e3943ec4a0518f7a291ce2c7be592556ee142ff9ef",
+    "81-93": "53ced42d7f3c933746b889b6bd993a31ef4c4fde3675395b411c586936d234ea",
+    "94-106": "699b1c2c1c55e847c81aa6c45cd2158df55ae09e342a01fffeedfd13b4b53c3a",
+    "107-119": "14ae5e3cb13e08be27c463c53687a4b4d9cd51330546c6646bc7676488f7f076",
+    "120-123": "ca56a574d304067e901c283663b04faa7d45b391c711364450af1fa9190ec29f"
+  },
+  "item_ranges": [
+    [
+      54,
+      67
+    ],
+    [
+      68,
+      80
+    ],
+    [
+      81,
+      93
+    ],
+    [
+      94,
+      106
+    ],
+    [
+      107,
+      119
+    ]
+  ],
+  "item_markers": [
+    "FIG. 3 is a view showing a first embodiment of a small lens system with alleviated sensitivity according to the present invention.",
+    "FIG. 5 is a view showing a second embodiment of the small lens system with alleviated sensitivity according to the present invention.",
+    "FIG. 7 is a view showing a third embodiment of the small lens system with alleviated sensitivity according to the present invention.",
+    "FIG. 9 is a view showing a fourth embodiment of the small lens system with alleviated sensitivity according to the present invention.",
+    "FIG. 11 is a view showing a fifth embodiment of the small lens system with alleviated sensitivity according to the present invention."
+  ],
+  "flattened_table_payload_sha256": [
+    "371282b025b5459b8988169c6adfbff1e97b5a27316320081967bc7ddd0c2219",
+    "740eb475482d16ba8ceaa34da2bac3544efc7d3d0cecd4d35453010f5315e824",
+    "747d9d1d0cc68cf5cfa2c1d99c9118783d35258aff43a3119b35cab740679990",
+    "97c2cc1f619001abb1f68406d5afc537334cbb5ace18d60eaba239842216a187",
+    "e4cab44fb63124f84d3c8d0ef61c6787d74f9725a76da654508548dd6f087506",
+    "3cbd5c9b674f963d3df1dc9c494dc337aa18565d500c32cd9d20b85e83ac1e69",
+    "c253d308305ee4b048bedd5157427ed7e4df3584ab24af0f25ec5e2472afe35f",
+    "85f7a60e5510ea6683cb43eb553f23c08cb009aa458d889c15a98dc7d45852c5",
+    "094e27304f6b35c6f976653d585c283a3924c417bbe05d8cd59167c6b511f24a",
+    "cd6094a0b5a155b3411ec320acab67862cfdf4df2280780dca717df8e0c22675"
+  ],
+  "radius_conflicts": [
+    [
+      [
+        "8",
+        "1.6411",
+        "1.84110.E+00"
+      ],
+      [
+        "11",
+        "-0.6224",
+        "-8.22449.E-01"
+      ],
+      [
+        "12",
+        "-3.9286",
+        "-3.92882.E+00"
+      ]
+    ],
+    [
+      [
+        "10",
+        "34.2167",
+        "3.42157.E+01"
+      ]
+    ],
+    [
+      [
+        "4",
+        "1.6720",
+        "1.57195.E+00"
+      ]
+    ],
+    [],
+    [
+      [
+        "6",
+        "-2.7664",
+        "-2.76644.8+00"
+      ],
+      [
+        "7",
+        "Infinity",
+        "1.00000.E+03"
+      ],
+      [
+        "10",
+        "-35.652",
+        "-3.56528.E+01"
+      ]
+    ]
+  ],
+  "mathml_sha256": [
+    "2e4bab355dc6c2664bc141e34ccbd7751c79827bbab3517fd3b4c1d4ab16dae6",
+    "0039f26e384c349f8020f5aae5a2cbf8f88a16a87a3a470ee6284921195903c6",
+    "cb89fa479de73e742ced5a032c1e0ef8e8c5567aa2c535717f1a0a5f6205d58d",
+    "76d8c00f9f6dcea4581864a63576ea3a3cb19c8501223bfd723f9b7dbde70648",
+    "eb9ce9daaaad0c98763e5db3d3cf9729f55cd5e46c19d5557b36538f4b85f9ea",
+    "34a0bc376fbc69632e69e040a2b43ac47ab8a6186508a8e257af619501401578",
+    "70933152f79063067f6659239c30a3797717423a914e68f6a59ca897ebdf68f7",
+    "c0a725335e8b667d6708c8479bf789cd98d98484bcb662c9dc7f20efdd60c2bb",
+    "1947996dffd947adc5fef0e7dbb75bcc73a91c6184233eb6b931cb7910179a81"
+  ],
+  "claim_sha256": [
+    "b40fe6e7a6816f8e85b8b16892c5b9f58ff8d1fb8461478e17dc55ebd19fcadb",
+    "37d39e710e6f11fdfe9ed726a1128a02e166112519fa60b295a39deacd78a71f",
+    "9509a0ad2113905246643986285aefa6373b9951882da26c57fe825f5a791d58",
+    "3cd892f99f110420087939ce590e0155c486ab34baffc3a87d236a949ce3ad39",
+    "494eaf47d2de15c81dea9469632f3b96794971944c5926a82c8e2e4747c63727",
+    "45192f3b7b8ef83c6b1bb6c8e9041e0a2ea2fc47748443e84cbfada806821919",
+    "028bef6c6dbd3fc9bb342dd88d0e272ca2f6e1409b43bff2c161a4347d69f4d9"
+  ],
+  "source_phrase_counts": {
+    "First Embodiment": 15,
+    "Second Embodiment": 15,
+    "Third Embodiment": 15,
+    "Fourth Embodiment": 15,
+    "Fifth Embodiment": 15,
+    "Example": 0,
+    "Embodiment": 77,
+    "effective focal length": 0,
+    "focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "Fno": 0,
+    "field of view": 0,
+    "angle of view": 0,
+    "FOV": 0,
+    "image height": 28,
+    "stop": 18,
+    "aperture": 5,
+    "Y Radius": 11,
+    "Qcon Coefficient": 146,
+    "TOPL/Himg": 13
+  },
+  "identity_marker_counts": {
+    "US-20230048740-A1": 1,
+    "Patent Application Publication 20230048740": 1,
+    "Kind Code A1": 1,
+    "Publication Date February 16, 2023": 1,
+    "Applicant: SEKONIX CO., LTD.": 1,
+    "Family ID: 85177416": 1,
+    "Assignee: SEKONIX CO., LTD.": 1,
+    "Appl. No.: 17/813265": 1,
+    "Filed: July 18, 2022": 1,
+    "KR 10-2021-0098990 Jul. 28, 2021": 1
+  },
+  "suspicious_source_tokens": {
+    "-2.76644.8+00": 1,
+    "-35.652 6": 1,
+    "-4.16535.E05": 1,
+    ".sup. 3.22295E-01": 1,
+    "|SAG511<0.5": 1
+  },
+  "denominator": {
+    "background_summary_paragraphs": 19,
+    "brief_description_paragraphs": 12,
+    "detailed_description_paragraphs": 92,
+    "description_paragraphs": 104,
+    "total_numbered_paragraphs": 123,
+    "claims": 7,
+    "independent_claims": 1,
+    "declared_figure_panels": 12,
+    "prior_art_figure_panels": 2,
+    "current_embodiment_figure_panels": 10,
+    "flattened_tables": 10,
+    "surface_tables": 5,
+    "qcon_tables": 5,
+    "mathml_objects": 9,
+    "source_items": 5,
+    "prescription_items": 5
+  }
+}

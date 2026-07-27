@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "family_id": "94050343",
+  "root_ids": [
+    "US-20260072245"
+  ],
+  "publication_id": "US-20260072245-A1",
+  "application_number": "19/023962",
+  "title": "OPTICAL LENS, CAMERA MODULE, AND TERMINAL DEVICE",
+  "applicant": "Jiangxi OFILM Optical Co.,Ltd.",
+  "inventors": [
+    "Takashi Sugiyama"
+  ],
+  "priority_date": "2024-09-12",
+  "filing_date": "2025-01-16",
+  "publication_date": "2026-03-12",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "retained_exact_google_wrappers": 1,
+    "retained_official_pdf_containers": 2,
+    "background_and_summary_paragraphs": 9,
+    "drawing_description_paragraphs": 19,
+    "detailed_description_paragraphs": 103,
+    "total_numbered_paragraphs": 131,
+    "total_claim_denominator": 20,
+    "declared_figures": 18,
+    "tagged_html_table_blocks": 17,
+    "primary_html_math_objects": 52,
+    "exact_google_math_objects": 52,
+    "classification_pdf_pages": 31,
+    "classification_drawing_sheets": 9,
+    "classification_specification_pages": 21,
+    "disclosed_lens_embodiments": 8,
+    "ledger_items": 8,
+    "parser_review_items": 8,
+    "terminal_items": 0
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0af7d9d9554ea041/US-20260072245-A1.html",
+    "bytes": 147170,
+    "raw_characters": 144854,
+    "raw_document_sha256": "0af7d9d9554ea04184d35858fe9f4134a0a9be1d166a1c3a6a47587aca65e257",
+    "normalized_characters": 110727,
+    "normalized_text_sha256": "0b9bf12f7656a75dc47ffdf115957d189b9b80e0c85a532350fb7576ccf2a704",
+    "section_positions": {
+      "abstract": 292,
+      "background_summary": 1443,
+      "brief": 7891,
+      "detailed": 10923,
+      "claims": 101621
+    },
+    "section_lengths": {
+      "abstract": 1151,
+      "background_summary": 6448,
+      "brief": 3032,
+      "detailed": 90698,
+      "claims": 9106
+    },
+    "section_sha256": {
+      "abstract": "fecec5d9c9190579616ac546e0033194ccd1a711e1e06915d8bf01ff984e7df5",
+      "background_summary": "90859b3b78c8936f8eb145adb606d0bc4ba9bd14a87ec59a09ed61a502f0fdfe",
+      "brief": "6e58590263da2a308d6d5c86318c1b04babdeac6cbc618810577b187397f220f",
+      "detailed": "66e5c325350dbc5b43944d7076ddd91c7343f6a0f64263ae07bfe99e02ec4b4d",
+      "claims": "87ec1a6e594125dc18e4d5d8bbd66350f420717b89f81f4cb4fd6e515b521da5"
+    },
+    "paragraph_ranges": {
+      "background_summary": [
+        1,
+        9
+      ],
+      "brief": [
+        10,
+        28
+      ],
+      "detailed": [
+        29,
+        131
+      ]
+    },
+    "claim_range": [
+      1,
+      20
+    ],
+    "figure_range": [
+      1,
+      18
+    ],
+    "tagged_table_block_sha256": {
+      "TABLE-US-00001": "72a8bcf4074d3604aa4d54404e6c70f6fb679c5986af6e2ed6c2d4eae11d5444",
+      "TABLE-US-00002": "140090b23aede15bd1e1d7ecd3624a9b2f39b06b04953438f30def909b1a83eb",
+      "TABLE-US-00003": "d0445577f2dcc30db980410ac4e717c7a5ad988a2a082385a69cbaca51a0959e",
+      "TABLE-US-00004": "a54fdb041357bc38a5488ffab90b6648a8f1172bd1baf98037b765c5a04b7a1e",
+      "TABLE-US-00005": "072228ce45f94fd94052fd0e1b4891273a17a93f0ae83c939c64eb50d02031fc",
+      "TABLE-US-00006": "68e1d074a99f821722bff476aed1e497175faefbde6a41f2b15ca30b96b59eb3",
+      "TABLE-US-00007": "f9833696ef000d2d6f1f1154b12a83a3fdb7a3ad4f1c977c865fe3ab2e1896be",
+      "TABLE-US-00008": "7add843b0e66b3b9e6754cc62fd2a5cb8ae5bc501b9b40ee4ba8a247723c5def",
+      "TABLE-US-00009": "a7a4903c633973431e4eeb7c4348e5658d20327dbb7277604e6eecf9830d0686",
+      "TABLE-US-00010": "3948291cbfad1efc0ba38e13f7df2cfd636744713ea354cd8b32019e6179a5bd",
+      "TABLE-US-00011": "acadb517e9745d2ffae2fa9617296861d1ac4df4eaed1e01092794845d8a1e12",
+      "TABLE-US-00012": "b4951c5cd4b1dd64bac9bb1a091c90562cb099bb4a541ffc1572623a6f913aa1",
+      "TABLE-US-00013": "68858ff8f282eb6f6269cf8c26e5e38e7226f07c6712191b2f90de9f135d520c",
+      "TABLE-US-00014": "06d1d0898c0e453aafbc780a2a47784a737159ac9540efdc7ef5623edcf1ab2f",
+      "TABLE-US-00015": "2dbee95eca02dc497ede3c6ca0c043ddef3b5ce2548d6561b8e44aabb0da8511",
+      "TABLE-US-00016": "bfc50d0bf60258218038338d61ae5514172f9b1ba88b2810ba12a686e1a28c59",
+      "TABLE-US-00017": "e072f7323577eaef3ad5804bee85c5747eac92c2851a7bf6733894d23fd6b26b"
+    }
+  },
+  "prescription_boundary": {
+    "published_prescriptions": 8,
+    "published_numbered_surface_rows_per_prescription": 14,
+    "published_asphere_surfaces_per_prescription": 6,
+    "published_nonzero_odd_terms": [
+      "A3",
+      "A5",
+      "A7"
+    ],
+    "published_nonzero_odd_term_surfaces": [
+      8,
+      9
+    ],
+    "first_embodiment_missing_radius_surfaces": [
+      6,
+      7
+    ],
+    "converter_supports_odd_powers": false,
+    "convertible_prescriptions": 0,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "external_family_coordinates_imported": false,
+    "coordinate_values_synthesized": 0
+  },
+  "nonterminal_outcome": {
+    "root_state": "parser_review_required",
+    "root_reason_code": "parser_review_required.all_disclosed_items_rejected",
+    "item_reason_code": "parser_review_required.deterministic_parser_rejected",
+    "parser_review_items": 8,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "473b2a42b1efa8b19278a62d501b00e40436c9b89ba8393ff71bb98d50bebfec",
+    "summary_sha256": "870f3e8dc9df1d983827474e6dc8f0631d4c9262b042326254559bc17075d86f",
+    "report_sha256": "26ffe1fdb0dfd1e988d58e5f4ffc32122bd781196af8bae5ce79fa47e4e840b0",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "conversion_retry_required": 0,
+      "converted_pending_intake": 25,
+      "mixed_nonterminal": 146,
+      "parser_review_required": 318,
+      "source_exhausted_pending_alternates": 0,
+      "source_retry_required": 0,
+      "terminal": 130
+    },
+    "item_state_counts": {
+      "conversion_retry_required": 28,
+      "converted_pending_intake": 551,
+      "parser_review_required": 1409,
+      "terminal": 1108
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-94050343/generic-residual-before-130.json",
+      "sha256": "ed5f2b6889b826c76177a31cff97dfeeb4e3c4744cdd28be7feddb5bb2edc166"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-94050343/generic-residual-after-1.json",
+      "sha256": "30789176a88f5909b80e4f3a9fb73aa703ea37fe03e45170077e422fa6b8d97e"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-94050343/generic-residual-after-2.json",
+      "sha256": "30789176a88f5909b80e4f3a9fb73aa703ea37fe03e45170077e422fa6b8d97e"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-94050343/queue-after.json",
+      "sha256": "9438060eb5e1c59d590f1d7ee70ed862ceb4f51aa6da2b2dab0239636bdd4bec"
+    }
+  },
+  "denominator_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-94050343/family-94050343-denominator.json",
+    "sha256": "cda3b0fb894aa4ba058017321c12e5024890334181432785b338d8bcb478cfd5"
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-94050343/family-94050343-raster-audit.json",
+    "sha256": "e6171f268a1e3f83ce7f26c1670231641e0aede40f5e0f9fe90ef25764bf2c47"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-94050343/family-94050343-external-family-members.json",
+    "sha256": "7125d88019ed1d10ec00a82aa107fc445109bea8dcaffd70a787468950c4ac60"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-94050343/family-94050343-replay-determinism.json",
+    "sha256": "555995cc2506f65f7dfc6d3f74f94b8846580a50df1d1b67716d9a1b1dd9dd60"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-94050343/family-94050343-source-audit.md",
+    "sha256": "479c993c8dc6e6ee21eab000aa8e1609be8108ac21cec00f5ec1de9921ab2017"
+  },
+  "saturation_boundary": "This root is now an eight-item exact parser-review result, not a source terminal. Odd-power asphere representation, first-embodiment radius recovery, all remaining parser buckets, formal intake and global source exhaustion remain open."
+}

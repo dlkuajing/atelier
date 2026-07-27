@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "family_id": "94050343",
+  "classification_publication": "US-20260072245-A1",
+  "classification_application": "US19/023962",
+  "priority_application": "CN202411281039.5A",
+  "discovery_source": {
+    "path": ".planning/quick/260717-patent-generic-family-94050343/source-review/US-20260072245-A1-google.html",
+    "bytes": 385767,
+    "sha256": "396b603d6619f23b192986250d7ca6903811012ae3f11f2e4f0df8b4e776c8d3"
+  },
+  "classification_application_publications": [
+    {
+      "publication_id": "US-20260072245-A1",
+      "publication_date": "2026-03-12",
+      "status": "pending",
+      "frozen_cohort": true
+    }
+  ],
+  "external_applications": [
+    {
+      "application_number": "CN202411281039.5A",
+      "filing_date": "2024-09-12",
+      "priority_date": "2024-09-12",
+      "status": "active",
+      "publications": [
+        {"publication_id": "CN-119200145-A", "publication_date": "2024-12-27"},
+        {"publication_id": "CN-119200145-B", "publication_date": "2025-11-18"}
+      ]
+    },
+    {
+      "application_number": "EP25164265.8A",
+      "filing_date": "2025-03-17",
+      "priority_date": "2024-09-12",
+      "status": "pending",
+      "publications": [
+        {"publication_id": "EP-4550019-A2", "publication_date": "2025-05-07"},
+        {"publication_id": "EP-4550019-A3", "publication_date": "2025-09-17"}
+      ]
+    }
+  ],
+  "repair_policy": {
+    "same_application_alternate_available": false,
+    "foreign_family_members_are_queue_only": true,
+    "numeric_coordinates_imported": false,
+    "reason": "Foreign-family publications are outside the frozen US cohort and may not supply numeric truth to the US A1 result without an explicit later reconciliation shovel."
+  },
+  "queued_publications": [
+    "CN-119200145-A",
+    "CN-119200145-B",
+    "EP-4550019-A2",
+    "EP-4550019-A3"
+  ]
+}

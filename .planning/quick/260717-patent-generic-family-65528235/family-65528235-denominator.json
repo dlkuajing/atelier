@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "family_id": "65528235",
+  "root_id": "US-20190294840",
+  "publication_id": "US-20190294840-A1",
+  "identity": {
+    "application_number": "15/928206",
+    "applicant": "SYMBOL TECHNOLOGIES, LLC",
+    "inventors": ["Mark Drzymala", "Carl D. Wittenberg", "Edward Barkan"],
+    "filed": "March 22, 2018",
+    "publication_date": "September 26, 2019",
+    "same_application_grant": "US-10769394-B2",
+    "grant_date": "September 8, 2020"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/ddba61d78743da42/US-20190294840-A1.html",
+    "bytes": 78872,
+    "raw_characters": 78764,
+    "raw_sha256": "ddba61d78743da423824842d82885f01f6272a2575b856129f9d4d2d287575b9",
+    "normalized_characters": 69831,
+    "normalized_sha256": "32da6aa8a323a2a259061523e866b61d730755b7da69026a99f816457968eba6",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "same_application_raster_publications": 1,
+    "numbered_heading_markers": 0,
+    "field_background_numbered_paragraphs": 3,
+    "summary_numbered_paragraphs": 13,
+    "brief_numbered_paragraphs": 19,
+    "detailed_numbered_paragraphs": 37,
+    "claims": 21,
+    "declared_textual_figure_statements": 19,
+    "declared_textual_figure_panels": 20,
+    "tagged_html_tables": 0,
+    "mathml_objects": 0,
+    "source_declared_architecture_items": 11,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 11,
+    "replayed_ledger_items": 11,
+    "official_a1_pdf_pages": 29,
+    "official_a1_drawing_sheets": 18,
+    "same_application_b2_pdf_pages": 30,
+    "same_application_b2_drawing_sheets": 18,
+    "same_application_claim_count_differences": 1,
+    "source_label_discrepancies": 0
+  },
+  "sections": {
+    "abstract": {
+      "position": 329,
+      "characters": 1056,
+      "sha256": "9b41fa0403cc68e882412d57e98677d4a3a073195df3ef21dbf5f707c4b6a5c8"
+    },
+    "field_background": {
+      "position": 1385,
+      "characters": 1226,
+      "paragraphs": [1, 3],
+      "sha256": "f08317f77580f4a55741e0fbc1821aed43b3cbccb1ce46575d13ce99b580ff91"
+    },
+    "summary": {
+      "position": 2611,
+      "characters": 10861,
+      "paragraphs": [4, 16],
+      "sha256": "4032a44e8d802d6ec72c0896974a8beb44e9f8501afcb8ef8097fc8b0e619505"
+    },
+    "brief": {
+      "position": 13472,
+      "characters": 2606,
+      "paragraphs": [17, 35],
+      "sha256": "012ef5a59d62293bedc1da544bf09f83cca71f95c8b2c90ef9721c9bb8b99891"
+    },
+    "detailed": {
+      "position": 16078,
+      "characters": 46983,
+      "paragraphs": [36, 72],
+      "sha256": "2ae7cbe8d2f1d19c8cb27d0b9282a25905052e92e157c0d941402cdea7c342f3"
+    },
+    "claims": {
+      "position": 63061,
+      "characters": 6770,
+      "claims": [1, 21],
+      "sha256": "838099939ac31cd606ed73a2e5aa387d70384325336d5b221050db67332cf1ad"
+    }
+  },
+  "summary_items": [
+    {"paragraph": 5, "characters": 924, "sha256": "6b04c024db0821f667f3476c8e3eafe969c9e34c1cbe18f2f0a505259a125a3e", "scope": "dual-linear-FOV barcode reader and aiming assembly"},
+    {"paragraph": 6, "characters": 1025, "sha256": "02b062ef6e408d196f9b6b1c593a41a7b6d1c415172ac13f573104f2e1fe3e96", "scope": "barcode-reader manufacturing and aiming alignment method"},
+    {"paragraph": 7, "characters": 826, "sha256": "927e3c0da275b2f0918a5bed9e105ef214205add11821cff6b42d1ac18e63dcf", "scope": "free-floating lens/chassis installation and image-based alignment method"},
+    {"paragraph": 8, "characters": 687, "sha256": "532b4e7253d69499f5bfc859a87ee68f459add536becf1dd849cf80ee0fde758", "scope": "imaging-apparatus chassis/lens alignment"},
+    {"paragraph": 9, "characters": 683, "sha256": "0e0592662da220cf586eb97ce1c7d23b398287c4808472e32f6199dcc88d1e4a", "scope": "barcode-reader chassis/lens alignment"},
+    {"paragraph": 10, "characters": 556, "sha256": "4f30f97449bb47cbdc1da720b75f6bdf1ca09962e1cfa1b0d6e5c5393582ffb5", "scope": "chassis/lens assembly"},
+    {"paragraph": 11, "characters": 873, "sha256": "7d8fba3e03d8972893e2d82470da600872f9565a4cc9d77913b6acc4801fb5e9", "scope": "dual-working-range imaging engine and aiming pattern"},
+    {"paragraph": 12, "characters": 1294, "sha256": "049adf3aab0b792500025a866ca02ff0938348265c2b1dfa630987a1df1ddc00", "scope": "aiming sub-portion spacing outside far FOV"},
+    {"paragraph": 13, "characters": 1253, "sha256": "3cf6b872e4fc11ddbeaba17a5bf34002171bdcfef2e0327a4b51a9fa33ff1940", "scope": "aiming intensity at second near working distance"},
+    {"paragraph": 14, "characters": 1282, "sha256": "0a3f04757ba3cf6def0adb5a109e3d05d89257e225166b23c643f5a6d1430365", "scope": "ambient-to-aiming intensity ratio"},
+    {"paragraph": 15, "characters": 1013, "sha256": "c8df4f053f8c174c09e3c536b7c07439eb3b03e4d361f3a5ef356249d0a7bdd3", "scope": "laser-safety aiming constraints"}
+  ],
+  "detailed_spans": [
+    {"paragraphs": [36, 43], "characters": 8825, "sha256": "79aeeeb0c667b8ee14924edeee73aa3af8bfd64b394bbae55a6312dfec5534c7", "scope": "reader, dual imaging assemblies, working ranges and aiming arrangement"},
+    {"paragraphs": [44, 51], "characters": 8294, "sha256": "8d41bb91176771c570b9a4782708c5ce60963e1bde2de86323281808a2aeac06", "scope": "chassis, free-floating lens barrel, clearance, image alignment and adhesive"},
+    {"paragraphs": [52, 66], "characters": 23680, "sha256": "939e572c0f044dbb0b92dfc242b7c3a88c0854e3664f93c6509a9df5f20fc944", "scope": "aiming pattern geometry, intensity, eye safety and beam-shaper architecture"},
+    {"paragraphs": [67, 72], "characters": 6159, "sha256": "755aa74c79e672304c43612eb93666977e59720ed0b8804ec94160ffbd2c5a83", "scope": "implementation and claim boilerplate"}
+  ],
+  "claim_families": [
+    {"claims": [1, 8], "characters": 2620, "sha256": "2ad2e11d9a6384fd25d2551766a48cd0cd10ec5789fe4ee0479678ff4cc9beb7", "scope": "free-floating lens/chassis installation method", "item": 3},
+    {"claims": [9, 13], "characters": 1529, "sha256": "fa921cc788afff2efc392277476e8b48196a037d2545c1b187055f8012969e9a", "scope": "imaging-apparatus chassis/lens alignment", "item": 4},
+    {"claims": [14, 18], "characters": 1516, "sha256": "06586899b61535d2c7ee9d82839c3912162bd998f122b0fc71dc133cdb32a7eb", "scope": "barcode-reader chassis/lens alignment", "item": 5},
+    {"claims": [19, 21], "characters": 1095, "sha256": "8ea8703a1ece3cff260e359bf4f4f8f0e76e8b2a48f0e5bbbf6d0fc46785b228", "scope": "chassis/lens assembly", "item": 6}
+  ],
+  "figures": ["1", "2", "3A", "3B", "3C", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17A", "17B"],
+  "prescription_marker_census": {
+    "focal length": 0,
+    "effective focal length": 0,
+    "F-number": 0,
+    "F number": 0,
+    "FNO": 0,
+    "F/#": 0,
+    "refractive index": 0,
+    "Abbe": 0,
+    "aspheric": 0,
+    "aspherical": 0,
+    "surface prescription": 0,
+    "optical prescription": 0,
+    "lens prescription": 0,
+    "surface no": 0,
+    "radius of curvature": 0,
+    "radius curvature": 0,
+    "curvature radius": 0,
+    "thickness": 0,
+    "lens element": 0,
+    "optical element": 2,
+    "field of view": 8,
+    "FOV": 109,
+    "full_field": 117,
+    "working distance": 91,
+    "working range": 3,
+    "lens assembly": 98,
+    "imaging assembly": 68,
+    "imaging engine": 8,
+    "aiming assembly": 22,
+    "aiming beam shaper": 4,
+    "beam shaper": 14,
+    "micro-lens": 5,
+    "prism": 4,
+    "fold mirror": 2,
+    "optical properties": 1,
+    "central axis": 11,
+    "clearance": 3,
+    "free-floating": 7,
+    "hardened adhesive": 12,
+    "light intensity": 23,
+    "foot-candles": 3,
+    "mrad": 3,
+    "mW": 7,
+    "FWD1": 10,
+    "FWD2": 18,
+    "NWD1": 9,
+    "NWD2": 16,
+    "linear aiming light pattern": 17,
+    "context": "working distances, aiming widths, intensities, angles and mechanical clearances are reader performance or alignment constraints; generic optical elements and beam-shaper components are not an ordered lens prescription"
+  },
+  "items": [
+    {"embodiment_number": 1, "summary_paragraph": 5, "claims": null, "source_category": "dual_linear_fov_barcode_reader", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.barcode_reader_dual_linear_fov_aiming_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 2, "summary_paragraph": 6, "claims": null, "source_category": "barcode_reader_manufacturing_method", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.barcode_reader_manufacturing_method_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 3, "summary_paragraph": 7, "claims": [1, 8], "source_category": "free_floating_lens_chassis_installation_method", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.free_floating_lens_chassis_installation_alignment_method_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 4, "summary_paragraph": 8, "claims": [9, 13], "source_category": "imaging_apparatus_lens_chassis_alignment", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.imaging_apparatus_lens_chassis_alignment_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 5, "summary_paragraph": 9, "claims": [14, 18], "source_category": "barcode_reader_lens_chassis_alignment", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.barcode_reader_lens_chassis_alignment_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 6, "summary_paragraph": 10, "claims": [19, 21], "source_category": "lens_chassis_assembly", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.lens_chassis_assembly_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 7, "summary_paragraph": 11, "claims": null, "source_category": "dual_working_range_imaging_engine", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.dual_working_range_imaging_engine_aiming_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 8, "summary_paragraph": 12, "claims": null, "source_category": "aiming_pattern_subportion_spacing", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.aiming_pattern_subportion_spacing_architecture_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 9, "summary_paragraph": 13, "claims": null, "source_category": "aiming_intensity_at_nwd2", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.aiming_intensity_at_second_near_working_distance_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 10, "summary_paragraph": 14, "claims": null, "source_category": "ambient_aiming_intensity_ratio", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.ambient_intensity_ratio_control_only", "ordered_surface_prescription_rows": 0},
+    {"embodiment_number": 11, "summary_paragraph": 15, "claims": null, "source_category": "laser_safety_aiming_constraint", "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.laser_safety_aiming_constraint_only", "ordered_surface_prescription_rows": 0}
+  ],
+  "same_application_scope_note": {
+    "classification_a1": "US-20190294840-A1 publishes 21 claims and is the retained classification source.",
+    "cross_check_b2": "US-10769394-B2 publishes 20 claims; the final chassis-dependent scope is consolidated.",
+    "numeric_effect": "none; no optical prescription is present in either raster publication"
+  },
+  "reconciliation": {
+    "unmapped_numbered_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tagged_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_disclosed_items": 0
+  },
+  "conversion_boundary": {
+    "reason": "The source publishes barcode-reader architecture, chassis/lens mechanical alignment, working ranges, aiming-pattern geometry and intensity, and a functional beam shaper; it never publishes ordered radii, spacings, materials, conics, asphere coefficients or required numeric system prescription metadata.",
+    "drawing_transcription": false,
+    "numeric_derivation_from_rasters": false,
+    "cross_publication_numeric_borrowing": false,
+    "code_v_used": false,
+    "zmx_written": 0,
+    "formal_intake": 0
+  }
+}

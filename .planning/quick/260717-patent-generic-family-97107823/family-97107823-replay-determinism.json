@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "family_id": "97107823",
+  "root_id": "US-20260086273",
+  "publication_id": "US-20260086273-A1",
+  "item_count": 12,
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "semantic_equal": true,
+  "semantic_sha256": "3f48d4c66a1f9768a9ff750c2e10a0db8be51e3fdd2539e9b330cf1ac927c8eb",
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260086273/attempt-0002/result.json",
+      "result_attempt": 2,
+      "bytes": 11820,
+      "file_sha256": "4974d468ca8b0511cfcb925b8665381760b51cd0746779412cf899246a104a7f",
+      "semantic_sha256": "3f48d4c66a1f9768a9ff750c2e10a0db8be51e3fdd2539e9b330cf1ac927c8eb"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20260086273/attempt-0003/result.json",
+      "result_attempt": 3,
+      "bytes": 11820,
+      "file_sha256": "2f805c4acca0d937179bc05d5af6de73e6f4c847634b29d42260a54846faff1c",
+      "semantic_sha256": "3f48d4c66a1f9768a9ff750c2e10a0db8be51e3fdd2539e9b330cf1ac927c8eb"
+    }
+  ],
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.adjustable_aperture_light_blocking_sheet_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_camera_module_placement_architecture_only"
+  ],
+  "conversion_attempts": 0,
+  "candidate_zmx_count": 0,
+  "matching_staging_zmx_count": 0
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "family_id": "60048601",
+  "purpose": "lineage cross-check only; never a numeric or classification authority",
+  "checked_on": "2026-07-21",
+  "primary_external_page": "https://patents.google.com/patent/US11086108B2/en",
+  "same_application_publications": [
+    {
+      "publication_id": "US-20200158996-A1",
+      "publication_date": "2020-05-21",
+      "application_number": "16/748874"
+    },
+    {
+      "publication_id": "US-11086108-B2",
+      "publication_date": "2021-08-10",
+      "application_number": "16/748874"
+    }
+  ],
+  "us_family_applications": [
+    {
+      "application_number": "15/201668",
+      "publication_id": "US-10234658-B2",
+      "relationship_to_primary": "earlier parent",
+      "filing_date": "2016-07-05",
+      "priority_date": "2016-05-09",
+      "external_page": "https://patents.google.com/patent/US10234658B2/en"
+    },
+    {
+      "application_number": "16/251320",
+      "publication_id": "US-10578839-B2",
+      "relationship_to_primary": "parent continuation",
+      "filing_date": "2019-01-18",
+      "priority_date": "2016-05-09",
+      "external_page": "https://patents.google.com/patent/US10578839B2/en"
+    },
+    {
+      "application_number": "16/748874",
+      "publication_id": "US-11086108-B2",
+      "relationship_to_primary": "classification primary",
+      "filing_date": "2020-01-22",
+      "priority_date": "2016-05-09",
+      "external_page": "https://patents.google.com/patent/US11086108B2/en"
+    }
+  ],
+  "foreign_priority": {
+    "application_number": "TW105114303",
+    "priority_date": "2016-05-09"
+  },
+  "boundaries": {
+    "classification_authority": "retained official USPTO PPUBS US-11086108-B2 HTML",
+    "external_family_numeric_values_imported": false,
+    "external_family_conclusions_imported": false,
+    "same_application_a1_claims_substituted_for_b2_claims": false
+  }
+}

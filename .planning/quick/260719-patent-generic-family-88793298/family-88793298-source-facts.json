@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "family_id": "88793298",
+  "root_id": "US-20260153710",
+  "publication_id": "US-20260153710-A1",
+  "application_number": "19/424607",
+  "content_authority": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/188dbb739fd8d713/US-20260153710-A1.html",
+    "bytes": 86522,
+    "sha256": "188dbb739fd8d71378d568a9d8d9d94dd06931b1c5ae9a0c7373836a4b31f36e",
+    "normalized_characters": 66453,
+    "normalized_sha256": "1f76127a058bbbfc3302e0c04bfcf460429ac45f8feeab2a6bca13f98d9f3239"
+  },
+  "sections": [
+    {"name": "abstract", "sha256": "e95581f1f9821276745cb4e4de75b90edeefcefd295e91af86ee9750373e3fe6"},
+    {"name": "background_summary", "paragraphs": [1, 23], "sha256": "66dcc3b5ffb0d1cbbaa5cad2df8a86f9abf237a064738ccfd181ea93a0df163e"},
+    {"name": "brief_description_of_drawings", "paragraphs": [24, 48], "sha256": "ec6683bc4b798abd105cdd524a57195827b988563fb5c603f17e638113e441f6"},
+    {"name": "detailed_description", "paragraphs": [49, 125], "sha256": "946b928aeea011cbbea20126f14ad0363e6df3e0cf9c1eb874bd9d002fbfd8a4"},
+    {"name": "claims", "sha256": "c5b3e8ecf0387ee71831313f4b3854ff1faa96a9e924fe949e5bfb8c20774d14"}
+  ],
+  "paragraph_spans": [
+    {"paragraphs": [1, 23], "role": "background_summary", "sha256": "03c02b5d6b9d7c3bd8f084a5f30d62bd3de96dde84a80740355ea6c037b78906"},
+    {"paragraphs": [24, 48], "role": "declared_figure_panels", "sha256": "df8dd41c462ccf54d043213d015e47a8f43e396bb73b52c53134b4380c968d06"},
+    {"paragraphs": [49, 52], "role": "known_art_system_200_context", "sha256": "83fc18da93f8e504cc2dd949fea7acbdf5102040aec312bcef8534358380cc83"},
+    {"paragraphs": [53, 56], "role": "item_1_system_250", "sha256": "962f351f568499d06aeb859d5e3202a090b0c5711786db73186db61b397c9a84"},
+    {"paragraphs": [57, 59], "role": "global_pop_out_context", "sha256": "98edee5a97089be81c378b08931dca69103a888bcd203bafaae42d12f1c0969e"},
+    {"paragraphs": [60, 78], "role": "item_2_system_300", "sha256": "411b0c8c412e0ba16a9eac45b4964deaa9db25d3b1cadffbbafc8be3719bcf75"},
+    {"paragraphs": [79, 91], "role": "item_3_system_400", "sha256": "9d39ded39b4b89d8372ab5552505f2e9354d59ae1d56e4ce7db1cea0dca63ff4"},
+    {"paragraphs": [92, 92], "role": "item_4_system_500", "sha256": "efef90eff107f1a683610591eae6647d9d5f4cbd0c0d70bdee7adf461ab74825"},
+    {"paragraphs": [93, 93], "role": "item_5_system_600", "sha256": "ea283719e61c2a7721fd7b780b211dba8acc52d30556efbfd6e34562a056cf18"},
+    {"paragraphs": [94, 104], "role": "item_6_system_700", "sha256": "c03dc0910e0e7ce8c39d4c8f263573baa8cd403de4a0fd95fdfb980ba2057415"},
+    {"paragraphs": [105, 109], "role": "item_7_system_800", "sha256": "2f4405772538722f0a8c227a94c26c15b32f9d53050a36adc20512c077667463"},
+    {"paragraphs": [110, 113], "role": "item_8_system_900", "sha256": "31cce92b45cac5955846e6599fb9732cd84666510b8501e6210a7dce9fa9edb9"},
+    {"paragraphs": [114, 116], "role": "item_9_system_1000", "sha256": "408711aaf1e2362f31c4c42ad867658de789211815c2ebd37fdb85761b4d988a"},
+    {"paragraphs": [117, 118], "role": "item_10_system_1100", "sha256": "d0e19c31fcf56561e27b7f27516cd80d8b987ee0844c8a765de0987547e74ab6"},
+    {"paragraphs": [119, 120], "role": "item_11_system_1200", "sha256": "19391946257e7fec451fc760844b5fbf2dd258e9ec29020a5eb9f6ab6805a48d"},
+    {"paragraphs": [121, 125], "role": "closing_context", "sha256": "ed58065ce1edb3f19df532f3693de94ffb97bd70b750dbe37277ff58907b74fb"}
+  ],
+  "declared_figures": {
+    "paragraph_range": [25, 48],
+    "panel_labels": ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D", "3", "4", "5", "6", "7", "8A", "8B", "8C", "9A", "9B", "9C", "10A", "10B", "11A", "11B", "12"],
+    "panel_count": 24
+  },
+  "claims": {
+    "source_number_sequence": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19],
+    "independent_claim_numbers": [1],
+    "section_sha256": "c5b3e8ecf0387ee71831313f4b3854ff1faa96a9e924fe949e5bfb8c20774d14"
+  },
+  "mathml": {
+    "object_count": 9,
+    "object_sha256": [
+      "f3b2042e230c2eae88c6a132cd004b91217b9cc3ca00e6f6e28784c364dcfc68",
+      "edeef9340f32e2d95a5c92e985fefbb82dfbc87b7555a376710ef2d201eb16c1",
+      "2ac9c7964bee34bd883afad75508cb9dd97fac71c8c73fa0bb1d2ecdc0a276ea",
+      "61842e1baa462f72a3796781d220304362019e6125fab04f264e5db968180ad4",
+      "f667bd18b8741b8eea36cb8849daa42f027a89a829087aa2bfbd7f83e1e1ed50",
+      "f9adae33281a41b08d4ea1e0375f2c892c7eee91b6fbb880ee7ef8d5799b6ead",
+      "cd8c21d246c53e6997be488e7615b052bcd1f9d8b4efd6cb40776b02c5de9f5e",
+      "62f2cd7128e6e919fec720587d94439a3e772911abf6d98bb71576e3103a27f5",
+      "a01d78b6665be43e2a8c9bf784b946b7a866916607e38541e33f14fa24fa7125"
+    ],
+    "qcon_defined_orders": [0, 1, 2, 3, 4, 5],
+    "external_basis_imported": false,
+    "formula_substitution_used": false
+  },
+  "tables": [
+    {"table_us": 1, "role": "system_300_surface_table", "tokens": 227, "sha256": "83b16a6bff2d3fb05f5b03a1a6756722a10153f5dcc1f24a416837a7b3e0fa8d"},
+    {"table_us": 2, "role": "system_300_qt1_coefficients", "tokens": 275, "sha256": "b003d312bcf8b1ccaa04252871f563ea2dbad69c7f2619f8fad31acc3e23f01e"},
+    {"table_us": 3, "role": "system_400_surface_table", "tokens": 193, "sha256": "3d14f1c5b0d7a6985c5fdecb91761ec8ba6913e1879ece123445838cbf303d35"},
+    {"table_us": 4, "role": "system_400_qt1_coefficients", "tokens": 276, "sha256": "b9490feac2eccef4e88c79464e8b752ab768fc740a8f3f26b983fd9a3ce5c15d"},
+    {"table_us": 5, "role": "system_500_surface_table", "tokens": 178, "sha256": "a5363be2c531eb9495bfdfde2eba65ccdbee3b190fd7bcb309c6fe8a57c9b7c2"},
+    {"table_us": 6, "role": "system_500_qt1_coefficients", "tokens": 177, "sha256": "43c61602d60f062aa36e47e9dfaad5e73dd67ac8554072736096da6f01e6536a"},
+    {"table_us": 7, "role": "system_600_surface_table", "tokens": 193, "sha256": "f379d18ed16afbd98fc20ca3c2f29353a82a51cae68e3f58b45fd16b546c0b13"},
+    {"table_us": 8, "role": "system_600_qt1_coefficients", "tokens": 295, "sha256": "39375c2b72047643b93e4558dbc8de0f08c8437f1b938fa2107530e9df76d375"},
+    {"table_us": 9, "role": "system_700_surface_table", "tokens": 142, "sha256": "0c4967fba6774869d0cd4db550dbb4f56c688bd2373a30b797e9ab83bae361c1"},
+    {"table_us": 10, "role": "system_700_qt1_coefficients", "tokens": 136, "sha256": "f9922d1c6a929dc3722afd2e71038d1fe208246ddbe85fd5652d85ad44e6d31f"},
+    {"table_us": 11, "role": "cross_system_summary", "tokens": 234, "sha256": "cff1654199f779b5c523767c354f613bdb171f1d321fbed94518a427898fc21b"}
+  ],
+  "prescription_facts": [
+    {"system": 300, "tables": [1, 2], "ordered_surface_rows": 22, "coefficient_rows": 18, "published_qcon_orders": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "efl_mm": 11.58, "f_number": 2.0, "hfov_deg": 41.35, "explicit_stop": true},
+    {"system": 400, "tables": [3, 4], "ordered_surface_rows": 22, "coefficient_rows": 18, "published_qcon_orders": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "efl_mm": 11.51, "f_number": 1.91, "hfov_deg": 43.91, "explicit_stop": true, "source_defect": "TABLE 3 repeats printed surface indices 14/15 for lenses 8 and 9"},
+    {"system": 500, "tables": [5, 6], "ordered_surface_rows": 20, "coefficient_rows": 16, "published_qcon_orders": [0, 1, 2, 3, 4, 5, 6, 7], "efl_mm": 11.53, "f_number": 1.675, "hfov_deg": 41.862, "explicit_stop": true},
+    {"system": 600, "tables": [7, 8], "ordered_surface_rows": 22, "coefficient_rows": 18, "published_qcon_orders": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], "efl_mm": 11.256, "f_number": 2.0, "hfov_deg": 42.9, "explicit_stop": true},
+    {"system": 700, "tables": [9, 10], "ordered_surface_rows": 15, "coefficient_rows": 12, "published_qcon_orders": [0, 1, 2, 3, 4, 5, 6, 7], "efl_mm": 8.78, "f_number": 1.4, "hfov_deg": 38.33, "explicit_stop": false}
+  ],
+  "items": [
+    {"number": 1, "system": 250, "paragraphs": [53, 56], "figures": ["2C", "2D"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.generic_one_group_pop_out_architecture_only"},
+    {"number": 2, "system": 300, "paragraphs": [60, 78], "figures": ["3"], "tables": [1, 2], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.qcon_q6_q9_basis_definitions_absent"},
+    {"number": 3, "system": 400, "paragraphs": [79, 91], "figures": ["4"], "tables": [3, 4], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.qcon_q6_q10_basis_definitions_and_surface_index_mapping_absent"},
+    {"number": 4, "system": 500, "paragraphs": [92, 92], "figures": ["5"], "tables": [5, 6], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.qcon_q6_q7_basis_definitions_absent"},
+    {"number": 5, "system": 600, "paragraphs": [93, 93], "figures": ["6"], "tables": [7, 8], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.qcon_q6_q11_basis_definitions_absent"},
+    {"number": 6, "system": 700, "paragraphs": [94, 104], "figures": ["7"], "tables": [9, 10], "terminal_status": "metadata_unpublished", "reason_code": "metadata_unpublished.qcon_q6_q7_basis_definitions_and_system_stop_absent"},
+    {"number": 7, "system": 800, "paragraphs": [105, 109], "figures": ["8A", "8B", "8C"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.inner_passive_poc_spring_architecture_only"},
+    {"number": 8, "system": 900, "paragraphs": [110, 113], "figures": ["9A", "9B", "9C"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.outer_passive_poc_magnetic_spring_architecture_only"},
+    {"number": 9, "system": 1000, "paragraphs": [114, 116], "figures": ["10A", "10B"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.outer_passive_poc_gear_architecture_only"},
+    {"number": 10, "system": 1100, "paragraphs": [117, 118], "figures": ["11A", "11B"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.folded_passive_poc_mirror_architecture_only"},
+    {"number": 11, "system": 1200, "paragraphs": [119, 120], "figures": ["12"], "tables": [], "terminal_status": "confirmed_no_prescription", "reason_code": "confirmed_no_prescription.multiwire_sma_actuator_architecture_only"}
+  ],
+  "exclusions": {
+    "known_art_system_200_paragraphs": [49, 52],
+    "known_art_pop_out_camera_110": true,
+    "generic_context_paragraphs": [[57, 59], [121, 125]],
+    "reason": "context is mapped but is not counted as a source-disclosed item of the claimed disclosure"
+  },
+  "conversion_policy": {
+    "qcon_orders_above_q5_substituted": false,
+    "table_3_surface_indices_repaired": false,
+    "system_700_stop_synthesized": false,
+    "drawing_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "related_family_numeric_borrowing_used": false
+  }
+}

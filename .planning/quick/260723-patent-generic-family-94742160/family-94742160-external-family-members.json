@@ -1,0 +1,24 @@
+{
+  "schema_version": "patent-family-external-members/v1",
+  "family_id": "94742160",
+  "retained_publication": {
+    "publication_id": "US-20260177783-A1",
+    "application_number": "19/054915",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2033debe04d6132a/US-20260177783-A1.html",
+    "sha256": "2033debe04d6132a8a686dbd1fc7f07c75d66bc9bb336f29fce4770e54d32fd0"
+  },
+  "source_disclosed_lineage": [
+    {
+      "record_type": "china_priority_application",
+      "identifier": "202411918281.9",
+      "filed": "2024-12-24",
+      "evidence": "official A1 Foreign Application Priority Data"
+    }
+  ],
+  "domestic_related_application_records": [],
+  "same_layout_distinct_families_excluded": [],
+  "completed_same_layout_families_are_not_sources": true,
+  "classification_source": "US-20260177783-A1 only",
+  "numeric_borrowing_from_lineage_or_same_layout_families": false,
+  "note": "The Chinese priority is bibliography only; completed same-layout families provide no value, source-item boundary or outcome."
+}

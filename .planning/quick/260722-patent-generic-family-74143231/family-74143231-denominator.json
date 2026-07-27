@@ -1,0 +1,157 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "74143231",
+  "root_id": "US-20220030168",
+  "publication_id": "US-20220030168-A1",
+  "application_number": "17/060047",
+  "title": "REFLECTION MODULE CAPABLE OF IMAGE STABILIZATION, CAMERA  MODULE AND ELECTRONIC DEVICE",
+  "lineage": {
+    "same_application_prior_publication": null,
+    "taiwan_priority_application": "109124665",
+    "taiwan_priority_date": "2020-07-22"
+  },
+  "denominator": {
+    "related_application_numbered_paragraphs": 1,
+    "background_numbered_paragraphs_excluding_related": 4,
+    "summary_numbered_paragraphs": 5,
+    "background_summary_section_numbered_paragraphs": 10,
+    "brief_drawing_numbered_paragraphs": 35,
+    "shared_detailed_architecture_numbered_paragraphs": 20,
+    "source_item_numbered_paragraphs": 82,
+    "closing_numbered_paragraphs": 1,
+    "description_numbered_paragraphs": 138,
+    "total_numbered_specification_paragraphs": 148,
+    "claims": 32,
+    "independent_claims": [1, 19, 28],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 0,
+    "maths_objects": 0,
+    "mathml_objects": 0,
+    "inline_formula_leads": 6,
+    "inline_formula_tails": 6,
+    "custom_character_image_tags": 0,
+    "figure_reference_occurrences": 135,
+    "declared_figure_panels": 34,
+    "drawing_sheets": 29,
+    "official_pdf_pages": 42,
+    "source_items": 8,
+    "reflection_image_stabilization_architecture_items": 6,
+    "electronic_device_wrapper_items": 2,
+    "ordered_optical_prescriptions": 0,
+    "source_items_unmapped": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan reflection/camera-module 1st embodiment",
+      "source_bindings": {"description_range": [66, 83], "figures": [1, 2, 3, 4, 5, 6, 7], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan reflection/camera-module 2nd embodiment",
+      "source_bindings": {"description_range": [84, 98], "figures": [8, 9, 10, 11, 12, 13, 14], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan reflection/camera-module 3rd embodiment",
+      "source_bindings": {"description_range": [99, 117], "figures": [15, 16, 17, 18, 19, 20, 21], "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan reflection/camera-module 4th embodiment",
+      "source_bindings": {"description_range": [118, 123], "figures": [22, 23, 24], "claims": [19, 20, 21, 22, 23, 24, 25, 26, 27]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan reflection/camera-module 5th embodiment",
+      "source_bindings": {"description_range": [124, 129], "figures": [25], "claims": [28, 29, 30, 31, 32]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan reflection/camera-module 6th embodiment",
+      "source_bindings": {"description_range": [130, 136], "figures": [26, 27, 28], "claims": [28, 29, 30, 31, 32]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.reflection_image_stabilization_architecture_only"
+    },
+    {
+      "number": 7,
+      "label": "Largan smartphone electronic-device 7th embodiment",
+      "source_bindings": {"description_range": [137, 143], "figures": [29, 30, 31, 32, 33], "claims": [18]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 8,
+      "label": "Largan smartphone electronic-device 8th embodiment",
+      "source_bindings": {"description_range": [144, 147], "figures": [34], "claims": [18]},
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "shared_architecture_boundary": {
+    "related_application_range": [1, 1],
+    "background_range_excluding_related": [2, 5],
+    "summary_range": [6, 10],
+    "brief_drawing_description_range": [11, 45],
+    "shared_detailed_architecture_range": [46, 65],
+    "item_description_range": [66, 147],
+    "closing_description_range": [148, 148],
+    "claim_1_reflection_module_independent": true,
+    "claim_19_reflection_module_independent": true,
+    "claim_28_reflection_module_independent": true,
+    "ordered_radius_rows_published": 0,
+    "ordered_spacing_rows_published": 0,
+    "numerical_material_or_index_dispersion_rows_published": 0,
+    "conic_or_asphere_rows_published": 0,
+    "identified_aperture_stop_rows_published": 0,
+    "exact_focal_length_published": false,
+    "exact_f_number_published": false,
+    "prescription_bound_numeric_angular_field_published": false,
+    "absolute_image_height_published": false
+  },
+  "direct_architecture_metadata": {
+    "shared_r_over_d_constraints": ["0.3<R/D<12", "0.5<R/D<10"],
+    "item_r_d_ratio_observations_mm": [
+      {"item": 1, "R": 0.45, "D": 0.3, "R_over_D": 1.5},
+      {"item": 2, "R": 0.6, "D": 0.25, "R_over_D": 2.4},
+      {"item": 3, "R": 0.45, "D": 0.3, "R_over_D": 1.5},
+      {"item": 4, "R": 0.4, "D": 0.79, "R_over_D": 0.51},
+      {"item": 5, "R": 0.8, "D": 0.62, "R_over_D": 1.29},
+      {"item": 6, "R": 0.45, "D": 0.45, "R_over_D": 1.0}
+    ],
+    "aspheric_surface_option_is_coefficient_free": true,
+    "device_field_roles_are_qualitative": true
+  },
+  "binding_policy": {
+    "architecture_metadata_promoted_to_prescription": false,
+    "device_field_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "printed_token_repair_used": false,
+    "priority_application_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 8,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  }
+}

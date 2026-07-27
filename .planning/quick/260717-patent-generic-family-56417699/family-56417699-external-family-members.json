@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "family_id": "56417699",
+  "priority_date": "2015-01-21",
+  "retained_application": "US15/545636",
+  "retained_publication": "US10782453B2",
+  "same_application_publications": [
+    {"publication_id": "US20180003978A1", "state": "queue_only", "publication_date": "2018-01-04"},
+    {"publication_id": "US10782453B2", "state": "retained_and_classified", "publication_date": "2020-09-22"}
+  ],
+  "google_family_applications": [
+    {"application_number": "US15/545620", "publication_id": "US10459126B2", "title": "Visual display with time multiplexing", "state": "queue_only"},
+    {"application_number": "US15/545626", "publication_id": "US10436951B2", "title": "Display device with total internal reflection", "state": "queue_only"},
+    {"application_number": "US15/545636", "publication_id": "US10782453B2", "title": "Display devices with reflectors", "state": "retained_and_classified"},
+    {"application_number": "US15/545633", "publication_id": "US10663626B2", "title": "Advanced refractive optics for immersive virtual reality", "state": "queue_only"},
+    {"application_number": "US15/545638", "publication_id": "US10690813B2", "title": "Imaging optics adapted to the human eye resolution", "state": "queue_only"}
+  ],
+  "pct_application": "PCT/US2016/014162",
+  "pct_publications": ["WO2016160099A2", "WO2016160099A3"],
+  "archived_google_evidence": [
+    {"path": ".planning/quick/260717-patent-generic-family-56417699/source-review/US-10782453-B2-google.html", "sha256": "efada8ea2f8a45937fd73ad110356ca682d8a820b4985ab7d2b47902fcbd3c01"},
+    {"path": ".planning/quick/260717-patent-generic-family-56417699/source-review/US-20180003978-A1-google.html", "sha256": "b770b0619b1fcdb04071ab881d91bee87f9231fa6f8f2443140c558b0a7abef5"}
+  ],
+  "classification_boundary": "Only retained US-10782453-B2 is classified in this shovel. Same-application A1, sibling US applications and PCT/foreign publications remain queue-only; no numeric truth is borrowed from them."
+}

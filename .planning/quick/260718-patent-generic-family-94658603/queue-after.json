@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "selection_policy": "generic bucket before AAC Raytech/Sunny; then minimum layout signature and root-first stable grouping",
+  "result_set_sha256": "ae553b4e9a655f7e2143a67d762b008e8b46eae3a169acffc1f4578269a4159e",
+  "generic_residual_roots": 80,
+  "generic_residual_items": 80,
+  "next_exact_group": {
+    "family_id": "75907839",
+    "root_ids": ["US-12554102"],
+    "publication_ids": ["US-12554102-B2"],
+    "application_number": "18/460957",
+    "title": "Imaging lens system",
+    "first_inventor": "Son; Ju Hwa",
+    "applicant": "SAMSUNG ELECTRO-MECHANICS CO., LTD.",
+    "assignee": "Samsung Electro-Mechanics Co., Ltd.",
+    "layout_signature": "65e7c81fcc86ef80c27964ce0ad0b130d49758908f927a1e90865d67c560f659",
+    "layout_signature_count": 1,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 4,
+      "full_field": 8,
+      "half_field": 0
+    },
+    "table_count": 12,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/03f007e37ed2e5c5/US-12554102-B2.html",
+      "sha256": "03f007e37ed2e5c5c084d2f9caede96ec14592a23210cef7f61eb98d52e382c1"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

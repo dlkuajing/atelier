@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-68161657/generic-residual-after-1.json",
+  "affected_roots": 11,
+  "affected_items": 11,
+  "result_set_sha256": "62f157437634ad50c4eafe730a4e37b7daa006eb1edba6734903322c8b1bd352",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "dfe865393c233a937e5f4c677b99e3f44ff9f18aeb8c03fef93cc3212a5adac5",
+    "layout_signature_count": 1,
+    "family_id": "50942169",
+    "root_ids": [
+      "US-9274312"
+    ],
+    "publication_ids": [
+      "US-9274312-B2"
+    ],
+    "application_numbers": [
+      "14/282013"
+    ],
+    "title": "Imaging lens assembly",
+    "applicant": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO., LTD",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/4bbe8e2ea7546dba/US-9274312-B2.html",
+      "sha256": "4bbe8e2ea7546dba693b253bcb364401434634aec1ea9f440c142bfaa5b7d315",
+      "bytes": 45158
+    },
+    "marker_counts": {
+      "effective_focal_length": 4,
+      "embodiment_anchor": 0,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 0
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

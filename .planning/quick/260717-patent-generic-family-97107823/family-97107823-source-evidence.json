@@ -1,0 +1,301 @@
+{
+  "schema_version": 1,
+  "family_id": "97107823",
+  "root_ids": [
+    "US-20260086273"
+  ],
+  "publication_id": "US-20260086273-A1",
+  "application_number": "19/337092",
+  "owner": "LARGAN PRECISION CO., LTD.",
+  "inventors": [
+    "LAI; Yu-Chen",
+    "TSENG; Te-Sheng"
+  ],
+  "priority_records": [
+    "US provisional 63/699249 Sep. 26, 2024",
+    "TW 114132575 Aug. 27, 2025"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "outside_cohort_family_publications": 4,
+    "related_application_paragraphs": 1,
+    "background_paragraphs": 2,
+    "summary_paragraphs": 9,
+    "description_paragraphs": 128,
+    "drawing_declarations": 28,
+    "figure_panels": 28,
+    "source_tables": 0,
+    "formal_embodiments": 5,
+    "shared_camera_module_embodiments": 2,
+    "named_adjustable_aperture_examples": 9,
+    "device_placement_embodiments": 3,
+    "claims": 33,
+    "classification_pdf_pages": 43,
+    "classification_drawing_sheets": 28,
+    "classification_specification_internal_pages": 14,
+    "terminal_items": 12
+  },
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/40376642ef07b3d1/US-20260086273-A1.html",
+    "bytes": 112431,
+    "raw_characters": 112335,
+    "raw_document_sha256": "40376642ef07b3d1e53469dce163bafdf89d54b4e4a205ae948071e7c25bc1b2",
+    "normalized_characters": 91886,
+    "normalized_text_sha256": "472b7cb6b08a969b8ceb70c1425b30d93f6d8a7dc0a7ac051d432fa1a7993c62",
+    "section_markers": {
+      "abstract": "Abstract An imaging lens assembly",
+      "background_summary": "Background/Summary RELATED APPLICATIONS",
+      "description": "Description BRIEF DESCRIPTION OF THE DRAWINGS",
+      "claims": "Claims 1 . An imaging lens assembly"
+    },
+    "section_positions": {
+      "abstract": 304,
+      "background_summary": 1664,
+      "description": 9031,
+      "claims": 78257
+    },
+    "section_sha256": {
+      "abstract": "bd5b0f2369252de593d4fad05b4fa4a5296851a0fc1e2c1a072c2e97925bce56",
+      "background_summary": "c03ec3c64e57f39ab7a670b69dfb34c09dcfe98fe617d2b2fd014c94e4eaa1fd",
+      "description": "2ef6842fd7c08a92b709d6aba5341ee1493c6c9a0bb673a0c019eb439883660a",
+      "claims": "08d17481a7ed7c5cb372e3bb4be20dcc8a4c398175702092b9fd31ad589df640"
+    },
+    "section_lengths": {
+      "abstract": 1360,
+      "background_summary": 7367,
+      "description": 69226,
+      "claims": 13629
+    },
+    "paragraph_range": [
+      1,
+      140
+    ],
+    "figure_declaration_paragraph_range": [
+      14,
+      41
+    ],
+    "figure_declaration_prefixes": [
+      "FIG. 1 A is ",
+      "FIG. 1 B is ",
+      "FIG. 1 C is ",
+      "FIG. 1 D is ",
+      "FIG. 1 E is ",
+      "FIG. 1 F is ",
+      "FIG. 1 G is ",
+      "FIG. 1 H is ",
+      "FIG. 1 I is ",
+      "FIG. 1 J is ",
+      "FIG. 1 K is ",
+      "FIG. 1 L is ",
+      "FIG. 1 M is ",
+      "FIG. 1 N is ",
+      "FIG. 1 O is ",
+      "FIG. 1 P is ",
+      "FIG. 1 Q is ",
+      "FIG. 2 A is ",
+      "FIG. 2 B is ",
+      "FIG. 2 C is ",
+      "FIG. 2 D is ",
+      "FIG. 2 E is ",
+      "FIG. 2 F is ",
+      "FIG. 2 G is ",
+      "FIG. 3 A is ",
+      "FIG. 3 B is ",
+      "FIG. 4 is ",
+      "FIG. 5 is "
+    ],
+    "heading_boundaries": {
+      "76": "1st Embodiment",
+      "80": "1st Example of 1st Embodiment",
+      "85": "2nd Example of 1st Embodiment",
+      "89": "3rd Example of 1st Embodiment",
+      "94": "4th Example of 1st Embodiment",
+      "100": "5th Example of 1st Embodiment",
+      "106": "6th Example of 1st Embodiment",
+      "112": "7th Example of 1st Embodiment",
+      "116": "2nd Embodiment",
+      "119": "1st Example of 2nd Embodiment",
+      "126": "2nd Example of 2nd Embodiment",
+      "133": "3rd Embodiment",
+      "137": "4th Embodiment",
+      "138": "5th Embodiment"
+    },
+    "shared_embodiment_ranges": {
+      "1st Embodiment": [
+        77,
+        80
+      ],
+      "2nd Embodiment": [
+        117,
+        119
+      ]
+    },
+    "terminal_item_ranges": {
+      "1st Embodiment Example 1": [
+        81,
+        85
+      ],
+      "1st Embodiment Example 2": [
+        86,
+        89
+      ],
+      "1st Embodiment Example 3": [
+        90,
+        94
+      ],
+      "1st Embodiment Example 4": [
+        95,
+        100
+      ],
+      "1st Embodiment Example 5": [
+        101,
+        106
+      ],
+      "1st Embodiment Example 6": [
+        107,
+        112
+      ],
+      "1st Embodiment Example 7": [
+        113,
+        116
+      ],
+      "2nd Embodiment Example 1": [
+        120,
+        126
+      ],
+      "2nd Embodiment Example 2": [
+        127,
+        133
+      ],
+      "3rd Embodiment": [
+        134,
+        137
+      ],
+      "4th Embodiment": [
+        138,
+        138
+      ],
+      "5th Embodiment": [
+        139,
+        139
+      ]
+    },
+    "claim_range": [
+      1,
+      33
+    ],
+    "formal_table_count": 0,
+    "raw_table_directive_count": 0
+  },
+  "optical_boundary": {
+    "absent_marker_counts": {
+      "focal length": 0,
+      "effective focal length": 0,
+      "F-number": 0,
+      "FNO": 0,
+      "field of view": 0,
+      "FOV": 0,
+      "radius": 0,
+      "curvature": 0,
+      "Abbe": 0,
+      "aspheric": 0,
+      "asphere": 0,
+      "aspheric coefficient": 0,
+      "asphere coefficient": 0,
+      "surface number": 0,
+      "optical prescription": 0,
+      "lens prescription": 0,
+      "surface prescription": 0,
+      "lens material": 0,
+      "glass type": 0,
+      "glass": 0,
+      "refractive index": 0
+    },
+    "published_numeric_context": [
+      "light-blocking-sheet T 0.035/0.05/0.06 mm",
+      "anti-bending-sheet T=0.023 mm, S=0.049 mm and T/S=0.469",
+      "overlapping light-blocking sheets Ti=0.033 mm, Tii=0.05 mm and Ti/Tii=0.66",
+      "bounded light-blocking/anti-bending and overlapping-sheet thickness ratios"
+    ],
+    "published_data_context": [
+      "rotatable light-blocking sheet shape and layered construction",
+      "tapered light-blocking surfaces and light-absorbing coatings",
+      "anti-bending sheet and overlap architecture",
+      "generic lens/barrel/filter/sensor placement",
+      "smartphone, drone and vehicle camera-module placement"
+    ],
+    "ordered_surface_prescription_published": false,
+    "direct_efl_f_number_field_metadata_published": false,
+    "image_only_prescription_found_in_pdf": false,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "cross_publication_values_borrowed": false
+  },
+  "terminal_outcome": {
+    "root_state": "terminal",
+    "terminal_status": "confirmed_no_prescription",
+    "aperture_example_item_count": 9,
+    "aperture_example_reason_code": "terminal.confirmed_no_prescription.adjustable_aperture_light_blocking_sheet_architecture_only",
+    "device_item_count": 3,
+    "device_reason_code": "terminal.confirmed_no_prescription.electronic_device_camera_module_placement_architecture_only",
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0
+  },
+  "replay_state": {
+    "result_set_sha256": "4855cde8f6c15fa566e1a4fbbb17d234d3e2f997b0db289bd603e60d120ce4e5",
+    "summary_sha256": "870f3e8dc9df1d983827474e6dc8f0631d4c9262b042326254559bc17075d86f",
+    "report_sha256": "26ffe1fdb0dfd1e988d58e5f4ffc32122bd781196af8bae5ce79fa47e4e840b0",
+    "strict_roots_with_results": 619,
+    "strict_cohort_roots": 619,
+    "corrupt_results": 0,
+    "root_state_counts": {
+      "parser_review_required": 323,
+      "mixed_nonterminal": 145,
+      "terminal": 126,
+      "converted_pending_intake": 25
+    },
+    "item_state_counts": {
+      "parser_review_required": 1405,
+      "terminal": 1092,
+      "converted_pending_intake": 551,
+      "conversion_retry_required": 28
+    }
+  },
+  "census": {
+    "before": {
+      "path": ".planning/quick/260717-patent-generic-family-97107823/generic-residual-before-136.json",
+      "sha256": "736a7d5fedb9fd9c99084edba4b7050d0f4bf1ca23997f36ab8c4249bb0146e6"
+    },
+    "after_1": {
+      "path": ".planning/quick/260717-patent-generic-family-97107823/generic-residual-after-1.json",
+      "sha256": "7466080417e23277b7d74ab87ec747226bc95f33027e338e0417f225268764b9"
+    },
+    "after_2": {
+      "path": ".planning/quick/260717-patent-generic-family-97107823/generic-residual-after-2.json",
+      "sha256": "7466080417e23277b7d74ab87ec747226bc95f33027e338e0417f225268764b9"
+    },
+    "queue_after": {
+      "path": ".planning/quick/260717-patent-generic-family-97107823/queue-after.json",
+      "sha256": "922309624cd8b56041e895b35012be6dbf89777e0a7a24f47aea8e513d4378c6"
+    }
+  },
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-97107823/family-97107823-raster-audit.json",
+    "sha256": "4e1da8963ed5c3c427bf5de6a3081ed41a7112882efa6c1fb388ce67f1e9625e"
+  },
+  "external_family_queue": {
+    "path": ".planning/quick/260717-patent-generic-family-97107823/family-97107823-external-family-members.json",
+    "sha256": "7cc9b4ef34e67d7ee77127c0136654c47ad4a5d2ae715049ed9f7ae149827ff6"
+  },
+  "replay_determinism": {
+    "path": ".planning/quick/260717-patent-generic-family-97107823/family-97107823-replay-determinism.json",
+    "sha256": "4ffa3df6be3119104a672f639363c3811c7818ee4ea2b2df159bb5c020d5dec8"
+  },
+  "source_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-97107823/family-97107823-source-audit.md",
+    "sha256": "d36f38d282f91f164fdc810d48443e99cf8e1d3b503fcf9fcfd54024b74cea50"
+  },
+  "saturation_boundary": "This frozen root is source-proven terminal. Four external family publications, all remaining parser buckets, staging intake, macro replay support and global source exhaustion remain open."
+}

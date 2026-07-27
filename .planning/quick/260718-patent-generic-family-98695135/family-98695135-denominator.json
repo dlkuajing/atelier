@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "family_id": "98695135",
+  "root_id": "US-20260086429",
+  "publication_id": "US-20260086429-A1",
+  "identity": {
+    "application_number": "19/333463",
+    "title": "IMAGING LENS DRIVING MODULE, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "first_inventor": "SU; Heng-Yi",
+    "filed": "2025-09-19",
+    "publication_date": "2026-03-26",
+    "kind_code": "A1",
+    "priority_application": "US 63/698,637",
+    "priority_date": "2024-09-25"
+  },
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/2d0745df79927e89/US-20260086429-A1.html",
+    "bytes": 128780,
+    "raw_sha256": "2d0745df79927e892aab44144dcff53fd384f2f7fb1d290ec9ad81dabb6cfece",
+    "normalized_characters": 110034,
+    "normalized_sha256": "ec0442b7f2ce2cb4b21a6f9bc27ac04e96c95d155d24dd4ac04d0f8511d1853c"
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "related_application_numbered_paragraphs": 1,
+    "background_numbered_paragraphs": 3,
+    "summary_numbered_paragraphs": 5,
+    "brief_drawing_numbered_paragraphs": 33,
+    "detailed_numbered_paragraphs": 97,
+    "total_numbered_paragraphs": 139,
+    "claims": 35,
+    "claim_families": 3,
+    "declared_figure_occurrences": 33,
+    "unique_declared_figure_labels": 33,
+    "tagged_html_tables": 4,
+    "mathml_objects": 12,
+    "source_declared_architecture_items": 8,
+    "source_declared_optical_prescriptions": 0,
+    "confirmed_no_prescription_items": 8,
+    "replayed_ledger_items": 8,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 51,
+    "retained_page_rasters": 51,
+    "retained_drawing_images": 33,
+    "unmapped_source_items": 0
+  },
+  "paragraph_spans": [
+    {"range": [1, 1], "role": "related applications"},
+    {"range": [2, 4], "role": "background"},
+    {"range": [5, 9], "role": "summary"},
+    {"range": [10, 42], "role": "brief description and 33 figure declarations"},
+    {"range": [43, 79], "role": "shared aperture-drive and flexible-wire architecture"},
+    {"range": [80, 94], "role": "first embodiment primary example and TABLE 1"},
+    {"range": [95, 98], "role": "first embodiment alternate example"},
+    {"range": [99, 104], "role": "second embodiment and TABLE 2"},
+    {"range": [105, 112], "role": "third embodiment and TABLE 3"},
+    {"range": [113, 120], "role": "fourth embodiment and TABLE 4"},
+    {"range": [121, 130], "role": "fifth multi-camera smartphone wrapper"},
+    {"range": [131, 134], "role": "sixth folded-telephoto smartphone wrapper"},
+    {"range": [135, 138], "role": "seventh vehicle-camera wrapper"},
+    {"range": [139, 139], "role": "boilerplate"}
+  ],
+  "figure_denominator": {
+    "occurrences_by_group": {
+      "FIGS. 1A-1O": 15,
+      "FIGS. 2A-2E": 5,
+      "FIGS. 3A-3B": 2,
+      "FIGS. 4A-4B": 2,
+      "FIGS. 5A-5E": 5,
+      "FIG. 6": 1,
+      "FIGS. 7A-7C": 3
+    },
+    "official_drawing_sheets": 33,
+    "official_pdf_page_range": [2, 34],
+    "source_discrepancies": [],
+    "source_labels_repaired": false
+  },
+  "mechanical_tables": [
+    {
+      "table": 1,
+      "values": {"D_mm": 5.588, "Hn_mm": 1.69, "L_mm": 48.224, "L_over_D": 8.63, "Wc_mm": 5.58, "Wc_over_Wf": 5.81, "Wf_mm": 0.96, "Hn_over_D": 0.302},
+      "meaning": "first flexible-wire-plate mechanical envelope"
+    },
+    {
+      "table": 2,
+      "values": {"D_mm": 5.6731, "Hn_mm": 0.81, "L_mm": 26.0401, "L_over_D": 4.5901, "Wc_mm": 5.58, "Wc_over_Wf": 5.8125, "Wf_mm": 0.96, "Hn_over_D": 0.319},
+      "meaning": "second flexible-wire-plate mechanical envelope",
+      "source_discrepancy": "The official HTML and PDF publish Hn/D=0.319; it is retained verbatim and is not recomputed or corrected."
+    },
+    {
+      "table": 3,
+      "values": {"D_mm": 5.6639, "L_mm": 18.5974, "L_over_D": 3.2835, "Wc_mm": 2.88, "Wc_over_Wf": 3.0, "Wf_mm": 0.96},
+      "meaning": "third flexible-wire-plate mechanical envelope"
+    },
+    {
+      "table": 4,
+      "values": {"D_mm": 6.0639, "L_mm": 23.7584, "L_over_D": 3.918, "Wc_mm": 6.7189, "Wc_over_Wf": 6.9988, "Wf_mm": 0.96},
+      "meaning": "fourth flexible-wire-plate mechanical envelope"
+    }
+  ],
+  "items": [
+    {"embodiment_number": 1, "label": "Largan first driving-module embodiment primary example", "paragraphs": [80, 94], "table": 1, "status": "confirmed_no_prescription", "reason_code": "flexible_wire_plate_driving_architecture_only"},
+    {"embodiment_number": 2, "label": "Largan first driving-module embodiment alternate example", "paragraphs": [95, 98], "table": null, "status": "confirmed_no_prescription", "reason_code": "alternate_flexible_wire_plate_architecture_only"},
+    {"embodiment_number": 3, "label": "Largan second driving-module embodiment", "paragraphs": [99, 104], "table": 2, "status": "confirmed_no_prescription", "reason_code": "second_flexible_wire_plate_drive_architecture_only"},
+    {"embodiment_number": 4, "label": "Largan third driving-module embodiment", "paragraphs": [105, 112], "table": 3, "status": "confirmed_no_prescription", "reason_code": "third_variable_aperture_drive_architecture_only"},
+    {"embodiment_number": 5, "label": "Largan fourth driving-module embodiment", "paragraphs": [113, 120], "table": 4, "status": "confirmed_no_prescription", "reason_code": "fourth_variable_aperture_drive_architecture_only"},
+    {"embodiment_number": 6, "label": "Largan fifth electronic-device embodiment", "paragraphs": [121, 130], "table": null, "status": "confirmed_no_prescription", "reason_code": "multi_camera_smartphone_wrapper_only"},
+    {"embodiment_number": 7, "label": "Largan sixth electronic-device embodiment", "paragraphs": [131, 134], "table": null, "status": "confirmed_no_prescription", "reason_code": "folded_telephoto_smartphone_wrapper_only"},
+    {"embodiment_number": 8, "label": "Largan seventh vehicle-device embodiment", "paragraphs": [135, 138], "table": null, "status": "confirmed_no_prescription", "reason_code": "vehicle_multi_camera_wrapper_only"}
+  ],
+  "optical_scope": {
+    "imaging_lens_assembly_occurrences": 53,
+    "lens_carrier_occurrences": 83,
+    "optical_axis_occurrences": 45,
+    "image_sensor_occurrences": 15,
+    "image_surface_occurrences": 7,
+    "focal_length_occurrences": 1,
+    "visual_angle_occurrences": 3,
+    "interpretation": "variable-aperture/lens-carrier mechanics and device wrappers only",
+    "ordered_surface_prescriptions": 0
+  },
+  "non_prescription_numeric_contexts": [
+    {"values": ["D", "Hn", "L", "Wc", "Wf"], "meaning": "flexible-wire-plate mechanical dimensions and ratios"},
+    {"value": "various focal lengths", "location": "paragraph 130", "meaning": "generic multi-camera zooming function"},
+    {"value": "40 degrees < theta < 90 degrees", "location": "paragraph 136", "meaning": "vehicle camera placement coverage visual angle"}
+  ],
+  "forbidden_substitutions": [
+    "flexible-wire or actuator dimensions for lens surface coordinates",
+    "variable-aperture hole for an axial prescription stop coordinate",
+    "generic imaging lens assembly for an ordered optical prescription",
+    "multi-camera focal-length wording for numeric system focal length",
+    "vehicle coverage angle for prescription-specific angular field",
+    "drawing coordinates for numeric prescription values"
+  ]
+}

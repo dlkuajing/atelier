@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260718-patent-generic-family-86240812/generic-residual-after-2.json",
+  "result_set_sha256": "2fd10d202f3eff06d47e99656510d7eb0035c61a0afd161b788247a450a649a4",
+  "generic_residual_roots": 76,
+  "generic_residual_items": 76,
+  "next_exact_group": {
+    "family_id": "78957411",
+    "root_ids": ["US-20250130396"],
+    "publication_ids": ["US-20250130396-A1"],
+    "application_number": "18/991878",
+    "layout_signature": "685058ff309a7229a046151e2af431ecc05a0e4f7645ed983ed2572588b7deb3",
+    "layout_signature_count": 1,
+    "table_count": 4,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 58,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/afda18a5a638aa20/US-20250130396-A1.html",
+      "sha256": "afda18a5a638aa206b285b3bdc7013ac715a16659cabd44e955f0799dfe49de2"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

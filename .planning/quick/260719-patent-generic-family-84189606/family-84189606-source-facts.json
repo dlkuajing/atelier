@@ -1,0 +1,430 @@
+{
+  "schema_version": 1,
+  "family_id": "84189606",
+  "root_id": "US-12474548",
+  "publication_id": "US-12474548-B2",
+  "bibliography": {
+    "title": "Optical lens assembly and a head-mounted electronic device",
+    "kind_code": "B2",
+    "date_of_patent": "2025-11-18",
+    "application_number": "17/892929",
+    "filed": "2022-08-22",
+    "inventors": [
+      "Chen; Po-Yu",
+      "Chen; Ping-Yi",
+      "Tsai; Fei-Hsin"
+    ],
+    "applicant": "NEWMAX TECHNOLOGY CO., LTD.",
+    "assignee": null
+  },
+  "lineage": {
+    "prior_us_publication": "US-20230341659-A1",
+    "foreign_priorities": [
+      "TW-111204209 (2022-04-22)",
+      "TW-111122243 (2022-06-15)"
+    ],
+    "classification_content_authority": [
+      "US-12474548-B2"
+    ],
+    "cross_publication_borrowing": false
+  },
+  "section_denominator": {
+    "background_paragraphs": 4,
+    "summary_paragraphs": 54,
+    "detailed_paragraphs": 140,
+    "numbered_specification_paragraphs": 159,
+    "brief_figure_declarations": 19,
+    "claims": 20,
+    "independent_claims": [
+      1,
+      15
+    ]
+  },
+  "object_denominator": {
+    "flattened_table_us_objects": 32,
+    "mathml_objects": 1,
+    "html_image_tags": 0,
+    "declared_figure_panels": 19,
+    "official_drawing_sheets": 10
+  },
+  "source_items": [
+    {
+      "item": 1,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 1",
+      "paragraphs": [
+        20,
+        54
+      ],
+      "paragraph_span_sha256": "22d60723f10130ad8ed514ca0e0eba4901d0879f35fb3f5fe54e4aac079a21ab",
+      "tables": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "physical_lens_count": 2,
+      "ordered_surface_rows": 19,
+      "surface_index_range": [
+        0,
+        18
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 35.31,
+          "epd_mm": 8.0,
+          "full_fov_deg": 94.8
+        },
+        "near": {
+          "efl_label": "EFL_N",
+          "efl_mm": 31.26,
+          "epd_mm": 8.0,
+          "full_fov_deg": 123.0
+        },
+        "image_height_mm": 26.64
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 2,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 2",
+      "paragraphs": [
+        55,
+        67
+      ],
+      "paragraph_span_sha256": "ac8aaf382ba11ed9d31351cd923e87eb93355b7be57d7ad2f46533272a41a612",
+      "tables": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "physical_lens_count": 2,
+      "ordered_surface_rows": 19,
+      "surface_index_range": [
+        0,
+        18
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 35.54,
+          "epd_mm": 8.0,
+          "full_fov_deg": 93.8
+        },
+        "near": {
+          "efl_label": "EFL_N",
+          "efl_mm": 33.09,
+          "epd_mm": 8.0,
+          "full_fov_deg": 110.1
+        },
+        "image_height_mm": 26.94
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 3,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 3",
+      "paragraphs": [
+        68,
+        80
+      ],
+      "paragraph_span_sha256": "1e778af13f71861bc0ef29cdddd98a541bbfbb93915f1b4bbf8a51c16e8ccec0",
+      "tables": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "physical_lens_count": 2,
+      "ordered_surface_rows": 19,
+      "surface_index_range": [
+        0,
+        18
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 18.04,
+          "epd_mm": 8.0,
+          "full_fov_deg": 96.6
+        },
+        "near": {
+          "efl_label": "EFL_N",
+          "efl_mm": 16.71,
+          "epd_mm": 8.0,
+          "full_fov_deg": 99.7
+        },
+        "image_height_mm": 13.47
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 4,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 4",
+      "paragraphs": [
+        81,
+        94
+      ],
+      "paragraph_span_sha256": "e4ed5e62433051243f3f1ffae8bed1798b7d0ffea4c9a3da476a580e29e21dd3",
+      "tables": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "physical_lens_count": 3,
+      "ordered_surface_rows": 25,
+      "surface_index_range": [
+        0,
+        24
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 26.04,
+          "epd_mm": 8.0,
+          "full_fov_deg": 94.8
+        },
+        "near": {
+          "efl_label": "EFL_N",
+          "efl_mm": 24.5,
+          "epd_mm": 8.0,
+          "full_fov_deg": 100.9
+        },
+        "image_height_mm": 19.25
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 5,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 5",
+      "paragraphs": [
+        95,
+        108
+      ],
+      "paragraph_span_sha256": "6f46c58420aea716d2784025bd66b8ccded7fe884749794a2f8247f3a4c82176",
+      "tables": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "physical_lens_count": 3,
+      "ordered_surface_rows": 22,
+      "surface_index_range": [
+        0,
+        21
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 27.04,
+          "epd_mm": 8.0,
+          "full_fov_deg": 94.7
+        },
+        "near": {
+          "efl_label": "EFL_F",
+          "efl_mm": 25.83,
+          "epd_mm": 8.0,
+          "full_fov_deg": 101.9
+        },
+        "parameter_table_near_efl_label": "EFL_N",
+        "image_height_mm": 19.25
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 6,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 6",
+      "paragraphs": [
+        109,
+        123
+      ],
+      "paragraph_span_sha256": "d6fa15c59560fddffab5bfebe2fa7245625f73ebeddfb999d9d0a80fb9f83917",
+      "tables": [
+        21,
+        22,
+        23,
+        24
+      ],
+      "physical_lens_count": 4,
+      "ordered_surface_rows": 31,
+      "surface_index_range": [
+        0,
+        30
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 30.03,
+          "epd_mm": 10.0,
+          "full_fov_deg": 93.3
+        },
+        "near": {
+          "efl_label": "EFL_N",
+          "efl_mm": 29.31,
+          "epd_mm": 10.0,
+          "full_fov_deg": 98.5
+        },
+        "image_height_mm": 21.1
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 7,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 7",
+      "paragraphs": [
+        124,
+        138
+      ],
+      "paragraph_span_sha256": "18aa5c4f9f778386926d8252dd15a62577841cfb5be28e17059a77fa34bec287",
+      "tables": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "physical_lens_count": 4,
+      "ordered_surface_rows": 31,
+      "surface_index_range": [
+        0,
+        30
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 26.59,
+          "epd_mm": 10.0,
+          "full_fov_deg": 95.0
+        },
+        "near": {
+          "efl_label": "EFL_N",
+          "efl_mm": 25.73,
+          "epd_mm": 10.0,
+          "full_fov_deg": 100.0
+        },
+        "image_height_mm": 20.0
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 8,
+      "label": "NEWMAX varifocal folded optical assembly embodiment 8",
+      "paragraphs": [
+        139,
+        153
+      ],
+      "paragraph_span_sha256": "c24dbc667a17f649e74ac1e7687c5f6eedfa286453dec4d1f96c883cd9277296",
+      "tables": [
+        29,
+        30,
+        31,
+        32
+      ],
+      "physical_lens_count": 4,
+      "ordered_surface_rows": 31,
+      "surface_index_range": [
+        0,
+        30
+      ],
+      "stop_rows": 1,
+      "system_values": {
+        "far": {
+          "efl_label": "EFL_F",
+          "efl_mm": 26.66,
+          "epd_mm": 10.0,
+          "full_fov_deg": 95.0
+        },
+        "near": {
+          "efl_label": "EFL_N",
+          "efl_mm": 25.48,
+          "epd_mm": 10.0,
+          "full_fov_deg": 100.3
+        },
+        "image_height_mm": 20.0
+      },
+      "classification": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.system_f_number_absent"
+    },
+    {
+      "item": 9,
+      "label": "NEWMAX head-mounted electronic-device wrapper",
+      "paragraphs": [
+        156,
+        159
+      ],
+      "paragraph_span_sha256": "4a07d8c73bfd111d57a1375bff18a35e04d0f5773902df732936051477373690",
+      "tables": [],
+      "figures": [
+        "9"
+      ],
+      "claims": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "classification": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "direct_metadata_boundary": {
+    "embodiments_with_direct_near_far_efl_epd_full_fov_and_image_height": 8,
+    "direct_system_f_number_values": 0,
+    "f_over_epd_derivation_permitted": false
+  },
+  "source_anomalies_retained_verbatim": [
+    {
+      "location": "Table 10",
+      "token": "A6 without a following colon"
+    },
+    {
+      "location": "Table 17 near-point header",
+      "token": "Near point: EFL_F = 25.83 mm",
+      "conflicts_with": "Table 19 EFL_N(mm) 25.83"
+    },
+    {
+      "location": "Table 13 surface 22",
+      "tokens": [
+        "1. 569 (Far point)",
+        "5. 771 (Near point)"
+      ]
+    },
+    {
+      "location": "Table 21 surface 24",
+      "token": "-.040 (Near point)"
+    },
+    {
+      "location": "Table 29 surface 28",
+      "token": "3.763 (Near poing)"
+    },
+    {
+      "location": "Table 25 surface 0",
+      "token": "10000.000 (Far point)"
+    }
+  ],
+  "adjudication": {
+    "metadata_unpublished_items": 8,
+    "confirmed_no_prescription_items": 1,
+    "conversion_requests": 0,
+    "formal_outputs": 0,
+    "numeric_repair_or_derivation": false
+  }
+}

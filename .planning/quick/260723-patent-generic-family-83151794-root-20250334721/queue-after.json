@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-83151794-root-20250334721/generic-residual-after-1.json",
+  "affected_roots": 5,
+  "affected_items": 5,
+  "result_set_sha256": "f295cb3cbb289be12dfdab410a7fb31e7db00339a148f90c43805412c9c68613",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "f2ee5ee92d4a0b008bfd5f1ae621a2b874005c56b8827866002047dc08d8d075",
+    "layout_signature_count": 1,
+    "family_id": "51536052",
+    "root_ids": [
+      "US-9835833"
+    ],
+    "publication_ids": [
+      "US-9835833-B2"
+    ],
+    "application_numbers": [
+      "14/848945"
+    ],
+    "title": "Wide angle lens and imaging apparatus",
+    "applicant": "FUJIFILM Corporation",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/9b1038d3ad24d262/US-9835833-B2.html",
+      "sha256": "9b1038d3ad24d26282a720e3e9e0ee07fdae49d2e49e850ce9b004cacfdb419d",
+      "bytes": 54311
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 33,
+      "f_number": 5,
+      "full_field": 0,
+      "half_field": 2
+    },
+    "table_count": 10
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

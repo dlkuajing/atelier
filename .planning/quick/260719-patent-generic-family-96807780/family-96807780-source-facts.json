@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "family_id": "96807780",
+  "root_id": "US-20250389925",
+  "publication_id": "US-20250389925-A1",
+  "source_integrity": {
+    "section_sha256": {
+      "background": "66203e396ff7c86043660d16dd25ebf64cb944cc29f153e6991cce802501cc41",
+      "description": "6d0eaaa74cdf7b509c36f2c095885c7a27739e507d959fd2c9f63e50ef3050de",
+      "claims": "4cef9d01b388d6d359229f66151e839b6ede7c4811ea878168280291e2e60b11"
+    },
+    "paragraph_span_sha256": {
+      "10-46": "1c72e92d42705b490cb0088af1cd77b0e1cbc8e2e23fa4eeaeecbc54196d845a",
+      "47-73": "04d48d6640ef235c4a699194b3b708e33c837bf4a69bd2fe1764971c00a2eabd",
+      "74-82": "56446e81bb3568a9b3ee4f07dc1c51149186d249bfcde3d78c35e0a35e7eb28b",
+      "83-84": "ba989745460baa4b5cb14afbaa41288344aa7ae2a6dced99288ce3e708002f65",
+      "85-86": "b23181a61819b10fd3c0bf9a7ee8e8daf23088606f478b1614a102b357812eca",
+      "87-88": "2cd06914eeb8064adfa7cce13a93bb44f616c017b554ac0f39ffa23be4c2b37b",
+      "89-90": "521dd90933d4d56150319301f5592a908e3fd7218e8963a25fab101e57d383d4",
+      "91-98": "9e7f2a80c16c332104450ff4f5d6aedfdb8e66f578f92b76b3fe87a0e372aa14",
+      "99-107": "4c4a43a19be3d216a893e8dfd110528625f2c21086335d9127863ac66bfe676d",
+      "108-116": "147a7df0f762769baf784fc6fce897514a52f7c0fcd119ffd2a0b55cdd3e7592",
+      "117-120": "c773154129edf88ac8f51917de1e4028fd4f29256eee61ef0d077b16600067fc",
+      "121-124": "7fcbd682e3dc38cd8d47a563dc708e26c43553f97010e539f6aa11c90d2b1686",
+      "125-125": "a0415d591dab3d239317da87a952d2c0638d8743bb253e55961111c284b4d3ca"
+    },
+    "table_fragments": [
+      {
+        "table": "1A",
+        "raw_characters": 171,
+        "raw_sha256": "3a4e0e9173bdd428686405c4a54837d571129cfbbc5faf357b3409945c397df4",
+        "normalized_characters": 163,
+        "normalized_sha256": "9b371248211c561ed8d4964f23a7e8de7519284f08a94296d59360e8b1c889e0"
+      },
+      {
+        "table": "2A",
+        "raw_characters": 171,
+        "raw_sha256": "a4293191e8f1517aa0631ccbf0b2539c210b6c678459002757f3b99d69c9e2d8",
+        "normalized_characters": 163,
+        "normalized_sha256": "5054f91939b1efba2ece6304722a4486492adef05a1091e3ca564359fcbe10d8"
+      },
+      {
+        "table": "3A",
+        "raw_characters": 203,
+        "raw_sha256": "7add29a39eece513dfdb66b9f1fe1ddafbb37a2d016cf8def03c4901aab04344",
+        "normalized_characters": 195,
+        "normalized_sha256": "84a93e94ddd9ac72ca80ed485de950d396b94e7ea36a5929f972f4fd4403b15c"
+      }
+    ],
+    "maths_objects": 22,
+    "maths_object_hash_set_sha256": "d875a877cc401c355417030d81ad4fb607af491e51ab1d6d095c13a753dd8c85"
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "First embodiment, first example image lens element 100 and imaging lens assembly 10",
+      "paragraphs": [74, 82],
+      "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I"],
+      "tables": ["1A"],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "First embodiment, second example image lens element 100a",
+      "paragraphs": [83, 84],
+      "figures": ["1J"],
+      "tables": [],
+      "reuses_item": 1,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "First embodiment, third example image lens element 100b",
+      "paragraphs": [85, 86],
+      "figures": ["1K"],
+      "tables": [],
+      "reuses_item": 1,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "First embodiment, fourth example image lens element 100c",
+      "paragraphs": [87, 88],
+      "figures": ["1L"],
+      "tables": [],
+      "reuses_item": 1,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "First embodiment, fifth example image lens element 100d",
+      "paragraphs": [89, 90],
+      "figures": ["1M"],
+      "tables": [],
+      "reuses_item": 1,
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Second embodiment, first example image lens element 200 and imaging lens assembly 20",
+      "paragraphs": [91, 98],
+      "figures": ["2A", "2B", "2C", "2D", "2E", "2F", "2G", "2H", "2I"],
+      "tables": ["2A"],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Third embodiment, first example image lens element 300 and imaging lens assembly 30",
+      "paragraphs": [99, 107],
+      "figures": ["3A", "3B", "3C", "3D", "3E", "3F"],
+      "tables": ["3A"],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.image_lens_outer_diameter_stripe_and_molding_geometry_only"
+    },
+    {
+      "embodiment_number": 8,
+      "label": "Fourth embodiment smartphone electronic device 40",
+      "paragraphs": [108, 116],
+      "figures": ["4A", "4B", "4C", "4D", "4E"],
+      "tables": [],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_camera_placement_and_digital_zoom_wrapper_only"
+    },
+    {
+      "embodiment_number": 9,
+      "label": "Fifth embodiment smartphone electronic device 50",
+      "paragraphs": [117, 120],
+      "figures": ["5"],
+      "tables": [],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_camera_placement_and_digital_zoom_wrapper_only"
+    },
+    {
+      "embodiment_number": 10,
+      "label": "Sixth embodiment vehicle instrument 60",
+      "paragraphs": [121, 124],
+      "figures": ["6A", "6B", "6C"],
+      "tables": [],
+      "ledger_state": "terminal",
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_camera_placement_and_visual_angle_wrapper_only"
+    }
+  ],
+  "shared_context": [
+    {
+      "role": "background and summary",
+      "paragraphs": [1, 9]
+    },
+    {
+      "role": "brief description of 37 drawing panels",
+      "paragraphs": [10, 46]
+    },
+    {
+      "role": "shared outer-diameter, stripe, shrinking-region, gate-trace and ratio definitions",
+      "paragraphs": [47, 73]
+    },
+    {
+      "role": "closing boilerplate",
+      "paragraphs": [125, 125]
+    }
+  ],
+  "claims": {
+    "count": 39,
+    "independent_claims": [1, 16, 26, 33],
+    "imaging_lens_assembly_claim": 14,
+    "electronic_device_claim": 15,
+    "ordered_optical_prescription_claims": 0,
+    "maths_objects": 22,
+    "maths_scope": "outer-diameter stripe angles, lengths and mechanical ratios only"
+  },
+  "prescription_boundary": {
+    "ordered_optical_surface_rows": 0,
+    "published_curvature_radii": 0,
+    "published_axial_thickness_or_air_space_rows": 0,
+    "published_optical_material_rows": 0,
+    "published_refractive_index_or_abbe_rows": 0,
+    "published_asphere_coefficients": 0,
+    "published_stop_locations": 0,
+    "published_efl_values": 0,
+    "published_f_number_values": 0,
+    "published_optical_field_values": 0,
+    "published_image_height_values": 0,
+    "mechanical_table_values_reclassified_as_optical": false,
+    "vehicle_visual_angle_reclassified_as_lens_field": false,
+    "drawing_geometry_measured": false,
+    "related_application_values_borrowed": false,
+    "raster_values_transcribed": false
+  }
+}

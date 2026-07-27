@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "family_id": "97107726",
+  "publication_id": "US-12425721-B1",
+  "retained_source": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/ced8908e46d666e0/US-12425721-B1.html",
+    "bytes": 106178,
+    "sha256": "ced8908e46d666e070d1f9776d6a3bf9865bd446f3acd7687116603843a8a7a2"
+  },
+  "uspto_pdf_probe": {
+    "url": "https://ppubs.uspto.gov/dirsearch-public/print/downloadPdf/US-12425721-B1",
+    "http_status": 404,
+    "file_retained": false,
+    "numeric_source": false
+  },
+  "uspto_official_gazette": {
+    "issue": "2025 week 38",
+    "html_url": "https://patentsgazette.uspto.gov/week38/OG/html/1538-4/US12425721-20250923.html",
+    "http_status": 200,
+    "exemplary_drawing": {
+      "url": "https://patentsgazette.uspto.gov/week38/OG/html/1538-4/US12425721-20250923-D00000.gif",
+      "path": ".planning/quick/260717-patent-generic-family-97107726/source-review/US-12425721-B1-uspto-og-exemplary.gif",
+      "bytes": 23729,
+      "sha256": "e8de283dc7cc57ebc82c6b89dd3acf0b08d56574ecbc17b43855288996923632",
+      "format": "GIF",
+      "size": [290, 400],
+      "mode": "L",
+      "frames": 1,
+      "visual_review": "FIG. 1 setting/decode/machine-learning flow; no optical surface table"
+    }
+  },
+  "google_patents_mirror": {
+    "url": "https://patents.google.com/patent/US12425721B1/en",
+    "http_status": 200,
+    "publication_description": "Patent (no pre-grant publication)",
+    "declared_full_drawing_image_links": 9,
+    "declared_pdf_links": 0,
+    "direct_image_probe_status": 403,
+    "retained_drawing_images": 0,
+    "numeric_source": false
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO full-text HTML only",
+    "official_gazette_use": "scope and exemplary drawing review only",
+    "mirror_use": "availability census only",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "cross_publication_numeric_borrowing": false
+  }
+}

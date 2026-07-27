@@ -1,0 +1,39 @@
+{
+  "schema_version": "patent-generic-residual-queue/v1",
+  "source_census": ".planning/quick/260721-patent-generic-family-40641507/generic-residual-after-1.json",
+  "affected_roots": 42,
+  "affected_items": 42,
+  "result_set_sha256": "23d7eb627685922ade629409ee52569fa196d06332010afbb91b68a2505e3c5a",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining layout signature; then exact family grouping",
+    "layout_signature": "b42ffd6f0e3fa9ab4b2d944d8377e5ce883cfa0c16f6dedc9f3557c09ddc21df",
+    "layout_signature_count": 1,
+    "family_id": "87845869",
+    "root_ids": [
+      "US-20260086440"
+    ],
+    "publication_ids": [
+      "US-20260086440-A1"
+    ],
+    "application_numbers": [
+      "19/408546"
+    ],
+    "title": "LIGHT PATH FOLDING ELEMENT, CAMERA MODULE AND ELECTRONIC DEVICE",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a6a2c63f2323dcaa/US-20260086440-A1.html",
+      "bytes": 95585,
+      "sha256": "a6a2c63f2323dcaae2fba1555d3e73d16649ca6de8c2292928c2627c582be01a"
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 86,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "table_count": 5
+  },
+  "saturation_complete": false
+}

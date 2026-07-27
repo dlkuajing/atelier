@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "family_id": "63165840",
+  "root_id": "US-10197774",
+  "publication_id": "US-10197774-B1",
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_primary_publications": 1,
+    "background_summary_numbered_paragraphs": 4,
+    "brief_drawing_numbered_paragraphs": 13,
+    "detailed_numbered_paragraphs": 108,
+    "description_numbered_paragraphs": 121,
+    "total_numbered_paragraphs_including_background_summary": 125,
+    "claims": 11,
+    "independent_claims": 1,
+    "declared_figures": 12,
+    "flattened_tables": 13,
+    "surface_prescription_tables": 3,
+    "asphere_coefficient_tables": 3,
+    "inflexion_point_tables": 3,
+    "arrest_point_tables": 3,
+    "shared_condition_and_summary_tables": 1,
+    "inline_formula_pairs": 22,
+    "description_formula_pairs": 1,
+    "claim_formula_pairs": 21,
+    "source_disclosed_optical_prescription_items": 3,
+    "ordered_published_surface_rows": 45,
+    "modeled_sequential_surfaces_including_appended_images": 48,
+    "asphere_surfaces": 36,
+    "even_asphere_terms_per_surface": 8,
+    "even_asphere_numeric_cells": 288,
+    "published_internal_exception_groups": 3,
+    "wrapper_items_with_additional_prescriptions": 0,
+    "replayed_ledger_items": 3,
+    "converted_pending_intake_items": 1,
+    "terminal_trace_failed_items": 2,
+    "worker_requests": 3,
+    "worker_receipts": 3,
+    "prescription_fingerprints": 3,
+    "candidate_zmx": 1,
+    "staging_zmx": 1,
+    "formal_intake_items": 0,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 16,
+    "retained_primary_page_rasters": 16,
+    "official_primary_drawing_sheets": 7,
+    "official_primary_table_pages": 5,
+    "official_primary_claim_pages": 2,
+    "unmapped_background_summary_paragraphs": 0,
+    "unmapped_description_paragraphs": 0,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_tables": 0,
+    "unmapped_formula_pairs": 0,
+    "unmapped_source_items": 0
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "paragraphs": [34, 97],
+      "figures": [1, 2, 3, 4],
+      "tables": [1, 2, 3, 4, 13],
+      "published_surface_rows": 15,
+      "modeled_surfaces_including_appended_image": 16,
+      "asphere_surfaces": 12,
+      "focal_length_mm": 4.569,
+      "f_number": 2.2,
+      "published_full_diagonal_field_deg": 80.73,
+      "parsed_half_field_deg": 40.365,
+      "published_ttl_mm": 5.2,
+      "detailed_surface_distance_sum_mm": 5.201,
+      "ledger_state": "terminal",
+      "terminal_status": "trace_failed",
+      "prescription_fingerprint": "75588376c449da1f"
+    },
+    {
+      "embodiment_number": 2,
+      "paragraphs": [98, 108],
+      "figures": [5, 6, 7, 8],
+      "tables": [5, 6, 7, 8, 13],
+      "published_surface_rows": 15,
+      "modeled_surfaces_including_appended_image": 16,
+      "asphere_surfaces": 12,
+      "focal_length_mm": 4.353,
+      "f_number": 2.2,
+      "published_full_diagonal_field_deg": 83.41,
+      "parsed_half_field_deg": 41.705,
+      "published_ttl_mm": 5.201,
+      "detailed_surface_distance_sum_mm": 5.199,
+      "ledger_state": "converted_pending_intake",
+      "terminal_status": null,
+      "prescription_fingerprint": "d36d28b2342ccb2a"
+    },
+    {
+      "embodiment_number": 3,
+      "paragraphs": [109, 119],
+      "figures": [9, 10, 11, 12],
+      "tables": [9, 10, 11, 12, 13],
+      "published_surface_rows": 15,
+      "modeled_surfaces_including_appended_image": 16,
+      "asphere_surfaces": 12,
+      "focal_length_mm": 4.604,
+      "f_number": 2.2,
+      "published_full_diagonal_field_deg": 80.34,
+      "parsed_half_field_deg": 40.17,
+      "published_ttl_mm": 5.201,
+      "detailed_surface_distance_sum_mm": 5.202,
+      "ledger_state": "terminal",
+      "terminal_status": "trace_failed",
+      "prescription_fingerprint": "80ee3f676160f46a"
+    }
+  ],
+  "context_ranges": [
+    {
+      "role": "background and summary",
+      "paragraphs": [1, 4]
+    },
+    {
+      "role": "brief description of drawings",
+      "paragraphs": [1, 13]
+    },
+    {
+      "role": "shared architecture, definitions, equations and first embodiment",
+      "paragraphs": [14, 97]
+    },
+    {
+      "role": "second embodiment",
+      "paragraphs": [98, 108]
+    },
+    {
+      "role": "third embodiment",
+      "paragraphs": [109, 119]
+    },
+    {
+      "role": "closing boilerplate",
+      "paragraphs": [120, 121]
+    }
+  ],
+  "representation_boundary": {
+    "full_diagonal_field_to_half_field_transform": "HFOV = published FOV / 2",
+    "negative_object_side_stop_spacing_retained": true,
+    "R13_R14_bound_to_optical_filter_GF": true,
+    "table_9_is_embodiment_3_ordered_prescription_authority": true,
+    "table_13_conflicts_retained_without_numeric_repair": true,
+    "rounded_table_13_ttl_does_not_replace_detailed_spacings": true,
+    "direct_image_height_substituted_for_pipeline_sanity_formula": false,
+    "conversion_state_is_formal_intake": false
+  },
+  "formal_outputs": {
+    "case_index_entries": 0,
+    "case_json": 0,
+    "intake_manifests": 0,
+    "expert_backed_items": 0
+  }
+}

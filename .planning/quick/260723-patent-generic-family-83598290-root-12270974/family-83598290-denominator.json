@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "family_id": "83598290",
+  "application_number": "18/839730",
+  "root_ids": [
+    "US-12270974"
+  ],
+  "publication_ids": [
+    "US-12270974-B1"
+  ],
+  "lineage": {
+    "national_stage_of": "PCT/JP2023/018580",
+    "international_publication": "WO2023/234051",
+    "japanese_priority": "2022-089667",
+    "priority_date": "2022-06-01",
+    "related_publication_values_borrowed": false
+  },
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 17,
+    "description_numbered_paragraphs": 147,
+    "claims": 20,
+    "independent_claims": 4,
+    "declared_drawing_panels": 61,
+    "ordered_figure_references": 98,
+    "html_native_tables": 0,
+    "html_native_rows": 0,
+    "html_native_cells": 0,
+    "html_images": 0,
+    "mathml_objects": 0,
+    "math_objects": 0,
+    "source_declared_embodiments": 15,
+    "focus_states_per_embodiment": 3,
+    "source_declared_optical_states": 45,
+    "metadata_unpublished_items": 45,
+    "replayed_ledger_items": 45,
+    "official_pdf_files": 2,
+    "official_pdf_pages_per_file": 73,
+    "official_drawing_sheets": 61,
+    "official_prescription_chart_pages": 15,
+    "official_focus_performance_pages": 45,
+    "shared_summary_pages": 1,
+    "unmapped_claims": 0,
+    "unmapped_declared_figures": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "background_summary": [
+      1,
+      17
+    ],
+    "brief_description_of_drawings": [
+      1,
+      31
+    ],
+    "common_detailed_description": [
+      32,
+      73
+    ],
+    "embodiment_1": [
+      74,
+      78
+    ],
+    "embodiment_2": [
+      79,
+      83
+    ],
+    "embodiment_3": [
+      84,
+      88
+    ],
+    "embodiment_4": [
+      89,
+      93
+    ],
+    "embodiment_5": [
+      94,
+      98
+    ],
+    "embodiment_6": [
+      99,
+      104
+    ],
+    "embodiment_7": [
+      105,
+      109
+    ],
+    "embodiment_8": [
+      110,
+      114
+    ],
+    "embodiment_9": [
+      115,
+      119
+    ],
+    "embodiment_10": [
+      120,
+      124
+    ],
+    "embodiment_11": [
+      125,
+      129
+    ],
+    "embodiment_12": [
+      130,
+      134
+    ],
+    "embodiment_13": [
+      135,
+      138
+    ],
+    "embodiment_14": [
+      139,
+      142
+    ],
+    "embodiment_15": [
+      143,
+      146
+    ],
+    "shared_figure_31_summary": [
+      147,
+      147
+    ]
+  },
+  "claim_dependency_graph": [
+    [],
+    [],
+    [],
+    [
+      3
+    ],
+    [],
+    [
+      5
+    ],
+    [
+      5
+    ],
+    [
+      5
+    ],
+    [
+      4
+    ],
+    [
+      4
+    ],
+    [
+      4
+    ],
+    [
+      3
+    ],
+    [
+      3
+    ],
+    [
+      3
+    ],
+    [
+      2
+    ],
+    [
+      2
+    ],
+    [
+      2
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ],
+    [
+      1
+    ]
+  ],
+  "items": [
+    {"item_number": 1, "embodiment_number": 1, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [74, 78], "lens_data_figure": "1", "focus_performance_figure": "2a", "pdf_lens_data_page": 3, "pdf_focus_performance_page": 4, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 2, "embodiment_number": 1, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [74, 78], "lens_data_figure": "1", "focus_performance_figure": "2b", "pdf_lens_data_page": 3, "pdf_focus_performance_page": 5, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 3, "embodiment_number": 1, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [74, 78], "lens_data_figure": "1", "focus_performance_figure": "2c", "pdf_lens_data_page": 3, "pdf_focus_performance_page": 6, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 4, "embodiment_number": 2, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [79, 83], "lens_data_figure": "3", "focus_performance_figure": "4a", "pdf_lens_data_page": 7, "pdf_focus_performance_page": 8, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 5, "embodiment_number": 2, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [79, 83], "lens_data_figure": "3", "focus_performance_figure": "4b", "pdf_lens_data_page": 7, "pdf_focus_performance_page": 9, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 6, "embodiment_number": 2, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [79, 83], "lens_data_figure": "3", "focus_performance_figure": "4c", "pdf_lens_data_page": 7, "pdf_focus_performance_page": 10, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 7, "embodiment_number": 3, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [84, 88], "lens_data_figure": "5", "focus_performance_figure": "6a", "pdf_lens_data_page": 11, "pdf_focus_performance_page": 12, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 8, "embodiment_number": 3, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [84, 88], "lens_data_figure": "5", "focus_performance_figure": "6b", "pdf_lens_data_page": 11, "pdf_focus_performance_page": 13, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 9, "embodiment_number": 3, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [84, 88], "lens_data_figure": "5", "focus_performance_figure": "6c", "pdf_lens_data_page": 11, "pdf_focus_performance_page": 14, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 10, "embodiment_number": 4, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [89, 93], "lens_data_figure": "7", "focus_performance_figure": "8a", "pdf_lens_data_page": 15, "pdf_focus_performance_page": 16, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 11, "embodiment_number": 4, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [89, 93], "lens_data_figure": "7", "focus_performance_figure": "8b", "pdf_lens_data_page": 15, "pdf_focus_performance_page": 17, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 12, "embodiment_number": 4, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [89, 93], "lens_data_figure": "7", "focus_performance_figure": "8c", "pdf_lens_data_page": 15, "pdf_focus_performance_page": 18, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 13, "embodiment_number": 5, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [94, 98], "lens_data_figure": "9", "focus_performance_figure": "10a", "pdf_lens_data_page": 19, "pdf_focus_performance_page": 20, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 14, "embodiment_number": 5, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [94, 98], "lens_data_figure": "9", "focus_performance_figure": "10b", "pdf_lens_data_page": 19, "pdf_focus_performance_page": 21, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 15, "embodiment_number": 5, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [94, 98], "lens_data_figure": "9", "focus_performance_figure": "10c", "pdf_lens_data_page": 19, "pdf_focus_performance_page": 22, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 16, "embodiment_number": 6, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [99, 104], "lens_data_figure": "11", "focus_performance_figure": "12a", "pdf_lens_data_page": 23, "pdf_focus_performance_page": 24, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 17, "embodiment_number": 6, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [99, 104], "lens_data_figure": "11", "focus_performance_figure": "12b", "pdf_lens_data_page": 23, "pdf_focus_performance_page": 25, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 18, "embodiment_number": 6, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [99, 104], "lens_data_figure": "11", "focus_performance_figure": "12c", "pdf_lens_data_page": 23, "pdf_focus_performance_page": 26, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 19, "embodiment_number": 7, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [105, 109], "lens_data_figure": "13", "focus_performance_figure": "14a", "pdf_lens_data_page": 27, "pdf_focus_performance_page": 28, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 20, "embodiment_number": 7, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [105, 109], "lens_data_figure": "13", "focus_performance_figure": "14b", "pdf_lens_data_page": 27, "pdf_focus_performance_page": 29, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 21, "embodiment_number": 7, "focus_state": "close", "shooting_distance_mm": 200, "description_paragraphs": [105, 109], "lens_data_figure": "13", "focus_performance_figure": "14c", "pdf_lens_data_page": 27, "pdf_focus_performance_page": 30, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 22, "embodiment_number": 8, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [110, 114], "lens_data_figure": "15", "focus_performance_figure": "16a", "pdf_lens_data_page": 31, "pdf_focus_performance_page": 32, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 23, "embodiment_number": 8, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [110, 114], "lens_data_figure": "15", "focus_performance_figure": "16b", "pdf_lens_data_page": 31, "pdf_focus_performance_page": 33, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 24, "embodiment_number": 8, "focus_state": "close", "shooting_distance_mm": 200, "description_paragraphs": [110, 114], "lens_data_figure": "15", "focus_performance_figure": "16c", "pdf_lens_data_page": 31, "pdf_focus_performance_page": 34, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 25, "embodiment_number": 9, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [115, 119], "lens_data_figure": "17", "focus_performance_figure": "18a", "pdf_lens_data_page": 35, "pdf_focus_performance_page": 36, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 26, "embodiment_number": 9, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [115, 119], "lens_data_figure": "17", "focus_performance_figure": "18b", "pdf_lens_data_page": 35, "pdf_focus_performance_page": 37, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 27, "embodiment_number": 9, "focus_state": "close", "shooting_distance_mm": 200, "description_paragraphs": [115, 119], "lens_data_figure": "17", "focus_performance_figure": "18c", "pdf_lens_data_page": 35, "pdf_focus_performance_page": 38, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 28, "embodiment_number": 10, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [120, 124], "lens_data_figure": "19", "focus_performance_figure": "20a", "pdf_lens_data_page": 39, "pdf_focus_performance_page": 40, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 29, "embodiment_number": 10, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [120, 124], "lens_data_figure": "19", "focus_performance_figure": "20b", "pdf_lens_data_page": 39, "pdf_focus_performance_page": 41, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 30, "embodiment_number": 10, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [120, 124], "lens_data_figure": "19", "focus_performance_figure": "20c", "pdf_lens_data_page": 39, "pdf_focus_performance_page": 42, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 31, "embodiment_number": 11, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [125, 129], "lens_data_figure": "21", "focus_performance_figure": "22a", "pdf_lens_data_page": 43, "pdf_focus_performance_page": 44, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 32, "embodiment_number": 11, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [125, 129], "lens_data_figure": "21", "focus_performance_figure": "22b", "pdf_lens_data_page": 43, "pdf_focus_performance_page": 45, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 33, "embodiment_number": 11, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [125, 129], "lens_data_figure": "21", "focus_performance_figure": "22c", "pdf_lens_data_page": 43, "pdf_focus_performance_page": 46, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 34, "embodiment_number": 12, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [130, 134], "lens_data_figure": "23", "focus_performance_figure": "24a", "pdf_lens_data_page": 47, "pdf_focus_performance_page": 48, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 35, "embodiment_number": 12, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [130, 134], "lens_data_figure": "23", "focus_performance_figure": "24b", "pdf_lens_data_page": 47, "pdf_focus_performance_page": 49, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 36, "embodiment_number": 12, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [130, 134], "lens_data_figure": "23", "focus_performance_figure": "24c", "pdf_lens_data_page": 47, "pdf_focus_performance_page": 50, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 37, "embodiment_number": 13, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [135, 138], "lens_data_figure": "25", "focus_performance_figure": "26a", "pdf_lens_data_page": 51, "pdf_focus_performance_page": 52, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 38, "embodiment_number": 13, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [135, 138], "lens_data_figure": "25", "focus_performance_figure": "26b", "pdf_lens_data_page": 51, "pdf_focus_performance_page": 53, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 39, "embodiment_number": 13, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [135, 138], "lens_data_figure": "25", "focus_performance_figure": "26c", "pdf_lens_data_page": 51, "pdf_focus_performance_page": 54, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 40, "embodiment_number": 14, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [139, 142], "lens_data_figure": "27", "focus_performance_figure": "28a", "pdf_lens_data_page": 55, "pdf_focus_performance_page": 56, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 41, "embodiment_number": 14, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [139, 142], "lens_data_figure": "27", "focus_performance_figure": "28b", "pdf_lens_data_page": 55, "pdf_focus_performance_page": 57, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 42, "embodiment_number": 14, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [139, 142], "lens_data_figure": "27", "focus_performance_figure": "28c", "pdf_lens_data_page": 55, "pdf_focus_performance_page": 58, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 43, "embodiment_number": 15, "focus_state": "infinity", "shooting_distance": "infinity", "description_paragraphs": [143, 146], "lens_data_figure": "29", "focus_performance_figure": "30a", "pdf_lens_data_page": 59, "pdf_focus_performance_page": 60, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 44, "embodiment_number": 15, "focus_state": "500mm", "shooting_distance_mm": 500, "description_paragraphs": [143, 146], "lens_data_figure": "29", "focus_performance_figure": "30b", "pdf_lens_data_page": 59, "pdf_focus_performance_page": 61, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"},
+    {"item_number": 45, "embodiment_number": 15, "focus_state": "close", "shooting_distance_mm": 150, "description_paragraphs": [143, 146], "lens_data_figure": "29", "focus_performance_figure": "30c", "pdf_lens_data_page": 59, "pdf_focus_performance_page": 62, "status": "metadata_unpublished", "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"}
+  ],
+  "item_boundary": {
+    "one_item_per_focus_state": true,
+    "shared_figure_31_is_new_item": false,
+    "claims_are_new_items": false,
+    "apparatus_wrappers_are_new_items": false,
+    "item_count_derived_from_title": false,
+    "item_count_derived_from_queue_markers": false
+  },
+  "metadata_boundary": {
+    "ordered_surface_data_published_in_machine_readable_html": false,
+    "material_data_published_in_machine_readable_html": false,
+    "asphere_data_published_in_machine_readable_html": false,
+    "focus_specific_system_data_published_in_machine_readable_html": false,
+    "ordered_surface_data_published_in_official_raster": true,
+    "material_data_published_in_official_raster": true,
+    "asphere_data_published_in_official_raster": true,
+    "focus_specific_system_data_published_in_official_raster": true,
+    "ocr_used": false,
+    "enhancement_used": false,
+    "measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "numeric_inference_used": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

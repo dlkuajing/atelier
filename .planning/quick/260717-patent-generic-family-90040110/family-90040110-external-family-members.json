@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "family_id": "90040110",
+  "frozen_cohort_root_ids": ["US-12386154", "US-20250327997"],
+  "retained_classification_publications": ["US-12386154-B2", "US-20250327997-A1"],
+  "queue_only_records": [
+    {
+      "publication_id": "US-20240168265-A1",
+      "relationship": "same application 18/362008 as US-12386154-B2",
+      "evidence": "B2 Prior Publication Data and both exact Google family wrappers",
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "TWI867679B",
+      "relationship": "Google family record",
+      "evidence": "both exact Google family wrappers",
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "TWM649703U",
+      "relationship": "Google family record",
+      "evidence": "both exact Google family wrappers",
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "TW202422150A",
+      "relationship": "Google family record",
+      "evidence": "both exact Google family wrappers",
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "TW202511800A",
+      "relationship": "Google family record",
+      "evidence": "both exact Google family wrappers",
+      "in_frozen_cohort": false
+    },
+    {
+      "publication_id": "KR102803451B1",
+      "relationship": "Google priority/family record",
+      "evidence": "both exact Google family wrappers",
+      "in_frozen_cohort": false
+    }
+  ],
+  "application_records_without_numeric_import": [
+    "TW112130144A",
+    "TW112208469U",
+    "TW113145142A"
+  ],
+  "numeric_truth_imported_from_queue_only_records": false,
+  "queue_only": true,
+  "saturation_complete": false
+}

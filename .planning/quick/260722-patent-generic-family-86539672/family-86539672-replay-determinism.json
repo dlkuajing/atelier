@@ -1,0 +1,52 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "86539672",
+  "root_id": "US-20240352227",
+  "publication_id": "US-20240352227-A1",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-20240352227/attempt-0001/result.json",
+    "bytes": 1299,
+    "sha256": "591b46ec1b207fcd28b02d45d6f272806b8438e24f1ee1ece5060e6c8e887ab6",
+    "result_attempt": 1,
+    "root_state": "parser_review_required"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20240352227/attempt-0002/result.json",
+      "bytes": 1740,
+      "sha256": "7f6922182c8e26ef5c225b4649849b1018ee064238322c2ca3727b05e77df06f",
+      "result_attempt": 2,
+      "file_sha256": "7f6922182c8e26ef5c225b4649849b1018ee064238322c2ca3727b05e77df06f",
+      "semantic_sha256": "c17e4836ecdd3502e38bc41a37facf377c9a7ad8fa2519ee6690bf52ca0af850"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20240352227/attempt-0003/result.json",
+      "bytes": 1740,
+      "sha256": "5313c741c881850c06d1910504eb824538b5aa8b67db8d4b037260f595f40df2",
+      "result_attempt": 3,
+      "file_sha256": "5313c741c881850c06d1910504eb824538b5aa8b67db8d4b037260f595f40df2",
+      "semantic_sha256": "c17e4836ecdd3502e38bc41a37facf377c9a7ad8fa2519ee6690bf52ca0af850"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "c17e4836ecdd3502e38bc41a37facf377c9a7ad8fa2519ee6690bf52ca0af850",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.resin_composition_molded_product_and_optical_component_materials_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

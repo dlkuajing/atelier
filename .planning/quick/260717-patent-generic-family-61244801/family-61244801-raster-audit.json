@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "family_id": "61244801",
+  "publication_id": "US-11287601-B2",
+  "page_count": 19,
+  "page_image_counts": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  "page_shape": [3300, 2560],
+  "page_raster_sha256": [
+    "486d2f2040192bb53af69337d8d374b928fc365f4378ea6e5d335667ba5271d9",
+    "909ddfec82ad0b5246a7e4f0d25b52bee7e532c6ba38f1b3440b9d1c4d9596db",
+    "eaca5b50fea4b279c35d8a317094e21ca0cf6e1b3adcb38f858602b4dc232715",
+    "544d4c74c7ab8cfabb9aeb809e7a876cc3b9d0cf69a2e16f1633711b17a9af9f",
+    "8824110fa208d5c9925895403da341ddf6ac5a38158d652b60ee432f0a83c08f",
+    "49745b8de3d0aa105b624f2926d353a7b49083fb24ad6b0114fcf6ec8cebac45",
+    "b4bf0c8478b2362eba3cb3c9a70554b73812525f0d04beb621536e00552e8de1",
+    "bfd126b5b583905013d02a12dc2f860a0e5ccea165073a4e37e366e30cc0f58c",
+    "e8063fe29aa0fd8630b95ec33046a34c1c0c1e3d6b38b84b8d0f4adca1aa2c9f",
+    "a146bbd217172444573359ee5c0f791c15daed459aeab45bb80b9ae7d8a23e6b",
+    "d93261af1f9db18fc7e151705f40d179d26863a32c9afec9005687f9efb223cb",
+    "4811237defcdde958ca706cc415370889afcf6da32966f87be12a7881414b18c",
+    "970beb6790a24c964031488f1283fd92441482c50c8047346b6934cb3ae0a720",
+    "21f1c25557131ba545e295b282dc1a520a22d32e2dca5961483d711476b5183f",
+    "581719c17f076c09b6cc8daec52f112ef02b4a7fb9dcb1dbe0ed57e020278e24",
+    "0991732fc27a1dcc0c5e2a5e957272429aa8e39b2283104ddc34a23fe49f0b51",
+    "83b634ced52d066a4b1f79e32552cf476a224eb743845c49340bec8e490cf81d",
+    "748df2a637820c92832d3d932a790a631aa62363654b4d72e7c1c35b4a02632e",
+    "388519915fcad6bb07ff1a995fa0823a7c2d0f7a41b710157d0d38235f4147f6"
+  ],
+  "raster_set_sha256_domain": "sha256 of page hashes joined by a single LF with no trailing LF",
+  "raster_set_sha256": "5c20f0e387a0160e9b3dc4337e744deeb1aa670cca26531c2e2bb160946938a6",
+  "page_roles": {
+    "cover_pages": [1],
+    "reference_pages": [2],
+    "drawing_sheet_pdf_pages": [3, 4, 5, 6, 7, 8, 9, 10],
+    "specification_and_claims_pdf_pages": [11, 12, 13, 14, 15, 16, 17, 18, 19],
+    "claims_start_pdf_page": 17,
+    "claims_end_pdf_page": 19,
+    "figure_to_pdf_page": {
+      "1": 3,
+      "2": 4,
+      "3": 5,
+      "4": 6,
+      "5": 7,
+      "6": 8,
+      "7": 9,
+      "8": 10
+    }
+  },
+  "table_roles": {
+    "figure_3": "relative power ranges",
+    "figure_4": "Sample Design 1 ordered surface/material prescription",
+    "figure_5": "Sample Design 1 conic/asphere coefficients",
+    "figure_6": "Sample Design 2 ordered surface/material prescription",
+    "figure_7": "Sample Design 2 conic/asphere coefficients",
+    "figure_8": "mobile-device architecture, no prescription table"
+  },
+  "wrappers": {
+    "official_1": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-official-1.pdf",
+      "bytes": 1413765,
+      "sha256": "453a1b7eb9ca7af2f5a23fd72b11b8ead32a22e9859b319804498a1a420a3caf",
+      "page_text_lengths": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "official_2": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-official-2.pdf",
+      "bytes": 1413765,
+      "sha256": "d4b0314fc95b19c73e50e6016a3c0c4344c3e66aa847e9db97017ae18d84c664",
+      "page_text_lengths": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "google": {
+      "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-google.pdf",
+      "bytes": 1925106,
+      "sha256": "a404b17068ef00c677def8ffcad8cd5be1c1acdbd0b54efab8ccd1c5378e0307",
+      "url": "https://patentimages.storage.googleapis.com/26/29/9c/a2f4094c57fee7/US11287601.pdf",
+      "page_text_lengths": [2664, 1736, 103, 122, 508, 715, 991, 697, 938, 153, 6657, 7775, 7824, 7208, 5309, 5541, 5526, 6244, 736]
+    }
+  },
+  "decoded_raster_equality": {
+    "official_1_vs_official_2": {"compared_pages": 19, "equal_pages": 19},
+    "official_1_vs_google": {"compared_pages": 19, "equal_pages": 19}
+  },
+  "retained_full_resolution_pages": [
+    {"pdf_page": 5, "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-page-5.png", "sha256": "bd1d322d58272955d420593019f9129879c9f08f775c1425f14ffb2d9ef2cf81"},
+    {"pdf_page": 6, "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-page-6.png", "sha256": "53ec9d312f3bbc242fd96d7b348948fa6a9846c3bc6a87ef24296c0b2e57e0ee"},
+    {"pdf_page": 7, "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-page-7.png", "sha256": "3f2c629136508e1cc1763f89e0dce12f5d50be5239728adb6bbe1c058668f68c"},
+    {"pdf_page": 8, "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-page-8.png", "sha256": "be77a7861f6c5d4e4d0a4cf81653183a5095820c445dc70b0e6b807644d922f0"},
+    {"pdf_page": 9, "path": ".planning/quick/260717-patent-generic-family-61244801/source-review/US-11287601-B2-page-9.png", "sha256": "5a9753d10dea6e70081208d156d3c771b967883a96ca9f21a57781621fe54c22"}
+  ],
+  "visual_conclusion": "All 19 pages and all eight drawing sheets were decoded and inspected. Numeric prescription truth remains bound to official rasters; the pixel-identical Google text layer and RapidOCR are auxiliary readings only. No numeric value was derived from drawing geometry."
+}

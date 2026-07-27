@@ -1,0 +1,929 @@
+{
+  "claims": {
+    "claim_set_sha256": "4a49bad2d261230840faa71aa6e82d2a52a6165dd1fa75b21a469a9837094d94",
+    "dependencies": [
+      [],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ],
+      [
+        1
+      ]
+    ],
+    "independent_claim_numbers": [
+      1
+    ],
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ]
+  },
+  "figures": {
+    "declared": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "declared_set_sha256": "8e322ce58047d5599d642ea635c1f934c118be0fcfc5b6131620191652cd8b43",
+    "figref_count": 41,
+    "figref_ordered_text_sha256": "a581f4745fee2f9dd296f0943c610763b8816ca94e75198c8de7830be1687323"
+  },
+  "formulas": {
+    "count": 31,
+    "maths_count": 1,
+    "maths_raw_hash_set_sha256": "708fabe7c7548e96a892bd4149a5545b432523cf41133eafa7f490e5b6593aa3",
+    "raw_hash_set_sha256": "917ed638190f9128287f88bcd413e783483109a9ca74bd12059013a9627942cc",
+    "text_hash_set_sha256": "8cc726d152c7a8d195b03a9d8d263a1b4457210ba0115a24a1453bb1c2e9b682"
+  },
+  "headings": [
+    "Abstract",
+    "Prior Publication Data",
+    "Foreign Application Priority Data",
+    "Publication Classification",
+    "Field of Classification Search",
+    "References Cited",
+    "Background/Summary",
+    "Description",
+    "Claims"
+  ],
+  "identity_marker_counts": {
+    "Appl. No.: 14/282013": 1,
+    "Applicant: ABILITY OPTO-ELECTRONICS TECHNOLOGY CO., LTD (Taichung, TW)": 1,
+    "Assignee: Ability Opto-Electronics Technology Co., LTD. (Taichung, TW)": 1,
+    "Date of Patent March 01, 2016": 1,
+    "Family ID: 50942169": 1,
+    "Filed: May 20, 2014": 1,
+    "Kind Code B2": 1,
+    "Lee; Hung-Wen": 2,
+    "TW 102137705 A Oct. 18, 2013": 1,
+    "US 20150109686 A1 Apr. 23, 2015": 1,
+    "United States Patent 9274312": 1
+  },
+  "manual_reviewed_page_roles": {
+    "asphere_table_figures": {
+      "12": 11,
+      "18": 16,
+      "24": 21,
+      "6": 6
+    },
+    "claims": [
+      25,
+      26
+    ],
+    "cover": [
+      1
+    ],
+    "drawings": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ],
+    "optical_table_figures": {
+      "11": 10,
+      "17": 15,
+      "23": 20,
+      "5": 5
+    },
+    "reviewed_original_pages": [
+      1,
+      2,
+      5,
+      6,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26
+    ],
+    "specification": [
+      22,
+      23,
+      24,
+      25,
+      26
+    ]
+  },
+  "official_pdf_sets_identical": true,
+  "official_pdfs": [
+    {
+      "bytes": 876169,
+      "decoded_raster_set_sha256": "03475e00893be4f1b5d21a7cf219f9f41079762089f7cd17313e06453027d010",
+      "page_count": 26,
+      "pages": [
+        {
+          "decoded_sha256": "63f0aa3eca1aeb299dd14cf79dbe7f05690203ad84eeb69f6e5514645937e357",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 1,
+          "pixel_sha256": "6b49d80742b86fb1283b221b1b27458f0c93a5435f0389c6e823b43dfe994659"
+        },
+        {
+          "decoded_sha256": "a307950dfd25d16c337f4859beccb69a29f3e7498641f2611b2bf0b459771890",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 2,
+          "pixel_sha256": "e64bb3270b4d7e1523adeb6e9ef061016b4952a8e2c940205f0ef8b1123a80cc"
+        },
+        {
+          "decoded_sha256": "96c3152d3452e56d6a2f14d96691c8cab8cbb1c2a5a0706a91b885a5d7b2ca45",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 3,
+          "pixel_sha256": "0692da9d68a4b38137df7f743f9f30ba97407825411f5d0b28e2334c167a1595"
+        },
+        {
+          "decoded_sha256": "cb089133b7afea401c67b2324a80c8ed15ed1b788b9e5f850ffd4a3965bd5fd6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 4,
+          "pixel_sha256": "371d5946f3a4b3c1e080044e6cc07cb40d019f7994d3b37799767e1bb9e348c2"
+        },
+        {
+          "decoded_sha256": "7d3ffbc5e72d41c8733eb7e17b77d90bb062878544e28cf8f072a65e47086af7",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 5,
+          "pixel_sha256": "bf4dd211cda7de4c57e270f98037f234b5eb18240824a2a0a9fe74793b43c5e6"
+        },
+        {
+          "decoded_sha256": "6d8789f7421a3293e887b34925a7dea3610db0b65e31cb0f2c9cf6a3199bc4fd",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 6,
+          "pixel_sha256": "ffbcf3fa273d864cea0a8fbd0adf3403fbbcee5e560c35fa29452943dec0c6a3"
+        },
+        {
+          "decoded_sha256": "4aae536fc978aad8ad060f657577926e8db793ce62479ae89aefe4d1379fc1b1",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 7,
+          "pixel_sha256": "93dee9b3a2bc4e3034831b6f1354b73c1f0f643c4a69c0e63e605d72cddea7e1"
+        },
+        {
+          "decoded_sha256": "60c2952684fd04a0d32ec88581a82ecc5ec4ddd46bdebe3476ee35d3fea73b93",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 8,
+          "pixel_sha256": "05e19f50151b95254d1b2964fc20a81a0aed78c2f90231d59e0243a0a3926445"
+        },
+        {
+          "decoded_sha256": "a8323bd6c24e1d87073fd420b0a6866f5c75b6c878bcf0c337000a9ad39b3853",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 9,
+          "pixel_sha256": "89917ffca3191a27f9368dcbd046e5671482997d6d5cfaccb6e70a35c8058e55"
+        },
+        {
+          "decoded_sha256": "99763cb1a0a55fe6b8fec4d79d9006e7f18b42773174af8658579d15f4905dd5",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 10,
+          "pixel_sha256": "2a6ffab643bc892664e28870b63f81968a9fbecc10de60f0a080ec08f846bc38"
+        },
+        {
+          "decoded_sha256": "19e812028a7dd3dcb7362117ad67a6fb1e4c5896e88593bf2b88969e9c61190d",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 11,
+          "pixel_sha256": "00161537b0b980f7efe0454d8f2328e0b0b1cc1c5a727bb06e3386e0c3ffb5c3"
+        },
+        {
+          "decoded_sha256": "85a7ce26084861a6988bd005162078b127f6d412de4a47b01caf6f5b057f9df5",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 12,
+          "pixel_sha256": "6c547b307ee515ec4003d239e49c7db2c700ea3ebce613dd93332f46b8c9877e"
+        },
+        {
+          "decoded_sha256": "bb40be55e8aa96bd8f9c3ebe55da42f1c8ed7a320bef8c9e2e7661df5bd0d607",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 13,
+          "pixel_sha256": "3810589c0d95682a150d4c115d56d8c510f6df421a13da70551cf1765070439e"
+        },
+        {
+          "decoded_sha256": "d1bc063d009e8af00c2bcc2123ef5f91970ec818109d47bb9e8563b939426fdd",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 14,
+          "pixel_sha256": "90fb4c27a6da46284df81e86eabbd3c016034c278bbde6c9a16b3cca4ac8bdb6"
+        },
+        {
+          "decoded_sha256": "b7d5c3bd6c74bf150a5d56e40fb83f3dfcbe66aa6c8ce1f765a2f7e5fa7b2e6e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 15,
+          "pixel_sha256": "86d3bb45215cbc9cfdfee698ae4edf72aa6bc7dc5561409e0ead62372465217f"
+        },
+        {
+          "decoded_sha256": "c61b8defccc08b76ff98bfe33e663f04a2a49f118bf2a19c2e5a9211e3a968eb",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 16,
+          "pixel_sha256": "c07b06dc9225af2e13e24ec12cb65b0a9f675f4b7ef742de2a5ead11e24f8755"
+        },
+        {
+          "decoded_sha256": "e542210741b58108cc9e2dbc269150e3b1921f07ba706a2ed8096648e2b4eaf2",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 17,
+          "pixel_sha256": "9a778abf384e2c349477fcc2fee4df8dc20142a882eb1c8f42ed43bded430401"
+        },
+        {
+          "decoded_sha256": "67cb30da6c6e69a2b388888a2a77fa63ed353c9f2ecbe1616fc00b9341dabe0d",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 18,
+          "pixel_sha256": "16d91cfaa3ce3c894217abbc2aa4a8df6737f3317135e9b2f2c172551c28a504"
+        },
+        {
+          "decoded_sha256": "f3b5759cf2bbe024aff52419d8c58255f4710b83a0b9388d228a47c797079922",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 19,
+          "pixel_sha256": "b7af45d94ec857ff10309b8a51ce40a16391c90d4ab4b35d89b7d2513bf459e3"
+        },
+        {
+          "decoded_sha256": "c77240368aa47c92afc53e12c9683e28ccbbd7b450c8b37d85aa0637cb3b7e74",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 20,
+          "pixel_sha256": "dae8d239385922506db894db428827dac88be17fa25eb5895fa9394c485b506e"
+        },
+        {
+          "decoded_sha256": "6c9b95931f58280c943d7a63b54dbb576fd1923de429afffacbf32d4a96b7904",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 21,
+          "pixel_sha256": "56bc6f0369424da9fb5a1a99e625b1755be7df8ce4403f2efc9e74f30d69e0ec"
+        },
+        {
+          "decoded_sha256": "1fdbe18790d8e2a99cc201e84887b49893cc63aceedda2a4727303e2e6b1aaeb",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 22,
+          "pixel_sha256": "071ed3106dabae145945c80bc9d9146a0627d2349be96db77fae8ceb20b605f6"
+        },
+        {
+          "decoded_sha256": "9a526e460a8279352e4ecf142b7e04e1ae521e32993a234f83ba5ba03e985422",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 23,
+          "pixel_sha256": "6ba9883c8de2fb8e20d41a47081c0c4802bd91872c3aca7c6bb81cae26383d26"
+        },
+        {
+          "decoded_sha256": "210241489d3513eb2d3b5ee0c6ce8a9555f18b9df254f0012715df99ba3b8967",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 24,
+          "pixel_sha256": "073d4541048324fd037a2ef6fce416b6d584d9c13d32daaef9506420c84a0b1e"
+        },
+        {
+          "decoded_sha256": "ca032439c9651b316b51ca74474441000244ecb04d02d5a369b33c92568eb1f9",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 25,
+          "pixel_sha256": "7296a713b7e5cc18615e55cca0c75bf71098fd1608d8b5bc8ab4a05d51ed9e51"
+        },
+        {
+          "decoded_sha256": "738884e4713b382e9aee0168fc92356ca0fcb6ea07486d364ea57a77a67dee6f",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 26,
+          "pixel_sha256": "8f6b751c95540ca70394a5ccc5b7b44d2fa1ce50431b5e55c802acbe6fd5a8dc"
+        }
+      ],
+      "path": ".planning/quick/260723-patent-generic-family-50942169/source-review/US-9274312-B2-official-1.pdf",
+      "pixel_only_raster_set_sha256": "dbdd204817453092915829cc11451a554de55e44acf19f7ac166418a2cc445b0",
+      "sha256": "400271318ab20a1f158b242adef4425de8ebfef1a58f6902ce0531bc56f537cc",
+      "text_layer_characters": 0
+    },
+    {
+      "bytes": 876169,
+      "decoded_raster_set_sha256": "03475e00893be4f1b5d21a7cf219f9f41079762089f7cd17313e06453027d010",
+      "page_count": 26,
+      "pages": [
+        {
+          "decoded_sha256": "63f0aa3eca1aeb299dd14cf79dbe7f05690203ad84eeb69f6e5514645937e357",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 1,
+          "pixel_sha256": "6b49d80742b86fb1283b221b1b27458f0c93a5435f0389c6e823b43dfe994659"
+        },
+        {
+          "decoded_sha256": "a307950dfd25d16c337f4859beccb69a29f3e7498641f2611b2bf0b459771890",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 2,
+          "pixel_sha256": "e64bb3270b4d7e1523adeb6e9ef061016b4952a8e2c940205f0ef8b1123a80cc"
+        },
+        {
+          "decoded_sha256": "96c3152d3452e56d6a2f14d96691c8cab8cbb1c2a5a0706a91b885a5d7b2ca45",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 3,
+          "pixel_sha256": "0692da9d68a4b38137df7f743f9f30ba97407825411f5d0b28e2334c167a1595"
+        },
+        {
+          "decoded_sha256": "cb089133b7afea401c67b2324a80c8ed15ed1b788b9e5f850ffd4a3965bd5fd6",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 4,
+          "pixel_sha256": "371d5946f3a4b3c1e080044e6cc07cb40d019f7994d3b37799767e1bb9e348c2"
+        },
+        {
+          "decoded_sha256": "7d3ffbc5e72d41c8733eb7e17b77d90bb062878544e28cf8f072a65e47086af7",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 5,
+          "pixel_sha256": "bf4dd211cda7de4c57e270f98037f234b5eb18240824a2a0a9fe74793b43c5e6"
+        },
+        {
+          "decoded_sha256": "6d8789f7421a3293e887b34925a7dea3610db0b65e31cb0f2c9cf6a3199bc4fd",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 6,
+          "pixel_sha256": "ffbcf3fa273d864cea0a8fbd0adf3403fbbcee5e560c35fa29452943dec0c6a3"
+        },
+        {
+          "decoded_sha256": "4aae536fc978aad8ad060f657577926e8db793ce62479ae89aefe4d1379fc1b1",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 7,
+          "pixel_sha256": "93dee9b3a2bc4e3034831b6f1354b73c1f0f643c4a69c0e63e605d72cddea7e1"
+        },
+        {
+          "decoded_sha256": "60c2952684fd04a0d32ec88581a82ecc5ec4ddd46bdebe3476ee35d3fea73b93",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 8,
+          "pixel_sha256": "05e19f50151b95254d1b2964fc20a81a0aed78c2f90231d59e0243a0a3926445"
+        },
+        {
+          "decoded_sha256": "a8323bd6c24e1d87073fd420b0a6866f5c75b6c878bcf0c337000a9ad39b3853",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 9,
+          "pixel_sha256": "89917ffca3191a27f9368dcbd046e5671482997d6d5cfaccb6e70a35c8058e55"
+        },
+        {
+          "decoded_sha256": "99763cb1a0a55fe6b8fec4d79d9006e7f18b42773174af8658579d15f4905dd5",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 10,
+          "pixel_sha256": "2a6ffab643bc892664e28870b63f81968a9fbecc10de60f0a080ec08f846bc38"
+        },
+        {
+          "decoded_sha256": "19e812028a7dd3dcb7362117ad67a6fb1e4c5896e88593bf2b88969e9c61190d",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 11,
+          "pixel_sha256": "00161537b0b980f7efe0454d8f2328e0b0b1cc1c5a727bb06e3386e0c3ffb5c3"
+        },
+        {
+          "decoded_sha256": "85a7ce26084861a6988bd005162078b127f6d412de4a47b01caf6f5b057f9df5",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 12,
+          "pixel_sha256": "6c547b307ee515ec4003d239e49c7db2c700ea3ebce613dd93332f46b8c9877e"
+        },
+        {
+          "decoded_sha256": "bb40be55e8aa96bd8f9c3ebe55da42f1c8ed7a320bef8c9e2e7661df5bd0d607",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 13,
+          "pixel_sha256": "3810589c0d95682a150d4c115d56d8c510f6df421a13da70551cf1765070439e"
+        },
+        {
+          "decoded_sha256": "d1bc063d009e8af00c2bcc2123ef5f91970ec818109d47bb9e8563b939426fdd",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 14,
+          "pixel_sha256": "90fb4c27a6da46284df81e86eabbd3c016034c278bbde6c9a16b3cca4ac8bdb6"
+        },
+        {
+          "decoded_sha256": "b7d5c3bd6c74bf150a5d56e40fb83f3dfcbe66aa6c8ce1f765a2f7e5fa7b2e6e",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 15,
+          "pixel_sha256": "86d3bb45215cbc9cfdfee698ae4edf72aa6bc7dc5561409e0ead62372465217f"
+        },
+        {
+          "decoded_sha256": "c61b8defccc08b76ff98bfe33e663f04a2a49f118bf2a19c2e5a9211e3a968eb",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 16,
+          "pixel_sha256": "c07b06dc9225af2e13e24ec12cb65b0a9f675f4b7ef742de2a5ead11e24f8755"
+        },
+        {
+          "decoded_sha256": "e542210741b58108cc9e2dbc269150e3b1921f07ba706a2ed8096648e2b4eaf2",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 17,
+          "pixel_sha256": "9a778abf384e2c349477fcc2fee4df8dc20142a882eb1c8f42ed43bded430401"
+        },
+        {
+          "decoded_sha256": "67cb30da6c6e69a2b388888a2a77fa63ed353c9f2ecbe1616fc00b9341dabe0d",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 18,
+          "pixel_sha256": "16d91cfaa3ce3c894217abbc2aa4a8df6737f3317135e9b2f2c172551c28a504"
+        },
+        {
+          "decoded_sha256": "f3b5759cf2bbe024aff52419d8c58255f4710b83a0b9388d228a47c797079922",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 19,
+          "pixel_sha256": "b7af45d94ec857ff10309b8a51ce40a16391c90d4ab4b35d89b7d2513bf459e3"
+        },
+        {
+          "decoded_sha256": "c77240368aa47c92afc53e12c9683e28ccbbd7b450c8b37d85aa0637cb3b7e74",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 20,
+          "pixel_sha256": "dae8d239385922506db894db428827dac88be17fa25eb5895fa9394c485b506e"
+        },
+        {
+          "decoded_sha256": "6c9b95931f58280c943d7a63b54dbb576fd1923de429afffacbf32d4a96b7904",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 21,
+          "pixel_sha256": "56bc6f0369424da9fb5a1a99e625b1755be7df8ce4403f2efc9e74f30d69e0ec"
+        },
+        {
+          "decoded_sha256": "1fdbe18790d8e2a99cc201e84887b49893cc63aceedda2a4727303e2e6b1aaeb",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 22,
+          "pixel_sha256": "071ed3106dabae145945c80bc9d9146a0627d2349be96db77fae8ceb20b605f6"
+        },
+        {
+          "decoded_sha256": "9a526e460a8279352e4ecf142b7e04e1ae521e32993a234f83ba5ba03e985422",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 23,
+          "pixel_sha256": "6ba9883c8de2fb8e20d41a47081c0c4802bd91872c3aca7c6bb81cae26383d26"
+        },
+        {
+          "decoded_sha256": "210241489d3513eb2d3b5ee0c6ce8a9555f18b9df254f0012715df99ba3b8967",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 24,
+          "pixel_sha256": "073d4541048324fd037a2ef6fce416b6d584d9c13d32daaef9506420c84a0b1e"
+        },
+        {
+          "decoded_sha256": "ca032439c9651b316b51ca74474441000244ecb04d02d5a369b33c92568eb1f9",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 25,
+          "pixel_sha256": "7296a713b7e5cc18615e55cca0c75bf71098fd1608d8b5bc8ab4a05d51ed9e51"
+        },
+        {
+          "decoded_sha256": "738884e4713b382e9aee0168fc92356ca0fcb6ea07486d364ea57a77a67dee6f",
+          "dimensions": [
+            2560,
+            3300
+          ],
+          "image_count": 1,
+          "mode": "1",
+          "page": 26,
+          "pixel_sha256": "8f6b751c95540ca70394a5ccc5b7b44d2fa1ce50431b5e55c802acbe6fd5a8dc"
+        }
+      ],
+      "path": ".planning/quick/260723-patent-generic-family-50942169/source-review/US-9274312-B2-official-2.pdf",
+      "pixel_only_raster_set_sha256": "dbdd204817453092915829cc11451a554de55e44acf19f7ac166418a2cc445b0",
+      "sha256": "2de0dab767d55de3e769cfdfa25e37632f31a9ce7c28163f2777195226396e75",
+      "text_layer_characters": 0
+    }
+  ],
+  "paragraphs": {
+    "background_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "background_paragraph_set_sha256": "aa6404c0c4592381d8def874ee8661c78bcba58acddfbb3f1fd1444842527e0e",
+    "background_span_1_15_sha256": "70f8ebc56a75020bba953a8a1738db0957d32f94bf7b389f0d048d13ffd0f484",
+    "description_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "description_paragraph_set_sha256": "ff9b65959c30704f270703c1cb08e15b3fe4260db186136b75335582b9a02c68",
+    "description_spans": {
+      "1_25": "ba2a7b308d5c23a2d5799271ae9d4b8737c3e18057fec80a185444c13c07caaa",
+      "26_34": "e0f44b1ed68eabf0eb1291b070134277545eccbbbb2965f957798b324a989bde",
+      "35_36": "966d82128221394d5a58492e3bfadb34583e8c69496d59589b7bc1c37ea09d39",
+      "37_38": "3cbffdd170ef181cec7d1510de393cdd6e4dc23bea1b82cb68d2875c6b6d730b",
+      "39_40": "607b089b008e2e1e8fb2282a114fbb7977adf46542f7fa7869cdc990798eb39b",
+      "41_42": "faa052f9ce9693e7083a25abdf1c8debf03e3caca0584c38711e65b9765ca596",
+      "43_47": "a9f309e59d84541be520950d6947e24cc98a068fc70bf0654af8c48f7b55b644"
+    }
+  },
+  "phrase_counts": {
+    "Abbe": 4,
+    "F-number": 0,
+    "Fno": 0,
+    "HFOV": 0,
+    "ImgH": 0,
+    "aperture stop": 20,
+    "asphere": 0,
+    "aspheric": 30,
+    "aspheric surfaces": 8,
+    "conic": 1,
+    "curvature": 21,
+    "effective focal length": 0,
+    "field of view": 0,
+    "focal length": 13,
+    "image height": 0,
+    "lens element": 113,
+    "lens prescription": 0,
+    "optical parameters": 8,
+    "optical prescription": 0,
+    "radius": 13,
+    "refractive index": 0,
+    "surface number": 0,
+    "thickness": 9
+  },
+  "raw_counts": {
+    "custom_img": 0,
+    "figref": 41,
+    "formula_pi_lead": 31,
+    "formula_pi_tail": 31,
+    "math": 1,
+    "maths": 1,
+    "native_table": 0,
+    "native_td": 0,
+    "native_tr": 0,
+    "paragraph_tags": 28,
+    "table_us": 0
+  },
+  "raw_section_sha256": {
+    "background_summary": "be4e6bb4666ff0d4d3073096ff8867418daae5dd4047db1cbc26eec3fb189787",
+    "claims": "b9c2baccdbbf83e81cb1e90c505b6dcae964245b4e6c6508beb9d2c8a5252b97",
+    "description": "9b8214db360710b5d7eb89a5bf60cfd2fa7e0fa5fefbe891dff6158e9f5399c3"
+  },
+  "section_sha256": {
+    "background_summary": "bd69dc69a4e8438c6ebff13c8ac7008ffc00b8c08a7a30864c84f2d19c7756d0",
+    "claims": "7ca60e315132d0761129b2e8708cdcfeb9abfbcea23598a9864802a772e7683d",
+    "description": "a9274ebbaddc529194404d5c6c44d3c787ea5fa0ed94f70a4924307835086726"
+  },
+  "source": {
+    "normalized_chars": 28955,
+    "normalized_text_sha256": "cf6fa4c37e89608527f69520dc71086775141c54b19820b85a2b4a41c6a1d94b",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/4bbe8e2ea7546dba/US-9274312-B2.html",
+    "raw_bytes": 45158,
+    "raw_chars": 45018,
+    "raw_document_sha256": "4bbe8e2ea7546dba693b253bcb364401434634aec1ea9f440c142bfaa5b7d315"
+  },
+  "title": "Imaging lens assembly"
+}

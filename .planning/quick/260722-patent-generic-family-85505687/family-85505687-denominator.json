@@ -1,0 +1,127 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "85505687",
+  "root_id": "US-12625342",
+  "publication_id": "US-12625342-B2",
+  "application_number": "18/177179",
+  "title": "Imaging lens assembly, camera module and electronic device",
+  "lineage": {
+    "same_application_prior_publication": "US-20230305261-A1",
+    "provisional_application": "63/323,104",
+    "provisional_filing_date": "2022-03-24"
+  },
+  "denominator": {
+    "related_application_numbered_paragraphs": 1,
+    "background_summary_numbered_paragraphs_excluding_related": 7,
+    "background_summary_section_numbered_paragraphs": 8,
+    "brief_drawing_numbered_paragraphs": 30,
+    "shared_detailed_architecture_numbered_paragraphs": 29,
+    "source_item_numbered_paragraphs": 46,
+    "closing_numbered_paragraphs": 1,
+    "description_numbered_paragraphs": 106,
+    "total_numbered_specification_paragraphs": 114,
+    "claims": 34,
+    "independent_claims": [1, 14, 25],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 0,
+    "maths_objects": 0,
+    "mathml_objects": 0,
+    "inline_formula_leads": 0,
+    "custom_character_image_tags": 0,
+    "figure_reference_occurrences": 218,
+    "declared_figure_panels": 29,
+    "drawing_sheets": 29,
+    "official_pdf_pages": 44,
+    "source_items": 3,
+    "coating_nanostructure_architecture_items": 2,
+    "electronic_device_wrapper_items": 1,
+    "ordered_optical_prescriptions": 0,
+    "source_items_unmapped": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan coating/nanostructure camera-module 1st embodiment",
+      "source_bindings": {
+        "description_range": [60, 89],
+        "figures": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "1J", "1K", "1L", "1M", "1N", "1O", "1P", "1Q", "1R", "1S", "1T"],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan coating/nanostructure camera-module 2nd embodiment",
+      "source_bindings": {
+        "description_range": [90, 100],
+        "figures": ["2A", "2B", "2C", "2D", "2E", "2F", "2G"],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_blocking_coating_and_nanostructure_lens_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan smartphone electronic-device 3rd embodiment",
+      "source_bindings": {
+        "description_range": [101, 105],
+        "figures": ["3A", "3B"],
+        "claims": [13]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "shared_architecture_boundary": {
+    "related_application_range": [1, 1],
+    "background_summary_range_excluding_related": [1, 7],
+    "brief_drawing_description_range": [1, 30],
+    "shared_detailed_architecture_range": [31, 59],
+    "item_description_range": [60, 105],
+    "closing_description_range": [106, 106],
+    "claim_1_imaging_lens_assembly_independent": true,
+    "claim_14_imaging_lens_assembly_independent": true,
+    "claim_25_imaging_lens_assembly_independent": true,
+    "ordered_radius_rows_published": 0,
+    "ordered_spacing_rows_published": 0,
+    "numerical_material_or_index_dispersion_rows_published": 0,
+    "conic_or_asphere_rows_published": 0,
+    "identified_aperture_stop_rows_published": 0,
+    "exact_focal_length_published": false,
+    "exact_f_number_published": false,
+    "prescription_bound_numeric_angular_field_published": false,
+    "absolute_image_height_published": false
+  },
+  "direct_architecture_metadata": {
+    "roundness_tolerance_upper_bounds_mm": [0.02, 0.01, 0.005],
+    "smooth_surface_roughness_upper_bound_um": 0.1,
+    "nanostructure_average_height_ranges_nm": [[90, 350], [125, 300], [195, 255]],
+    "adjacent_boundary_range_mm": [-0.03, 0.03],
+    "paragraph_89_connecting_layer_heights_nm": [73.68, 76.62, 75.15],
+    "paragraph_89_nanostructure_maximum_heights_nm": [200.3, 232.7, 247.4],
+    "paragraph_102_device_field_ranges_degrees": [[93, 175], [65, 90], [20, 50], [5, 20]]
+  },
+  "binding_policy": {
+    "architecture_metadata_promoted_to_prescription": false,
+    "device_field_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "printed_token_repair_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 3,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  }
+}

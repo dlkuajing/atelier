@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "family_id": "38997638",
+  "classification_publication": "US-7551370-B2",
+  "same_application_prior_publication": "US-20080030874-A1",
+  "cross_publication_numeric_borrowing": false,
+  "numeric_derivation_from_rasters": false,
+  "publications": {
+    "US-7551370-B2": {
+      "relationship": "frozen_cohort_classification_publication",
+      "path": ".planning/quick/260717-patent-generic-family-38997638/source-review/US-7551370-B2-official.pdf",
+      "source_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/7551370",
+      "bytes": 526569,
+      "sha256": "99b6fb67ab23e198df8f39c2ea2ce881e40d6960869c7970ae7cf69675873088",
+      "page_count": 8,
+      "decoded_raster_set_sha256": "956d79061d5053bbfb05d18058fb5cd0f0cd0cdbe5affeadc143b8278c2ccba3",
+      "sections": {"cover": [1, 1], "drawings": [2, 4], "specification_and_claims": [5, 8]},
+      "pages": [
+        {"page": 1, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "d70e72b94c86c6d1a9f2a1538e4f28159138b067c105a8fb14d7dcf3b10757f1"},
+        {"page": 2, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "d26a612a7ca1420a834302812dcfd4a95b22ebc0baa47c2ca8d79c2f28edff6e"},
+        {"page": 3, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "7fa856ef4585ae6f378b6e6a3c19988514d26534cfaf2d1e2c2a3c532b7f8864"},
+        {"page": 4, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "b777d103804d2abdb79748d0a1a54cf03f505c275629d6f263068f2811d3b740"},
+        {"page": 5, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "238332830e2c52ca7f1e7ff5fe3718427b4748111524f6027822b5b3e7324e8b"},
+        {"page": 6, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "01c14b427b2278d5d7c9d4b12741a14c15ceb6083c72fb2f1300be9fa0973901"},
+        {"page": 7, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "ebf417bffe46ee8650933fff551928bdf90e6e99f7dd91f19f856b9382c4da39"},
+        {"page": 8, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "0309ddd7c7ba7168db46a9c19b08213dd1bef366266defbf6682a1ef7f718a34"}
+      ],
+      "visual_review": {
+        "all_page_contact_reviewed": true,
+        "contact": {"path": ".planning/quick/260717-patent-generic-family-38997638/source-review/US-7551370-B2-official-contact.png", "bytes": 1367878, "sha256": "06b9ff1da72db94505d4e64ce5c05a94b367912a20817cff6ba32e3884f1bcef"},
+        "critical_pages": [
+          {"page": 2, "bytes": 108745, "sha256": "569e120421509474bfe08c71b2c5051c6a2f7e80482852d2b8f4933d88996057", "finding": "FIGS. 1-2 show workstation and handheld reader housings."},
+          {"page": 3, "bytes": 73907, "sha256": "2c73edfa62f67b523fad87326540b9cdcef3e485795445c45e625b367c1f29ab", "finding": "FIG. 3 is a reader block diagram with symbolic WD1/WD2."},
+          {"page": 4, "bytes": 74163, "sha256": "a84c9fd7bc368e86f4028b1bcb0c8945a3e404cce4d3318c21227bd38f1df6df", "finding": "FIGS. 5/4 show unscaled on/off-axis component placement with no numeric prescription."},
+          {"page": 5, "bytes": 247622, "sha256": "463cecebeda0cbd1331396ead1ad601e060a3ae5984208b615389b4217f5bd07", "finding": "Specification pages 1-2 contain background and shared architecture."},
+          {"page": 6, "bytes": 250601, "sha256": "5c86237da40117e6a6e9f4c2410be105643886a1c4f2bff3903a2a282e9be5b9", "finding": "Specification pages 3-4 describe generic component shapes and placement."},
+          {"page": 7, "bytes": 231312, "sha256": "8520e727d2559d29cc9b32d25c8846e371f321c629e1b1f7020dd34f56f74c80", "finding": "Specification and claims 1-9 publish performance and architecture only."},
+          {"page": 8, "bytes": 125606, "sha256": "930deb75eada8d87ec40a4e583484c2f83330b988ca0b3754c2b268ee4fb94c9", "finding": "Claims 10-20 close the means, method and lens-assembly families without a prescription."}
+        ]
+      }
+    },
+    "US-20080030874-A1": {
+      "relationship": "same_application_prior_publication_cross_check_only",
+      "path": ".planning/quick/260717-patent-generic-family-38997638/source-review/US-20080030874-A1-official.pdf",
+      "source_url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20080030874",
+      "bytes": 525343,
+      "sha256": "b0d5f639e66c66a53e9d2002e1c1aa167b24565bad220a7e005bc2df38d30d29",
+      "page_count": 8,
+      "decoded_raster_set_sha256": "bcbf11c33389c15f52ca1a96b634af855a4c6960b97e182809c52a2175d82540",
+      "sections": {"cover": [1, 1], "drawings": [2, 4], "specification_and_claims": [5, 8]},
+      "pages": [
+        {"page": 1, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "7d1697b62d6f7064959af731874c8ddcdc4ba1dd93bf428b87e1fc0b9bf1ec1b"},
+        {"page": 2, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "7bd055a23a8c1b9dbc329308bbf93c766a3d47c3fda1f49eb7a425438bb518ec"},
+        {"page": 3, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "0e6a565c683466d9f155819da5467165ebce5796aa6a987635ffb14b9144da48"},
+        {"page": 4, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "cb3ae1303c85b53bfbb98de1569e7743bf8c20e82c97fee69d3662301743f0aa"},
+        {"page": 5, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "575153c49f58912842aa50166ecbd1a928f7a60ce795025b67233008a11e52bd"},
+        {"page": 6, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "1f756c3f3e46d9a9dc34c2c2f05b12baa2c0e6b97d608a6cf3af7affcf2bdfac"},
+        {"page": 7, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "94c5280d651dd696f28d21f1bf751ea9e5f02ceda9ee16d767d6f7efb1923189"},
+        {"page": 8, "text_characters": 0, "image_count": 1, "size": [2560, 3300], "raster_sha256": "b3565c584b7b3fdd38a3312b1456f1654c170c034492d6d6c4ceff8d21df0fbf"}
+      ],
+      "visual_review": {
+        "all_page_contact_reviewed": true,
+        "contact": {"path": ".planning/quick/260717-patent-generic-family-38997638/source-review/US-20080030874-A1-official-contact.png", "bytes": 1416263, "sha256": "7ea6477b4179b2f12ff6d411cf8c899d71ed1fea459dc5daa70540088e1697a6"},
+        "critical_pages": [
+          {"page": 2, "bytes": 108845, "sha256": "95303961e9a2c01076d67176673cebead1957bb8fc66e309f32e1d911cc0bd40", "finding": "FIGS. 1-2 match the reader-form-factor scope."},
+          {"page": 3, "bytes": 73325, "sha256": "29f00b948495f9ff24c4223be7d15a53b3cd8794156ff5d421fac78bd7abfa4f", "finding": "FIG. 3 is the same symbolic reader block diagram."},
+          {"page": 4, "bytes": 71549, "sha256": "1a341a2ac66669c31ad9a763cd685c4eb5d55eba057f6a51ee16476a449a2ea2", "finding": "The lower on-axis panel is labeled FIG. 6 rather than the B2/textual FIG. 4; no numeric value is present."},
+          {"page": 5, "bytes": 237719, "sha256": "01db40676df73adfd6b6e95607567c584dc34920f2cce59fff03393aaae73933", "finding": "Specification pages 1-2 contain the same background and architecture."},
+          {"page": 6, "bytes": 234008, "sha256": "1654511732837d555e6008193e34bf551c0e660a02e8a5995430983871d3199a", "finding": "Specification pages 2-3 contain the same generic placement disclosure."},
+          {"page": 7, "bytes": 251437, "sha256": "b1d71821e8bfac9128b47ad238a204f463ce66d8ed27b79e1621f3975af9cb62", "finding": "Specification pages 3-4 preserve the same unparameterized component scope."},
+          {"page": 8, "bytes": 167341, "sha256": "e8ca959924ad50a25e2c20510072ce785f5f2e3c8521fc4435425bb5367c4cb8", "finding": "Claims 1-20 match the four architecture claim families."}
+        ]
+      }
+    }
+  },
+  "raster_intersection_count": 0,
+  "source_label_discrepancies": [
+    {
+      "location": "drawing sheet 3 lower on-axis panel",
+      "US-20080030874-A1": "FIG. 6",
+      "US-7551370-B2": "FIG. 4",
+      "classification_source_text": "FIG. 4",
+      "numeric_effect": "none"
+    }
+  ],
+  "ordered_optical_prescription_present": false,
+  "drawing_transcription_permitted": false,
+  "numeric_derivation_permitted": false
+}

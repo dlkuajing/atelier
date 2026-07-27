@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "family_id": "94732062",
+  "application_number": "19/545464",
+  "root_ids": [
+    "US-20260181269"
+  ],
+  "publication_ids": [
+    "US-20260181269-A1"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "background_summary_numbered_paragraphs": 12,
+    "description_numbered_paragraphs": 308,
+    "total_numbered_paragraphs": 320,
+    "claims": 20,
+    "declared_nominal_figures": 18,
+    "declared_textual_figure_panels": 19,
+    "located_raster_figure_panels": 19,
+    "tagged_html_tables": 0,
+    "optical_prescription_tables": 0,
+    "mathml_objects": 0,
+    "html_image_tags": 0,
+    "source_disclosed_items": 3,
+    "electronic_device_architectures": 1,
+    "operating_methods": 1,
+    "computer_readable_medium_wrappers": 1,
+    "ordered_optical_surface_rows": 0,
+    "confirmed_no_prescription_items": 3,
+    "replayed_ledger_items": 3,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 50,
+    "retained_page_rasters": 50,
+    "retained_drawing_sheets": 19,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_tables": 0,
+    "unmapped_mathml_objects": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "related_application": [1, 1],
+    "technical_field": [2, 2],
+    "related_art": [3, 6],
+    "summary_items": [7, 12],
+    "brief_drawings_and_transition": [13, 33],
+    "generic_definitions": [34, 42],
+    "head_mounted_device_and_camera_environment": [43, 67],
+    "figure_3_camera_module": [68, 90],
+    "figure_4_device_architecture": [91, 114],
+    "figures_5_through_16_multi_camera_control": [115, 259],
+    "figure_17_generic_device_environment": [260, 288],
+    "figure_18_generic_camera_module": [289, 294],
+    "electronic_device_item_restatement": [295, 305],
+    "operating_method_item_restatement": [306, 314],
+    "computer_readable_medium_item": [315, 319],
+    "closing_boilerplate": [320, 320]
+  },
+  "figure_labels": [
+    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10A", "10B",
+    "11", "12", "13", "14", "15", "16", "17", "18"
+  ],
+  "claim_mapping": {
+    "electronic_device_architecture": [1, 10],
+    "operating_method": [11, 19],
+    "computer_readable_medium_wrapper": [20, 20]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Samsung multi-camera timing and exposure-control electronic device architecture",
+      "summary_paragraphs": [9, 9],
+      "description_paragraphs": [43, 305],
+      "claims": [1, 10],
+      "reason_code": "confirmed_no_prescription.multi_camera_timing_exposure_control_electronic_device_architecture_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Samsung multi-camera timing and exposure-control operating method",
+      "summary_paragraphs": [10, 10],
+      "description_paragraphs": [306, 314],
+      "claims": [11, 19],
+      "reason_code": "confirmed_no_prescription.multi_camera_timing_exposure_control_operating_method_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Samsung multi-camera timing and exposure-control computer-readable medium wrapper",
+      "summary_paragraphs": [11, 11],
+      "description_paragraphs": [315, 319],
+      "claims": [20, 20],
+      "reason_code": "confirmed_no_prescription.multi_camera_timing_exposure_control_computer_readable_medium_wrapper_only"
+    }
+  ],
+  "representability_boundary": {
+    "ordered_surface_sequence_published": false,
+    "surface_radii_published": false,
+    "surface_spacing_published": false,
+    "optical_materials_published": false,
+    "refractive_indices_published": false,
+    "abbe_numbers_published": false,
+    "conic_or_asphere_coefficients_published": false,
+    "stop_location_published": false,
+    "effective_focal_length_published": false,
+    "prescription_specific_f_number_published": false,
+    "prescription_specific_angular_field_published": false,
+    "image_height_published": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

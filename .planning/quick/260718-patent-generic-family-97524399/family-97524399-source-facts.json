@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "family_id": "97524399",
+  "publication_id": "US-20260147219-A1",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/08078faa3d16975e/US-20260147219-A1.html",
+    "bytes": 85759,
+    "raw_characters": 84511,
+    "raw_sha256": "08078faa3d16975e12990aad5bcfbd922e0d95b0263040261b19a2e6d06abf72",
+    "normalized_characters": 65362,
+    "normalized_sha256": "efe2d28dee38b66bae28d7c1aa65e5090b4f46f19ebaad98cc65ba17b0204395"
+  },
+  "section_starts": {
+    "preamble": 0,
+    "abstract": 291,
+    "background": 1213,
+    "summary": 2287,
+    "brief": 8182,
+    "detailed": 9218,
+    "claims": 59550
+  },
+  "section_sha256": {
+    "preamble": "94e9aec58da33aefa73717df9039fb73d73f1c5d12bfc4edbb204bd89e26fc6a",
+    "abstract": "db31270046676ea9c738b17f3b6a850adcef4082d017495c38c621d8cb57de6e",
+    "background": "c95399e2f6497904f478c7c5715ed6df8a90bfed15fd968c476ba0b1a48422e6",
+    "summary": "40b34e40e5f8e9b677e798d180ce1a2f541d8805af409fc57f2046a2c89a251f",
+    "brief": "0fe69ad476cd23c742a674c6addc0fbc32469366409f8d43f9f0d820571039d6",
+    "detailed": "e3c6ac4d893faec8ac02b4c30f2ab59ffa0a2f855c9a72d648026d8d82072eaf",
+    "claims": "a1cd046845b691479b517de4224da50937a889bf1c9dc0ad91d62f0b518b62c8"
+  },
+  "paragraph_spans": [
+    {
+      "range": [
+        1,
+        4
+      ],
+      "characters": 1025,
+      "sha256": "0968c8b3d3d88bd0e067f0d5ce711797cec157a55288984add5dd96c37a738e6"
+    },
+    {
+      "range": [
+        5,
+        23
+      ],
+      "characters": 5902,
+      "sha256": "f0caf88d8c0d22c8368fb6cb27d7d9dcd83747a61c5173de49850630ee5874c0"
+    },
+    {
+      "range": [
+        24,
+        31
+      ],
+      "characters": 1015,
+      "sha256": "257219f00e8b3b92356345ee6ac4721b9fa0f7e4ea39ad0b115920f57553a922"
+    },
+    {
+      "range": [
+        32,
+        36
+      ],
+      "characters": 2385,
+      "sha256": "561e331bf65fc5bbe023c565ff205cb6bc2d015633c0b9be83fffcf96a4bdd82"
+    },
+    {
+      "range": [
+        37,
+        57
+      ],
+      "characters": 12564,
+      "sha256": "e99308379805670b77ac7043a0309f2dcc81222df7b974441bab9e5a709e6403"
+    },
+    {
+      "range": [
+        58,
+        63
+      ],
+      "characters": 6386,
+      "sha256": "2582f062865f61ce850a607bc8d118a01bcb522c2dc7b237d0352c8db76be838"
+    },
+    {
+      "range": [
+        64,
+        69
+      ],
+      "characters": 6383,
+      "sha256": "15c498631ddff36faff73c1d0fbbbd6f05cbc0937721bee73c3e1c1f31ec7b2d"
+    },
+    {
+      "range": [
+        70,
+        75
+      ],
+      "characters": 6508,
+      "sha256": "ccc2575e370569e7662c842db4fb4811f2a2a89a215b80880b669e472be6edbc"
+    },
+    {
+      "range": [
+        76,
+        81
+      ],
+      "characters": 6605,
+      "sha256": "51ae58e7ffca369fd2dc3e247c354b3e64a04f7160cd4f3c4124cf216d288dfe"
+    },
+    {
+      "range": [
+        82,
+        87
+      ],
+      "characters": 6331,
+      "sha256": "24aec4530fca83fdcaa2d152ad6a55bcbb58059d086655d84d9d13abd9c19baa"
+    },
+    {
+      "range": [
+        88,
+        95
+      ],
+      "characters": 3085,
+      "sha256": "5bf8267a63fadb87c1d087976c70fdc84c084985b3cb18ffea59ea54be60625e"
+    }
+  ],
+  "claims": {
+    "numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "independent_heads": [
+      1,
+      14
+    ],
+    "section_sha256": "a1cd046845b691479b517de4224da50937a889bf1c9dc0ad91d62f0b518b62c8"
+  },
+  "figures": {
+    "labels": [
+      "1A",
+      "1B",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7"
+    ],
+    "count": 8,
+    "html_img_tags": 0
+  },
+  "tables": {
+    "count": 24,
+    "payloads": [
+      {
+        "table": 1,
+        "characters": 1279,
+        "sha256": "cec04c5f530ba93805a7cb5e077852481e6e3e671dd304a228736b0a9d730542"
+      },
+      {
+        "table": 2,
+        "characters": 925,
+        "sha256": "8ee873af506749a14bacae8891689dd0c34812bc5d75023023f9f1fc4dd0b825"
+      },
+      {
+        "table": 3,
+        "characters": 230,
+        "sha256": "3e521852a3f95dff7df189a6a048df760fb45dac765e691a3d00033782c8410d"
+      },
+      {
+        "table": 4,
+        "characters": 279,
+        "sha256": "a1d345bf6d1d039d97c9fc5cc79cb3dd5c239e1848e042403204b94b6c1d3c8f"
+      },
+      {
+        "table": 5,
+        "characters": 1280,
+        "sha256": "9f345caea93fba0e8bf5b88340768cfef8a36af39d54f3bef8bd94fa284c04d0"
+      },
+      {
+        "table": 6,
+        "characters": 924,
+        "sha256": "b3153c7c64f7f3816446dca95284067ae92cee312d73462bd87f2a768852760e"
+      },
+      {
+        "table": 7,
+        "characters": 230,
+        "sha256": "dddf3d09760284783816d6a08269acd1f4257abc58207a93d057f0faa9cff9ff"
+      },
+      {
+        "table": 8,
+        "characters": 298,
+        "sha256": "2fca9bb624c6aae2d04e01464e70b68eaaad1b889e42fb19ae22c9b4c031f719"
+      },
+      {
+        "table": 9,
+        "characters": 1276,
+        "sha256": "d94d9e1daa48930d990d93d1a5092353763dbe6aebe4f52eba82525775fbf2d5"
+      },
+      {
+        "table": 10,
+        "characters": 925,
+        "sha256": "d2f7c23dce615d2c8877509550c6573ea608025bfb3ecfba095efb86eba5b8a8"
+      },
+      {
+        "table": 11,
+        "characters": 231,
+        "sha256": "32c12ed0e8dd2894049c506573e654ef868f37e782b31a0bc9194e3c1c93aadd"
+      },
+      {
+        "table": 12,
+        "characters": 297,
+        "sha256": "8e0817f6588eb1b515822240d31e516499db9fe9d89dd47e7ae308d0cb75b383"
+      },
+      {
+        "table": 13,
+        "characters": 1277,
+        "sha256": "a640414f93ab5a2fa44704e85b28366d14711c8afd3c14a633973af5f3c8ce74"
+      },
+      {
+        "table": 14,
+        "characters": 918,
+        "sha256": "ecf06e37772732f2368fc34a0aee58386dcfa939e61ec8d7ae2d3b3f6f55832f"
+      },
+      {
+        "table": 15,
+        "characters": 231,
+        "sha256": "552b1a8a2445d447aa2f841ac48ca30e813fdbe0b107d336e9f43962654e3c5d"
+      },
+      {
+        "table": 16,
+        "characters": 297,
+        "sha256": "522594f274a6ed47f10dc305886a41c4463863d5f641f22584b098c23ddbd374"
+      },
+      {
+        "table": 17,
+        "characters": 1269,
+        "sha256": "be2c9d3464f26343ccd444c9432b9537aad7ed967cf706d62fb10c3073dc60da"
+      },
+      {
+        "table": 18,
+        "characters": 921,
+        "sha256": "083d13bffc8a4a15b9a2e9647df6ef0dceff4f93fd81af5bf90c0626cd0cfbde"
+      },
+      {
+        "table": 19,
+        "characters": 230,
+        "sha256": "dd03ce95efac5c2010b5c05c4f58b2ab30f6ab210db0b410ce449b26c233b554"
+      },
+      {
+        "table": 20,
+        "characters": 296,
+        "sha256": "274bdc38a256e1165abd440445249a1851aba1f03e207df1c7a97bdcb1fb8915"
+      },
+      {
+        "table": 21,
+        "characters": 1283,
+        "sha256": "16f2847ed31da421df10bf80ba60020f15e1a8d4bca9a063f88a208b92f2d50c"
+      },
+      {
+        "table": 22,
+        "characters": 921,
+        "sha256": "c819edc9c18c46d2a7430960bab6e4538495704f53bd40ada6580081714ff451"
+      },
+      {
+        "table": 23,
+        "characters": 231,
+        "sha256": "183f9cb59645809522d8ed6b55fe328efa17bfe416e52b574c711fd2fea8221c"
+      },
+      {
+        "table": 24,
+        "characters": 282,
+        "sha256": "2e9a7636ea76e335007c623e6cbb5c84dbcc4a3cf5b42a95951a52399e537013"
+      }
+    ],
+    "groups": {
+      "1": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "2": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "3": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "4": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "5": [
+        17,
+        18,
+        19,
+        20
+      ],
+      "6": [
+        21,
+        22,
+        23,
+        24
+      ]
+    }
+  },
+  "mathml": {
+    "count": 27,
+    "ordered_id_sha256": "8acc13bcda599fd3f879067b613d3065417ad2660a1bd4ea67e361b078f1b844"
+  },
+  "direct_metadata": {
+    "embodiments": {
+      "1": {
+        "f_mm": 16.09,
+        "entrance_pupil_diameter_mm": 8.0,
+        "full_fov_deg": 94.7,
+        "system_f_number": null
+      },
+      "2": {
+        "f_mm": 16.94,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 90.14,
+        "system_f_number": null
+      },
+      "3": {
+        "f_mm": 16.09,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 100.34,
+        "system_f_number": null
+      },
+      "4": {
+        "f_mm": 16.35,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 95.2,
+        "system_f_number": null
+      },
+      "5": {
+        "f_mm": 16.98,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 95.07,
+        "system_f_number": null
+      },
+      "6": {
+        "f_mm": 16.74,
+        "entrance_pupil_diameter_mm": 9.0,
+        "full_fov_deg": 90.14,
+        "system_f_number": null
+      }
+    },
+    "reference_wavelength_nm": 550,
+    "system_f_number_label_counts": {
+      "F-number": 0,
+      "FNO": 0,
+      "F/#": 0,
+      "aperture number": 0,
+      "numerical aperture": 0
+    },
+    "f_over_epd_derivation_permitted": false
+  },
+  "folded_path": {
+    "surface_rows_per_prescription": 19,
+    "mirror_rows_per_prescription": 2,
+    "negative_thickness_segment_present": true,
+    "partial_reflective_partial_transmissive_element_present": true,
+    "reflective_polarizer_present": true
+  },
+  "device_wrapper": {
+    "paragraphs": [
+      92,
+      95
+    ],
+    "figure": "7",
+    "claim": 14,
+    "inherits_prescription_items": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "independent_prescription": false
+  }
+}

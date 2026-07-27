@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "family_id": "59500840",
+  "root_id": "US-11118059",
+  "publication_id": "US-11118059-B2",
+  "application_number": "16/052051",
+  "official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/e7790b40f208dbfd/US-11118059-B2.html",
+    "raw_document_sha256": "e7790b40f208dbfd463b8cd758eb9039e2db3aa2e1030040f7784be1dff160ef",
+    "normalized_text_sha256": "a0eb39df7c75b8ca04b8d49171482c93fde090a68ed7b0ee40a8b5894d171409",
+    "raw_character_count": 255678,
+    "normalized_character_count": 236534,
+    "section_sha256": {
+      "cross_reference": "e7fd977e6718fc58881182bae246a19e8b1fabdaf88fbc0727161536ee0c9f61",
+      "background": "8f159d33305e060cf073436ec539f1374eefa275b8a08331b731490137ddf023",
+      "summary": "8711d0ea7678c230a74675af611ae1e98dcc1bede91c284aec4d03c45ca414b7",
+      "brief_description_of_drawing": "33eb0c1236ce1859f0b834f4377f594bb43302d30e6ab19231a8d1a63b4a7100",
+      "description_of_preferred_embodiments": "eaac56aee6cb6bb5da2774acdfc6242727a60a1950d86ea3adc53b324b43352e",
+      "claims": "f394ac84ae507c989bd23a4287076057a4f000a5d24ad238edf02014dcfdd205"
+    },
+    "raw_section_sha256": {
+      "cross_reference": "042991ff653437eeebd7fb9479558974d36c2285725ab6a96aef8d09a886c53b",
+      "background": "3c4e989f29111a90da573f098ec0dc494a5247e9224b7eb7c34cb28e03982927",
+      "summary": "903826746e6181f55008b509b1699606077dd77fed0015a449fec1b6d1784e86",
+      "brief_description_of_drawing": "9dea835ee2c330a94cf9f7f1ffeafdd84ca87daf65d5ddff72ac451b0415948f",
+      "description_of_preferred_embodiments": "e9bc55b32231f9a9541d00bdfc6ea3d6c6c01604faae93ce0c5f9b13f671e734",
+      "claims": "b8c0866edcb185a3c28b2297c9ac66db9eda326de1cd759f7bee7247ee05f5ab"
+    }
+  },
+  "identity": {
+    "title": "Film, film forming method, optical filter, laminate, solid image pickup element, image display device, and infrared sensor",
+    "applicant": "FUJIFILM Corporation",
+    "prior_publication_id": "US-20180340070-A1",
+    "priority_application": "JP2016-019130",
+    "priority_date": "2016-02-03",
+    "parent_application": "PCT/JP2017/003587"
+  },
+  "denominator": {
+    "b2_pdf_pages": 78,
+    "a1_pdf_pages": 79,
+    "cross_reference_paragraphs": 1,
+    "background_paragraphs": 3,
+    "summary_paragraphs": 49,
+    "brief_drawing_paragraphs": 1,
+    "detailed_description_paragraphs": 732,
+    "source_tables": 6,
+    "film_examples": 57,
+    "comparative_examples": 18,
+    "total_experimental_rows": 75,
+    "resin_reference_rows": 19,
+    "chemical_structure_tokens": 78,
+    "claims": 29,
+    "drawing_sheets": 1,
+    "figure_panels": 1,
+    "terminal_items": 1
+  },
+  "tables": [
+    {
+      "number": 1,
+      "role": "yellow/green/blue/violet/red/orange colorant mass-ratio ranges, rows 1-8",
+      "block_sha256": "34dd1182501cbe0907197980a2409934fa023d15a2076e835c0106afd539ab1d",
+      "formal_table_sha256": "64f60bd129cc4c9a205f06944542cadaa49e32611e9095f0f28813e3f3c9976d"
+    },
+    {
+      "number": 2,
+      "role": "film Examples 1-38 with dye, formula, process, aggregation, resin, particle size, fastness, heat, and defect evaluations",
+      "block_sha256": "7053acc5b9f4f0d941936090175fb7b566e800e9d5ccc146c63721bfc18dad43",
+      "formal_table_sha256": "708eb8ab9063bc5ba6ffaa3d05d11b248a0ed6da7375abcd731eb43436ef7ce0"
+    },
+    {
+      "number": 3,
+      "role": "film Examples 39-57 with the same materials/process/evaluation fields",
+      "block_sha256": "939600d862cbe0ab614f68411159a73ebf7246db095c5fccf3eecff333aafe04",
+      "formal_table_sha256": "8e25a4b7559436936764d5bfc2e005c97346c2f304bff875a4b4934cd852e41c"
+    },
+    {
+      "number": 4,
+      "role": "Comparative Examples 1-18 with materials/process/evaluation fields",
+      "block_sha256": "934257c1c895af96ce4864d729ba66d643e4172324c1aa3607298aa0c4545d37",
+      "formal_table_sha256": "76d275a2ae413d538994b1c5d985d2bc282b4a6c047ff948bc710365ad58ebc8"
+    },
+    {
+      "number": 5,
+      "role": "Resins 1-6 glass-transition temperature, molecular weight, and structure",
+      "block_sha256": "a558b18e3a1868d35bfd7474240f022c936a1b97a26d9eeec931d0015ff43571",
+      "formal_table_sha256": "1f94a611917319f9b32d45b1ed28e52554a42ba6409765168d70a20f23e74169"
+    },
+    {
+      "number": 6,
+      "role": "Resins 7-19 glass-transition temperature, molecular weight, and structure",
+      "block_sha256": "6122f27ff3518a87765590ee9e4b8f735bab1a05f66010338d0b603995250c2f",
+      "formal_table_sha256": "e8fa3aeae21daf702efd30e74b3be437612417809d9285d797d1de4e59ac222e"
+    }
+  ],
+  "figure": {
+    "panel": "1",
+    "role": "infrared-sensor layer-stack schematic",
+    "reference_labels": {
+      "110": "solid image pickup element",
+      "111": "infrared cut filter",
+      "112": "color filter",
+      "114": "infrared transmitting filter",
+      "115": "microlens",
+      "116": "planarizing layer"
+    }
+  },
+  "source_scope_phrase_counts": {
+    "Example": 412,
+    "Comparative Example": 1,
+    "optical filter": 31,
+    "infrared cut filter": 26,
+    "infrared transmitting filter": 23,
+    "solid image pickup element": 22,
+    "film forming method": 59,
+    "focal length": 0,
+    "effective focal length": 0,
+    "F-number": 0,
+    "FNO": 0,
+    "field of view": 0,
+    "FOV": 0,
+    "radius": 0,
+    "curvature": 0,
+    "Abbe": 0,
+    "asphere": 0,
+    "prescription": 0,
+    "surface number": 0,
+    "refractive index": 3,
+    "lens": 10,
+    "microlens": 5
+  },
+  "refractive_index_context": [
+    "paragraph 529 antireflection-film high/low refractive-index layers",
+    "paragraph 537 low-refractive-index pixel partition wall"
+  ],
+  "terminal_items": [
+    {
+      "embodiment_number": 1,
+      "label": "Dye-aggregate film and optical-filter materials disclosure",
+      "status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.dye_aggregate_film_and_optical_filter_materials_only"
+    }
+  ],
+  "official_pdf_audit": {
+    "path": ".planning/quick/260717-patent-generic-family-59500840/family-59500840-raster-audit.json",
+    "sha256": "977777d987d5fd7ae1a08ce33619647ffbf505ea62f3167116c6f48864519866"
+  }
+}

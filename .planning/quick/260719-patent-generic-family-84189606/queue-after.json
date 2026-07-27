@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260719-patent-generic-family-84189606/generic-residual-after-2.json",
+  "result_set_sha256": "5b34ec3b55d94014cccc167b88b83ccc039e7e9e9229c7ab5f683a56343ac240",
+  "generic_residual_roots": 63,
+  "generic_residual_items": 63,
+  "next_exact_group": {
+    "family_id": "63853856",
+    "root_ids": [
+      "US-10514523"
+    ],
+    "publication_ids": [
+      "US-10514523-B2"
+    ],
+    "application_number": "15/671765",
+    "title": "Optical image capturing system and electronic device",
+    "first_inventor": "Lai; Chien-Hsun",
+    "applicant": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO.LTD.",
+    "assignee": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO. LTD.",
+    "layout_signature": "7f12be2ecad1a77e0198ca00007b8489e54f691372d96701b03e82495cb7e4aa",
+    "layout_signature_count": 1,
+    "table_count": 12,
+    "marker_counts": {
+      "effective_focal_length": 9,
+      "embodiment_anchor": 173,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 20,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/0c93198ad6094f80/US-10514523-B2.html",
+      "sha256": "0c93198ad6094f8057d5df45a399a8bbd615f6286790c5a87632a1447a81b902"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

@@ -1,0 +1,206 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "87279038",
+  "root_id": "US-20250155675",
+  "publication_id": "US-20250155675-A1",
+  "application_number": "18/728486",
+  "title": "IMAGING LENS SYSTEM, CAMERA MODULE, IN-VEHICLE SYSTEM, AND VEHICLE",
+  "lineage": {
+    "pct_application": "PCT/JP2023/000159",
+    "pct_filed": "2023-01-06",
+    "foreign_priority_application": "JP 2022-004493",
+    "foreign_priority_date": "2022-01-14",
+    "priority_repeated_in_paragraph": 141
+  },
+  "denominator": {
+    "background_summary_numbered_paragraphs": 13,
+    "brief_drawing_numbered_paragraphs": 32,
+    "detailed_description_numbered_paragraphs": 116,
+    "total_numbered_specification_paragraphs": 161,
+    "claims": 11,
+    "independent_claims": [1, 9, 10, 11],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 14,
+    "maths_objects": 1,
+    "mathml_objects": 1,
+    "inline_formula_leads": 17,
+    "figure_reference_occurrences": 179,
+    "declared_figure_panels": 32,
+    "drawing_sheets": 32,
+    "official_pdf_pages": 45,
+    "source_items": 9,
+    "ordered_optical_prescriptions": 6,
+    "wrapper_items": 3,
+    "source_items_unmapped": 0,
+    "published_surface_rows_per_example": 16,
+    "published_surface_rows_total": 96,
+    "published_iris_rows_per_example": 2,
+    "published_iris_rows_total": 12,
+    "published_material_rows_per_example": 8,
+    "published_material_rows_total": 48,
+    "asphere_surfaces_per_example": 4,
+    "asphere_surfaces_total": 24,
+    "asphere_coefficient_cells_per_example": 32,
+    "asphere_coefficient_cells_total": 192
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Maxell bright six-lens Example 1",
+      "source_bindings": {
+        "description_range": [75, 96],
+        "shared_description_range": [119, 129],
+        "figures": ["1", "2A", "2B", "2C", "2D"],
+        "tables": [1, 2, 13, 14],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent"
+    },
+    {
+      "number": 2,
+      "label": "Maxell bright six-lens Example 2",
+      "source_bindings": {
+        "description_range": [97, 100],
+        "shared_description_range": [119, 129],
+        "figures": ["3", "4A", "4B", "4C", "4D"],
+        "tables": [3, 4, 13, 14],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent"
+    },
+    {
+      "number": 3,
+      "label": "Maxell bright six-lens Example 3",
+      "source_bindings": {
+        "description_range": [101, 104],
+        "shared_description_range": [119, 129],
+        "figures": ["5", "6A", "6B", "6C", "6D"],
+        "tables": [5, 6, 13, 14],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent"
+    },
+    {
+      "number": 4,
+      "label": "Maxell bright six-lens Example 4",
+      "source_bindings": {
+        "description_range": [105, 109],
+        "shared_description_range": [119, 129],
+        "figures": ["7", "8A", "8B", "8C", "8D"],
+        "tables": [7, 8, 13, 14],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent"
+    },
+    {
+      "number": 5,
+      "label": "Maxell bright six-lens Example 5",
+      "source_bindings": {
+        "description_range": [110, 113],
+        "shared_description_range": [119, 129],
+        "figures": ["9", "10A", "10B", "10C", "10D"],
+        "tables": [9, 10, 13, 14],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent"
+    },
+    {
+      "number": 6,
+      "label": "Maxell bright six-lens Example 6",
+      "source_bindings": {
+        "description_range": [114, 118],
+        "shared_description_range": [119, 129],
+        "figures": ["11", "12A", "12B", "12C", "12D"],
+        "tables": [11, 12, 13, 14],
+        "claims": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.prescription_specific_stop_surface_and_absolute_image_height_absent"
+    },
+    {
+      "number": 7,
+      "label": "Maxell camera-module wrapper",
+      "source_bindings": {
+        "description_range": [73, 130],
+        "claim": 9
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_wrapper_only"
+    },
+    {
+      "number": 8,
+      "label": "Maxell in-vehicle-system wrapper",
+      "source_bindings": {
+        "description_range": [131, 139],
+        "figures": ["13", "14"],
+        "claim": 10
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.in_vehicle_system_wrapper_only"
+    },
+    {
+      "number": 9,
+      "label": "Maxell vehicle wrapper",
+      "source_bindings": {
+        "description_range": [131, 132],
+        "figure": "13",
+        "claim": 11
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_wrapper_only"
+    }
+  ],
+  "shared_prescription_boundary": {
+    "surface_table_numbers": [1, 3, 5, 7, 9, 11],
+    "asphere_table_numbers": [2, 4, 6, 8, 10, 12],
+    "surface_rows": ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9", "S10", "S11", "S12", "S13", "S14", "S15", "S16"],
+    "surface_roles": {
+      "lens": [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14],
+      "iris": [7, 8],
+      "infrared_cut_filter": [15],
+      "img_labeled": [16]
+    },
+    "material_surface_numbers": [1, 3, 5, 9, 10, 11, 13, 15],
+    "asphere_surface_numbers": [5, 6, 13, 14],
+    "asphere_orders": ["K", "A4", "A6", "A8", "A10", "A12", "A14", "A16"],
+    "iris_stop_location_statement": "between L3 and L4",
+    "specific_stop_surface_published": false,
+    "absolute_image_height_published": false
+  },
+  "direct_system_metadata": {
+    "f_number": [1.56, 1.58, 1.56, 1.57, 1.60, 1.55],
+    "whole_angle_of_view_deg": [37.6, 38.8, 37.5, 38.4, 38.6, 38.2],
+    "total_track_length_mm": [38.00, 37.83, 38.20, 38.30, 38.34, 38.40],
+    "focal_length_mm": [13.47, 13.10, 13.51, 13.10, 13.15, 13.40],
+    "focal_length_and_total_track_reference_wavelength_nm": 550,
+    "paragraph_half_angle_of_view_deg": [18.8, 19.4, 18.8, 19.2, 19.3, 19.1]
+  },
+  "binding_policy": {
+    "iris_surface_selected": false,
+    "image_height_derived_from_focal_length_and_field": false,
+    "image_height_transcribed_or_measured_from_plot": false,
+    "img_surface_label_reinterpreted": false,
+    "whole_angle_repaired_from_half_angle": false,
+    "numeric_repair_used": false,
+    "drawing_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "related_publication_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "metadata_unpublished_items": 6,
+    "confirmed_no_prescription_items": 3,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  }
+}

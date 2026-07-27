@@ -1,0 +1,294 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "81328003",
+  "root_id": "US-12474593",
+  "publication_id": "US-12474593-B2",
+  "application_number": "17/668278",
+  "title": "Camera module, electronic device and vehicle device",
+  "lineage": {
+    "same_application_prior_publication": "US-20230100691-A1",
+    "provisional_application": "63/248966",
+    "provisional_filing_date": "2021-09-27"
+  },
+  "denominator": {
+    "related_application_numbered_paragraphs": 1,
+    "background_summary_numbered_paragraphs": 7,
+    "brief_drawing_numbered_paragraphs": 26,
+    "detailed_description_numbered_paragraphs": 66,
+    "description_numbered_paragraphs": 92,
+    "total_numbered_specification_paragraphs": 100,
+    "claims": 17,
+    "independent_claims": [
+      1,
+      10
+    ],
+    "html_table_tags": 0,
+    "flattened_table_blocks": 0,
+    "maths_objects": 0,
+    "mathml_objects": 0,
+    "inline_formula_leads": 0,
+    "custom_character_image_tags": 0,
+    "figure_reference_occurrences": 102,
+    "declared_figure_panels": 25,
+    "drawing_sheets": 25,
+    "official_pdf_pages": 35,
+    "source_items": 6,
+    "camera_module_items": 3,
+    "electronic_device_wrapper_items": 2,
+    "vehicle_device_wrapper_items": 1,
+    "ordered_optical_prescriptions": 0,
+    "source_items_unmapped": 0
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Largan actuator camera-module 1st embodiment",
+      "source_bindings": {
+        "description_range": [
+          44,
+          53
+        ],
+        "shared_description_range": [
+          27,
+          43
+        ],
+        "figures": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "claims": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_actuator_architecture_only"
+    },
+    {
+      "number": 2,
+      "label": "Largan actuator camera-module 2nd embodiment",
+      "source_bindings": {
+        "description_range": [
+          54,
+          63
+        ],
+        "shared_description_range": [
+          27,
+          43
+        ],
+        "figures": [
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12"
+        ],
+        "claims": [
+          10,
+          11,
+          12,
+          13,
+          17
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_actuator_architecture_only"
+    },
+    {
+      "number": 3,
+      "label": "Largan actuator camera-module 3rd embodiment",
+      "source_bindings": {
+        "description_range": [
+          64,
+          75
+        ],
+        "shared_description_range": [
+          27,
+          43
+        ],
+        "figures": [
+          "13",
+          "14",
+          "15"
+        ],
+        "claims": []
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.camera_module_actuator_architecture_only"
+    },
+    {
+      "number": 4,
+      "label": "Largan multi-camera smartphone 4th embodiment",
+      "source_bindings": {
+        "description_range": [
+          76,
+          82
+        ],
+        "shared_description_range": [
+          27,
+          43
+        ],
+        "figures": [
+          "16",
+          "17",
+          "18",
+          "19",
+          "20"
+        ],
+        "claims": [
+          8
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 5,
+      "label": "Largan nine-camera smartphone 5th embodiment",
+      "source_bindings": {
+        "description_range": [
+          83,
+          85
+        ],
+        "shared_description_range": [
+          27,
+          43
+        ],
+        "figures": [
+          "21"
+        ],
+        "claims": [
+          8
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "number": 6,
+      "label": "Largan automotive camera deployment 6th embodiment",
+      "source_bindings": {
+        "description_range": [
+          86,
+          90
+        ],
+        "shared_description_range": [
+          27,
+          43
+        ],
+        "figures": [
+          "22",
+          "23",
+          "24",
+          "25"
+        ],
+        "claims": [
+          9
+        ]
+      },
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.vehicle_device_wrapper_only"
+    }
+  ],
+  "shared_architecture_boundary": {
+    "related_application_range": [
+      1,
+      1
+    ],
+    "brief_drawing_description_range": [
+      1,
+      26
+    ],
+    "general_description_range": [
+      27,
+      43
+    ],
+    "closing_description_range": [
+      91,
+      92
+    ],
+    "claim_1_camera_module_independent": true,
+    "claim_8_electronic_device_depends_on_claim_1": true,
+    "claim_9_vehicle_device_depends_on_claim_1": true,
+    "claim_10_camera_module_independent": true,
+    "ordered_radius_rows_published": 0,
+    "ordered_spacing_rows_published": 0,
+    "material_or_index_dispersion_rows_published": 0,
+    "conic_or_asphere_rows_published": 0,
+    "aperture_stop_rows_published": 0,
+    "exact_focal_length_published": false,
+    "exact_f_number_published": false,
+    "absolute_image_height_published": false
+  },
+  "direct_architecture_metadata": {
+    "item_1": {
+      "first_ball_group_count": 4,
+      "second_ball_group_count": 4,
+      "second_groove_group": "two strip V-shaped grooves and two U-shaped grooves",
+      "third_groove_group": "four strip V-shaped grooves"
+    },
+    "item_2": {
+      "first_ball_group_count": 4,
+      "second_ball_group_count": 6,
+      "second_groove_group": "three strip V-shaped grooves and three U-shaped grooves",
+      "third_groove_group": "three strip V-shaped grooves and three U-shaped grooves"
+    },
+    "item_3": {
+      "first_ball_group_count": 6,
+      "second_ball_group_count": 4,
+      "second_groove_group": "four strip V-shaped grooves",
+      "third_groove_group": "four strip V-shaped grooves"
+    },
+    "item_4": {
+      "deployment_roles": [
+        "ultra-wide-angle",
+        "high pixel",
+        "telephoto"
+      ]
+    },
+    "item_5": {
+      "camera_count": 9,
+      "deployment_roles": [
+        "telephoto",
+        "wide-angle",
+        "ultra-wide-angle",
+        "time of flight"
+      ]
+    },
+    "item_6": {
+      "printed_maximum_field_of_view_range_degrees": [
+        40,
+        90
+      ],
+      "deployment_context": "side-mirror lane imaging"
+    }
+  },
+  "binding_policy": {
+    "actuator_geometry_promoted_to_prescription": false,
+    "device_deployment_range_promoted_to_prescription": false,
+    "numeric_derivation_used": false,
+    "numeric_interpolation_used": false,
+    "drawing_or_plot_measurement_used": false,
+    "raster_numeric_transcription_used": false,
+    "related_publication_numeric_borrowing_used": false,
+    "family_or_layout_numeric_borrowing_used": false
+  },
+  "terminal_outcome": {
+    "confirmed_no_prescription_items": 6,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_runs": 0
+  }
+}

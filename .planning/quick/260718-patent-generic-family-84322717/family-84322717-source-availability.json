@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "family_id": "84322717",
+  "root_id": "US-12656584",
+  "publication_id": "US-12656584-B2",
+  "application_number": "18/526988",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/4c49c1f0f7b88434/US-12656584-B2.html",
+    "bytes": 134814,
+    "characters": 132114,
+    "normalized_characters": 113014,
+    "sha256": "4c49c1f0f7b88434639b5ffddd557efe1333044a14517a802bf2d0388e6a38a5",
+    "normalized_sha256": "a769839300a2b2fa29467f2b6b308a0df1bc8743b54c4373d7480cbfeeb984a0",
+    "flattened_tables": 45,
+    "inline_formula_pairs": 31,
+    "embedded_img_tags": 0
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/7f3e55c77a56cefb/US-12656584-B2.pdf",
+    "bytes": 2187468,
+    "container_sha256": "7f3e55c77a56cefb87b93ea7dc562e6b9f4ea1bd192aa1f9de99a6c584bb648e",
+    "page_count": 45,
+    "single_raster_pages": 45,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "6d8c500d0d743a6f020b43e3cccef62176f681ca44fe00d8c20ce904276a72c7"
+  },
+  "same_application_prior_publication": {
+    "publication_id": "US-20240134168-A1",
+    "html_path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/5051d586bf1ceb98/US-20240134168-A1.html",
+    "html_bytes": 127238,
+    "html_sha256": "5051d586bf1ceb98249134d480d75437f52cb76eb6f2b28e6da671d1f925a2b7",
+    "normalized_characters": 112144,
+    "normalized_sha256": "3e07223492134bb5f806d31a7a440eb77be7c4bcca11db76698e4d15d03cb5f3",
+    "flattened_tables": 45,
+    "pdf_path": "data/patent-lake/uspto-ppubs-pdf/efbbf43a0e577142/US-20240134168-A1.pdf",
+    "pdf_bytes": 2048544,
+    "pdf_sha256": "efbbf43a0e57714200b3380731a2bbf5be6be3af19a295cdd0b0f9a0d1bc6339",
+    "pdf_page_count": 46,
+    "pdf_single_raster_pages": 46,
+    "pdf_text_layer_characters": 0,
+    "pdf_decoded_raster_set_sha256": "f87a061be76d1971c6e0b6cee87f3b5302947073f3fd1033fcbc1b5970f48214"
+  },
+  "lineage": {
+    "prior_us_publication": "US-20240134168-A1",
+    "international_application": "PCT/CN2021/098016",
+    "international_filing_date": "2021-06-02",
+    "continuation_filing_date": "2023-12-01",
+    "numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_b2_html_is_numeric_authority": true,
+    "same_application_a1_numeric_sequences_used_as_corroboration_only": true,
+    "official_pdf_used_for_printed_formula_and_internal_conflict_confirmation": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "mirror_coordinate_synthesis_permitted": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "exact_coefficient_radii_precede_rounded_surface_radii": true,
+    "published_internal_exceptions_are_explicit_and_narrow": true
+  }
+}

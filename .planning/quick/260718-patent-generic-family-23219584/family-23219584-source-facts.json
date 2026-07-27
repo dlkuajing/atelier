@@ -1,0 +1,267 @@
+{
+  "schema_version": "patent-family-source-facts/v1",
+  "family_id": "23219584",
+  "root_id": "US-6292306",
+  "publication_id": "US-6292306-B1",
+  "application_number": "09/314343",
+  "layout_signature": "437fa2555cbad39206a20353ea2dc5e5c7dba01ccf65749ed1c49baa7cfdaa4b",
+  "source": {
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/79baca6bd83e0d39/US-6292306-B1.html",
+    "bytes": 30376,
+    "characters": 30376,
+    "sha256": "79baca6bd83e0d395aedfb916b7af7afa388706a6030b2706f6ef1c112430ba6",
+    "normalized_characters": 24993,
+    "normalized_sha256": "2f691be3ea31819fb33602b18f23a630f6e127de3f4c0b9917ae911680c80dce"
+  },
+  "identity_counts": {
+    "US-6292306-B1": 1,
+    "United States Patent 6292306": 1,
+    "Kind Code B1": 1,
+    "Date of Patent September 18, 2001": 1,
+    "Family ID: 23219584": 1,
+    "Assignee: Optical Gaging Products, Inc.": 1,
+    "Appl. No.: 09/314343": 1,
+    "Filed: May 19, 1999": 1
+  },
+  "section_markers": {
+    "background": "Background/Summary",
+    "description": "Description THE DRAWINGS",
+    "claims": "Claims 1. In a video inspection apparatus"
+  },
+  "section_starts": {
+    "background": 1947,
+    "description": 6056,
+    "claims": 18480
+  },
+  "section_sha256": {
+    "background": "cd158be645f319c362d60a8868c458628ae46e424790695792f4889ad18082bc",
+    "description": "f378ff75d4bbe756c8feb8ebab88fee27a2437a25bbbaa2304eb22c3c364a9be",
+    "claims": "1acd6648c693dfb519537ec80f3a4bf3a184a4de6e54cd23889cc84668398771"
+  },
+  "paragraphs": {
+    "background_summary_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "description_numbers": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "background_summary_span_sha256": {
+      "1-7": "5192aa5dfb261d86db8bdfb493071d4f7c8f945f04c8c7cdd093d334f513c70d",
+      "8-10": "96b0a5c930ee18876f0b7bbb78f8e749cb213f47f58f40a148e85958f95dd81c"
+    },
+    "description_span_sha256": {
+      "1-2": "a660e9a90178af9fddb84b5e73dc10c952f46626f7245290b1ef05ef99c0be3d",
+      "3-11": "0ef75bf163fba5f28cc3e901beb23ee9bd4ff31aa08141b07d437c027074fe0a",
+      "12-17": "1ce353c78bdda83015d5cc3588dc4285ed7b21d2b88cb9177b24094ef6339db0",
+      "18-19": "01d7b16a20c09b3a055b8f5e84bc850aab21f52ee95a14bbfd5a7c5e6e1dc164"
+    }
+  },
+  "drawings": {
+    "declaration_prefix_sha256": "0df81be0fc5e49ea16d6204b079150a8e8e5f9e31c1309d8f504bf146a88fc96",
+    "declared_figures": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "located_figures": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "official_pdf_pages": [
+      2,
+      3
+    ],
+    "drawing_measurement_used": false
+  },
+  "html_structure": {
+    "tagged_tables": 0,
+    "flattened_tables": 2,
+    "mathml_objects": 0,
+    "image_tags": 0
+  },
+  "lens_table": {
+    "description_paragraph": 14,
+    "normalized_characters": 544,
+    "sha256": "bb894075b12c801d607a4c6fa388b7b8d3d2eb33d22e4fe1247b2bbaeed0f396",
+    "columns": [
+      "surface",
+      "radius_mm",
+      "glass_element_thickness_mm",
+      "glass"
+    ],
+    "air_spacing_column_present": false,
+    "rows": [
+      {"surface": "S2", "radius_mm": 121, "thickness_mm": 8, "glass": "O_S-FPL51"},
+      {"surface": "S3", "radius_mm": -52, "thickness_mm": 5, "glass": "KZFSN5"},
+      {"surface": "S4", "radius_mm": 1557, "thickness_mm": 8, "glass": "O_S-FPL51"},
+      {"surface": "S5", "radius_mm": -42.1, "thickness_mm": null, "glass": null},
+      {"surface": "S6", "radius_mm": 72.2, "thickness_mm": 4, "glass": "KZFSN5"},
+      {"surface": "S7", "radius_mm": 37.7, "thickness_mm": 8.9, "glass": "O_S-FPL51"},
+      {"surface": "S8", "radius_mm": -186, "thickness_mm": null, "glass": null},
+      {"surface": "S10", "radius_mm": -897, "thickness_mm": 3, "glass": "KZFSN5"},
+      {"surface": "S11", "radius_mm": 21.8, "thickness_mm": 12, "glass": "O_S-BAH28"},
+      {"surface": "S12", "radius_mm": 295, "thickness_mm": null, "glass": null},
+      {"surface": "S13", "radius_mm": -23.1, "thickness_mm": 12, "glass": "LAK8"},
+      {"surface": "S14", "radius_mm": -30.2, "thickness_mm": null, "glass": null},
+      {"surface": "S15", "radius_mm": 37.5, "thickness_mm": 7, "glass": "LAK8"},
+      {"surface": "S16", "radius_mm": -15.8, "thickness_mm": 2, "glass": "SF53"},
+      {"surface": "S17", "radius_mm": -159, "thickness_mm": null, "glass": null},
+      {"surface": "S19", "radius_mm": -15.5, "thickness_mm": 1, "glass": "O_S LAL9"},
+      {"surface": "S20", "radius_mm": 13.2, "thickness_mm": 2.5, "glass": "O_S TIH53"},
+      {"surface": "S21", "radius_mm": -262, "thickness_mm": null, "glass": null},
+      {"surface": "S22", "radius_mm": 15.1, "thickness_mm": 2.5, "glass": "O_S-LAH66"},
+      {"surface": "S23", "radius_mm": -16.9, "thickness_mm": 1, "glass": "O_S-TIM28"},
+      {"surface": "S24", "radius_mm": 10.5, "thickness_mm": null, "glass": null},
+      {"surface": "S25", "radius_mm": 18, "thickness_mm": 2, "glass": "O_S-LAL59"},
+      {"surface": "S26", "radius_mm": -67.6, "thickness_mm": null, "glass": null},
+      {"surface": "S27", "radius_mm": 15.14, "thickness_mm": 2, "glass": "O_S-LAL9"},
+      {"surface": "S28", "radius_mm": 42.8, "thickness_mm": null, "glass": null},
+      {"surface": "S29", "radius_mm": 10.9, "thickness_mm": 1, "glass": "FK5"},
+      {"surface": "S30", "radius_mm": 9.6, "thickness_mm": null, "glass": null}
+    ]
+  },
+  "optical_groups": [
+    {"name": "front objective 14", "surfaces": ["S2", "S3", "S4", "S5"], "elements": 3, "notes": "cemented triplet; S2-facing surface is expressly aspheric"},
+    {"name": "doublet 20", "surfaces": ["S6", "S7", "S8"], "elements": 2},
+    {"name": "telecentric stop 18", "surface": "S9", "implicit_in_lens_table": true},
+    {"name": "doublet 21", "surfaces": ["S10", "S11", "S12"], "elements": 2},
+    {"name": "singlet 22", "surfaces": ["S13", "S14"], "elements": 1},
+    {"name": "field doublet 25", "surfaces": ["S15", "S16", "S17"], "elements": 2},
+    {"name": "first image plane P1", "surface": "S18", "implicit_in_lens_table": true},
+    {"name": "moving doublet 33", "surfaces": ["S19", "S20", "S21"], "elements": 2},
+    {"name": "moving group 34", "surfaces": ["S22", "S23", "S24", "S25", "S26", "S27", "S28", "S29", "S30"], "elements": 5}
+  ],
+  "magnification_table": {
+    "description_paragraph": 16,
+    "normalized_characters": 187,
+    "sha256": "07225957c8b8bb89a863ba7b30dd64cc443d5f55c4acb489cf43d0c5d3cee3df",
+    "separation_bindings": {
+      "X_mm": "group 25 / S17 to group 33 / S19",
+      "Y_mm": "group 33 / S21 to group 34 / S22",
+      "Z_mm": "group 34 / S30 to final image plane P2"
+    },
+    "rows": [
+      {"magnification": "0.8x", "stop_diameter_mm": 2.6, "X_mm": 58.8, "Y_mm": 3.9, "Z_mm": 25.2},
+      {"magnification": "1.8x", "stop_diameter_mm": 6.0, "X_mm": 44.0, "Y_mm": 0.5, "Z_mm": 43.4},
+      {"magnification": "4.8x", "stop_diameter_mm": 16.0, "X_mm": 16.6, "Y_mm": 4.6, "Z_mm": 66.7},
+      {"magnification": "8.0x", "stop_diameter_mm": 27.0, "X_mm": 1.3, "Y_mm": 12.9, "Z_mm": 73.7}
+    ]
+  },
+  "required_unpublished_metadata": {
+    "fixed_air_gaps": [
+      "S5-S6",
+      "S8-S9(stop)",
+      "S9(stop)-S10",
+      "S12-S13",
+      "S14-S15",
+      "S24-S25",
+      "S26-S27",
+      "S28-S29"
+    ],
+    "s2_conic_and_asphere_coefficients": true,
+    "system_effective_focal_length": true,
+    "image_height": true,
+    "prescription_specific_angular_field": true
+  },
+  "published_system_metadata": {
+    "constant_image_f_number": "F/20",
+    "range_notation": "0.8x F/25 to 8x F/2.5",
+    "variable_group_spacings": ["X", "Y", "Z"],
+    "stop_diameters_for_all_states": true
+  },
+  "qualitative_variants": [
+    "achromatic quarter-wave retardation plate plus air-spaced triplet and polarizers",
+    "alternative commercially available infinity-corrected objective lenses",
+    "changed fixed-group powers for a different telecentric 10:1 zoom",
+    "lens-group motion controlled by means other than cams",
+    "changed rear group 34 or an additional rear group for another sensor size"
+  ],
+  "source_phrase_counts": {
+    "constant F/20 at the image": 2,
+    "aspheric surface": 2,
+    "focal length": 1,
+    "field of view": 0,
+    "image height": 0,
+    "0.8.times.F/25": 3,
+    "8.times.F/2.5": 2
+  },
+  "claim_sha256": [
+    "9ea9cbede56408a0391b2b46f7ed035061f5e098efae063425fa894291fa6008",
+    "f8fd91e35859363a9bc2be414305032910960a10a54db7d67803023028b7e0a2",
+    "133cbde80414970eb39c81fa38e9e9160b9a28f9e20aabf785f1003d32c3b4e2",
+    "5d88a85b76fbbc0c60af661bd06ee858690c31e55289912f40667bf81868e9a5",
+    "b8836e85de486386731c74e0564d25f552b0b17358037b9fbaf99ada4b9106a9",
+    "d4b718c720c665ae404b932330ae6d80654127a0c6aaa85c2c9d5c989239bd9c",
+    "71e6b7a473e8ba70f6e9bd4a2410933ce9ffaeaa227e4bff67c332dc2980e08b",
+    "4aac5625e11acac279044075363dbf97ba655bb9e00c3d70b3aedb0e4a9c9aa4",
+    "e064004b01f5a56b02e9aaa9c7a9ac61c8f3ad47d94bce505a3dd71c9236b5ce",
+    "0708a39b3c12311da5dc61c5b434538f1e96cd12b2bc33150c616e3c12973ac3",
+    "1301a499fae17ea6128aec1a099429c53a3fb646e1f784c8bca81aa9b57093b8",
+    "2454c3d04b64d1554bebbf33389edc8cdb9d6ff7d689dc83b88891d5849db6ff",
+    "751ac3ae401865ea0b19c2bf04b2e95e07676bb811cdcde99e3016b0d789bb31",
+    "67b1ade6f375a62365cf450a991162d0e09a01343536ff4071ad2b904ed4b26c",
+    "4fb4f943fba1c603f4f87503b45d3e59e794270f0bc739e9ecdbb1c7c4a3743f",
+    "fc975b91ed7aabf07d9e53128eaa0b55317af809684b5a11e416c81e066156f2",
+    "0e2a3ecbad7617c69865e52dea1a3ec2e95cc787cbdf949f209d687c5ed30b9c"
+  ],
+  "item": {
+    "embodiment_number": 1,
+    "label": "Optical Gaging Products telecentric zoom prescription and variants",
+    "terminal_status": "metadata_unpublished",
+    "reason_code": "metadata_unpublished.required_fixed_air_spacings_asphere_coefficients_and_system_focal_length_field_absent",
+    "zoom_states": 4,
+    "qualitative_variants_mapped": 5
+  },
+  "representability_boundary": {
+    "ordered_radius_and_glass_rows_representable_in_isolation": true,
+    "complete_sequential_surface_spacing_available": false,
+    "declared_aspheric_surface_numerically_defined": false,
+    "system_focal_length_and_field_available": false,
+    "f_number_available": true,
+    "formal_output_permitted": false,
+    "drawing_transcription_used": false,
+    "coordinate_synthesis_used": false,
+    "related_family_numeric_borrowing_used": false
+  },
+  "formal_outputs": {
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

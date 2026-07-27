@@ -1,0 +1,147 @@
+{
+  "schema_version": "patent-family-denominator/v1",
+  "family_id": "93669750",
+  "root_id": "US-20260093094",
+  "publication_id": "US-20260093094-A1",
+  "sections": {
+    "background_summary_paragraphs": 11,
+    "description_paragraphs": 169,
+    "claims": 20,
+    "independent_claims": 3,
+    "machine_readable_tables": 0,
+    "raster_optical_data_tables": 10,
+    "raster_asphere_data_tables": 10,
+    "raster_common_comparison_system_table_panels": 2,
+    "inline_formula_pairs": 0,
+    "mathml_objects": 15,
+    "figref_tags": 167,
+    "declared_figure_panels": 77,
+    "drawing_sheets": 34
+  },
+  "source_items": [
+    {
+      "number": 1,
+      "label": "Genius six-lens optical imaging lens 1st embodiment",
+      "paragraph_range": [108, 123],
+      "figures": ["6", "7A", "7B", "7C", "7D", "26", "27"],
+      "optical_table_figure": "26",
+      "asphere_table_figure": "27",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 2,
+      "label": "Genius six-lens optical imaging lens 2nd embodiment",
+      "paragraph_range": [124, 125],
+      "figures": ["8", "9A", "9B", "9C", "9D", "28", "29"],
+      "optical_table_figure": "28",
+      "asphere_table_figure": "29",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 3,
+      "label": "Genius six-lens optical imaging lens 3rd embodiment",
+      "paragraph_range": [126, 127],
+      "figures": ["10", "11A", "11B", "11C", "11D", "30", "31"],
+      "optical_table_figure": "30",
+      "asphere_table_figure": "31",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 4,
+      "label": "Genius six-lens optical imaging lens 4th embodiment",
+      "paragraph_range": [128, 129],
+      "figures": ["12", "13A", "13B", "13C", "13D", "32", "33"],
+      "optical_table_figure": "32",
+      "asphere_table_figure": "33",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 5,
+      "label": "Genius six-lens optical imaging lens 5th embodiment",
+      "paragraph_range": [130, 131],
+      "figures": ["14", "15A", "15B", "15C", "15D", "34", "35"],
+      "optical_table_figure": "34",
+      "asphere_table_figure": "35",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 6,
+      "label": "Genius six-lens optical imaging lens 6th embodiment",
+      "paragraph_range": [132, 133],
+      "figures": ["16", "17A", "17B", "17C", "17D", "36", "37"],
+      "optical_table_figure": "36",
+      "asphere_table_figure": "37",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 7,
+      "label": "Genius six-lens optical imaging lens 7th embodiment",
+      "paragraph_range": [134, 135],
+      "figures": ["18", "19A", "19B", "19C", "19D", "38", "39"],
+      "optical_table_figure": "38",
+      "asphere_table_figure": "39",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 8,
+      "label": "Genius six-lens optical imaging lens 8th embodiment",
+      "paragraph_range": [136, 137],
+      "figures": ["20", "21A", "21B", "21C", "21D", "40", "41"],
+      "optical_table_figure": "40",
+      "asphere_table_figure": "41",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 9,
+      "label": "Genius six-lens optical imaging lens 9th embodiment",
+      "paragraph_range": [138, 139],
+      "figures": ["22", "23A", "23B", "23C", "23D", "42", "43"],
+      "optical_table_figure": "42",
+      "asphere_table_figure": "43",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    },
+    {
+      "number": 10,
+      "label": "Genius six-lens optical imaging lens 10th embodiment",
+      "paragraph_range": [140, 141],
+      "figures": ["24", "25A", "25B", "25C", "25D", "44", "45"],
+      "optical_table_figure": "44",
+      "asphere_table_figure": "45",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "metadata_unpublished.machine_readable_prescription_and_system_tables_absent"
+    }
+  ],
+  "common_figures": {
+    "baseline_definition_figures": ["1", "2", "3", "4", "5"],
+    "comparison_system_table_figures": ["46", "47"]
+  },
+  "optical_interpretation": {
+    "published_numerical_prescriptions": 10,
+    "machine_readable_numerical_prescriptions": 0,
+    "html_item_specific_efl_f_number_hfov_ttl_image_height": true,
+    "ordered_surface_and_asphere_rows_location": "official PDF raster figures only",
+    "pdf_text_layer_characters": 0,
+    "raster_numeric_transcription_authorized": false,
+    "worker_authorized": false
+  },
+  "terminal_outcome": {
+    "metadata_unpublished_items": 10,
+    "worker_launches": 0,
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_intake_items": 0,
+    "codev_calls": 0
+  }
+}

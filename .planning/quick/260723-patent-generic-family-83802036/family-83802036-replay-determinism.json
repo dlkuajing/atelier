@@ -1,0 +1,55 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "83802036",
+  "root_id": "US-12631845",
+  "publication_id": "US-12631845-B2",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-12631845/attempt-0001/result.json",
+    "bytes": 1272,
+    "sha256": "04025aca4a6aeb905edee773feaa059d396449f63af481942388cc2d1eb7dcf3",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "3af40b5a6e792470804607f7db1187dd28fde8461fc3d0528601dd26d1143019"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12631845/attempt-0002/result.json",
+      "bytes": 14595,
+      "sha256": "4e1dc4d6d8fb4f80a8e2b033110a91f20293ece882630f2715aaad0da29210d0",
+      "result_attempt": 2,
+      "root_state": "terminal",
+      "semantic_sha256": "ed7324182337371476da09ad518e3a4e159a042b70511b04abb5df210cbae066"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12631845/attempt-0003/result.json",
+      "bytes": 14595,
+      "sha256": "86ebfc79a90e818d9a46c3e39684d82908d9bb3b353c559f517ad3ec45a68af1",
+      "result_attempt": 3,
+      "root_state": "terminal",
+      "semantic_sha256": "ed7324182337371476da09ad518e3a4e159a042b70511b04abb5df210cbae066"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "ed7324182337371476da09ad518e3a4e159a042b70511b04abb5df210cbae066",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.camera_module_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only",
+    "terminal.confirmed_no_prescription.polygonal_light_passing_hole_and_lens_holding_member_architecture_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

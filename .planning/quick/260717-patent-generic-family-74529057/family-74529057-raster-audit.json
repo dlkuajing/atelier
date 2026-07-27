@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "family_id": "74529057",
+  "root_ids": ["US-20210364452"],
+  "publication_id": "US-20210364452-A1",
+  "application_number": "17/019421",
+  "source_truth_boundary": "USPTO HTML and two official USPTO A1 containers are primary. The Google A1 wrapper is accepted only because all 35 decoded rasters equal the official publication. No values are derived from drawing geometry.",
+  "page_count": 35,
+  "page_image_count": 1,
+  "page_shape": [3300, 2560],
+  "page_structure": {
+    "cover_pages": [1],
+    "drawing_page_range": [2, 26],
+    "drawing_sheet_count": 25,
+    "figure_labels": ["1A", "1B", "1C", "1D", "1E", "1F", "1G", "1H", "1I", "2A", "2B", "2C", "2D", "2E", "2F", "2G", "2H", "2I", "2J", "2K", "2L", "3A", "3B", "3C", "3D"],
+    "specification_pdf_page_range": [27, 35],
+    "specification_internal_page_range": [1, 9],
+    "table_pages": [28, 30, 31, 32, 33],
+    "claims_pdf_pages": [34, 35],
+    "claims_internal_page_range": [8, 9]
+  },
+  "page_raster_sha256": ["e78779677079e0dc91ea659296827ffda9daa728277ed7f44f3adccd7ce5dbc1", "4e5ac78f88dca4fd4a2b0b6a65af9d73f60a52896f3c4a3a0835239873cca113", "d1ca6427196aa0cacefc009d683ce5aef83ac10e57f4e10f6d059c8e9e5135db", "60bbb989fef2ee0a22a722b5a9bd33e721abe767c06e3230ad8bf2c6d7b34506", "402672ca74720c00b8aca85b85a3a25ab0d3fe4ff705fafe5618c8ec4801c2f4", "603e47c775d824d0001af22eaf919a5244045dbf83fc7ee4aee4760994acc393", "0e0e2e628845c75d8e4e0c17ec50e82bd6a5affc529ecd989ea6051aab97443a", "0d1920ee98fb5677d28c8366f3a26c2d9e77ecd96a59241bb0434dfe281a6ea5", "a4a2b3a7c1da657556d71a78e3106a55aa6abc56a2c2f4f6a7fdf25ec3b20ec6", "85c5e6ac6a11217e65d0e122b48c74de3c730ed52abaf69e24d1107ec5f762ec", "cf687cd775c533c45c939ac6d9881e717fe23abcffdf3dc4e5add4e6a591df9b", "3fd3e01dd9657ca70cf7368b4f738b5a9fd78408916ddb4d767d17a3a681ebb7", "2771eed0b9325592edea8b7d78df435079d0c7006cd52fff358181fbafeee3e9", "619ccc0bbf076074600b74ffdb61d83a38b19821e3659c3ab985159ee31f8405", "7b1c6649815007916012742e22c614a7116489331cd7af81bd48db437e347e40", "498d678d9aea9f3c990d207961dc1abbf765a89d104aee27b97a4eaa03d8b709", "69fd9414d048f8871f5c01451c8f9694117110d5a291da0baf5af80fb51ed891", "78a8b670e6e64b7547dd6d9c774d51fe303e6bf63909b43866f8fb01e72a0ba7", "5be61844aa583bca6d2d12d7aff1e7eae2c181669753af7ba3eddc6d07253212", "a88a25d139b912f01f9313f7bcfad4163e3914f66b2e038a49d8bb17e74935f3", "70a1a349f50a472b952c6420090962ffd707d3e4e4fbbf4aa725bd41ef59ddca", "f1e9a7de2e37e362aaf304c63b588c0d2832973121fc5c6d757490651d9b7a93", "ea290621613351cca4f7f6cc9653403941a58fe503ea292d6fc070df6205fb49", "12526c0c454e754044f4f8ef10a5bbca3439446f3aea374979efdd22614f98a7", "f83b6e66cc1739ca070c0339ec9c70ddf27bde96fd84dd5cf4a248b5908b7b91", "d41dab31c00c55f908d7dc25af7f030a96c535cbbd392a2378fdd0ab7ef5fa24", "d10ba4999d41d9f4724e589d9106ff3a278920d182d7ba594bba92a4dd82c4a4", "02c9133d2cec13613bbe9910d63c513003eb75a8951ebc9c32d647cd05c036d4", "c857a76a133b1c37c7370b3d630872b0dad81a2910b5c768e24ff15cdaba0891", "6805cb90c061902ac28b674854f59a278f10b68169b27a7861dbb6204b2b5d2e", "89c951045379635994a5a0b8df5709eead6632a80cb149ce65707eac20149a4f", "e3a74c589c2811ab027defa023896fc32260d380c768fd582df98b7203c3bd69", "071ef7e356a76e82b4c1e238e924d365f9cb1e6e3f9c70701f035bf8805a224b", "1fb54b7a14cc6600c2f03a5323cf635ccef0323b9eba2ad4157e6f14d882ade8", "5b1fb082e7c62dbb5741a30a09e8fb3229366a4b1af08aa884707affcec88db0"],
+  "raster_set_sha256": "336f4401fc5a5ee61e1627c86e2ca8b6b1bc3371835efd9cf5abbdc6c1f56604",
+  "wrappers": {
+    "official-live-1": {
+      "path": ".planning/quick/260717-patent-generic-family-74529057/source-review/US-20210364452-A1-official-1.pdf",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20210364452",
+      "bytes": 1946735,
+      "sha256": "8ff2dbbd13f166daa3851d3887a8fd82dbfd58f660acff64a9f1db8f4040ab6c",
+      "page_text_lengths": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "official-live-2": {
+      "path": ".planning/quick/260717-patent-generic-family-74529057/source-review/US-20210364452-A1-official-2.pdf",
+      "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20210364452?download=2",
+      "bytes": 1946735,
+      "sha256": "d994d046771a798ac94cc4e1d2821a04dea1059147286ab6c325b69524f91602",
+      "page_text_lengths": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    "google": {
+      "path": ".planning/quick/260717-patent-generic-family-74529057/source-review/US-20210364452-A1-google.pdf",
+      "url": "https://patentimages.storage.googleapis.com/25/fd/88/d241d698f947d6/US20210364452A1.pdf",
+      "bytes": 2484619,
+      "sha256": "cbf8795b6774b374a09b9b77544aa3b19d294daa35bbae6722741c08d522b9c9",
+      "page_text_lengths": [1669, 207, 184, 165, 152, 149, 103, 159, 123, 128, 211, 161, 164, 152, 101, 115, 150, 145, 110, 102, 130, 105, 127, 341, 136, 108, 6156, 6569, 7618, 7277, 7317, 7240, 7268, 7161, 5191]
+    }
+  },
+  "same_position_raster_equality": {
+    "official_1_vs_official_2": {"compared_pages": 35, "equal_pages": 35},
+    "official_1_vs_google": {"compared_pages": 35, "equal_pages": 35},
+    "official_2_vs_google": {"compared_pages": 35, "equal_pages": 35}
+  },
+  "retained_visual_audits": [
+    {"path": ".planning/quick/260717-patent-generic-family-74529057/source-review/US-20210364452-A1-contact-pages-1-35.png", "bytes": 1752686, "sha256": "cb8bb782a7f6f6f2e6656b7b3f0ebc9c5cfe0bdb63d6c172a1de2a1a3a2c514d"},
+    {"path": ".planning/quick/260717-patent-generic-family-74529057/source-review/US-20210364452-A1-spec-pages-27-35.png", "bytes": 4113943, "sha256": "d8bd75b49d94b6157f92eece9c4d921f695dda095d2adef13fe09a19d778bcf0"},
+    {"path": ".planning/quick/260717-patent-generic-family-74529057/source-review/US-20210364452-A1-tables-claims-pages-28-35.png", "bytes": 5041471, "sha256": "553fdc504eb08d42b35738cc945fe8e3249d1df2eeaf17dd8194fe49383a1a55"}
+  ],
+  "visual_conclusion": "All 35 publication pages, all 25 drawing sheets, all nine specification pages, all eight table regions and claims 1-25 were inspected. The drawings and tables disclose optical-inspection/manufacturing geometry and materials, not an ordered optical prescription."
+}

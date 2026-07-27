@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "473b2a42b1efa8b19278a62d501b00e40436c9b89ba8393ff71bb98d50bebfec",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 129,
+      "affected_items": 129
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "90040110",
+    "root_ids": ["US-20250327997"],
+    "publication_ids": ["US-20250327997-A1"],
+    "title": "IMAGING LENS SYSTEM",
+    "layout_signature": "243aafd8888d24487c3aa7dda394bddcc4beb698629b78478fbb697389f8a128",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f6c6fd1b68f084d0/US-20250327997-A1.html",
+      "sha256": "f6c6fd1b68f084d086dcbbe3423dcbbee7093dfd472771b2b1fd1fd8474d9858"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

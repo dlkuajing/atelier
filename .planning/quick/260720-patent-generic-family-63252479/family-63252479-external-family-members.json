@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "family_id": "63252479",
+  "frozen_cohort_root_ids": [
+    "US-20250284086"
+  ],
+  "retained_classification_publications": [
+    "US-20250284086-A1"
+  ],
+  "retained_application_status": {
+    "application_number": "US19/218688",
+    "representative_publication": "US20250284086A1",
+    "status_in_exact_google_wrapper": "Pending",
+    "us_grant_identified_in_exact_google_wrapper": false
+  },
+  "provisional_priority_records": [
+    {
+      "application_number": "US201762462438P",
+      "filing_date": "2017-02-23",
+      "publication_id": null,
+      "in_frozen_cohort": false
+    },
+    {
+      "application_number": "US201762478783P",
+      "filing_date": "2017-03-30",
+      "publication_id": null,
+      "in_frozen_cohort": false
+    },
+    {
+      "application_number": "US201762483422P",
+      "filing_date": "2017-04-09",
+      "publication_id": null,
+      "in_frozen_cohort": false
+    }
+  ],
+  "pct_record": {
+    "application_number": "PCT/IB2018/050988",
+    "publication_id": "WO2018154421A1",
+    "in_frozen_cohort": false
+  },
+  "same_family_us_applications": [
+    {"application_number": "US16/077477", "publication_id": "US11347016B2"},
+    {"application_number": "US16/252608", "publication_id": "US10571644B2"},
+    {"application_number": "US16/252660", "publication_id": "US10534153B2"},
+    {"application_number": "US16/392754", "publication_id": "US10670827B2"},
+    {"application_number": "US16/851475", "publication_id": "US11347020B2"},
+    {"application_number": "US17/665495", "publication_id": "US11668894B2"},
+    {"application_number": "US18/314866", "publication_id": "US12345943B2"},
+    {"application_number": "US18/350773", "publication_id": "US12066683B2"},
+    {"application_number": "US19/218688", "publication_id": "US20250284086A1"}
+  ],
+  "country_status_representatives": [
+    "US11347016B2",
+    "EP3579040B1",
+    "JP6898460B2",
+    "KR102354134B1",
+    "CN113341528B",
+    "IL302577B2",
+    "WO2018154421A1"
+  ],
+  "google_html": {
+    "path": ".planning/quick/260720-patent-generic-family-63252479/source-review/US-20250284086-A1-google.html",
+    "bytes": 933772,
+    "sha256": "01e7b4ad28e8912aadf91885fbb767323db2e5b41a7e2134316204675c356e88"
+  },
+  "numeric_truth_imported_from_queue_only_records": false,
+  "queue_only": true,
+  "saturation_complete": false
+}

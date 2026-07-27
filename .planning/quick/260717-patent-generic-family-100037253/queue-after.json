@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "d06a4e642a7a2e9f42f90b530e27b3f70f295385863cd67386e38616b2c71b7c",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 116, "affected_items": 116},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "38997638",
+    "root_ids": ["US-7551370"],
+    "publication_ids": ["US-7551370-B2"],
+    "application_number": "11/496335",
+    "title": "Negative spherical aberration component-based imaging lens assembly in imaging reader",
+    "layout_signature": "309c64184a88291e285d86d370dd049212208cb380959eb04fea3496b564964d",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 7, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/99dc69471bf1e1a1/US-7551370-B2.html",
+      "sha256": "99dc69471bf1e1a14492e5df58524cfd68197312c8e79f8393e45687fac6a1eb"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

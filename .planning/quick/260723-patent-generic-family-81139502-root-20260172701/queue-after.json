@@ -1,0 +1,10 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-81139502-root-20260172701/generic-residual-after-1.json",
+  "affected_roots": 0,
+  "affected_items": 0,
+  "result_set_sha256": "feeb0e16f34a49567a8a24b552b45e14a430bea2c4e54fda921eb3282f04b337",
+  "next_exact_group": null,
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": true
+}

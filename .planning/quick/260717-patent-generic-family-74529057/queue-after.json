@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "result_set_sha256": "a8d6f4b03db5284d103de80d7c7c2023019d4b2f3abd3d84360a7581bec7d343",
+  "ordering": [
+    "nonterminal_root_count_desc",
+    "item_count_desc",
+    "parser_layout_family_signature_ascending"
+  ],
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 137,
+      "affected_items": 137
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "79728652",
+    "root_id": "US-12588309",
+    "publication_id": "US-12588309-B2",
+    "layout_signature": "18f601741e46968dd9aa08221b03b91587e37313eeac6ae406034b44be026e21",
+    "raw_document_sha256": "ec9eabc5a6f28fdd86b3685e102429aee393d7db2614149c72af9c14fbc16867",
+    "title": "Solid-state imaging apparatus, method for manufacturing solid-state imaging apparatus, and electronic apparatus",
+    "affected_roots": 1,
+    "affected_items": 1
+  }
+}

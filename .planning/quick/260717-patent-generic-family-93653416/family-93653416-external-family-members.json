@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "family_id": "93653416",
+  "current_frozen_cohort_roots": [
+    "US-12663910"
+  ],
+  "official_relationship_source": "data/patent-lake/uspto-ppubs-html/USPAT/699f9e2331ebb851/US-12663910-B2.html",
+  "family_discovery_source": "https://patents.google.com/patent/US20240402869A1/en",
+  "external_family_members": [
+    {
+      "publication_id": "US-20240402869-A1",
+      "application_number": "US18/611377",
+      "priority_date": "2023-06-02",
+      "filing_date": "2024-03-20",
+      "publication_date": "2024-12-05",
+      "relationship": "same_application_prior_publication",
+      "discovery_evidence": "official B2 Prior Publication Data, independently mirrored by Google",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    },
+    {
+      "publication_id": "WO2024249046A1",
+      "application_number": "PCT/US2024/028414",
+      "priority_date": "2023-06-02",
+      "filing_date": "2024-05-08",
+      "relationship": "same-title_priority_application_discovered_outside_frozen_cohort",
+      "discovery_evidence": "Google Priority Applications metadata; queued for later official WIPO/EPO verification",
+      "disposition": "queue_after_frozen_619_root_cohort"
+    }
+  ],
+  "priority_documents_without_queued_publication_identity": [
+    {
+      "application_number": "US63/470821",
+      "filing_date": "2023-06-02"
+    },
+    {
+      "application_number": "US63/470895",
+      "filing_date": "2023-06-03"
+    }
+  ]
+}

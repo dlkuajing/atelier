@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "family_id": "94115759",
+  "root_id": "US-12560789",
+  "publication_id": "US-12560789-B2",
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12560789/attempt-0002/result.json",
+      "bytes": 9982,
+      "sha256": "5c2aa3052c0e14d24b80a01a24e5912d7947fc593dec28eb3bb606b657e72d3a",
+      "file_sha256": "5c2aa3052c0e14d24b80a01a24e5912d7947fc593dec28eb3bb606b657e72d3a",
+      "semantic_sha256": "3a0f398b225eb63bafd8d5e175e7d88cc63c20f270a38c3a5469cba87b18ec33"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12560789/attempt-0003/result.json",
+      "bytes": 9982,
+      "sha256": "9c8750fb294cb48a4da05fc9069970a975cfccaeedd88f2929055f52359bc9a0",
+      "file_sha256": "9c8750fb294cb48a4da05fc9069970a975cfccaeedd88f2929055f52359bc9a0",
+      "semantic_sha256": "3a0f398b225eb63bafd8d5e175e7d88cc63c20f270a38c3a5469cba87b18ec33"
+    }
+  ],
+  "semantic_sha256": "3a0f398b225eb63bafd8d5e175e7d88cc63c20f270a38c3a5469cba87b18ec33",
+  "semantic_equal": true,
+  "normalization": {
+    "removed_fields": [
+      "result_attempt"
+    ],
+    "outcome_fields_removed": [],
+    "request_fields_removed": [],
+    "runtime_paths_normalized": false
+  },
+  "final_state": {
+    "result_attempt": 3,
+    "root_state": "terminal",
+    "root_reason_code": "terminal.all_disclosed_items_terminal",
+    "item_state_counts": {
+      "terminal": 9
+    },
+    "terminal_status_counts": {
+      "metadata_unpublished": 8,
+      "confirmed_no_prescription": 1
+    },
+    "conversion_requests": 0,
+    "conversion_receipts": 0,
+    "prescription_fingerprints": 0,
+    "candidate_zmx": 0,
+    "staging_zmx": 0,
+    "formal_outputs": 0
+  },
+  "strict_replay": {
+    "cohort_roots": 619,
+    "roots_with_results": 619,
+    "missing_results": 0,
+    "corrupt_results": 0,
+    "result_set_sha256": "c1ed3deebabe22e2768dbef4800a7a67ef6e9e46ca2c443d8c86480473d99432"
+  },
+  "codev_calls": 0
+}

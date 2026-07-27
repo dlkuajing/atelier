@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "family_id": "81258214",
+  "source_disclosed_design_count": 4,
+  "source_disclosed_claim_family_count": 3,
+  "items": [
+    {
+      "item": "OL1",
+      "source": ["FIG. 1", "FIG. 3A", "FIG. 3B", "FIG. 9"],
+      "classification": "complete_representable_prescription",
+      "result_item": "US-20220128799-A1:e1",
+      "result_state": "converted_pending_intake"
+    },
+    {
+      "item": "OL2",
+      "source": ["FIG. 2", "FIG. 4A", "FIG. 4B", "FIG. 9"],
+      "classification": "complete_representable_prescription",
+      "result_item": "US-20220128799-A1:e2",
+      "result_state": "converted_pending_intake"
+    },
+    {
+      "item": "OL3",
+      "source": ["FIG. 5", "FIG. 7", "FIG. 9"],
+      "classification": "complete_representable_spherical_prescription",
+      "result_item": "US-20220128799-A1:e3",
+      "result_state": "converted_pending_intake"
+    },
+    {
+      "item": "OL4",
+      "source": ["FIG. 6", "FIG. 8", "FIG. 9"],
+      "classification": "complete_representable_spherical_prescription",
+      "result_item": "US-20220128799-A1:e4",
+      "result_state": "converted_pending_intake"
+    }
+  ],
+  "claim_families": [
+    {
+      "independent_claim": 1,
+      "dependent_claims": [2, 3, 4, 5, 6, 7],
+      "separate_numerical_prescription": false
+    },
+    {
+      "independent_claim": 8,
+      "dependent_claims": [9, 10, 11, 12, 13],
+      "separate_numerical_prescription": false
+    },
+    {
+      "independent_claim": 14,
+      "dependent_claims": [15, 16, 17, 18, 19, 20],
+      "separate_numerical_prescription": false
+    }
+  ],
+  "formula": {
+    "count": 1,
+    "source_paragraph": 39,
+    "supported_terms_used": ["K", "A2", "A4", "A6", "A8", "A10", "A12"],
+    "nonzero_unsupported_terms": false,
+    "ol1_ol2_k_and_a2_zero": true
+  },
+  "unmapped_disclosed_designs": 0,
+  "borrowed_related_application_values": 0,
+  "drawing_measured_values": 0
+}

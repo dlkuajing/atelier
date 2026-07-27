@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/family signature order",
+  "result_set_sha256": "813663383d10880ca64f1566b24c1e31e1bcae3f67a3154872334f3c4d9138b6",
+  "executable_buckets": [
+    {
+      "parser_signature": "generic_summary_metadata_missing",
+      "affected_roots": 126,
+      "affected_items": 126
+    },
+    {
+      "parser_signature": "aac_raytech_summary_metadata_missing",
+      "affected_roots": 55,
+      "affected_items": 174
+    },
+    {
+      "parser_signature": "sunny_embodiment_metadata_missing",
+      "affected_roots": 49,
+      "affected_items": 177
+    }
+  ],
+  "next_exact_group": {
+    "family_id": "82656625",
+    "root_ids": [
+      "US-20260110882"
+    ],
+    "publication_ids": [
+      "US-20260110882-A1"
+    ],
+    "title": "IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "layout_signature": "27b1ad005470b8955d34ec137b142d43ac8a16cd3cb4d425646dad18f97d7b5d",
+    "raw_document": {
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/372dcb8566efd301/US-20260110882-A1.html",
+      "sha256": "372dcb8566efd3011fb0e1f032455f2ca7f25707c5e41fd3fe2d1b945d423da5"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}

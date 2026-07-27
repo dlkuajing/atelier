@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "family_id": "96807780",
+  "root_id": "US-20250389925",
+  "publication_id": "US-20250389925-A1",
+  "application_number": "19/243071",
+  "retained_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/be27298a96714a19/US-20250389925-A1.html",
+    "bytes": 121958,
+    "characters": 121732,
+    "normalized_characters": 99629,
+    "sha256": "be27298a96714a19583ff4551cb38afa67ffc23572072354ccbf8bbebaf008ec",
+    "normalized_sha256": "3e6f0b10f216e844ba1931c56bbb1049ee9fb029f43772892ddb69b04ada2a3d",
+    "flattened_tables": 3,
+    "maths_tags": 22,
+    "embedded_img_tags": 0,
+    "html_table_tags": 0
+  },
+  "official_pdf": {
+    "path": "data/patent-lake/uspto-ppubs-pdf/06b8e527534d4d96/US-20250389925-A1.pdf",
+    "bytes": 2670002,
+    "retained_container_sha256": "06b8e527534d4d966d6f512581e314badfb0cad3d0c5dda5f9b9091657bd20a7",
+    "page_count": 53,
+    "single_raster_pages": 53,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "92c970fd18bc8c1fa5bf152b7981b90a5b1e039617c39c3cd94749f050d7e614",
+    "endpoint_container_sha256_stable": false,
+    "endpoint_decoded_raster_set_stable_across_consecutive_fetches": true
+  },
+  "bibliography": {
+    "title": "IMAGE LENS ELEMENT, IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "inventors": [
+      "PAN; Chun-Jui",
+      "CHANG; Lin-An",
+      "HSU; Chih-Wen"
+    ],
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": null,
+    "filed": "2025-06-19",
+    "publication_date": "2025-12-25"
+  },
+  "lineage": {
+    "provisional_application": "63/663757",
+    "provisional_filed": "2024-06-25",
+    "related_application_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_a1_html_is_content_authority": true,
+    "official_pdf_used_for_layout_confirmation_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_application_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false,
+    "visual_angle_reclassified_as_lens_field_permitted": false,
+    "generic_focal_length_wording_used_as_numeric_metadata": false
+  }
+}

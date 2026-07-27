@@ -25,9 +25,28 @@ jobs:
   backend:
     name: Backend (pytest)
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    # Patent-saturation adds ~1,426 offline tests to main's ~2,707-test suite.
+    # Main's measured serial baseline is ~30 minutes; the expanded suite needs
+    # headroom beyond the previous 45-minute limit without hiding a hang forever.
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Restore Git LFS evidence cache
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ runner.os }}-${{ hashFiles('.planning/quick/260727-patent-saturation-repository-slimming/lfs-evidence-manifest.json') }}
+          restore-keys: |
+            lfs-${{ runner.os }}-
+
+      - name: Hydrate and verify patent evidence
+        run: |
+          git lfs install --local
+          git lfs pull
+          git lfs fsck
 
       - uses: astral-sh/setup-uv@v3
         with:
@@ -69,4 +88,4 @@ jobs:
         # 见 tests/test_acceptance_task_export.py 的 _report() memo。
         # --durations=25 保留：慢测试分布是后续分档决策的依据。
         # 不用 -v：逐条输出对 CI 日志无价值，只增加 IO。
-        run: uv run pytest -q --durations=25
+        run: uv run pytest -q --durations=25 -m "not real_machine"

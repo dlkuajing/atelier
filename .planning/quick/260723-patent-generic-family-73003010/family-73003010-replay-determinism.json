@@ -1,0 +1,79 @@
+{
+  "schema_version": "patent-family-replay-determinism/v1",
+  "family_id": "73003010",
+  "root_id": "US-12313819",
+  "publication_id": "US-12313819-B2",
+  "preserved_prefix": {
+    "path": "data/patent-ledger/replay/local-uncovered/results/US-12313819/attempt-0001/result.json",
+    "bytes": 1272,
+    "sha256": "9877d68013aace7bbb1a8fc03974cb3d06113f99254cff2f724d044ae3eb1426",
+    "result_attempt": 1,
+    "root_state": "parser_review_required",
+    "semantic_sha256": "5666fd72eb1cfab2563d16ffbed038fdc0b3ae84a80d9236e95e2e473d8d4f4c"
+  },
+  "attempts": [
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12313819/attempt-0002/result.json",
+      "bytes": 18451,
+      "sha256": "02660891a77805321dd63b089dfc680cd31d0ccca4801b4f1a59843f95e905a0",
+      "result_attempt": 2,
+      "root_state": "mixed_nonterminal",
+      "semantic_sha256": "d831797a07115a8ad8eab9db2ec8dff669caeb17e88066667af759b3c159b97a"
+    },
+    {
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-12313819/attempt-0003/result.json",
+      "bytes": 18451,
+      "sha256": "2cafcd2813f09c78aa093fbe651b9bd9a7e0747d2c7791482988170266548041",
+      "result_attempt": 3,
+      "root_state": "mixed_nonterminal",
+      "semantic_sha256": "d831797a07115a8ad8eab9db2ec8dff669caeb17e88066667af759b3c159b97a"
+    }
+  ],
+  "semantic_projection": {
+    "excluded_fields": [
+      "result_attempt"
+    ],
+    "kept_fields": "all remaining canonical root-result fields"
+  },
+  "semantic_equal": true,
+  "semantic_sha256": "d831797a07115a8ad8eab9db2ec8dff669caeb17e88066667af759b3c159b97a",
+  "item_counts": {
+    "source_items": 22,
+    "parser_review_required": 20,
+    "terminal_confirmed_no_prescription": 2
+  },
+  "ordered_reason_codes": [
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "parser_review_required.deterministic_parser_rejected",
+    "terminal.confirmed_no_prescription.image_capturing_unit_wrapper_only",
+    "terminal.confirmed_no_prescription.electronic_device_wrapper_only"
+  ],
+  "append_only_prefix_preserved": true,
+  "strict_replay": {
+    "roots_with_results": 619,
+    "expected_roots": 619,
+    "missing_results": 0,
+    "corrupt_results": 0
+  },
+  "worker_outputs_absent": true,
+  "conversion_requests_absent": true,
+  "codev_calls": 0
+}

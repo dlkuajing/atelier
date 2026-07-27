@@ -1,6 +1,82 @@
 *.bat text eol=crlf
 *.ps1 text eol=crlf
 *.sh text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.tsv text eol=lf
+*.css text eol=lf
+*.patch text eol=lf
+*.html text eol=lf
+*.lis -text -diff
+*.trace-tmp -text -diff
+*.out -text -diff
 *.zmx -text
 *.ZMX -text
 *.seq -text
+.planning/quick/**/source-review/*.html binary
+data/patent-lake/uspto-ppubs-html/**/*.html binary
+.planning/quick/260717-patent-generic-family-56417699/*.json text eol=lf
+.planning/quick/260717-patent-generic-family-56417699/*.md text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-10782453/**/result.json text eol=lf
+.planning/quick/260717-patent-generic-family-92714478/*.json text eol=lf
+.planning/quick/260717-patent-generic-family-92714478/*.md text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-12670673/**/result.json text eol=lf
+data/patent-ledger/replay/local-uncovered/summary.json text eol=lf
+.planning/loop/patent-local-replay-report.md text eol=lf
+.planning/quick/260717-patent-generic-family-75614661/*.json text eol=lf
+.planning/quick/260717-patent-generic-family-75614661/*.md text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-20260063874/**/result.json text eol=lf
+data/patent-conversion-attempts/local-replay/US-20260063874-A1-*/**/*.json text eol=lf
+data/patent-conversion-attempts/local-replay/US-20260063874-A1-*/**/*.log -text -diff
+.planning/quick/260720-patent-generic-family-63252479/*.json text eol=lf
+.planning/quick/260720-patent-generic-family-63252479/*.md text eol=lf
+.planning/quick/260720-patent-generic-family-63252479/source-review/*.json text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-20250284086/**/result.json text eol=lf
+.planning/quick/260720-patent-generic-family-66892676/*.json text eol=lf
+.planning/quick/260720-patent-generic-family-66892676/*.md text eol=lf
+.planning/quick/260720-patent-generic-family-66892676/source-review/*.json text eol=lf
+data/patent-ledger/replay/local-uncovered/results/US-11340422/**/result.json text eol=lf
+data/patent-conversion-attempts/local-replay/US-11340422-B2-*/**/*.json text eol=lf
+data/patent-conversion-attempts/local-replay/US-11340422-B2-*/**/*.log -text -diff
+data/patent-conversion-attempts/local-replay/US-11340422-B2-*/**/*.zmx -text -diff
+data/zmx-staging/patent-local-replay/US-11340422-B2-*.zmx -text -diff
+.planning/quick/260720-patent-generic-family-71123577/*.json text eol=lf
+.planning/quick/260720-patent-generic-family-71123577/*.md text eol=lf
+data/patent-conversion-attempts/local-replay/US-11137579-B2-*/**/*.json text eol=lf
+data/patent-conversion-attempts/local-replay/US-11137579-B2-*/**/*.log -text -diff
+data/patent-conversion-attempts/local-replay/US-11137579-B2-*/**/*.zmx -text -diff
+data/zmx-staging/patent-local-replay/US-11137579-B2-*.zmx -text -diff
+data/patent-conversion-attempts/**/*.log -text -diff
+
+# USPTO crawl batches are frozen raw inputs whose recorded digests include CRLF.
+data/patents/*.json text eol=crlf
+data/patents/*.jsonl text eol=crlf
+app/data/optical_cases/index.json text eol=crlf
+
+# Quick-task evidence contains source-recorded LF, CRLF, and mixed-EOL bytes.
+.planning/quick/**/*.json -text
+.planning/quick/**/*.md -text
+
+.planning/quick/**/*.png filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.pdf filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.tif filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.tiff filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.gif filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.webp filter=lfs diff=lfs merge=lfs -text
+.planning/quick/**/*.bmp filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.png filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.pdf filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.tif filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.tiff filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.jpeg filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.gif filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.webp filter=lfs diff=lfs merge=lfs -text
+data/patent-lake/**/*.bmp filter=lfs diff=lfs merge=lfs -text

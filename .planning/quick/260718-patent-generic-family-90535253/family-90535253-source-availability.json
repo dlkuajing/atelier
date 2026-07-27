@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "family_id": "90535253",
+  "publication_id": "US-20240118520-A1",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/f72e752aba1ccbdb/US-20240118520-A1.html",
+    "bytes": 76012,
+    "characters": 75125,
+    "sha256": "f72e752aba1ccbdb0fcc09e45ecd23dbea549b6d39f677ed0d466d21b2c7e96e",
+    "normalized_characters": 63798,
+    "normalized_sha256": "c7b46ad834d5adacc69bab9eeea1f2353cbb7ef93317f12a92ec56f6ec63cf75"
+  },
+  "official_pdf": {
+    "authority": "USPTO Patent Public Search image service",
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20240118520",
+    "request_authentication": "anonymous direct download",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "path": "data/patent-lake/uspto-ppubs-pdf/d529e3c09704284b/US-20240118520-A1.pdf",
+    "bytes": 1266189,
+    "container_sha256": "d529e3c09704284b6996880483f6a519704a5de6c9b45bdd76cccd2bfdfd7007",
+    "page_count": 23,
+    "single_raster_pages": 23,
+    "common_raster_dimensions": [2560, 3300],
+    "narrow_raster_page_numbers": [13],
+    "narrow_raster_dimensions": [2550, 3300],
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "1070dfce17cbf0502b108ea3a76235b467bd8d0fe37fd97bcff82a0712971429"
+  },
+  "drawing_source": {
+    "declared_nominal_figures": 9,
+    "declared_textual_panels": 10,
+    "located_raster_panels": 10,
+    "drawing_sheets": 9,
+    "drawing_pdf_pages": [2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "full_page_contact_review_claimed": true,
+    "figures_1_through_5_original_resolution_reviewed": true,
+    "table_pages_original_resolution_reviewed": [14, 16, 18, 20, 21],
+    "classification_dependency": true,
+    "source_discrepancies": []
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO A1 HTML plus retained exact official A1 decoded-raster set",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "f_number_used_to_synthesize_stop": false,
+    "y_aperture_used_as_stop_coordinate": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

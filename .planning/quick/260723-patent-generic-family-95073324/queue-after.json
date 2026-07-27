@@ -1,0 +1,41 @@
+{
+  "schema_version": "patent-generic-next-exact-group/v1",
+  "source_census": ".planning/quick/260723-patent-generic-family-95073324/generic-residual-after-1.json",
+  "affected_roots": 6,
+  "affected_items": 6,
+  "result_set_sha256": "d25e55011dcc69583ca7b9b298980acfbb61839ed8ad3e430353e8f42676be05",
+  "next_exact_group": {
+    "selection_rule": "lexicographically smallest remaining exact layout signature",
+    "layout_signature": "f088d66545bbf4f760862915ae5f916a8f03ce68d1e5e3bd01d7321b8760deca",
+    "layout_signature_count": 1,
+    "family_id": "83151794",
+    "root_ids": [
+      "US-20250334721"
+    ],
+    "publication_ids": [
+      "US-20250334721-A1"
+    ],
+    "application_numbers": [
+      "19/260917"
+    ],
+    "title": "OPTICAL IMAGING LENS ASSEMBLY, IMAGING APPARATUS AND ELECTRONIC DEVICE",
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/b60f9d0e106d0592/US-20250334721-A1.html",
+      "sha256": "b60f9d0e106d05922a0c06b41e71fd6f7db784d718d9cda036a1cc56090db4e7",
+      "bytes": 139967
+    },
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 139,
+      "example_anchor": 0,
+      "f_number": 0,
+      "full_field": 21,
+      "half_field": 0
+    },
+    "table_count": 19
+  },
+  "same_layout_distinct_families_excluded": 0,
+  "saturation_complete": false
+}

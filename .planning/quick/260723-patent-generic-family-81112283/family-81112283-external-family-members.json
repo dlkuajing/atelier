@@ -1,0 +1,30 @@
+{
+  "schema_version": "patent-family-external-members/v1",
+  "family_id": "81112283",
+  "retained_publication": {
+    "publication_id": "US-12625341-B2",
+    "application_number": "17/745922",
+    "path": "data/patent-lake/uspto-ppubs-html/USPAT/7c3fe3dfbff42ee3/US-12625341-B2.html",
+    "bytes": 94450,
+    "sha256": "7c3fe3dfbff42ee3433b0ca0df17b878b8a1918866cfa370a47954e42a75a29d"
+  },
+  "source_disclosed_lineage": [
+    {
+      "record_type": "prior_us_publication",
+      "identifier": "US-20220413191-A1",
+      "published": "2022-12-29",
+      "application_number": "17/745922",
+      "evidence": "official B2 Prior Publication Data"
+    },
+    {
+      "record_type": "foreign_priority_application",
+      "identifier": "TW-110123641",
+      "filed": "2021-06-28",
+      "publication_id": null,
+      "evidence": "official B2 Foreign Application Priority Data"
+    }
+  ],
+  "classification_source": "US-12625341-B2 only",
+  "numeric_borrowing_from_lineage_or_external_sources": false,
+  "note": "The prior A1 and Taiwan priority record establish bibliography only; no value, item boundary or outcome is borrowed."
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "family_id": "74529057",
+  "root_id": "US-20210364452",
+  "publication_id": "US-20210364452-A1",
+  "item_count": 3,
+  "excluded_semantic_fields": ["result_attempt"],
+  "semantic_equal": true,
+  "semantic_sha256": "6aefa53dd8527e9d558e79285b197432d5bc7a52c72893ca78e2f32030a00589",
+  "terminal_reason_codes": [
+    "terminal.confirmed_no_prescription.plastic_lens_optical_inspection_and_assembly_architecture_only",
+    "terminal.confirmed_no_prescription.electronic_device_camera_module_placement_architecture_only"
+  ],
+  "attempts": [
+    {
+      "result_attempt": 2,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20210364452/attempt-0002/result.json",
+      "bytes": 3481,
+      "file_sha256": "b42ca127ebce53f125fbb9e17643a3542b1a79378f2f552c307194ad2f0b3f09",
+      "semantic_sha256": "6aefa53dd8527e9d558e79285b197432d5bc7a52c72893ca78e2f32030a00589"
+    },
+    {
+      "result_attempt": 3,
+      "path": "data/patent-ledger/replay/local-uncovered/results/US-20210364452/attempt-0003/result.json",
+      "bytes": 3481,
+      "file_sha256": "7527e6e07cfabdbcfc826d7eabc25c9c4f313535f1b9866474dd57d8013ab24a",
+      "semantic_sha256": "6aefa53dd8527e9d558e79285b197432d5bc7a52c72893ca78e2f32030a00589"
+    }
+  ],
+  "conversion_attempts": 0,
+  "candidate_zmx_count": 0,
+  "matching_staging_zmx_count": 0
+}

@@ -1,0 +1,635 @@
+{
+  "denominator": {
+    "architecture_wrapper_items": 5,
+    "declared_embodiments": 15,
+    "optical_state_items": 20,
+    "optical_states_per_prescription_embodiment": 2,
+    "prescription_embodiments": 10,
+    "total_items": 25
+  },
+  "family_id": "95157884",
+  "identity": {
+    "applicant_and_assignee": "Largan Precision Co Ltd",
+    "application_number": "18/973352",
+    "filing_date": "2024-12-09",
+    "inventors": [
+      "Yeh Kuan-Ting",
+      "Chen I-Chieh",
+      "Tsai Cheng-Yu"
+    ],
+    "priority_application": "TW113100162A",
+    "priority_date": "2024-01-02",
+    "publication_date": "2025-07-03",
+    "publication_id": "US-20250216652-A1",
+    "status_at_family_review": "Pending",
+    "title": "OPTICAL PHOTOGRAPHING LENS ASSEMBLY, IMAGING APPARATUS AND ELECTRONIC DEVICE"
+  },
+  "items": [
+    {
+      "embodiment": 1,
+      "item_number": 1,
+      "mode": "infinity",
+      "source_tables": [
+        "1A",
+        "1B",
+        "1C"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 1,
+      "item_number": 2,
+      "mode": "macro",
+      "source_tables": [
+        "1A",
+        "1B",
+        "1C"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 2,
+      "item_number": 3,
+      "mode": "infinity",
+      "source_tables": [
+        "2A",
+        "2B",
+        "2C",
+        "2D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 2,
+      "item_number": 4,
+      "mode": "macro",
+      "source_tables": [
+        "2A",
+        "2B",
+        "2C",
+        "2D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 3,
+      "item_number": 5,
+      "mode": "infinity",
+      "source_tables": [
+        "3A",
+        "3B",
+        "3C",
+        "3D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 3,
+      "item_number": 6,
+      "mode": "macro",
+      "source_tables": [
+        "3A",
+        "3B",
+        "3C",
+        "3D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 4,
+      "item_number": 7,
+      "mode": "infinity",
+      "source_tables": [
+        "4A",
+        "4B",
+        "4C",
+        "4D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 4,
+      "item_number": 8,
+      "mode": "macro",
+      "source_tables": [
+        "4A",
+        "4B",
+        "4C",
+        "4D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 5,
+      "item_number": 9,
+      "mode": "infinity",
+      "source_tables": [
+        "5A",
+        "5B",
+        "5C",
+        "5D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 5,
+      "item_number": 10,
+      "mode": "macro",
+      "source_tables": [
+        "5A",
+        "5B",
+        "5C",
+        "5D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 6,
+      "item_number": 11,
+      "mode": "infinity",
+      "source_tables": [
+        "6A",
+        "6B",
+        "6C",
+        "6D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 6,
+      "item_number": 12,
+      "mode": "macro",
+      "source_tables": [
+        "6A",
+        "6B",
+        "6C",
+        "6D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 7,
+      "item_number": 13,
+      "mode": "infinity",
+      "source_tables": [
+        "7A",
+        "7B",
+        "7C",
+        "7D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 7,
+      "item_number": 14,
+      "mode": "macro",
+      "source_tables": [
+        "7A",
+        "7B",
+        "7C",
+        "7D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 8,
+      "item_number": 15,
+      "mode": "infinity",
+      "source_tables": [
+        "8A",
+        "8B",
+        "8C",
+        "8D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 8,
+      "item_number": 16,
+      "mode": "macro",
+      "source_tables": [
+        "8A",
+        "8B",
+        "8C",
+        "8D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 9,
+      "item_number": 17,
+      "mode": "infinity",
+      "source_tables": [
+        "9A",
+        "9B",
+        "9C",
+        "9D"
+      ],
+      "current_disposition": "metadata_unpublished.surface_sequence_and_stop_radius_conflict"
+    },
+    {
+      "embodiment": 9,
+      "item_number": 18,
+      "mode": "macro",
+      "source_tables": [
+        "9A",
+        "9B",
+        "9C",
+        "9D"
+      ],
+      "current_disposition": "metadata_unpublished.surface_sequence_and_stop_radius_conflict"
+    },
+    {
+      "embodiment": 10,
+      "item_number": 19,
+      "mode": "infinity",
+      "source_tables": [
+        "10A",
+        "10B",
+        "10C",
+        "10D"
+      ],
+      "current_disposition": "prescription_parsed_for_replay"
+    },
+    {
+      "embodiment": 10,
+      "item_number": 20,
+      "mode": "macro",
+      "source_tables": [
+        "10A",
+        "10B",
+        "10C",
+        "10D"
+      ],
+      "current_disposition": "nonterminal.infinity_conjugate_replay_model_does_not_support_finite_object_state"
+    },
+    {
+      "embodiment": 11,
+      "item_number": 21,
+      "mode": "imaging_apparatus_wrapper",
+      "source_tables": [],
+      "current_disposition": "confirmed_no_prescription.imaging_apparatus_wrapper_only"
+    },
+    {
+      "embodiment": 12,
+      "item_number": 22,
+      "mode": "electronic_device_wrapper",
+      "source_tables": [],
+      "current_disposition": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "embodiment": 13,
+      "item_number": 23,
+      "mode": "electronic_device_wrapper",
+      "source_tables": [],
+      "current_disposition": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "embodiment": 14,
+      "item_number": 24,
+      "mode": "electronic_device_wrapper",
+      "source_tables": [],
+      "current_disposition": "confirmed_no_prescription.electronic_device_wrapper_only"
+    },
+    {
+      "embodiment": 15,
+      "item_number": 25,
+      "mode": "electronic_device_wrapper",
+      "source_tables": [],
+      "current_disposition": "confirmed_no_prescription.electronic_device_wrapper_only"
+    }
+  ],
+  "official_html": {
+    "normalized_text_sha256": "70233e3a4c941838d0b20a08066a14a88b19cfe2e17c1c16ba47494736723c79",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/a8ce8130d4420c43/US-20250216652-A1.html",
+    "raw_document_sha256": "a8ce8130d4420c435c79dffde20989df9035f1e32f2b2b19d01bb140ac55a018"
+  },
+  "official_pdf_audit": "family-95157884-raster-audit.json",
+  "published_states": {
+    "1": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 18.58,
+          "f_number": 1.94,
+          "fov_deg": 33.6,
+          "hfov_deg": 16.8
+        },
+        "macro": {
+          "f_mm": 14.26,
+          "f_number": 1.88,
+          "fov_deg": 33.4,
+          "hfov_deg": 16.7
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.207,
+        "d0_macro": 109.9,
+        "d1_infinity": 1.806,
+        "d1_macro": 4.806,
+        "d2_infinity": 3.8,
+        "d2_macro": 0.8
+      }
+    },
+    "2": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 18.4,
+          "f_number": 1.94,
+          "fov_deg": 34.2,
+          "hfov_deg": 17.1
+        },
+        "macro": {
+          "f_mm": 14.77,
+          "f_number": 1.96,
+          "fov_deg": 33.0,
+          "hfov_deg": 16.5
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.031,
+        "d0_macro": 109.9,
+        "d1_infinity": 1.337,
+        "d1_macro": 3.587,
+        "d2_infinity": 3.05,
+        "d2_macro": 0.8
+      }
+    },
+    "3": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 17.1,
+          "f_number": 1.94,
+          "fov_deg": 35.6,
+          "hfov_deg": 17.8
+        },
+        "macro": {
+          "f_mm": 14.11,
+          "f_number": 1.95,
+          "fov_deg": 34.0,
+          "hfov_deg": 17.0
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.031,
+        "d0_macro": 109.9,
+        "d1_infinity": 1.74,
+        "d1_macro": 3.99,
+        "d2_infinity": 3.25,
+        "d2_macro": 1.0
+      }
+    },
+    "4": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 18.59,
+          "f_number": 1.95,
+          "fov_deg": 34.0,
+          "hfov_deg": 17.0
+        },
+        "macro": {
+          "f_mm": 14.68,
+          "f_number": 1.94,
+          "fov_deg": 32.6,
+          "hfov_deg": 16.3
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 130.1,
+        "d0_macro": 120.0,
+        "d1_infinity": 1.528,
+        "d1_macro": 3.152,
+        "d2_infinity": 4.113,
+        "d2_macro": 2.489
+      }
+    },
+    "5": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 17.84,
+          "f_number": 1.94,
+          "fov_deg": 34.4,
+          "hfov_deg": 17.2
+        },
+        "macro": {
+          "f_mm": 14.08,
+          "f_number": 1.95,
+          "fov_deg": 32.8,
+          "hfov_deg": 16.4
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.268,
+        "d0_macro": 109.9,
+        "d1_infinity": 0.37,
+        "d1_macro": 2.67,
+        "d2_infinity": 3.8,
+        "d2_macro": 1.5
+      }
+    },
+    "6": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 17.05,
+          "f_number": 1.94,
+          "fov_deg": 34.8,
+          "hfov_deg": 17.4
+        },
+        "macro": {
+          "f_mm": 13.81,
+          "f_number": 1.94,
+          "fov_deg": 34.2,
+          "hfov_deg": 17.1
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.123,
+        "d0_macro": 109.9,
+        "d1_infinity": 1.603,
+        "d1_macro": 3.853,
+        "d2_infinity": 3.15,
+        "d2_macro": 0.9
+      }
+    },
+    "7": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 18.57,
+          "f_number": 1.95,
+          "fov_deg": 33.8,
+          "hfov_deg": 16.9
+        },
+        "macro": {
+          "f_mm": 14.49,
+          "f_number": 1.93,
+          "fov_deg": 33.0,
+          "hfov_deg": 16.5
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.032,
+        "d0_macro": 109.9,
+        "d1_infinity": 1.841,
+        "d1_macro": 4.083,
+        "d2_infinity": 4.25,
+        "d2_macro": 2.008
+      }
+    },
+    "8": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 16.88,
+          "f_number": 1.94,
+          "fov_deg": 35.6,
+          "hfov_deg": 17.8
+        },
+        "macro": {
+          "f_mm": 14.8,
+          "f_number": 2.03,
+          "fov_deg": 33.0,
+          "hfov_deg": 16.5
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.023,
+        "d0_macro": 109.9,
+        "d1_infinity": 1.24,
+        "d1_macro": 3.482,
+        "d2_infinity": 3.25,
+        "d2_macro": 1.008
+      }
+    },
+    "9": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 17.74,
+          "f_number": 1.94,
+          "fov_deg": 34.8,
+          "hfov_deg": 17.4
+        },
+        "macro": {
+          "f_mm": 13.74,
+          "f_number": 1.89,
+          "fov_deg": 34.4,
+          "hfov_deg": 17.2
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.427,
+        "d0_macro": 109.9,
+        "d1_infinity": 1.864,
+        "d1_macro": 4.106,
+        "d2_infinity": 3.25,
+        "d2_macro": 1.008
+      }
+    },
+    "10": {
+      "metadata": {
+        "infinity": {
+          "f_mm": 18.57,
+          "f_number": 1.95,
+          "fov_deg": 34.0,
+          "hfov_deg": 17.0
+        },
+        "macro": {
+          "f_mm": 14.76,
+          "f_number": 1.93,
+          "fov_deg": 33.4,
+          "hfov_deg": 16.7
+        }
+      },
+      "spacing": {
+        "object_distance_macro": 120.0,
+        "d0_macro": 114.492,
+        "d1_infinity": 2.01,
+        "d1_macro": 4.554,
+        "d2_infinity": 5.654,
+        "d2_macro": 3.11
+      }
+    }
+  },
+  "schema_version": 1,
+  "table_count": 39,
+  "table_inventory": [
+    "1A",
+    "1B",
+    "1C",
+    "2A",
+    "2B",
+    "2C",
+    "2D",
+    "3A",
+    "3B",
+    "3C",
+    "3D",
+    "4A",
+    "4B",
+    "4C",
+    "4D",
+    "5A",
+    "5B",
+    "5C",
+    "5D",
+    "6A",
+    "6B",
+    "6C",
+    "6D",
+    "7A",
+    "7B",
+    "7C",
+    "7D",
+    "8A",
+    "8B",
+    "8C",
+    "8D",
+    "9A",
+    "9B",
+    "9C",
+    "9D",
+    "10A",
+    "10B",
+    "10C",
+    "10D"
+  ],
+  "table_sha256": {
+    "1A": "8b6a5dfc17fadacc0d96ea20544da0df1b217c3d8925dfe6b3d28766dcfa638c",
+    "1B": "c792bf739d8d0b79e1779071eef3402e10b4061442073f35270ecb64639c7fd4",
+    "1C": "5b5e139b34bde6792174d3168ca33a3ff4c1d4fbe5e2093bde8e0380f68a1736",
+    "2A": "0ddcb90e0ef868b74033c496737083cc9fbe54608dca903419cebeb4859a2e6d",
+    "2B": "294f7dec6a8ae71ce65a6ffe3e25bd7968afb5eb2ea18a55129f59d1720dcd25",
+    "2C": "86fd0a77265341dff2e88741e1388196774dd8d14bf2d4759929d179ccb61469",
+    "2D": "f2f61eb6bb9652a0dad4866e1e39f92f4a974fd495fb3c5e1dcf3886080ff1d9",
+    "3A": "a9c15257ade71dc005f6a25e5285952bd231f258841388dcdf65849cf3fa9a31",
+    "3B": "b0bc6a422e258267d2394e99073e4573ad1c57ed1bdbe50a4194689b3c17e259",
+    "3C": "2b1ddc24dbad02e59b4823e0435bcefb25928b0532da4592d8329b338253c884",
+    "3D": "ad7fb812165650926e8584c46b2919015d54d440981293f4d9ec032f5a31b430",
+    "4A": "f36ced7b13d07c99a7ab9bd340aced5fce6924e8181b750f2f68654f7b55d4db",
+    "4B": "79e1a2f73efaa39b880445da99a904493f4f9c962a005b8cc8171758cf0851e5",
+    "4C": "7ee077eb1315c5ca018281e44e2059e67a505f5c101e7b3e7d10cd8c46be3ee4",
+    "4D": "39a9fdde9472b00347bfba2c3a6193f66c7e138a0da6b94f84011d94a975e36b",
+    "5A": "7495aff86f54516f72516e62ee9c91100dd19e23da91b2e732b12a74b7b6e173",
+    "5B": "e30cd02a4e57205e03f864631dffba0d31a48af9cf5ccb8e075d018576a07b4a",
+    "5C": "d4c495b5d04a3c6949cf5f4a430f8a081c470b0f74bdcf293c0ec85a9e061e5b",
+    "5D": "1d061ce5ed49fdc8dd7c2478c04cdbaf4bdfb8c6299e8a64afd818bde958e033",
+    "6A": "d264d228babe06d7578619c8a2e101fc4aaead3e6691f9af7b9564d694979f43",
+    "6B": "58f97f138a178240530392c9c19c5124d241530829a8c270be14182df15d72be",
+    "6C": "3d14dd27507f60fe4fafb5daf545853039865e84611f8a9b61f2f8946cc94e4a",
+    "6D": "f0c1af9bb153714edf8e036fb594a788933e5f9c63bf67d6efaa484a8a8c4b0d",
+    "7A": "edc530e8ff3c83e58b59fd7deb4f874201dddeb9a3af275c7a605e518dda2ea4",
+    "7B": "a2792264964bca4b4fc4bb740c17147efba873e6a5dce2878befb3129ba7cbad",
+    "7C": "04bfa2ce303952bab09368690c80739defbaa853fac4556a23084eb987724a4f",
+    "7D": "d3202da1da64b853f6de24a1c42cdba4ce2195786345cf1e2013a8964237769e",
+    "8A": "c3fb54bf7edb051e99c426034c9a3a5e06a7402726403e5b98db65eac6ee3fff",
+    "8B": "eaca719032eb98cfd52ae3fad9a05ca589f0dfc0c06229b3d4207258046ed4b3",
+    "8C": "a3204983713f4f7c0658e4d8a9d3d31e8a6286d71f31f228c77bd04a56a4a342",
+    "8D": "94aaf9f25a09041253d80b0f911da8f005a817cc85aff74ea3ed006d526e4a10",
+    "9A": "69f3cba625aace7062b21296daceca1a7b5e275f1c8ed1ae5233a9d2d32b59f4",
+    "9B": "8a741d6d3dee96564de51e44adedba87a10ab8d018a5714325704029691402ea",
+    "9C": "715805175c83d142e326ec905c3585b967fa316330bd7f8293991e9195383d15",
+    "9D": "ad8ef5f6102efdff11be35f2221e46e16ba9953e94e538a0f974c1c097c3eaba",
+    "10A": "8f3d2080d3b9b5e2b2d482d004e8e50b1766d893199a00ad20cd8a2e25057d3c",
+    "10B": "cb54593669cb72e85c75faf63f31790dd1e1737a6682b2f178a6efd040a2216a",
+    "10C": "ac568ddd503df39d2b5cee864aebfe8492d8822b01d3164b8456f224cbb6dde6",
+    "10D": "cb1cd00c20b269ad5068ee55bbb54962ae506f6d9c7dfad2affcc65bf1097e46"
+  },
+  "table_sha256_algorithm": "sha256(parser-normalized exact suffixed-table block UTF-8)"
+}

@@ -1,0 +1,24 @@
+{
+  "cohort_check": {
+    "all_external_roots_absent": true,
+    "cohort_roots": 619,
+    "cohort_sha256": "e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b"
+  },
+  "current_frozen_cohort_roots": [
+    "US-20150138653",
+    "US-8976467"
+  ],
+  "external_family_members": [
+    {
+      "application_number": "13/757675",
+      "discovery_evidence": "US-8976467-B2 official Prior Publication Data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "publication_date": "2014-03-13",
+      "publication_id": "US-20140071340-A1",
+      "publication_root": "US-20140071340",
+      "relationship": "prior_publication_data_same_application"
+    }
+  ],
+  "family_id": "48495278",
+  "schema_version": 1
+}

@@ -1,0 +1,50 @@
+{
+  "current_frozen_cohort_roots": [
+    "US-20250216652"
+  ],
+  "external_family_members": [
+    {
+      "application_number": "CN202410873286.8A",
+      "discovery_evidence": "US20250216652A1 Google family country-status and Also Published As metadata",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "filing_date": "2024-07-01",
+      "priority_date": "2024-01-02",
+      "publication_date": "2025-07-04",
+      "publication_id": "CN120255132A",
+      "relationship": "docdb_family_member"
+    },
+    {
+      "application_number": "DE202024107550.1U",
+      "discovery_evidence": "US20250216652A1 Google family country-status and Also Published As metadata",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "filing_date": "2024-12-23",
+      "priority_date": "2024-01-02",
+      "publication_date": "2025-03-11",
+      "publication_id": "DE202024107550U1",
+      "relationship": "docdb_family_member"
+    },
+    {
+      "application_number": "TW113100162A",
+      "discovery_evidence": "US20250216652A1 Google Also Published As metadata",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "filing_date": "2024-01-02",
+      "priority_date": "2024-01-02",
+      "publication_date": "2025-07-16",
+      "publication_id": "TW202528789A",
+      "relationship": "docdb_family_member_and_priority_application_publication"
+    },
+    {
+      "application_number": "TW113100162A",
+      "discovery_evidence": "US20250216652A1 Google Applications Claiming Priority metadata and TWI916734B publication page",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "filing_date": "2024-01-02",
+      "priority_date": "2024-01-02",
+      "publication_date": "2026-03-01",
+      "publication_id": "TWI916734B",
+      "relationship": "priority_application_grant"
+    }
+  ],
+  "family_id": "95157884",
+  "family_metadata_source": "https://patents.google.com/patent/US20250216652A1/en",
+  "schema_version": 1
+}

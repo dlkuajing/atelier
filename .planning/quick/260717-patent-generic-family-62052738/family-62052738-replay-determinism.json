@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "family_id": "62052738",
+  "root_count": 2,
+  "item_count": 4,
+  "excluded_semantic_fields": [
+    "result_attempt"
+  ],
+  "roots": [
+    {
+      "root_id": "US-10739565",
+      "publication_id": "US-10739565-B2",
+      "item_count": 2,
+      "attempts": [
+        {
+          "result_attempt": 2,
+          "path": "data/patent-ledger/replay/local-uncovered/results/US-10739565/attempt-0002/result.json",
+          "file_sha256": "188e7ebf620f7982d9d9c7b4ca63ca1620faae4656566c71b3e15c08bd821d63",
+          "semantic_sha256": "87fa187194a547f93786253acb090331b465c989299f82de0df594ef4c453c92"
+        },
+        {
+          "result_attempt": 3,
+          "path": "data/patent-ledger/replay/local-uncovered/results/US-10739565/attempt-0003/result.json",
+          "file_sha256": "cc1c0a95eca6ea4d93036145940467c056d6aa7a166dcaf06a58b249057dc976",
+          "semantic_sha256": "87fa187194a547f93786253acb090331b465c989299f82de0df594ef4c453c92"
+        }
+      ],
+      "semantic_equal": true,
+      "semantic_sha256": "87fa187194a547f93786253acb090331b465c989299f82de0df594ef4c453c92"
+    },
+    {
+      "root_id": "US-20190154990",
+      "publication_id": "US-20190154990-A1",
+      "item_count": 2,
+      "attempts": [
+        {
+          "result_attempt": 2,
+          "path": "data/patent-ledger/replay/local-uncovered/results/US-20190154990/attempt-0002/result.json",
+          "file_sha256": "c68c6e0586612ad8d419c6975a212508c4bf15dbcbab6021f9b8ed12a4a3b5da",
+          "semantic_sha256": "0a026f0f3b04978d6e7ce2aa9103deebcc423c65d215e7a7f9d9d2ba60bf6437"
+        },
+        {
+          "result_attempt": 3,
+          "path": "data/patent-ledger/replay/local-uncovered/results/US-20190154990/attempt-0003/result.json",
+          "file_sha256": "5ed7f0997671b876b73453dd96c4ef6add33c1a1e29c9191646ce8512655c542",
+          "semantic_sha256": "0a026f0f3b04978d6e7ce2aa9103deebcc423c65d215e7a7f9d9d2ba60bf6437"
+        }
+      ],
+      "semantic_equal": true,
+      "semantic_sha256": "0a026f0f3b04978d6e7ce2aa9103deebcc423c65d215e7a7f9d9d2ba60bf6437"
+    }
+  ],
+  "semantic_equal": true
+}

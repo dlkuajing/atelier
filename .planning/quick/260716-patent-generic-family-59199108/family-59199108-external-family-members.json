@@ -1,0 +1,107 @@
+{
+  "cohort_check": {
+    "all_external_roots_absent": true,
+    "cohort_roots": 619,
+    "cohort_sha256": "e809823c709de93f49eb9b2103c4ebcdd9cf7e34d88f45a4953aaa21fd7bb42b"
+  },
+  "current_frozen_cohort_roots": [
+    "US-12298484",
+    "US-20240411113"
+  ],
+  "external_family_members": [
+    {
+      "application_number": "18/119300",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 36,
+      "publication_date": "2023-09-14",
+      "publication_id": "US-20230288673-A1",
+      "publication_root": "US-20230288673"
+    },
+    {
+      "application_number": "18/119300",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 36,
+      "publication_date": "2024-07-09",
+      "publication_id": "US-12032141-B2",
+      "publication_root": "US-12032141"
+    },
+    {
+      "application_number": "17/502019",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 36,
+      "publication_date": "2022-02-03",
+      "publication_id": "US-20220035138-A1",
+      "publication_root": "US-20220035138"
+    },
+    {
+      "application_number": "17/502019",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 35,
+      "publication_date": "2023-04-11",
+      "publication_id": "US-11624897-B2",
+      "publication_root": "US-11624897"
+    },
+    {
+      "application_number": "17/351263",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 36,
+      "publication_date": "2021-12-02",
+      "publication_id": "US-20210373294-A1",
+      "publication_root": "US-20210373294"
+    },
+    {
+      "application_number": "17/351263",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 35,
+      "publication_date": "2023-01-31",
+      "publication_id": "US-11567304-B2",
+      "publication_root": "US-11567304"
+    },
+    {
+      "application_number": "16/792894",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 36,
+      "publication_date": "2020-08-06",
+      "publication_id": "US-20200249438-A1",
+      "publication_root": "US-20200249438"
+    },
+    {
+      "application_number": "16/792894",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 37,
+      "publication_date": "2021-07-27",
+      "publication_id": "US-11073682-B2",
+      "publication_root": "US-11073682"
+    },
+    {
+      "application_number": "15/441253",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 35,
+      "publication_date": "2018-07-05",
+      "publication_id": "US-20180188485-A1",
+      "publication_root": "US-20180188485"
+    },
+    {
+      "application_number": "15/441253",
+      "discovery_evidence": "US-12298484-B2/US-20240411113-A1 official related-document data",
+      "disposition": "queue_after_frozen_619_root_cohort",
+      "page_count": 36,
+      "publication_date": "2020-03-31",
+      "publication_id": "US-10606034-B2",
+      "publication_root": "US-10606034"
+    }
+  ],
+  "family_id": "59199108",
+  "priority_application": "CN201611254134.1",
+  "priority_date": "2016-12-30",
+  "schema_version": 1
+}

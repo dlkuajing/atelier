@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "family_id": "99635674",
+  "root_id": "US-20260126648",
+  "publication_id": "US-20260126648-A1",
+  "application_number": "19/424407",
+  "retained_official_html": {
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/0358dfc131913d9a/US-20260126648-A1.html",
+    "bytes": 101320,
+    "sha256": "0358dfc131913d9af55e3db73a70aebf7786005f0f57bdce7d30854cbac4b172",
+    "characters": 101136,
+    "normalized_characters": 79567,
+    "normalized_sha256": "43d7ef14c993d2a06f99dd7226b2c61ec760644e38f66230b67ecc0f096e5beb",
+    "flattened_table_us_objects": 13,
+    "mathml_objects": 13,
+    "embedded_img_tags": 0,
+    "html_table_tags": 0,
+    "content_authority": true
+  },
+  "retained_official_pdf_fetches": [
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/e8c201eb96ea6963/US-20260126648-A1.pdf",
+      "bytes": 1919119,
+      "sha256": "e8c201eb96ea69631d9ab1a3fca9388ca20b07697e69553b2b267c32303abc1f"
+    },
+    {
+      "path": "data/patent-lake/uspto-ppubs-pdf/4583ddc63d25a5a2/US-20260126648-A1.pdf",
+      "bytes": 1919119,
+      "sha256": "4583ddc63d25a5a2cc6e3ae2deb0fdeb76325112205855032bdc91b17e986022"
+    }
+  ],
+  "pdf_reconciliation": {
+    "page_count": 39,
+    "single_raster_pages": 39,
+    "text_layer_characters": 0,
+    "container_sha256_equal": false,
+    "container_bytes_equal": true,
+    "decoded_page_rasters_equal": true,
+    "page_record_set_sha256": "a603d4769f2261b81b82affa883047a1ee518a25e827030963e9c14a4389bf71",
+    "content_authority": false,
+    "layout_and_printed_token_corroboration_only": true
+  },
+  "bibliography": {
+    "title": "IMAGING LENS ASSEMBLY AND ELECTRONIC DEVICE",
+    "inventors": [
+      "HSU; Chih-Wen",
+      "HSIAO; Hsiu-Yi",
+      "CHOU; Ming-Ta"
+    ],
+    "applicant": "LARGAN PRECISION CO., LTD.",
+    "assignee": null,
+    "filed": "2025-12-18",
+    "publication_date": "2026-05-07"
+  },
+  "lineage": {
+    "continuation_in_part_parent_application": "18/192837",
+    "continuation_in_part_parent_filed": "2023-03-30",
+    "continuation_in_part_parent_patent": "US-12541072",
+    "provisional_application": "63/328757",
+    "provisional_filed": "2022-04-08",
+    "related_application_numeric_borrowing_used": false
+  },
+  "source_policy": {
+    "official_html_is_content_authority": true,
+    "official_pdf_used_for_layout_and_printed_token_corroboration_only": true,
+    "image_enhancement_permitted": false,
+    "drawing_geometry_measurement_permitted": false,
+    "raster_numeric_transcription_permitted": false,
+    "related_application_numeric_borrowing_permitted": false,
+    "source_value_repair_permitted": false
+  }
+}

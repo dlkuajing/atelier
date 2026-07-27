@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "family_id": "79728600",
+  "root_ids": [
+    "US-20230132659"
+  ],
+  "classification_publication": "US-20230132659-A1",
+  "application_number": "17/607400",
+  "paragraph_ranges": {
+    "background_and_summary": [1, 31],
+    "brief_description_of_drawings": [32, 46],
+    "detailed_description": [47, 138]
+  },
+  "claims": {
+    "active_range": [1, 36],
+    "total_claim_denominator": 36,
+    "relationship_to_items": "Claims are generic across the three source-distinct lens variants and do not repair the missing QT1 metadata."
+  },
+  "figure_panels": [
+    "1A", "1B", "1C", "2A", "2B", "2C", "2D", "2E", "3A", "3B",
+    "4", "5", "6", "7"
+  ],
+  "source_tables": {
+    "tagged_html_blocks": 3,
+    "logical_tables": 2,
+    "tagged_block_roles": {
+      "TABLE-US-00001": "Table 1: 20-row base lens prescription",
+      "TABLE-US-00002": "Table 2: Rnorm and A0-A3 for surfaces 2-17",
+      "TABLE-US-00003": "continuation of Table 2: A4-A8 for surfaces 2-17"
+    },
+    "referenced_but_absent_logical_tables": ["Table 3"]
+  },
+  "formula_objects": {
+    "official_primary_html": 0,
+    "exact_google_a1": 9,
+    "same_application_b2": 11,
+    "defined_q_terms": ["Q0", "Q1", "Q2", "Q3", "Q4", "Q5"],
+    "undefined_but_required_q_terms": ["Q6", "Q7", "Q8"]
+  },
+  "base_prescription": {
+    "surface_rows": 20,
+    "lens_elements": 8,
+    "lens_surface_rows": [2, 17],
+    "lens_surface_count": 16,
+    "lens_surface_type": "QT1",
+    "stop_row": 1,
+    "filter_row": 18,
+    "air_row": 19,
+    "image_row": 20,
+    "efl_mm": 4.14,
+    "f_number": 1.0,
+    "diagonal_fov_deg": 80.4,
+    "ttl_mm": 8.34,
+    "bfl_mm": 1.08,
+    "sensor_diagonal_mm": 7.0,
+    "reference_wavelength_nm": 555,
+    "coefficient_columns": ["Rnorm", "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8"],
+    "nonzero_high_order_counts": {
+      "A4": 16,
+      "A5": 16,
+      "A6": 16,
+      "A7": 4,
+      "A8": 4
+    },
+    "surface_conic_values_published": 0
+  },
+  "ledger_items": [
+    {
+      "item_number": 1,
+      "label": "Folded lens 204 shared axial-symmetric QT1 prescription",
+      "paragraph_ranges": [[58, 109], [126, 129]],
+      "figure_panels": ["2A", "2C", "2D"],
+      "coordinate_relationship": "one shared base prescription; FIGS. 2C and 2D alter only the optical-path-folding element",
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "terminal.metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent"
+    },
+    {
+      "item_number": 2,
+      "label": "Folded cut lens 204-prime 5 mm directional-aperture variant",
+      "paragraph_ranges": [[110, 125]],
+      "figure_panels": ["2B"],
+      "coordinate_relationship": "inherits the base prescription and replaces the y-direction aperture radius on all L6/L8 surfaces and S15 with 2.5 mm",
+      "noncircular": true,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "terminal.metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent"
+    },
+    {
+      "item_number": 3,
+      "label": "Folded cut lens 204-double-prime 4.9 mm directional-aperture variant",
+      "paragraph_ranges": [[130, 135]],
+      "figure_panels": ["2E"],
+      "coordinate_relationship": "inherits the base prescription and replaces the y-direction aperture radius on all L6/L8 surfaces plus S11/S15 with 2.45 mm",
+      "noncircular": true,
+      "terminal_status": "metadata_unpublished",
+      "reason_code": "terminal.metadata_unpublished.qcon_q6_q8_surface_conic_and_table3_absent"
+    }
+  ],
+  "non_item_detailed_paragraph_ranges": [[47, 57], [136, 138]],
+  "non_item_figure_panels": ["1A", "1B", "1C", "3A", "3B", "4", "5", "6", "7"],
+  "reconciliation": {
+    "paragraphs_1_through_138_contiguous": true,
+    "detailed_description_paragraphs": 92,
+    "item_paragraphs_mapped_once": 78,
+    "non_item_detailed_paragraphs": 14,
+    "unmapped_detailed_paragraphs": 0,
+    "figure_panels_mapped": 14,
+    "unmapped_figure_panels": 0,
+    "unique_optical_variants": 3,
+    "ordered_surface_prescriptions_published": 1,
+    "convertible_prescriptions": 0,
+    "coordinate_values_synthesized": 0,
+    "drawing_geometry_used_for_numeric_derivation": false,
+    "external_standard_q_terms_imported": false
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "family_id": "86451284",
+  "publication_id": "US-20260072253-A1",
+  "retained_html": {
+    "authority": "USPTO Patent Public Search",
+    "path": "data/patent-lake/uspto-ppubs-html/US-PGPUB/1d13b30b11551e9e/US-20260072253-A1.html",
+    "bytes": 109425,
+    "characters": 104824,
+    "sha256": "1d13b30b11551e9e40d92414d9e5580fba18766d4393c98a079ea146453e9a6f",
+    "normalized_characters": 86930,
+    "normalized_sha256": "14a5f798808909175cd4cb4bad4dfb9e940683030ea9c2c33baf5bf5c97e8168"
+  },
+  "official_pdf": {
+    "authority": "USPTO Patent Public Search image service",
+    "url": "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/20260072253",
+    "request_authentication": "anonymous PPUBS session token passed as requestToken and x-access-token",
+    "http_status": 200,
+    "content_type": "application/pdf",
+    "path": "data/patent-lake/uspto-ppubs-pdf/fee9c82e6df84948/US-20260072253-A1.pdf",
+    "bytes": 1567679,
+    "container_sha256": "fee9c82e6df8494899f4d03d2fcc14886bd7da917b25502bb3f87db34ecd4ac7",
+    "page_count": 35,
+    "single_raster_pages": 35,
+    "text_layer_characters": 0,
+    "decoded_raster_set_sha256": "8325129c56f7a2163d03dc3cf30ff67118f6a87f7b5572234da6dd04435a72b5"
+  },
+  "drawing_source": {
+    "declared_textual_figures": 19,
+    "located_raster_figures": 19,
+    "drawing_sheets": 18,
+    "drawing_pdf_pages": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "prescription_table_pdf_pages": [
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33
+    ],
+    "original_resolution_reviewed_pages": [
+      19,
+      26,
+      33
+    ],
+    "full_page_raster_review_claimed": true,
+    "classification_dependency": true,
+    "source_discrepancies": []
+  },
+  "source_policy": {
+    "classification_truth": "retained USPTO A1 HTML plus retained exact official A1 decoded-raster set",
+    "drawing_transcription_permitted": false,
+    "numeric_derivation_permitted": false,
+    "ambiguous_stop_gap_resolved_by_inference": false,
+    "related_family_numeric_borrowing_permitted": false,
+    "nonofficial_numeric_source_used": false
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "family_id": "77292582",
+  "root_ids": ["US-20230090281"],
+  "publication_ids": ["US-20230090281-A1"],
+  "application_number": "17/798838",
+  "pct_number": "PCT/US21/17284",
+  "queue_only_related_international_applications": [
+    "PCT/US2020/039197",
+    "PCT/US2020/039200",
+    "PCT/US2020/039201",
+    "PCT/US2020/066702"
+  ],
+  "denominator": {
+    "frozen_cohort_roots": 1,
+    "retained_classification_publications": 1,
+    "queue_only_related_international_applications": 4,
+    "background_summary_numbered_paragraphs": 7,
+    "description_numbered_paragraphs": 165,
+    "total_numbered_paragraphs": 172,
+    "claims": 20,
+    "independent_claim_families": 1,
+    "declared_textual_figure_panels": 28,
+    "located_raster_figure_panels": 28,
+    "retained_drawing_sheets": 28,
+    "tagged_html_tables": 0,
+    "optical_prescription_tables": 0,
+    "equation_placeholders": 0,
+    "mathml_objects": 0,
+    "html_image_tags": 0,
+    "source_disclosed_items": 11,
+    "named_optical_design_items": 4,
+    "enhanced_sensing_configuration_items": 6,
+    "claimed_system_items": 1,
+    "confirmed_no_prescription_items": 11,
+    "metadata_unpublished_items": 0,
+    "replayed_ledger_items": 11,
+    "official_pdf_files": 1,
+    "official_pdf_pages": 57,
+    "retained_page_rasters": 57,
+    "unmapped_claims": 0,
+    "unmapped_declared_figure_panels": 0,
+    "unmapped_source_items": 0
+  },
+  "section_ranges": {
+    "related_applications": [1, 1],
+    "technical_field": [2, 2],
+    "background": [3, 7],
+    "brief_drawings": [8, 33],
+    "detailed_description": [34, 172]
+  },
+  "claim_mapping": {
+    "coherent_low_parallax_objective_relay_system": [1, 20]
+  },
+  "items": [
+    {
+      "embodiment_number": 1,
+      "label": "Circle Optics baseline low-parallax objective lens 120",
+      "description_paragraphs": [41, 43],
+      "figures": ["2A", "2B"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.baseline_low_parallax_objective_schematic_only"
+    },
+    {
+      "embodiment_number": 2,
+      "label": "Circle Optics multi-compressor low-parallax objective lens 320",
+      "description_paragraphs": [94, 104],
+      "figures": ["8"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.multicompressor_objective_partial_values_only"
+    },
+    {
+      "embodiment_number": 3,
+      "label": "Circle Optics direct primary-plane sensing channel",
+      "description_paragraphs": [105, 105],
+      "figures": ["8", "11"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.direct_primary_plane_sensor_architecture_only"
+    },
+    {
+      "embodiment_number": 4,
+      "label": "Circle Optics 1.5x objective-plus-relay system",
+      "description_paragraphs": [106, 107],
+      "supporting_paragraphs": [131, 138],
+      "figures": ["9"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.one_point_five_x_objective_relay_schematic_only"
+    },
+    {
+      "embodiment_number": 5,
+      "label": "Circle Optics beam-split multi-modal objective-plus-relay channel",
+      "description_paragraphs": [139, 144],
+      "figures": ["15A"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.beam_split_multimodal_channel_architecture_only"
+    },
+    {
+      "embodiment_number": 6,
+      "label": "Circle Optics 2x coherent objective-plus-relay system",
+      "description_paragraphs": [145, 146],
+      "figures": ["15B"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.two_x_coherent_objective_relay_partial_values_only"
+    },
+    {
+      "embodiment_number": 7,
+      "label": "Circle Optics MEMS-scanned laser range-finding channel",
+      "description_paragraphs": [151, 152],
+      "figures": ["16A"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.mems_lidar_channel_architecture_only"
+    },
+    {
+      "embodiment_number": 8,
+      "label": "Circle Optics optical-phased-array laser range-finding channel",
+      "description_paragraphs": [153, 159],
+      "figures": ["16B", "16C"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.opa_lidar_channel_architecture_only"
+    },
+    {
+      "embodiment_number": 9,
+      "label": "Circle Optics flash-LIDAR channel",
+      "description_paragraphs": [160, 165],
+      "figures": ["16D"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.flash_lidar_channel_architecture_only"
+    },
+    {
+      "embodiment_number": 10,
+      "label": "Circle Optics light-field depth-sensing channel",
+      "description_paragraphs": [166, 166],
+      "figures": ["16E"],
+      "claims": [],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.light_field_depth_channel_architecture_only"
+    },
+    {
+      "embodiment_number": 11,
+      "label": "Circle Optics claimed coherent low-parallax imaging system",
+      "description_paragraphs": [167, 172],
+      "figures": [],
+      "claims": [1, 20],
+      "terminal_status": "confirmed_no_prescription",
+      "reason_code": "confirmed_no_prescription.claimed_coherent_imaging_system_architecture_only"
+    }
+  ],
+  "merged_or_excluded_disclosures": [
+    {
+      "scope": "FIGS. 1, 3-7 and paragraphs 34-93",
+      "treatment": "multi-camera, parallax, field, distortion and design-method context supporting the counted objective and system items; no independent surface prescription"
+    },
+    {
+      "scope": "FIGS. 10-14 and paragraphs 108-130",
+      "treatment": "electronics and opto-mechanical mounting/packaging context supporting the counted channels; no independent optical prescription"
+    },
+    {
+      "scope": "FIG. 16C and paragraph 159",
+      "treatment": "common aperture-stop integration shared by the already-counted MEMS and OPA LIDAR configurations; not double-counted as another sensor architecture"
+    },
+    {
+      "scope": "reflective, catadioptric, fiber-bundle, mixed relay/no-relay, dome, zoom, projection-display and spectral variants",
+      "treatment": "dependent variants merged into the applicable sensing configuration or the single independent claim family; none publishes an independent numerical prescription"
+    },
+    {
+      "scope": "PCT/US2020/039197, PCT/US2020/039200, PCT/US2020/039201 and PCT/US2020/066702",
+      "treatment": "related international applications identified from the exact A1 but outside the frozen 619-root cohort; no conclusion, prescription value or coordinate borrowed"
+    }
+  ],
+  "representability_boundary": {
+    "figure_2_ordered_surface_sequence_published": false,
+    "figure_8_partial_first_element_radii_published": true,
+    "figure_8_complete_ordered_surface_sequence_published": false,
+    "figure_8_complete_surface_spacings_published": false,
+    "figure_8_complete_optical_materials_published": false,
+    "figure_8_complete_asphere_coefficients_published": false,
+    "figure_9_complete_objective_and_relay_prescriptions_published": false,
+    "figure_15a_complete_objective_and_relay_prescriptions_published": false,
+    "figure_15b_complete_objective_and_relay_prescriptions_published": false,
+    "figure_16_sensor_configurations_publish_prescriptions": false,
+    "drawing_transcription_used": false,
+    "numeric_derivation_from_rasters_used": false,
+    "coordinate_synthesis_used": false,
+    "related_application_numeric_borrowing_used": false,
+    "formal_output_permitted": false
+  },
+  "formal_outputs": {
+    "worker_requests": 0,
+    "worker_receipts": 0,
+    "conversion_attempt_ids": 0,
+    "prescription_fingerprints": 0,
+    "staging_zmx": 0,
+    "candidate_zmx": 0,
+    "formal_intake": 0,
+    "codev_calls": 0
+  }
+}

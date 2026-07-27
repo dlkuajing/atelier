@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "source_census": ".planning/quick/260720-patent-generic-family-89536570/generic-residual-after-2.json",
+  "result_set_sha256": "4c2f70bdfa72844b6dec9d93353823ea4c0bc8597cb437d70a05d9596eaeb756",
+  "generic_residual_roots": 53,
+  "generic_residual_items": 53,
+  "next_exact_group": {
+    "family_id": "59685373",
+    "root_ids": [
+      "US-11236215"
+    ],
+    "publication_ids": [
+      "US-11236215-B2"
+    ],
+    "application_number": "16/104657",
+    "title": "Curable composition, cured film, optical filter, laminate, solid image pickup element, image display device, and infrared sensor",
+    "first_inventor": "Sasaki; Daisuke",
+    "applicant": "FUJIFILM Corporation",
+    "assignee": "FUJIFILM Corporation",
+    "layout_signature": "95006f856387838a9166a1c77b2b4275ce07b997298c99ef6b6989c8e11fe808",
+    "layout_signature_count": 1,
+    "table_count": 13,
+    "marker_counts": {
+      "effective_focal_length": 0,
+      "embodiment_anchor": 0,
+      "example_anchor": 81,
+      "f_number": 0,
+      "full_field": 0,
+      "half_field": 0
+    },
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/d5eee1bd8a6bb6dd/US-11236215-B2.html",
+      "sha256": "d5eee1bd8a6bb6dde3a4f62a4a2fdf6589e89a5071322e9de2487086199ba543"
+    }
+  },
+  "selection_rule": "minimum remaining exact layout signature, then stable root/publication order",
+  "saturation_complete": false
+}

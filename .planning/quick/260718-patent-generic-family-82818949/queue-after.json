@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "selection_rule": "largest executable nonterminal root bucket, then item count, then stable parser/layout/root/publication order",
+  "result_set_sha256": "95fe1daefb7ea970805324eb77b2376ab57d0dc1a71a8520dc91531c01f3a6ec",
+  "executable_buckets": [
+    {"parser_signature": "generic_summary_metadata_missing", "affected_roots": 99, "affected_items": 99},
+    {"parser_signature": "aac_raytech_summary_metadata_missing", "affected_roots": 55, "affected_items": 174},
+    {"parser_signature": "sunny_embodiment_metadata_missing", "affected_roots": 49, "affected_items": 177}
+  ],
+  "next_exact_group": {
+    "family_id": "51743335",
+    "root_ids": ["US-9360657"],
+    "publication_ids": ["US-9360657-B2"],
+    "application_number": "14/520589",
+    "title": "Imaging lens module",
+    "applicant": "ABILITY OPTO-ELECTRONICS TECHNOLOGY CO., LTD.",
+    "layout_signature": "398622f52ff511311c349f40626f79b6e19bad3e73c2c0586750234eb69b3715",
+    "marker_counts": {"effective_focal_length": 0, "embodiment_anchor": 0, "example_anchor": 0, "f_number": 0, "full_field": 0, "half_field": 0},
+    "table_count": 0,
+    "raw_document": {
+      "evidence_type": "uspto_ppubs_parser_input_html",
+      "path": "data/patent-lake/uspto-ppubs-html/USPAT/b74d7e8a6f9f2982/US-9360657-B2.html",
+      "sha256": "b74d7e8a6f9f29825e44ec488e48a164e0807fbf0c2070e4f6529a06b50c2491"
+    },
+    "affected_roots": 1,
+    "affected_items": 1,
+    "queue_only": true
+  },
+  "saturation_complete": false
+}
