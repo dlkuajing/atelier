@@ -10,6 +10,8 @@ Goal gates (from BRIEF §5):
 import math
 import warnings
 
+import pytest
+
 from app.core.optiland_patches import _safe_float, apply_all
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
 from app.core.zmx_materials import lookup_nd_vd, resolve_material
@@ -58,6 +60,32 @@ def test_material_table():
     assert lookup_nd_vd("EP8000") == (1.651, 21.5)
     # unknown material returns None (caller falls back, honestly)
     assert lookup_nd_vd("NO-SUCH-GLASS") is None
+
+
+def test_unknown_dispersion_fails_closed():
+    # Regression: unknown glass with a usable placeholder nd but vd=0/None
+    # ("dispersion unspecified", Zemax convention) used to be silently forged
+    # into AbbeMaterial(nd, 50.0). It must raise instead — no material
+    # reporting abbe==50.0 may ever be produced from unknown dispersion.
+    for bad_vd in (0.0, None, float("nan"), -5.0):
+        with pytest.raises(ValueError, match="NO-SUCH-GLASS"):
+            resolve_material("NO-SUCH-GLASS", 1.6, bad_vd)
+
+
+def test_unknown_glass_with_full_placeholder_still_resolves():
+    # unknown glass but BOTH placeholder nd and vd are real -> honest fallback
+    mat = resolve_material("NO-SUCH-GLASS", 1.6, 30.0)
+    assert math.isclose(_safe_float(mat.n(0.5876)), 1.6, abs_tol=5e-3)
+    assert _safe_float(mat.abbe) == 30.0
+
+
+def test_known_table_glass_unaffected_by_dead_placeholder():
+    # known-table glass keeps resolving from the datasheet table even when the
+    # zmx row carries a dead placeholder (1.0 / 0.0) — same inputs as the
+    # fail-closed test above, proving the raise only guards true unknowns.
+    mat = resolve_material("ZEONEX-K26R_14", 1.0, 0.0)
+    assert math.isclose(_safe_float(mat.n(0.5876)), 1.535, abs_tol=5e-3)
+    assert _safe_float(mat.abbe) == 56.0
 
 
 def test_patch_idempotent():
