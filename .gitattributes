@@ -51,6 +51,17 @@ data/patent-conversion-attempts/local-replay/US-11137579-B2-*/**/*.json text eol
 data/patent-conversion-attempts/local-replay/US-11137579-B2-*/**/*.log -text -diff
 data/patent-conversion-attempts/local-replay/US-11137579-B2-*/**/*.zmx -text -diff
 data/zmx-staging/patent-local-replay/US-11137579-B2-*.zmx -text -diff
+data/patent-conversion-attempts/**/*.log -text -diff
+
+# USPTO crawl batches are frozen raw inputs whose recorded digests include CRLF.
+data/patents/*.json text eol=crlf
+data/patents/*.jsonl text eol=crlf
+app/data/optical_cases/index.json text eol=crlf
+
+# Quick-task evidence contains source-recorded LF, CRLF, and mixed-EOL bytes.
+.planning/quick/**/*.json -text
+.planning/quick/**/*.md -text
+
 .planning/quick/**/*.png filter=lfs diff=lfs merge=lfs -text
 .planning/quick/**/*.pdf filter=lfs diff=lfs merge=lfs -text
 .planning/quick/**/*.tif filter=lfs diff=lfs merge=lfs -text
