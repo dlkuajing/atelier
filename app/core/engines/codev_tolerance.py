@@ -21,6 +21,7 @@ from app.core.engines.codev_batch import (
     ensure_codev_safe_input_path,
     run_codev_process,
 )
+from app.core.engines.zmx_import_prep import stage_zmx_for_codev
 
 TorMetric = Literal["mtf", "rms"]
 _COMMAND_PREFIX = re.compile(
@@ -136,6 +137,9 @@ def run_codev_tor(
     ensure_codev_safe_input_path(source, role="source_zmx")
     ensure_codev_safe_input_path(work, role="work_dir")
     work.mkdir(parents=True, exist_ok=True)
+    # Import through a wavelength-normalized copy: a collapsed WAVM table would
+    # make every tolerance sensitivity monochromatic (see zmx_import_prep).
+    staged_source = stage_zmx_for_codev(source, work)
     sequence_path = work / "atelier_tor.seq"
     per_path = work / "atelier_tor_per.tsv"
     mc_path = work / "atelier_tor_mc.tsv"
@@ -143,7 +147,7 @@ def run_codev_tor(
         ensure_buf_exp_safe_filename(path)
     sequence_path.write_text(
         build_codev_tor_sequence(
-            source_path=source,
+            source_path=staged_source,
             performance_result_path=per_path,
             monte_carlo_result_path=mc_path,
             tolerance_table=tolerance_table,

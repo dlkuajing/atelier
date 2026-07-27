@@ -9,7 +9,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from scripts.repair_legacy_zmx_glass import decode_zmx_text, encode_zmx_text  # noqa: E402
+from app.core.engines.zmx_import_prep import (  # noqa: E402
+    count_wavm_rows,
+    decode_zmx_text,
+    encode_zmx_text,
+    pad_wavm_slots,
+)
 
 _WAVM_RE = re.compile(r"^(?P<indent>\s*)WAVM\s+(?P<slot>\d+)\b")
 _NUMERIC_GLAS_RE = re.compile(
@@ -51,25 +56,19 @@ def rename_numeric_glass_names(text: str) -> tuple[str, int]:
 
 
 def pad_wavm_text(text: str) -> tuple[str, int]:
-    """Return padded text and number of rows added; reject missing/malformed tables."""
+    """Return padded text and number of rows added; reject missing/malformed tables.
 
-    lines = text.splitlines(keepends=True)
-    rows = [(index, match) for index, line in enumerate(lines) if (match := _WAVM_RE.match(line))]
-    if not rows:
+    Padding itself lives in ``app.core.engines.zmx_import_prep`` so the import
+    path and this repair tool cannot drift apart. The extra rule here is this
+    tool's own: a *candidate* ZMX we generated must already carry a wavelength
+    table, so a missing one is a defect to report rather than a file to leave
+    alone (the shared helper passes such files through untouched, because a
+    ``WAVL``-style seed legitimately has no ``WAVM`` rows).
+    """
+
+    if count_wavm_rows(text) == 0:
         raise ValueError("no WAVM rows; refusing to invent a wavelength table")
-    slots = [int(match.group("slot")) for _, match in rows]
-    if slots != list(range(1, len(slots) + 1)) or len(slots) > 24:
-        raise ValueError(f"WAVM slots must be contiguous 1..N with N <= 24; got {slots}")
-    if len(slots) == 24:
-        return text, 0
-
-    last_index, last_match = rows[-1]
-    last_line = lines[last_index]
-    newline = "\r\n" if last_line.endswith("\r\n") else "\n" if last_line.endswith("\n") else ""
-    indent = last_match.group("indent")
-    padding = [f"{indent}WAVM {slot} 0.55 1{newline}" for slot in range(len(slots) + 1, 25)]
-    lines[last_index + 1:last_index + 1] = padding
-    return "".join(lines), len(padding)
+    return pad_wavm_slots(text)
 
 
 def repair_wavm_file(path: Path, *, write: bool = False) -> tuple[int, bool, int]:

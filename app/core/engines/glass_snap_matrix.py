@@ -27,6 +27,7 @@ from app.core.engines.glass_snap_chain import (
     material_claims_from_readout,
     propose_material_snaps,
 )
+from app.core.engines.zmx_import_prep import pad_wavm_bytes
 
 SNAPSHOT_SCHEMA = "atelier-glass-snap-snapshots-v1"
 EXPERIMENTS = (
@@ -71,7 +72,12 @@ def run_snap_matrix(
         try:
             candidate_work.mkdir(parents=True, exist_ok=True)
             staged = (candidate_work / "source.zmx").resolve()
-            shutil.copy2(candidate, staged)
+            # Normalize the WAVM table while staging: without a flush sentinel
+            # CODE V imports one default wavelength and every glass loses its
+            # measurable dispersion, which is exactly what this matrix probes
+            # (see zmx_import_prep).
+            padded_bytes, _wavm_rows_added = pad_wavm_bytes(candidate.read_bytes())
+            staged.write_bytes(padded_bytes)
         except Exception as exc:  # noqa: BLE001 - preserve prior matrix rows.
             rows.extend(_failed_rows(candidate, output_dir, candidate_id, "stage", exc))
             continue

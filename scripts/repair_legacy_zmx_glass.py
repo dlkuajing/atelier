@@ -76,6 +76,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+# Re-exported for the repair scripts that import them from here; the canonical
+# implementation lives beside the CODE V import prep that depends on it.
+from app.core.engines.zmx_import_prep import (  # noqa: E402,F401
+    decode_zmx_text,
+    encode_zmx_text,
+)
 from app.core.zmx_materials import _CODEV_MODEL_GLASS_MARKER_RE, lookup_nd_vd  # noqa: E402
 
 ZMX_DIR = Path(__file__).resolve().parents[1] / "data" / "zmx"
@@ -94,32 +100,6 @@ CODEV_RESOLVABLE_GLASS_NAMES = frozenset({"BK7", "H-LAK51A", "H-LAK53A"})
 # match on "BLANK", macro L1523) while keeping the trade name recoverable.
 # Python readers strip it: zmx_materials._canon / prescription_table.
 CODEV_MODEL_GLASS_MARKER = "_BLANK"
-
-_UTF16_LE_BOM = b"\xff\xfe"
-_UTF16_BE_BOM = b"\xfe\xff"
-
-
-def decode_zmx_text(raw: bytes) -> tuple[str, str]:
-    """Decode ZMX bytes, returning (text, encoding_tag) for a lossless roundtrip.
-
-    encoding_tag is one of ``utf-16-le-bom`` / ``utf-16-be-bom`` / ``latin-1``;
-    ``encode_zmx_text`` reverses it byte-for-byte (latin-1 is the identity
-    byte<->str mapping for non-BOM files, whose GLAS content is ASCII anyway).
-    """
-    if raw.startswith(_UTF16_LE_BOM):
-        return raw[len(_UTF16_LE_BOM):].decode("utf-16-le"), "utf-16-le-bom"
-    if raw.startswith(_UTF16_BE_BOM):
-        return raw[len(_UTF16_BE_BOM):].decode("utf-16-be"), "utf-16-be-bom"
-    return raw.decode("latin-1"), "latin-1"
-
-
-def encode_zmx_text(text: str, encoding_tag: str) -> bytes:
-    if encoding_tag == "utf-16-le-bom":
-        return _UTF16_LE_BOM + text.encode("utf-16-le")
-    if encoding_tag == "utf-16-be-bom":
-        return _UTF16_BE_BOM + text.encode("utf-16-be")
-    return text.encode("latin-1")
-
 
 def iter_glas_lines(text: str) -> Iterator[tuple[int, list[str]]]:
     """Yield ``(line_number, tokens)`` for every GLAS line (1-based numbering)."""
