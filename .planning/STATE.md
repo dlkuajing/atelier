@@ -2,7 +2,7 @@
 
 ## Project Reference
 
-唯一目标真相锚 = 仓库根 `NORTH-STAR.md`（v2，2026-07-27）。术语 = `CONTEXT.md`。
+唯一目标真相锚 = `.planning/NORTH-STAR.md`（v2，2026-07-27）。术语 = `CONTEXT.md`。
 另见 `.planning/PROJECT.md` 与 `AGENTS.md`。
 
 **北极星 v2 摘要：** 把手机镜头「出一版设计」这个动作自动化——结构化 spec → 交付物，
@@ -73,7 +73,7 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
 
 ## Session Continuity
 
-**新 session 起手**：读 `NORTH-STAR.md` → `CONTEXT.md` → 本文件 → `.planning/loop/backlog.md`。
+**新 session 起手**：读 `.planning/NORTH-STAR.md` → 根 `CONTEXT.md` → 本文件 → `.planning/loop/backlog.md`。
 
 **不要**从 `.planning/archive/north-star-v0.1/` 恢复任何 gate、backlog 或判据——它是冻结归档。
 

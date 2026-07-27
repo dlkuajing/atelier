@@ -5,7 +5,7 @@
 
 ## 北极星
 
-**唯一目标真相锚 = 仓库根 [`NORTH-STAR.md`](NORTH-STAR.md)（v2，2026-07-27 主公裁定）。术语见 [`CONTEXT.md`](CONTEXT.md)。**
+**唯一目标真相锚 = [`.planning/NORTH-STAR.md`](.planning/NORTH-STAR.md)（v2，2026-07-27 主公裁定）。术语见 [`CONTEXT.md`](CONTEXT.md)。**
 本节只作摘要，冲突以 `NORTH-STAR.md` 为准。
 
 把手机镜头「**出一版设计**」这个动作自动化：从结构化 spec 到可评审交付物，零人工介入，

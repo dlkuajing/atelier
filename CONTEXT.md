@@ -1,7 +1,7 @@
 # Atelier
 
 手机镜头光学设计的自动产出引擎。本文件是这个领域的**词汇表**——只定义概念，不含实现细节。
-目标与判据见 [NORTH-STAR.md](NORTH-STAR.md)。
+目标与判据见 [.planning/NORTH-STAR.md](.planning/NORTH-STAR.md)。
 
 ## Language
 

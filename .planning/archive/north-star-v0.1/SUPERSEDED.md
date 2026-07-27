@@ -2,7 +2,7 @@
 
 **状态**：SUPERSEDED，冻结，不删不维护
 **归档于**：2026-07-27
-**取代者**：仓库根 [NORTH-STAR.md](../../../NORTH-STAR.md)
+**取代者**：[.planning/NORTH-STAR.md](../../NORTH-STAR.md)
 
 本目录内所有文件**不再是任何 gate、判据或工作源**。它们不消耗 loop 预算，
 不进入任何 backlog，不作为任何声明的依据。保留仅供追溯。
