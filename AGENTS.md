@@ -29,7 +29,32 @@
 （CODE V 11.5 装于 `D:\CODEV115`，ZMX↔CODE V 闭环=DB 读数直出重建，见
 `app/core/engines/codev_readout.py`+`zmx_writer.py`）、2/7/9 进行中、6 待启。
 staging ZMX 不可得（主公 2026-07-05 裁定），底库靠 USPTO 采集。ROADMAP 阶段划分成型于 v0.1
-体系下，**须按 v2 判据重新对齐**。推进方式=gsd-loop 多车道夜车（见 `.planning/decisions.log`）。
+体系下，**须按 v2 判据重新对齐**。
+
+## 推进范式（2026-07-27 主公裁定）
+
+**主力 = goal-driven**：读 `.planning/NORTH-STAR.md` 判断当前最该做的一铲 → 做 →
+看结果 → 再定下一步。判断留在回路内。
+
+**`gsd-loop` 降级为按需调用的批量工具**，不再是默认推进方式。只在任务同时满足三条时才用：
+① 能预先枚举成一串**同构**小任务 ② 每条判据**机器可判** ③ **不需要看上一条结果**决定下一条。
+
+判定依据（实测，非推断）：
+
+- loop 累计产出 57 条 `loop:` 提交、41 条进 main，**全部是上述形态**——USPTO 波次采集
+  （`DATA-08x`：续采 ≥100 落 batchN，`@accept` 为 `grep -q "1814" tests/test_patent_pool.py`）
+  与 parser 受让人族扩展（`DATA-09x`）。底库 159 → 1814 原料池 / 442 可路由案例是 loop 的实绩。
+- 但 v2 判据缺口对应的工作，多数**不满足条件③**：46 blocked 根因诊断、按诊断修产出率、
+  MC 饱和、成本模型设计，都要看上一步结果才知道下一步做什么。
+- 结构原因：loop 的"指挥官"是 [`orchestrator.sh`](file) 的
+  `pick_task_line()` = `grep '^- \[ \]' backlog.md | head -1`，**无模型**；
+  执行层裸调 `codex exec`，不传 `--model`/effort，全部继承 `~/.codex/config.toml`
+  （当前 `gpt-5.6-sol` / `model_reasoning_effort=high`）。**全部规划智能被前置到"写 backlog
+  那一刻"，循环运行期间零判断**——跑偏了回路内没有任何环节能察觉。
+
+⚠️ 注意：全局 CLAUDE.md 提到的项目级 `.codex/config.toml` **本仓库不存在**，
+codex 推理强度实际由全局配置决定；`--effort xhigh` 逐次升档只对 `codex:rescue` 路径有效，
+loop 路径没有传参口子。
 
 ## 与 lumira 官网的关系（drift 契约）
 

@@ -73,7 +73,13 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
 
 ## Session Continuity
 
-**新 session 起手**：读 `.planning/NORTH-STAR.md` → 根 `CONTEXT.md` → 本文件 → `.planning/loop/backlog.md`。
+**新 session 起手**：读 `.planning/NORTH-STAR.md` → 根 `CONTEXT.md` → 本文件 → `AGENTS.md`「推进范式」节。
+
+**推进范式（2026-07-27 主公裁定）**：主力 = **goal-driven**（读北极星判断下一铲 → 做 →
+看结果 → 再定下一步，判断留在回路内）。`gsd-loop` **降级为按需调用的批量工具**，不再是默认
+方式——只在任务能枚举成一串同构小任务、判据机器可判、且不需看上条结果定下条时才用。
+`.planning/loop/backlog.md` 当前**不存在**（loop2 收尾时清空），需要时按上述三条件现写。
+详见 `AGENTS.md`「推进范式」节。
 
 **不要**从 `.planning/archive/north-star-v0.1/` 恢复任何 gate、backlog 或判据——它是冻结归档。
 
