@@ -27,6 +27,7 @@ from app.core.engines.codev_optimize import (
     _glass_map_hull,
     _measured_fnum,
     _parse_metrics,
+    _parse_tolerance_sensitivity,
     build_codev_optimize_sequence,
     build_codev_target_sequence,
     default_optimize_seed,
@@ -2859,6 +2860,148 @@ def test_lateral_color_fails_closed_below_three_wavelengths() -> None:
     for bad in ("", "abc", "0", "-2"):
         parsed = _parse_metrics({**base, "after.num_wavelengths": bad}, "after")
         assert parsed.wavelength_count is None
+
+
+def test_parse_metrics_fails_closed_when_no_field_traced() -> None:
+    """Every metric FCT seeds an accumulator whose seed value is the ideal reading.
+
+    @rmssum/@wfewav/@dstpct start at ``^max == 0`` and only update on a field
+    whose query succeeds, so a system where every field fails returns exactly
+    0.0 -- a perfect point image, a perfect wavefront, zero distortion. This is
+    the literal snapshot 4 of 8 corpus seeds produced on the real machine on
+    2026-07-27 while their listings carried 99x "Total reflection at surface 12".
+    """
+
+    degenerate = {
+        "after.efl_y_mm": "3.35529",
+        "after.max_lateral_color_um": "0.0",
+        "after.max_rms_spot_diameter_um": "0.0",
+        "after.max_rms_wavefront_error_waves": "0.0",
+        "after.max_distortion_pct": "0.0",
+        "after.num_wavelengths": "3",
+    }
+
+    parsed = _parse_metrics(degenerate, "after")
+
+    assert parsed.ray_trace_degenerate is True
+    assert parsed.max_rms_spot_diameter_um is None
+    assert parsed.max_rms_wavefront_error_waves is None
+    # Distortion and lateral color have legitimate 0.0 readings, so they are
+    # withheld on the joint discriminator rather than on their own value.
+    assert parsed.max_distortion_pct is None
+    assert parsed.max_lateral_color_um is None
+    # EFL is paraxial: it computes fine on a system no real ray survives, which
+    # is precisely why it cannot vouch for the others.
+    assert parsed.efl_y_mm == pytest.approx(3.35529)
+
+
+def test_parse_metrics_withholds_lateral_color_when_trace_fails_despite_three_wavelengths() -> None:
+    """Regression guard for the hole the multi-wavelength import fix would open.
+
+    Before that fix a trace-failed seed also reported NUM W = 1, so the
+    wavelength test suppressed its 0.0 lateral color. Once the import is
+    repaired the same seed reports NUM W = 3, the wavelength test stops firing,
+    and without this second discriminator the 0.0 would surface as "measured,
+    and perfectly achromatic".
+    """
+
+    parsed = _parse_metrics(
+        {
+            "after.efl_y_mm": "3.35529",
+            "after.max_lateral_color_um": "0.0",
+            "after.max_rms_spot_diameter_um": "0.0",
+            "after.max_rms_wavefront_error_waves": "0.0",
+            "after.max_distortion_pct": "0.0",
+            "after.num_wavelengths": "3",
+        },
+        "after",
+    )
+
+    assert parsed.wavelength_count == 3
+    assert parsed.max_lateral_color_um is None
+
+
+def test_parse_metrics_keeps_a_partially_traced_snapshot() -> None:
+    """A real reading must survive: only the *joint* collapse withholds values."""
+
+    parsed = _parse_metrics(
+        {
+            "after.efl_y_mm": "3.61803",
+            "after.max_lateral_color_um": "0.0399589",
+            "after.max_rms_spot_diameter_um": "5.61135",
+            "after.max_rms_wavefront_error_waves": "0.0738658",
+            # A genuinely rectilinear design reads exactly 0.0 here; it must not
+            # be confused with the untraced sentinel.
+            "after.max_distortion_pct": "0.0",
+            "after.num_wavelengths": "3",
+        },
+        "after",
+    )
+
+    assert parsed.ray_trace_degenerate is False
+    assert parsed.max_rms_spot_diameter_um == pytest.approx(5.61135)
+    assert parsed.max_distortion_pct == 0.0
+    assert parsed.max_lateral_color_um == pytest.approx(0.0399589)
+
+
+@pytest.mark.parametrize("bad", ["0.0", "-1.0", "-0.0"])
+def test_parse_metrics_rejects_unphysical_positive_definite_metrics(bad: str) -> None:
+    """RMS spot and RMS wavefront error are positive-definite; anything else is a defect.
+
+    Non-finite exports are deliberately absent from this list: ``_required_float``
+    already raises on them, which is a stricter contract than withholding the
+    value, and this guard must not soften it.
+    """
+
+    parsed = _parse_metrics(
+        {
+            "after.efl_y_mm": "3.6",
+            "after.max_lateral_color_um": "1.0",
+            "after.max_rms_spot_diameter_um": bad,
+            "after.max_rms_wavefront_error_waves": "0.17",
+            "after.max_distortion_pct": "1.1",
+            "after.num_wavelengths": "3",
+        },
+        "after",
+    )
+
+    assert parsed.max_rms_spot_diameter_um is None
+    # Only one of the pair collapsed, so the joint discriminator stays quiet and
+    # the measurable metrics are still reported.
+    assert parsed.ray_trace_degenerate is False
+    assert parsed.max_rms_wavefront_error_waves == pytest.approx(0.17)
+    assert parsed.max_distortion_pct == pytest.approx(1.1)
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [("1.0", None), ("1.5", None), ("0.0", None), ("-0.2", None), ("0.611622", 0.611622)],
+)
+def test_tolerance_rows_reject_the_mtfmin_seed_value(raw: str, expected: float | None) -> None:
+    """@mtfmin starts at 1.0 and only decreases: 1.0 means no field produced data.
+
+    Tolerance MTF is always evaluated at a strictly positive frequency
+    (``_validate_positive`` on ``tolerance_mtf_frequency_lpmm``), where
+    diffraction bounds MTF strictly below 1.
+    """
+
+    rows = _parse_tolerance_sensitivity(
+        {
+            "tolerance.count": "1",
+            "tolerance.1.parameter_name": "S3 thickness",
+            "tolerance.1.perturbation": "+0.01",
+            "tolerance.1.mtf_drop": "0.05",
+            "tolerance.1.nominal_mtf": raw,
+            "tolerance.1.perturbed_mtf": raw,
+        }
+    )
+
+    assert len(rows) == 1
+    if expected is None:
+        assert rows[0].nominal_mtf is None
+        assert rows[0].perturbed_mtf is None
+    else:
+        assert rows[0].nominal_mtf == pytest.approx(expected)
 
 
 def test_optimize_sequence_emits_wavelength_count(tmp_path: Path) -> None:

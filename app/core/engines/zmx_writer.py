@@ -54,8 +54,17 @@ def build_zmx_from_codev_readout(
     ZEMAXOS_TO_CV's WAVM wavelength parsing — the lens imports with NO
     wavelength data ("No wavelength data specified"), silently killing
     dispersion/vd and chromatic evaluation. The LF variant imports all
-    wavelengths and yields dispersion-measured vd. The seed corpus in
-    data/zmx/ is LF on disk and imports correctly.
+    wavelengths and yields dispersion-measured vd.
+
+    Correction (2026-07-27, measured): this docstring used to add "the seed
+    corpus in data/zmx/ is LF on disk and imports correctly". Both halves are
+    false. All 442 corpus files are CRLF, and a CRLF 24-slot seed reads back
+    all 5 wavelengths with dispersion-measured vd on the real machine — so CRLF
+    is not what decides whether wavelengths survive. What decides it is the
+    ``WAVM`` flush sentinel (see ``zmx_import_prep``), and 403 of the 442 seeds
+    lack it and did NOT import correctly. The LF rule above is left in force:
+    the 2026-07-11 A/B that motivated it was run on writer output, which this
+    module still emits as LF, and no experiment has since retested it.
     """
 
     surfaces = _ordered_surfaces(readout)

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import shutil
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,6 +15,7 @@ from app.core.engines.codev_batch import (
     parse_codev_result_file,
     run_codev_batch,
 )
+from app.core.engines.zmx_import_prep import stage_zmx_for_codev
 
 CODEV_READOUT_RESULT_SCHEMA = "atelier-codev-readout-v1"
 
@@ -388,15 +388,12 @@ def run_codev_readout(
     work_dir = Path(work_dir).resolve()
     ensure_codev_safe_input_path(work_dir, role="work_dir")
     work_dir.mkdir(parents=True, exist_ok=True)
-    staged_zmx: Path | None = None
-    try:
-        ensure_codev_safe_input_path(source_zmx, role="source_zmx")
-        import_zmx = source_zmx
-    except ValueError:
-        staged_zmx = work_dir / source_zmx.name
-        ensure_codev_safe_input_path(staged_zmx, role="staged_zmx")
-        shutil.copy2(source_zmx, staged_zmx)
-        import_zmx = staged_zmx
+    # Always import through a staged copy: the WAVM table needs a flush
+    # sentinel or CODE V silently drops to one default wavelength, which also
+    # takes every vd with it (see zmx_import_prep). Staging doubles as the
+    # escape hatch for source paths CODE V cannot open.
+    staged_zmx: Path | None = stage_zmx_for_codev(source_zmx, work_dir)
+    import_zmx = staged_zmx
     sequence_path = work_dir / _READOUT_SEQUENCE_NAME
     result_path = work_dir / _READOUT_RESULT_NAME
     write_codev_readout_sequence(

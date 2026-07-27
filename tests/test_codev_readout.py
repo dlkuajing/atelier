@@ -16,6 +16,7 @@ from app.core.engines.codev_readout import (
     run_codev_readout,
 )
 from app.core.engines.codev_roundtrip import default_patent_roundtrip_seed
+from app.core.engines.zmx_import_prep import STAGED_INPUT_DIRNAME
 
 
 def _fake_codev_executable(tmp_path: Path) -> Path:
@@ -291,7 +292,13 @@ def test_run_codev_readout_stages_dotted_source_and_reports_it(monkeypatch, tmp_
 
     monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
     result = run_codev_readout(source_zmx=source, work_dir=tmp_path / "work", executable=executable)
-    assert result.describe()["staged_zmx"] == str((tmp_path / "work" / "lens.zmx").resolve())
+    # Staging is now unconditional (every import needs its WAVM flush sentinel,
+    # see zmx_import_prep), so the dotted-path escape hatch it also provides
+    # lands in the shared staging sub-directory rather than work_dir itself.
+    assert (
+        result.describe()["staged_zmx"]
+        == str((tmp_path / "work" / STAGED_INPUT_DIRNAME / "lens.zmx").resolve())
+    )
 
 
 def test_run_codev_readout_rejects_dotted_work_dir(tmp_path: Path) -> None:
