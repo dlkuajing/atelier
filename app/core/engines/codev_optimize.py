@@ -70,17 +70,23 @@ class CodeVOptimizationMetrics:
     """Metrics explicitly emitted by the CODE V optimization macro."""
 
     efl_y_mm: float
-    # ``None`` = lateral color was not measurable for this run (see _parse_metrics).
-    # It is NOT interchangeable with 0.0, which means "measured, and achromatic".
+    # Every ``None`` below means "not measurable for this run" (see
+    # _parse_metrics). None is NEVER interchangeable with a numeric value:
+    # 0.0 lateral color means "measured, and achromatic", 0.0 RMS spot would
+    # mean "measured as a perfect point", and both are what the CODE V macros
+    # emit when nothing traced at all.
     max_lateral_color_um: float | None
-    max_rms_spot_diameter_um: float
-    max_rms_wavefront_error_waves: float
-    max_distortion_pct: float
+    max_rms_spot_diameter_um: float | None
+    max_rms_wavefront_error_waves: float | None
+    max_distortion_pct: float | None
     # Wavelength count CODE V actually had. ``None`` for legacy result files
     # written before the macro emitted it -- unknown, not "verified fine".
     wavelength_count: int | None = None
+    # True when no field produced a traceable ray, so every ray-derived metric
+    # above is the macro's initial value rather than a measurement.
+    ray_trace_degenerate: bool = False
 
-    def describe(self) -> dict[str, float | None]:
+    def describe(self) -> dict[str, float | bool | None]:
         return {
             "efl_y_mm": self.efl_y_mm,
             "max_lateral_color_um": self.max_lateral_color_um,
@@ -88,6 +94,7 @@ class CodeVOptimizationMetrics:
             "max_rms_wavefront_error_waves": self.max_rms_wavefront_error_waves,
             "max_distortion_pct": self.max_distortion_pct,
             "wavelength_count": self.wavelength_count,
+            "ray_trace_degenerate": self.ray_trace_degenerate,
         }
 
 
@@ -2281,8 +2288,11 @@ def _parse_tolerance_sensitivity(
                 parameter_name=parameter_name,
                 perturbation=perturbation,
                 mtf_drop=mtf_drop,
-                nominal_mtf=_optional_float(data, f"{prefix}.nominal_mtf"),
-                perturbed_mtf=_optional_float(data, f"{prefix}.perturbed_mtf"),
+                # 1.0 是 @mtfmin 的"无一视场出数"种子值，不是"完美 MTF"。
+                nominal_mtf=_measured_mtf_or_none(_optional_float(data, f"{prefix}.nominal_mtf")),
+                perturbed_mtf=_measured_mtf_or_none(
+                    _optional_float(data, f"{prefix}.perturbed_mtf")
+                ),
                 provenance=data.get("tolerance.provenance", "codev-run"),
             )
         )
@@ -2337,17 +2347,78 @@ def _parse_metrics(data: Mapping[str, str], prefix: str) -> CodeVOptimizationMet
     # value alone, and the wavelength count is the only sound discriminator.
     if wavelength_count is not None and wavelength_count < 3:
         lateral_color = None
+
+    # Second, independent degeneracy: NO field traced at all.
+    #
+    # Every metric FCT in _metric_function_block seeds an accumulator and only
+    # updates it for fields whose query succeeds, so a system where every field
+    # fails returns the seed value -- and each seed value is the *ideal* reading:
+    # @rmssum/@wfewav/@dstpct start at ``^max == 0`` and @mtfmin at ``^min == 1``.
+    # Real-machine evidence (2026-07-27, 8 corpus seeds x 2 arms): 4 of the 8
+    # returned exactly rms=0 / wfe=0 / distortion=0 / lat=0 / mtf=1 while their
+    # EFL computed normally, and their listings carry 99x "Total reflection at
+    # surface 12", "Ray missed surface", "Unable to find chief ray" -- CODE V
+    # even printed "distortion calculations may be in error." 16 times.
+    #
+    # RMS spot diameter and RMS wavefront error are positive-definite, so <= 0
+    # is self-marking for those two. Distortion and lateral color have legitimate
+    # 0.0 readings and cannot be judged by value -- the collapse of BOTH
+    # positive-definite metrics is what tells us nothing was traced.
+    #
+    # This guard is what keeps the multi-wavelength import fix from *opening* a
+    # hole: once a trace-failed seed reports NUM W = 3, the wavelength test above
+    # no longer fires, and its 0.0 lateral color would read as "measured, and
+    # perfectly achromatic".
+    rms_spot = _positive_metric_or_none(_required_float(data, f"{prefix}.max_rms_spot_diameter_um"))
+    wavefront_error = _positive_metric_or_none(
+        _required_float(data, f"{prefix}.max_rms_wavefront_error_waves")
+    )
+    distortion: float | None = _required_float(data, f"{prefix}.max_distortion_pct")
+    ray_trace_degenerate = rms_spot is None and wavefront_error is None
+    if ray_trace_degenerate:
+        distortion = None
+        lateral_color = None
+
     return CodeVOptimizationMetrics(
         efl_y_mm=_required_float(data, f"{prefix}.efl_y_mm"),
         max_lateral_color_um=lateral_color,
-        max_rms_spot_diameter_um=_required_float(data, f"{prefix}.max_rms_spot_diameter_um"),
-        max_rms_wavefront_error_waves=_required_float(
-            data,
-            f"{prefix}.max_rms_wavefront_error_waves",
-        ),
-        max_distortion_pct=_required_float(data, f"{prefix}.max_distortion_pct"),
+        max_rms_spot_diameter_um=rms_spot,
+        max_rms_wavefront_error_waves=wavefront_error,
+        max_distortion_pct=distortion,
         wavelength_count=wavelength_count,
+        ray_trace_degenerate=ray_trace_degenerate,
     )
+
+
+def _positive_metric_or_none(value: float | None) -> float | None:
+    """Return a positive-definite metric, or ``None`` when it cannot be one.
+
+    RMS spot diameter and RMS wavefront error are strictly positive for any real
+    system (diffraction sets a floor above zero), so ``<= 0`` can only be the
+    "nothing traced" accumulator seed described in :func:`_parse_metrics`, and a
+    non-finite value can only be a broken export.
+    """
+
+    if value is None or not math.isfinite(value) or value <= 0.0:
+        return None
+    return value
+
+
+def _measured_mtf_or_none(value: float | None) -> float | None:
+    """Return a measured MTF, or ``None`` when the reading is the ``@mtfmin`` seed.
+
+    ``@mtfmin`` starts at ``^min == 1`` and only ever decreases, so 1.0 survives
+    exactly when no field produced a modulation value. Callers always evaluate at
+    a strictly positive frequency (``_validate_positive`` on
+    ``tolerance_mtf_frequency_lpmm``), where diffraction bounds MTF strictly below
+    1 -- so ``>= 1.0`` is self-marking, and ``<= 0`` is likewise unphysical.
+    """
+
+    if value is None or not math.isfinite(value):
+        return None
+    if value <= 0.0 or value >= 1.0:
+        return None
+    return value
 
 
 def _metric_function_block() -> list[str]:
