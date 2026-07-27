@@ -1,6 +1,6 @@
 # Quick Plan: Patent saturation repository slimming
 
-**Status:** Complete (latest-main integration and PR publication pending)
+**Status:** Complete (PR publication pending)
 **Date:** 2026-07-27
 **Base:** `origin/main` at `42803f8de6c6d8f6a2dbd5a0d4eb0c2ed8cf5ad7`
 **Source branch:** `codex/patent-saturation-ledger` at
@@ -116,8 +116,9 @@ separate issues:
 After those corrections, the exact CI-equivalent offline command passed with 4,133
 passed and one skipped in 22 minutes 12 seconds. The focused parallel regression passed
 31/31; Ruff, CI YAML parsing, diff checks, `git lfs fsck`, manifest rehash, source
-worktree and process inventories also pass. `origin/main` subsequently advanced again
-through PR #89, so that final two-commit integration remains before publication.
+worktree and process inventories also pass. The later PR #89 pair was merged through
+`17d71802`; its four affected Stage C/orchestration test files pass 193/193 under the
+same explicit non-`real_machine` marker.
 
 ## Safety boundary
 
@@ -152,6 +153,6 @@ through PR #89, so that final two-commit integration remains before publication.
   is below GitHub's push limits and the evidence contract remains intact.
 - [x] Integrate the six commits that first reached `origin/main` during validation and
   make the inherited parallel CI command explicitly offline-safe.
-- [ ] Integrate the two commits from PR #89 that reached `origin/main` after the final
-  full local gate, then rerun the affected gates.
+- [x] Integrate the two commits from PR #89 that reached `origin/main` after the final
+  full local gate and rerun the affected gates.
 - [ ] Push the slim branch and publish it through a reviewed PR.

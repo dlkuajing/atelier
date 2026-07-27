@@ -38,8 +38,9 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   污染的 job-0020/0021 attempt-1 永久排除。
 - **Stage B**：8/8 unique accepted，30 outcomes，6 pre-run-bound + 2 retrospective，no incomplete。
   manifest SHA256 `29384d5d9a10356c8b9bd908c48ab6970977fcafe77ac59a100aaf268350d969`。
-- **Stage C**：48/48 receipts，**2 delivered / 46 blocked**；6/48 run metrics usable；3/24 cells complete。
-  ← 这是 v2 判据 ① 的当前真实基线：产能不是放大，是堵塞。
+- **Stage C**：48/48 receipts，**6 delivered / 42 blocked**；6/48 run metrics usable；3/24 cells complete。
+  ← PR #89 按 CODE V 单精度回读修正不可满足的 landing 比较后重放全包所得；v2 判据 ①
+  的当前真实基线仍是产能堵塞，不是放大。
 - **Production**：仅 `US9304295B2` 一个 exact target 完成 fresh Stage B → Stage C receipt →
   candidate → exports-v2 同源闭环；外层 C1 CLI exit=1。
 - **Convergence**：`TARGET_CONVERGED` capability ceiling 为 `efl + conditional fnum`；
@@ -71,7 +72,8 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   安装了 CODE V，意外启动了一条 `real_machine` round-trip；该用例以 wavelength
   24 vs 3 失败并退出，未重跑。CI 已改为显式
   `uv run pytest -q -n 4 -m "not real_machine"`，后续全量验证未再触发 CODE V。
-- `origin/main` 在最终全量门禁后又通过 PR #89 前移两提交；发布前须合入并复验。
+- `origin/main` 在最终全量门禁后通过 PR #89 前移的两提交已由 `17d71802` 合入；
+  四个受影响 Stage C/orchestration 测试文件 193/193 通过。
 
 ## Blockers / Concerns
 
