@@ -1,6 +1,6 @@
 # Quick Plan: Patent saturation repository slimming
 
-**Status:** Active
+**Status:** Complete (publication integration pending)
 **Date:** 2026-07-27
 **Base:** `origin/main` at `42803f8de6c6d8f6a2dbd5a0d4eb0c2ed8cf5ad7`
 **Source branch:** `codex/patent-saturation-ledger` at
@@ -29,7 +29,7 @@ Recomputed from the source branch tree at
 
 ## Storage decision
 
-Use Git LFS for the 4,138 immutable evidence binaries and retain code, schemas,
+Use Git LFS for immutable evidence binaries and retain code, schemas,
 manifests, ledgers, receipts and text metadata in ordinary Git.
 
 - Rewrite only the unpublished derivative branch
@@ -55,12 +55,12 @@ map:
   `6dad8ab815498453fb2b3e1970ff7bfddd5e85d1`.
 - `origin/main` remains:
   `42803f8de6c6d8f6a2dbd5a0d4eb0c2ed8cf5ad7`.
-- Current checkout contains 4,138 LFS paths backed by 4,124 unique objects.
-- LFS logical bytes are 1,751,304,821; unique LFS object bytes are 1,718,987,981.
-- Remaining ordinary-Git delta history contains 16,631 blobs totaling 903,375,763
+- Final checkout contains 4,269 LFS paths backed by 4,226 unique objects.
+- LFS logical bytes are 2,043,282,327; unique LFS object bytes are 1,942,561,003.
+- Remaining ordinary-Git delta history contains 22,490 blobs totaling 1,010,973,488
   uncompressed bytes; the largest remaining blob is 4,557,660 bytes.
-- A full standalone pack of every object in `origin/main..HEAD` is 15,328,265 bytes
-  (16,172,781 bytes including its index), well below GitHub's 2 GiB push limit.
+- A conservative standalone pack of every ordinary-Git object in
+  `origin/main..HEAD` is 29,439,968 bytes, well below GitHub's 2 GiB push limit.
 - `lfs-commit-object-map.csv` records all 230 old/new commit pairs.
 - `lfs-evidence-manifest.json` records every path, exact byte count and SHA-256 LFS
   object ID and is the CI cache-key source.
@@ -73,6 +73,29 @@ returned clean at the original SHA. No file content or source commit was discard
 CI now restores `.git/lfs`, runs `git lfs pull`, and verifies the hydrated objects
 with `git lfs fsck` before dependency installation and tests. Tests therefore continue
 to see the original evidence bytes rather than pointer text.
+
+## Reproducibility closure
+
+Validation exposed that the source worktree's green suite depended on ignored local
+evidence that was absent from Git. A fresh checkout first missed USPTO HTML and PDF
+sources, then conversion receipts referenced by the replay ledger. The derivative now
+tracks the complete tested offline closure while leaving the source archive untouched:
+
+- 865 previously ignored patent-lake evidence files: 610 HTML, 127 PDF, 123 JSON,
+  four PNG and one text file. PDF/PNG content follows the existing LFS policy.
+- 8,108 previously ignored conversion-attempt files and 567 staging ZMX files,
+  totaling 32,934,259 bytes.
+- The two local OCR ONNX model files remain ignored because the offline suite does not
+  require them and they are not part of any checked evidence reference.
+- Raw USPTO batches, the frozen optical-case index, and quick-task JSON/Markdown
+  evidence have explicit checkout-byte rules so Linux and Windows reproduce the hashes
+  recorded by the manifests.
+
+The complete non-`real_machine` verification is green: 4,133 passed, one skipped and
+10 deselected. This is composed of the 1,477-test patent shard and four non-patent
+partitions (the heaviest first partition was itself split after one transient wrapper
+exit). `git lfs fsck`, the 4,269-path manifest hash test, Ruff and diff checks pass.
+No CODE V process was started or controlled.
 
 ## Safety boundary
 
@@ -100,8 +123,10 @@ to see the original evidence bytes rather than pointer text.
   byte/hash/source receipts and checkout behavior.
 - [x] Recompute evidence manifests and acceptance checks without inventing or repairing
   source data.
-- [ ] Run the complete non-`real_machine` test suite, Ruff, diff, object-size,
+- [x] Run the complete non-`real_machine` test suite, Ruff, diff, object-size,
   protected-path, worktree and primary-repository audits.
-- [ ] Record the final storage/restore contract in `STATE.md` and `decisions.log`.
-- [ ] Commit atomically; push and PR only after the slim branch is demonstrably below
-  GitHub's limits and the user-approved evidence contract remains intact.
+- [x] Record the final storage/restore contract in `STATE.md` and `decisions.log`.
+- [x] Commit the storage migration and reproducibility closure after proving the branch
+  is below GitHub's push limits and the evidence contract remains intact.
+- [ ] Integrate the six commits that reached `origin/main` during validation, rerun the
+  affected gates, then push and publish through a reviewed PR.

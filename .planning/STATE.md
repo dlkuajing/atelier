@@ -1293,15 +1293,21 @@ and the separate attested lease broker still holding the same lease through dura
 **Repository transport update (2026-07-27, patent saturation slimming):**
 The complete 229-commit patent-saturation history remains locally archived at source
 branch `codex/patent-saturation-ledger` commit `6dad8ab8`. A transport-only derivative,
-`codex/patent-saturation-slim`, converts exactly 4,138 immutable patent evidence
+`codex/patent-saturation-slim`, converts immutable patent evidence
 binaries under `.planning/quick/` and `data/patent-lake/` to Git LFS while preserving
-their checkout bytes. The LFS manifest freezes 1,751,304,821 logical bytes across
-4,124 unique SHA-256 objects totaling 1,718,987,981 bytes; the 230-entry commit map
-preserves the old/new history correspondence. Remaining ordinary-Git delta blobs
-total 903,375,763 uncompressed bytes with a 4,557,660-byte maximum. CI must restore
-and hydrate `.git/lfs`, then pass `git lfs fsck`, before any test reads evidence. A
-standalone pack of every ordinary-Git object above `origin/main` is 15,328,265 bytes
-(16,172,781 bytes including its index), below GitHub's 2 GiB push limit.
-This changes storage representation only: source identities, evidence hashes, ledger
-state, terminal classifications and the still-incomplete parent saturation goal are
-unchanged. No CODE V action is authorized or used.
+their checkout bytes. Fresh-checkout validation also proved that the source worktree's
+green suite depended on ignored local files. The derivative therefore adds the complete
+tested offline closure: 865 patent-lake HTML/PDF/JSON/PNG/TXT files plus 8,108
+conversion-attempt and 567 staging files; the two unused local OCR ONNX models remain
+ignored. The final LFS manifest freezes 2,043,282,327 logical bytes across 4,269 paths
+and 4,226 unique SHA-256 objects totaling 1,942,561,003 bytes; the 230-entry commit map
+preserves the rewritten history correspondence. Remaining ordinary-Git delta blobs total
+1,010,973,488 uncompressed bytes with a 4,557,660-byte maximum. CI must restore and
+hydrate `.git/lfs`, then pass `git lfs fsck`, before any test reads evidence. A
+conservative standalone pack of every ordinary-Git object above `origin/main` is
+29,439,968 bytes, below GitHub's 2 GiB push limit. Offline verification is 4,133 passed,
+one skipped and 10 deselected; Ruff, diff, LFS fsck and the hydrated manifest test pass.
+Source identities, evidence hashes, ledger state, terminal classifications and the
+still-incomplete parent saturation goal are unchanged. No CODE V action is authorized
+or used. `origin/main` advanced by six commits during validation, so publication remains
+pending integration and affected-gate revalidation through the PR-only path.
