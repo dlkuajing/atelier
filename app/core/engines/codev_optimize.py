@@ -24,6 +24,7 @@ from app.core.engines.codev_readout import (
     parse_codev_readout_file,
 )
 from app.core.engines.codev_roundtrip import DEFAULT_PATENT_ROUNDTRIP_SEED
+from app.core.engines.zmx_import_prep import stage_zmx_for_codev
 from app.core.engines.zmx_writer import write_zmx_from_codev_readout
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
 
@@ -339,6 +340,9 @@ def run_codev_optimize(
     source_zmx = default_optimize_seed() if source_zmx is None else Path(source_zmx)
     work_dir = Path(work_dir)
     work_dir.mkdir(parents=True, exist_ok=True)
+    # Import through a wavelength-normalized copy; ``source_zmx`` stays the
+    # original so provenance and derived filenames are unaffected.
+    import_zmx = stage_zmx_for_codev(source_zmx, work_dir)
     sequence_path = work_dir / _OPTIMIZE_SEQUENCE_NAME
     result_path = work_dir / _OPTIMIZE_RESULT_NAME
     optimized_readout_path = work_dir / _OPTIMIZED_READOUT_NAME
@@ -349,7 +353,7 @@ def run_codev_optimize(
 
     write_codev_optimize_sequence(
         sequence_path=sequence_path,
-        source_zmx=source_zmx,
+        source_zmx=import_zmx,
         result_path=result_path,
         optimized_readout_path=optimized_readout_path,
         optimized_zmx_filename=optimized_zmx_filename,
@@ -1054,6 +1058,8 @@ def run_codev_target(
     source_zmx = Path(source_zmx)
     work_dir = Path(work_dir).resolve()  # 绝对路径：CODE V BUF EXP 相对路径会二次拼接失败
     work_dir.mkdir(parents=True, exist_ok=True)
+    # 导入走波长归一化副本；``source_zmx`` 保持原件，产物命名与溯源不受影响。
+    import_zmx = stage_zmx_for_codev(source_zmx, work_dir)
     filename_token = (
         rung_filename_tag
         if rung_filename_tag is not None
@@ -1089,7 +1095,7 @@ def run_codev_target(
                 stale.unlink()
     seq.write_text(
         build_codev_target_sequence(
-            source_zmx=source_zmx, result_path=res, target_efl_mm=target_efl_mm,
+            source_zmx=import_zmx, result_path=res, target_efl_mm=target_efl_mm,
             target_f_number=target_f_number, target_imh_mm=target_imh_mm, stage=stage,
             emit_optimized_zmx=emit_optimized_zmx,
             optimized_readout_path=optimized_readout_path,

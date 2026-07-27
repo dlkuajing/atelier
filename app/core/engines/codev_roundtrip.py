@@ -15,6 +15,7 @@ from app.core.engines.codev_batch import (
     run_codev_batch,
 )
 from app.core.engines.codev_readout import CodeVReadoutResult, run_codev_readout
+from app.core.engines.zmx_import_prep import stage_zmx_for_codev
 from app.core.engines.zmx_writer import write_zmx_from_codev_readout
 from app.core.prescription_table import PrescriptionTable, extract_prescription_table
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx
@@ -257,6 +258,9 @@ def run_codev_zmx_import(
 
     source_zmx = Path(source_zmx)
     work_dir = Path(work_dir)
+    # Import through a wavelength-normalized copy (see zmx_import_prep); the
+    # returned result keeps ``source_zmx`` so provenance points at the original.
+    import_zmx = stage_zmx_for_codev(source_zmx, work_dir)
     sequence_path = work_dir / _ROUNDTRIP_SEQUENCE_NAME
     result_path = work_dir / _ROUNDTRIP_RESULT_NAME
     command_export_path = work_dir / _ROUNDTRIP_COMMAND_EXPORT_NAME
@@ -265,7 +269,7 @@ def run_codev_zmx_import(
             stale.unlink()
     write_zmx_import_sequence(
         sequence_path=sequence_path,
-        source_zmx=source_zmx,
+        source_zmx=import_zmx,
         result_path=result_path,
         command_export_path=command_export_path,
     )
