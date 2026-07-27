@@ -65,4 +65,4 @@ jobs:
         # 串行跑实测 31-36 分钟，本地同一套测试 -n 8 只要 6 分 40 秒——差距几乎全是并行度。
         # 不用 -n auto：runner 规格若变，worker 数会跟着涨并撞 Optiland 内存峰值。
         # 不用 -v：逐条输出对 CI 日志无价值，只增加 IO。
-        run: uv run pytest -q -n 4
+        run: uv run pytest -q -n 4 -m "not real_machine"

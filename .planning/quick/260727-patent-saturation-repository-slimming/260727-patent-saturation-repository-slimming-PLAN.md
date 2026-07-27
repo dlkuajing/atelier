@@ -1,6 +1,6 @@
 # Quick Plan: Patent saturation repository slimming
 
-**Status:** Complete (publication integration pending)
+**Status:** Complete (latest-main integration and PR publication pending)
 **Date:** 2026-07-27
 **Base:** `origin/main` at `42803f8de6c6d8f6a2dbd5a0d4eb0c2ed8cf5ad7`
 **Source branch:** `codex/patent-saturation-ledger` at
@@ -95,7 +95,29 @@ The complete non-`real_machine` verification is green: 4,133 passed, one skipped
 10 deselected. This is composed of the 1,477-test patent shard and four non-patent
 partitions (the heaviest first partition was itself split after one transient wrapper
 exit). `git lfs fsck`, the 4,269-path manifest hash test, Ruff and diff checks pass.
-No CODE V process was started or controlled.
+Those initial transport and evidence-closure gates did not start or control CODE V.
+
+## Latest-main integration
+
+The six commits that first reached `origin/main` during validation were merged through
+`6016b662`, whose second parent is `42e05fbb`. Replaying the newly inherited
+`uv run pytest -q -n 4` command on a Windows machine with CODE V installed exposed two
+separate issues:
+
+- Because the command lacked a marker exclusion, it accidentally selected one
+  `real_machine` round-trip test. That test started the local CODE V executable, exited
+  with a 24-versus-3 wavelength mismatch, and was not rerun. The CI command now
+  explicitly uses `-m "not real_machine"`.
+- Six offline tests failed only under xdist because destination-derived temporary
+  filenames crossed the Windows `MAX_PATH` boundary. Same-directory temporary names
+  now use only a UUID while retaining atomic replace or exclusive-create semantics.
+  The reviewed Stage B wrapper hard pin was recomputed for the resulting source bytes.
+
+After those corrections, the exact CI-equivalent offline command passed with 4,133
+passed and one skipped in 22 minutes 12 seconds. The focused parallel regression passed
+31/31; Ruff, CI YAML parsing, diff checks, `git lfs fsck`, manifest rehash, source
+worktree and process inventories also pass. `origin/main` subsequently advanced again
+through PR #89, so that final two-commit integration remains before publication.
 
 ## Safety boundary
 
@@ -128,5 +150,8 @@ No CODE V process was started or controlled.
 - [x] Record the final storage/restore contract in `STATE.md` and `decisions.log`.
 - [x] Commit the storage migration and reproducibility closure after proving the branch
   is below GitHub's push limits and the evidence contract remains intact.
-- [ ] Integrate the six commits that reached `origin/main` during validation, rerun the
-  affected gates, then push and publish through a reviewed PR.
+- [x] Integrate the six commits that first reached `origin/main` during validation and
+  make the inherited parallel CI command explicitly offline-safe.
+- [ ] Integrate the two commits from PR #89 that reached `origin/main` after the final
+  full local gate, then rerun the affected gates.
+- [ ] Push the slim branch and publish it through a reviewed PR.

@@ -502,7 +502,7 @@ def reconstruct_image_fields(
             line = f"YFLN {y_values}"
         rebuilt.append(line)
     output.parent.mkdir(parents=True, exist_ok=True)
-    temp = output.with_name(f".{output.name}.{uuid.uuid4().hex}.tmp")
+    temp = output.with_name(f".tmp-{uuid.uuid4().hex}")
     try:
         payload = ("\n".join(rebuilt) + "\n").encode("utf-8")
         temp.write_bytes(payload)

@@ -563,7 +563,7 @@ def _durable_move(source: Path, destination: Path, *, replace: bool) -> None:
 
 def _exclusive_bytes(path: Path, raw: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_name(f".{path.name}.exclusive-{uuid4().hex}.tmp")
+    temporary = path.with_name(f".exclusive-{uuid4().hex}.tmp")
     try:
         with temporary.open("xb") as handle:
             handle.write(raw)

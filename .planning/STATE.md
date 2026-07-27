@@ -63,8 +63,15 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   blob 为 4,557,660 bytes，独立 pack 为 29,439,968 bytes。
 - fresh-checkout 修复补入此前被忽略、但被测试/账本引用的 865 个 patent-lake 文件与
   8,675 个 conversion-attempt/staging 文件；两个无引用 OCR ONNX 模型继续忽略。
-- 离线门禁为 4,133 passed、1 skipped、10 deselected；Ruff、diff、LFS fsck 与
-  hydrated manifest rehash 均通过。没有启动或控制 CODE V。
+- 首轮传输/证据闭包门禁为 4,133 passed、1 skipped、10 deselected；合入
+  `origin/main@42e05fbb` 后的最终 CI 等价离线门禁为 4,133 passed、1 skipped，
+  31 条定向并行回归全绿；Ruff、CI YAML、diff、LFS fsck 与 hydrated manifest
+  rehash 均通过。
+- 合入主线后首次照搬 `uv run pytest -q -n 4` 时，因上游命令未排除 marker 且本机
+  安装了 CODE V，意外启动了一条 `real_machine` round-trip；该用例以 wavelength
+  24 vs 3 失败并退出，未重跑。CI 已改为显式
+  `uv run pytest -q -n 4 -m "not real_machine"`，后续全量验证未再触发 CODE V。
+- `origin/main` 在最终全量门禁后又通过 PR #89 前移两提交；发布前须合入并复验。
 
 ## Blockers / Concerns
 
