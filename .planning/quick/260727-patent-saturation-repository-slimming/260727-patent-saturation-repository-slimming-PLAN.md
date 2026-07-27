@@ -154,6 +154,21 @@ executable names with `PureWindowsPath` on every host. The exact four failing te
 plus all guard parameters pass 8/8 locally; Ruff and diff checks pass. Linux CI remains
 the final cross-platform gate.
 
+Run `30285724536` then passed the hydrated Linux checkout at
+`f96270b04da01ad8a3a7de7d3eb1b9ce9d7c235c`: 4,132 passed, 7 skipped and 10
+deselected in 54 minutes 47 seconds; the complete job finished successfully in 56
+minutes 55 seconds. The non-blocking post-job cache warnings did not change the job
+conclusion, and the preceding LFS fsck was successful.
+
+During that run, `origin/main` advanced by eight commits through PRs #93 and #94 to
+`4449d7c9f15aaaf1e4442cfd835cab619a6a7d22`. Those commits add the shared CODE V ZMX
+import preparation seam, fail-closed metric behavior, tests and traceability census.
+They were merged without conflict at `ec5f02e57cbb85bc3cfc870a03eec33f72190fa9`.
+Because the upstream drift changes production engine code and tests, the prior green
+run cannot authorize the new head. The observed local CODE V process activity also
+keeps further local Python/pytest paused, so the next hydrated GitHub CI run is the
+authoritative integration gate.
+
 ## Safety boundary
 
 - Preserve the source branch and worktree unchanged as the complete local evidence
@@ -203,5 +218,8 @@ steps are Git/GitHub-only.
   xdist configuration; resolve CI to bounded serial/offline-safe execution.
 - [x] Preserve historic evidence bytes while fixing the four Linux checkout-path
   failures exposed by replacement run `30280348106`.
+- [x] Obtain a green Linux checkout run at `f96270b0` (`30285724536`: 4,132 passed,
+  7 skipped, 10 deselected).
+- [x] Integrate the eight commits in `origin/main@4449d7c9` after that run completed.
 - [ ] Obtain a green replacement PR CI run, record review evidence and merge through
   the PR path.

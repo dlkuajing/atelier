@@ -88,7 +88,13 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   两项反斜杠相对路径、一项回执绝对 worktree 路径、一项离线 CODE V 守卫按宿主
   `Path` 解析 Windows 命令。修复仅在测试读取层用 `PureWindowsPath` 映射当前 checkout，
   保留 1,616 份含绝对路径的原始回执及其哈希不变；精确失败集与守卫参数 8/8 通过，
-  Ruff/diff 通过，下一轮 Linux PR CI 待验证。
+  Ruff/diff 通过。run `30285724536` 在 `f96270b0` 全绿：4,132 passed / 7 skipped /
+  10 deselected，pytest 54m47s、job 56m55s，LFS fsck 成功。
+- 该 run 期间 `origin/main` 经 PR #93/#94 前移 8 提交至 `4449d7c9`，包含多波长
+  导入接缝、指标 fail-closed、测试与可追迹率普查；已无冲突合入
+  `ec5f02e5`。因上游触及生产 engine 与测试，`f96270b0` 的绿不能覆盖新 HEAD；
+  又因下述本机进程红线继续暂停本地 Python/pytest，须由下一轮 hydrated PR CI
+  完成最终集成验证。
 - 2026-07-28 00:38 +08:00 的测试后只读库存两次发现短时 `codev`/`codevm`：
   PIDs 22288/21752（00:38:03）及 3516/5288（00:38:38）；均在 CIM 父进程查询前自行
   退出，来源未能证明。未终止或控制进程；发现后停止本地 Python/pytest，余下只做
