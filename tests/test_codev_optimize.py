@@ -26,6 +26,7 @@ from app.core.engines.codev_optimize import (
     _geometric_fnum_ladder,
     _glass_map_hull,
     _measured_fnum,
+    _parse_metrics,
     build_codev_optimize_sequence,
     build_codev_target_sequence,
     default_optimize_seed,
@@ -2808,3 +2809,67 @@ def test_fno_ladder_ray_retry_not_triggered_without_ray_evidence(
     assert target_rung["ray_retry"] is None
     assert target_rung["ray_traceable"] is None
     assert result["target_achieved"] is False
+
+
+def test_lateral_color_fails_closed_below_three_wavelengths() -> None:
+    """@lcum spans W1..W(NUM W); at NUM W < 3 both ends are the same wavelength.
+
+    The macro then reports a constant 0.0 -- perfect achromatism for a system
+    whose chromatic behaviour was never evaluated. Unlike @rmssum, 0.0 is a
+    physically legitimate lateral color, so the value cannot self-mark and the
+    wavelength count is the only sound discriminator.
+    """
+
+    base = {
+        "after.efl_y_mm": "3.6",
+        "after.max_lateral_color_um": "0.0",
+        "after.max_rms_spot_diameter_um": "18.0",
+        "after.max_rms_wavefront_error_waves": "0.17",
+        "after.max_distortion_pct": "1.1",
+    }
+
+    # Single wavelength: the 0.0 is degenerate and must not be reported as a value.
+    single = _parse_metrics({**base, "after.num_wavelengths": "1"}, "after")
+    assert single.max_lateral_color_um is None
+    assert single.wavelength_count == 1
+
+    # Two wavelengths still cannot drive @lcum's shortest/longest span.
+    two = _parse_metrics({**base, "after.num_wavelengths": "2"}, "after")
+    assert two.max_lateral_color_um is None
+
+    # Three or more: a genuine 0.0 is preserved -- achromatic is a real result.
+    three = _parse_metrics({**base, "after.num_wavelengths": "3"}, "after")
+    assert three.max_lateral_color_um == 0.0
+    assert three.wavelength_count == 3
+
+    # A real nonzero measurement is untouched.
+    measured = _parse_metrics(
+        {**base, "after.max_lateral_color_um": "3.1", "after.num_wavelengths": "3"}, "after"
+    )
+    assert measured.max_lateral_color_um == 3.1
+
+    # Legacy result files predate the key: unknown, so the value is left as-is
+    # rather than retroactively invalidated -- but the count stays None, which
+    # is not the same as "verified fine".
+    legacy = _parse_metrics(base, "after")
+    assert legacy.max_lateral_color_um == 0.0
+    assert legacy.wavelength_count is None
+
+    # Malformed / non-positive counts degrade to unknown, never to "measurable".
+    for bad in ("", "abc", "0", "-2"):
+        parsed = _parse_metrics({**base, "after.num_wavelengths": bad}, "after")
+        assert parsed.wavelength_count is None
+
+
+def test_optimize_sequence_emits_wavelength_count(tmp_path: Path) -> None:
+    """The reader can only fail closed if the macro actually reports NUM W."""
+
+    sequence = build_codev_optimize_sequence(
+        source_zmx=default_optimize_seed(),
+        result_path=tmp_path / "result.tsv",
+        optimized_readout_path=tmp_path / "optimized-readout.tsv",
+    )
+    assert "^before_num_wavelengths == (NUM W)" in sequence
+    assert "^after_num_wavelengths == (NUM W)" in sequence
+    assert '"before.num_wavelengths"' in sequence
+    assert '"after.num_wavelengths"' in sequence
