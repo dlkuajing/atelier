@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
+from typing import Any
 
 import scripts.export_acceptance_tasks as acceptance_export
 from scripts.export_acceptance_tasks import (
@@ -10,9 +12,58 @@ from scripts.export_acceptance_tasks import (
     write_artifacts,
 )
 
+_REPORT_CACHE: dict[tuple[Any, ...], dict[str, Any]] = {}
+
+
+def _report(**kwargs: Any) -> dict[str, Any]:
+    """``build_report`` memoized across tests in this module.
+
+    ``build_report`` forks ``uv run python scripts/evaluate_design_agent.py``
+    once per case, and every fork re-imports the whole Optiland/scipy/numpy
+    stack before running a full optical evaluation. Two tests here call it with
+    *identical* arguments -- ``test_acceptance_export_writes_runner_summary_artifact``
+    and ``test_acceptance_export_executes_case_verification_probe``, both
+    ``case_names={"high_fov_main_uses_89deg_seed"}`` plus
+    ``execute_case_verification=True`` -- so the second one recomputed a report
+    the first had already produced.
+
+    Measured on identical serial CI baselines (2026-07-27): those two ran at
+    117.67s and 116.52s without the cache (main run 30254095332) and dropped
+    off the slowest-25 table entirely (<2s) with it (run 30256323174) --
+    about 232s of CPU that was pure duplication.
+
+    Two honest caveats, so nobody over-credits this:
+
+    * ``test_seed_ingestion_export_empty_after_evidence_layer_cleared`` looks
+      like a third duplicate but is NOT one: it also passes
+      ``stage="seed_ingestion"`` and ``execute_local_probes=True``, so it keys
+      differently and still pays full price.
+    * End-to-end wall clock did not measurably improve (1782s -> 1842s across
+      those two runs). Runner variance dominates: the single slowest test moved
+      593s -> 711s (+20%) between the same two runs. The duplication removed
+      here is real, but it is smaller than the noise floor.
+
+    Caching is observationally equivalent: ``build_report`` writes no files
+    (that is ``write_artifacts``' job) and its result depends only on these
+    arguments. Callers get a deep copy, so a test mutating its report cannot
+    leak into another.
+    """
+
+    case_names = kwargs.get("case_names")
+    key = (
+        frozenset(case_names) if case_names is not None else None,
+        kwargs.get("stage"),
+        kwargs.get("execute_local_probes", False),
+        kwargs.get("execute_case_verification", False),
+        kwargs.get("probe_timeout_s"),
+    )
+    if key not in _REPORT_CACHE:
+        _REPORT_CACHE[key] = build_report(**kwargs)
+    return copy.deepcopy(_REPORT_CACHE[key])
+
 
 def test_acceptance_export_has_no_stale_remediation_resolution_packets():
-    report = build_report(
+    report = _report(
         stage="remediation_resolution",
         case_names={"big_sensor_prefers_large_image_height_seed"},
         execute_local_probes=True,
@@ -31,7 +82,7 @@ def test_seed_ingestion_export_empty_after_evidence_layer_cleared():
     # (blocker resolved at the evidence layer, not hidden). Regression guard that
     # the machinery stays dissolved; the seed-task packet/runner logic remains
     # covered by the inline-data tests below.
-    report = build_report(
+    report = _report(
         stage="seed_ingestion",
         case_names={"high_fov_main_uses_89deg_seed"},
         execute_local_probes=True,
@@ -47,7 +98,7 @@ def test_acceptance_export_writes_artifacts(tmp_path):
     # Covered world: the high-FOV case's follow-ups are internal manual tasks
     # (recover full-field, etc.), not a seed-acquisition probe. Artifact writing is
     # exercised against those real tasks.
-    report = build_report(
+    report = _report(
         case_names={"high_fov_main_uses_89deg_seed"},
     )
 
@@ -72,7 +123,7 @@ def test_acceptance_export_writes_artifacts(tmp_path):
 def test_acceptance_export_writes_runner_summary_artifact(tmp_path):
     # Covered world: no external seed blocker, so the runner is manual-followup
     # ready rather than blocked on external evidence.
-    report = build_report(
+    report = _report(
         case_names={"high_fov_main_uses_89deg_seed"},
         execute_case_verification=True,
     )
@@ -97,7 +148,7 @@ def test_acceptance_export_writes_runner_summary_artifact(tmp_path):
 def test_acceptance_export_executes_case_verification_probe():
     # Covered world: the high-FOV follow-ups are internal manual tasks; case
     # verification runs the eval for the case (which passes) per task.
-    report = build_report(
+    report = _report(
         case_names={"high_fov_main_uses_89deg_seed"},
         execute_case_verification=True,
     )
@@ -124,7 +175,7 @@ def test_acceptance_export_executes_case_verification_probe():
 
 
 def test_acceptance_export_scopes_balanced_followups_to_single_case():
-    report = build_report(case_names={"balanced_main_default"})
+    report = _report(case_names={"balanced_main_default"})
 
     assert report["tasks"]
     assert {item["eval_case"] for item in report["tasks"]} == {"balanced_main_default"}
@@ -349,7 +400,7 @@ def test_acceptance_runner_summary_has_no_external_seed_gap_after_evidence_clear
     # layer, so the high-FOV case's runner is manual-followup ready -- there is no
     # external-evidence gap to prioritize. The runner's external-gap and
     # upstream-blocking logic stays covered by the inline-data tests below.
-    report = build_report(
+    report = _report(
         case_names={"high_fov_main_uses_89deg_seed"},
         execute_case_verification=True,
     )
@@ -371,7 +422,7 @@ def test_acceptance_runner_has_no_upstream_seed_blocking_after_evidence_cleared(
     # layer, no external-evidence task exists, so no case's downstream tasks are
     # blocked on an upstream seed gap. The runner's external-gap / upstream-
     # blocking logic stays covered by the inline-data tests above.
-    report = build_report(
+    report = _report(
         case_names={
             "high_fov_main_uses_89deg_seed",
             "ui_high_fov_default_request_stays_blocked",
