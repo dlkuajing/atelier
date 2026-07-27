@@ -1,6 +1,20 @@
 *.bat text eol=crlf
 *.ps1 text eol=crlf
 *.sh text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.toml text eol=lf
+*.lock text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.tsv text eol=lf
+*.css text eol=lf
+*.patch text eol=lf
+*.html text eol=lf
+*.lis -text -diff
+*.trace-tmp -text -diff
+*.out -text -diff
 *.zmx -text
 *.ZMX -text
 *.seq -text

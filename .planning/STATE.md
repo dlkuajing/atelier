@@ -1289,3 +1289,19 @@ heartbeat. Before any future machine call, recheck the retained ledger/artifact 
 `runner`, `codev`, `codevm`, `p18_owner`, `global_owner`, `per_call_owner`, and `launched_subtree`
 are all zero or absent in the exact pre/during/post snapshot contract, with `unknown_carrier` absent
 and the separate attested lease broker still holding the same lease through durable receipt.
+
+**Repository transport update (2026-07-27, patent saturation slimming):**
+The complete 229-commit patent-saturation history remains locally archived at source
+branch `codex/patent-saturation-ledger` commit `6dad8ab8`. A transport-only derivative,
+`codex/patent-saturation-slim`, converts exactly 4,138 immutable patent evidence
+binaries under `.planning/quick/` and `data/patent-lake/` to Git LFS while preserving
+their checkout bytes. The LFS manifest freezes 1,751,304,821 logical bytes across
+4,124 unique SHA-256 objects totaling 1,718,987,981 bytes; the 230-entry commit map
+preserves the old/new history correspondence. Remaining ordinary-Git delta blobs
+total 903,375,763 uncompressed bytes with a 4,557,660-byte maximum. CI must restore
+and hydrate `.git/lfs`, then pass `git lfs fsck`, before any test reads evidence. A
+standalone pack of every ordinary-Git object above `origin/main` is 15,328,265 bytes
+(16,172,781 bytes including its index), below GitHub's 2 GiB push limit.
+This changes storage representation only: source identities, evidence hashes, ledger
+state, terminal classifications and the still-incomplete parent saturation goal are
+unchanged. No CODE V action is authorized or used.

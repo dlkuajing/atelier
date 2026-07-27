@@ -43,6 +43,37 @@ manifests, ledgers, receipts and text metadata in ordinary Git.
 - Do not delete, regenerate, deduplicate by discarding paths, or externalize evidence
   behind an unversioned URL.
 
+## Migration result
+
+`git lfs migrate import` rewrote the 230 unpublished derivative commits (the 229
+source commits plus this quick's plan commit) and produced a complete old/new commit
+map:
+
+- Rewritten migration head:
+  `8c877abab2eaf1d89e28f5173bae18541e0a25f0`.
+- Source branch restored and verified at:
+  `6dad8ab815498453fb2b3e1970ff7bfddd5e85d1`.
+- `origin/main` remains:
+  `42803f8de6c6d8f6a2dbd5a0d4eb0c2ed8cf5ad7`.
+- Current checkout contains 4,138 LFS paths backed by 4,124 unique objects.
+- LFS logical bytes are 1,751,304,821; unique LFS object bytes are 1,718,987,981.
+- Remaining ordinary-Git delta history contains 16,631 blobs totaling 903,375,763
+  uncompressed bytes; the largest remaining blob is 4,557,660 bytes.
+- A full standalone pack of every object in `origin/main..HEAD` is 15,328,265 bytes
+  (16,172,781 bytes including its index), well below GitHub's 2 GiB push limit.
+- `lfs-commit-object-map.csv` records all 230 old/new commit pairs.
+- `lfs-evidence-manifest.json` records every path, exact byte count and SHA-256 LFS
+  object ID and is the CI cache-key source.
+
+Git LFS also moved the local source-branch ref because it pointed into the rewritten
+commit set, despite the explicit include-ref. The old objects remained present; the
+source ref was immediately restored with a guarded `git update-ref`, and its worktree
+returned clean at the original SHA. No file content or source commit was discarded.
+
+CI now restores `.git/lfs`, runs `git lfs pull`, and verifies the hydrated objects
+with `git lfs fsck` before dependency installation and tests. Tests therefore continue
+to see the original evidence bytes rather than pointer text.
+
 ## Safety boundary
 
 - Preserve the source branch and worktree unchanged as the complete local evidence
@@ -65,9 +96,9 @@ manifests, ledgers, receipts and text metadata in ordinary Git.
   external immutable archive) using repository and GitHub runtime facts.
 - [x] Fast-forward this transport-only derivative from `origin/main` to the source
   branch's complete 229-commit logical history.
-- [ ] Migrate eligible large binary evidence out of ordinary Git while preserving
+- [x] Migrate eligible large binary evidence out of ordinary Git while preserving
   byte/hash/source receipts and checkout behavior.
-- [ ] Recompute evidence manifests and acceptance checks without inventing or repairing
+- [x] Recompute evidence manifests and acceptance checks without inventing or repairing
   source data.
 - [ ] Run the complete non-`real_machine` test suite, Ruff, diff, object-size,
   protected-path, worktree and primary-repository audits.

@@ -17,6 +17,22 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Restore Git LFS evidence cache
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ runner.os }}-${{ hashFiles('.planning/quick/260727-patent-saturation-repository-slimming/lfs-evidence-manifest.json') }}
+          restore-keys: |
+            lfs-${{ runner.os }}-
+
+      - name: Hydrate and verify patent evidence
+        run: |
+          git lfs install --local
+          git lfs pull
+          git lfs fsck
 
       - uses: astral-sh/setup-uv@v3
         with:
