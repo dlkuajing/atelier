@@ -6,7 +6,7 @@ import io
 import json
 import math
 import re
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from types import SimpleNamespace
 
 import cv2
@@ -27,6 +27,25 @@ from scripts.patent_to_zmx import (
     prescription_fingerprint,
     write_patent_zmx,
 )
+
+
+def _recorded_repository_path(root: Path, value: object) -> Path:
+    """Resolve retained Windows evidence paths inside the current checkout."""
+
+    recorded = PureWindowsPath(str(value))
+    parts = list(recorded.parts)
+    if recorded.is_absolute():
+        for anchor in (".planning", "data"):
+            if anchor in parts:
+                parts = parts[parts.index(anchor) :]
+                break
+        else:
+            raise AssertionError(f"absolute evidence path has no repository anchor: {value}")
+    resolved_root = root.resolve()
+    resolved = resolved_root.joinpath(*parts).resolve()
+    if not resolved.is_relative_to(resolved_root):
+        raise AssertionError(f"evidence path escapes repository: {value}")
+    return resolved
 
 
 def test_load_patent_pool_filters_only_patents_with_normalized_ids(tmp_path: Path) -> None:
@@ -6355,7 +6374,7 @@ def test_genius_four_lens_eight_raster_audit_rehashes_all_originals() -> None:
     assert len(audit["containers"]) == 3
     assert len({record["sha256"] for record in audit["containers"]}) == 3
     for record in audit["containers"]:
-        raw = (root / record["path"]).read_bytes()
+        raw = _recorded_repository_path(root, record["path"]).read_bytes()
         assert len(raw) == record["bytes"] == 2_413_976
         assert hashlib.sha256(raw).hexdigest() == record["sha256"]
         assert record["page_count"] == 41
@@ -6375,14 +6394,14 @@ def test_genius_four_lens_eight_raster_audit_rehashes_all_originals() -> None:
         start=1,
     ):
         assert page["page"] == retained["page"] == expected_page
-        png = (root / retained["path"]).read_bytes()
+        png = _recorded_repository_path(root, retained["path"]).read_bytes()
         assert len(png) == retained["bytes"]
         assert hashlib.sha256(png).hexdigest() == retained["sha256"]
         assert patent_pdf_recovery._canonical_raster_sha256(png) == page[
             "raster_sha256"
         ] == retained["raster_sha256"]
     for contact in audit["contact_sheets"]:
-        raw = (root / contact["path"]).read_bytes()
+        raw = _recorded_repository_path(root, contact["path"]).read_bytes()
         assert len(raw) == contact["bytes"]
         assert hashlib.sha256(raw).hexdigest() == contact["sha256"]
     assert audit["review_conclusions"]["original_raster_only"] is True
@@ -9619,7 +9638,7 @@ def test_genius_four_lens_eight_source_evidence_rehash() -> None:
         if isinstance(value, dict):
             if {"path", "bytes", "sha256"} <= value.keys():
                 records.append(value)
-                raw = (root / str(value["path"])).read_bytes()
+                raw = _recorded_repository_path(root, value["path"]).read_bytes()
                 assert len(raw) == value["bytes"]
                 assert hashlib.sha256(raw).hexdigest() == value["sha256"]
             for child in value.values():
@@ -20248,9 +20267,10 @@ def test_aac_seven_lens_exact_replay_is_semantically_deterministic() -> None:
                     "stdout": "stdout_path",
                     "stderr": "stderr_path",
                 }.items():
-                    assert hashlib.sha256((root / receipt[field]).read_bytes()).hexdigest() == (
-                        embodiment["worker_artifact_sha256"][label]
-                    )
+                    worker_artifact = _recorded_repository_path(root, receipt[field])
+                    assert hashlib.sha256(worker_artifact.read_bytes()).hexdigest() == embodiment[
+                        "worker_artifact_sha256"
+                    ][label]
                 for field in artifact["excluded_receipt_fields"]:
                     receipt.pop(field, None)
                 receipt_semantic_sha256 = semantic_digest(receipt)

@@ -141,6 +141,19 @@ timeout to 75 minutes. The newly merged acceptance, wavelength and material test
 122/122 locally (three real-machine tests deselected) in 15 minutes 52 seconds. A new
 PR CI run remains required.
 
+Replacement run `30280348106` completed the serial suite within the 75-minute bound
+and reported 4 failed / 4,128 passed / 7 skipped / 10 deselected in 56 minutes 54
+seconds. All four failures are checkout portability defects in retained evidence
+tests, not LFS, timeout, parser or optical-result regressions: two records use
+backslash-separated repository-relative paths, one replay receipt retains its original
+absolute Windows worktree paths, and the offline CODE V guard used host `Path`
+semantics to parse a quoted Windows executable on Linux. The fix preserves every
+retained byte and hash: tests map historic Windows evidence paths to the matching
+`.planning` or `data` location in the current checkout, while the guard parses
+executable names with `PureWindowsPath` on every host. The exact four failing tests
+plus all guard parameters pass 8/8 locally; Ruff and diff checks pass. Linux CI remains
+the final cross-platform gate.
+
 ## Safety boundary
 
 - Preserve the source branch and worktree unchanged as the complete local evidence
@@ -152,6 +165,15 @@ PR CI run remains required.
 - Do not start, control, probe or terminate CODE V; process inventory is read-only.
 - Do not weaken evidence, parser, terminal, scoring, quality or protected-path gates to
   make the slim tree pass.
+
+The pre-test inventory for the Linux-path focused regression was zero. During the
+post-test audit at 2026-07-28 00:38 +08:00, two short-lived CODE V pairs appeared:
+`codev`/`codevm` PIDs 22288/21752 at 00:38:03 and 3516/5288 at 00:38:38. Each pair
+exited before a read-only CIM query could capture its parent. Other Python processes
+from `D:\atelier` were concurrently active, but no parent relationship was captured,
+so no source is attributed. No process was controlled or terminated, and further
+local Python/pytest execution stopped after the observation; remaining publication
+steps are Git/GitHub-only.
 
 ## Work plan
 
@@ -179,5 +201,7 @@ PR CI run remains required.
 - [x] Push all 4,226 LFS objects and publish draft PR #92.
 - [x] Integrate `origin/main@a5d3eb07` after the first PR CI exposed the superseded
   xdist configuration; resolve CI to bounded serial/offline-safe execution.
+- [x] Preserve historic evidence bytes while fixing the four Linux checkout-path
+  failures exposed by replacement run `30280348106`.
 - [ ] Obtain a green replacement PR CI run, record review evidence and merge through
   the PR path.

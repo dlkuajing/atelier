@@ -83,7 +83,16 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   `origin/main@a5d3eb07`，保留主线串行 `--durations=25`，叠加
   `-m "not real_machine"` 与 LFS hydration，扩展套件 timeout 有界提高到 75 分钟。
   新增 acceptance/wavelength/material 受影响套件 122/122 通过、3 条真实机 deselected；
-  替换 PR CI 尚待远端验证。
+  替换 CI `30280348106` 在 56m54s 内跑完，结果为 4 failed / 4,128 passed /
+  7 skipped / 10 deselected。四项均为历史 Windows 路径在 Linux checkout 中的解析失败：
+  两项反斜杠相对路径、一项回执绝对 worktree 路径、一项离线 CODE V 守卫按宿主
+  `Path` 解析 Windows 命令。修复仅在测试读取层用 `PureWindowsPath` 映射当前 checkout，
+  保留 1,616 份含绝对路径的原始回执及其哈希不变；精确失败集与守卫参数 8/8 通过，
+  Ruff/diff 通过，下一轮 Linux PR CI 待验证。
+- 2026-07-28 00:38 +08:00 的测试后只读库存两次发现短时 `codev`/`codevm`：
+  PIDs 22288/21752（00:38:03）及 3516/5288（00:38:38）；均在 CIM 父进程查询前自行
+  退出，来源未能证明。未终止或控制进程；发现后停止本地 Python/pytest，余下只做
+  Git/GitHub 发布操作。测试前库存为 0。
 
 ## Blockers / Concerns
 

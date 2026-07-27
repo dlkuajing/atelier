@@ -4,7 +4,7 @@ import os
 import re
 import subprocess
 from collections.abc import Sequence
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 import pytest
@@ -33,7 +33,7 @@ def _command_executable_name(command: Any) -> str:
         token = match.group(1) or match.group(2)
     if isinstance(token, bytes):
         token = os.fsdecode(token)
-    return Path(str(token).strip('"')).name.lower()
+    return PureWindowsPath(str(token).strip('"')).name.lower()
 
 
 def _guard_offline_codev_command(command: Any) -> None:
