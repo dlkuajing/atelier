@@ -69,18 +69,24 @@ class CodeVOptimizationMetrics:
     """Metrics explicitly emitted by the CODE V optimization macro."""
 
     efl_y_mm: float
-    max_lateral_color_um: float
+    # ``None`` = lateral color was not measurable for this run (see _parse_metrics).
+    # It is NOT interchangeable with 0.0, which means "measured, and achromatic".
+    max_lateral_color_um: float | None
     max_rms_spot_diameter_um: float
     max_rms_wavefront_error_waves: float
     max_distortion_pct: float
+    # Wavelength count CODE V actually had. ``None`` for legacy result files
+    # written before the macro emitted it -- unknown, not "verified fine".
+    wavelength_count: int | None = None
 
-    def describe(self) -> dict[str, float]:
+    def describe(self) -> dict[str, float | None]:
         return {
             "efl_y_mm": self.efl_y_mm,
             "max_lateral_color_um": self.max_lateral_color_um,
             "max_rms_spot_diameter_um": self.max_rms_spot_diameter_um,
             "max_rms_wavefront_error_waves": self.max_rms_wavefront_error_waves,
             "max_distortion_pct": self.max_distortion_pct,
+            "wavelength_count": self.wavelength_count,
         }
 
 
@@ -2290,16 +2296,51 @@ def _parse_tolerance_sensitivity(
     )
 
 
+def _parse_wavelength_count(data: Mapping[str, str], prefix: str) -> int | None:
+    """Wavelength count CODE V actually ran with, or None on legacy result files."""
+
+    raw = data.get(f"{prefix}.num_wavelengths")
+    if raw is None:
+        return None
+    try:
+        value = int(float(str(raw)))
+    except (TypeError, ValueError):
+        return None
+    return value if value > 0 else None
+
+
 def _parse_metrics(data: Mapping[str, str], prefix: str) -> CodeVOptimizationMetrics:
+    wavelength_count = _parse_wavelength_count(data, prefix)
+    lateral_color: float | None = _required_float(data, f"{prefix}.max_lateral_color_um")
+    # Fail-closed on un-measurable lateral color.
+    #
+    # ``@lcum`` (see _metric_function_block) measures the image-point separation
+    # between the shortest and longest wavelength: ^wshort == 1, ^wlong == (NUM W).
+    # When CODE V ends up with a single wavelength both indices point at the SAME
+    # wavelength, so the distance is identically 0 and the macro reports perfect
+    # achromatism for a system whose chromatic behaviour was never evaluated.
+    # It also silently neuters the ``@atelier_latcolor = 0`` optimization target.
+    #
+    # This is not hypothetical: 403 of 442 library seeds (91%) carry the 3-row
+    # WAVM header, and a 2026-07-27 real-machine probe collapsed 6/6 of them to
+    # NUM W == 1 on import (the 24-row, CODE-V-round-tripped seeds kept 5).
+    #
+    # Unlike @rmssum -- where any value <= 0 is impossible and thus self-marking
+    # (see _standard_config_rms) -- 0.0 is a PHYSICALLY LEGITIMATE lateral color.
+    # The degenerate case is therefore indistinguishable from a real result by
+    # value alone, and the wavelength count is the only sound discriminator.
+    if wavelength_count is not None and wavelength_count < 3:
+        lateral_color = None
     return CodeVOptimizationMetrics(
         efl_y_mm=_required_float(data, f"{prefix}.efl_y_mm"),
-        max_lateral_color_um=_required_float(data, f"{prefix}.max_lateral_color_um"),
+        max_lateral_color_um=lateral_color,
         max_rms_spot_diameter_um=_required_float(data, f"{prefix}.max_rms_spot_diameter_um"),
         max_rms_wavefront_error_waves=_required_float(
             data,
             f"{prefix}.max_rms_wavefront_error_waves",
         ),
         max_distortion_pct=_required_float(data, f"{prefix}.max_distortion_pct"),
+        wavelength_count=wavelength_count,
     )
 
 
@@ -2383,6 +2424,9 @@ def _capture_metric_variables(prefix: str) -> list[str]:
         f"^{prefix}_max_rms_spot_diameter_um == @rmssum(1)",
         f"^{prefix}_max_rms_wavefront_error_waves == @wfewav(1)",
         f"^{prefix}_max_distortion_pct == @dstpct(1)",
+        # Emitted so the reader can tell "achromatic" from "never measured":
+        # @lcum spans W1..W(NUM W) and degenerates to a constant 0 at NUM W < 3.
+        f"^{prefix}_num_wavelengths == (NUM W)",
     ]
 
 
@@ -2404,6 +2448,7 @@ def _append_metric_rows(lines: list[str], prefix: str) -> None:
         f"^{prefix}_max_rms_wavefront_error_waves",
     )
     _append_put_row(lines, f'"{prefix}.max_distortion_pct"', f"^{prefix}_max_distortion_pct")
+    _append_put_row(lines, f'"{prefix}.num_wavelengths"', f"^{prefix}_num_wavelengths")
 
 
 def _append_tolerance_sensitivity_rows(

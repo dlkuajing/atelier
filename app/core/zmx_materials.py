@@ -12,13 +12,17 @@ so the glass patch in `optiland_patches.py` can rebuild a faithful AbbeMaterial.
 
 All values are public datasheet figures:
   nd = refractive index at the d-line (587.6 nm), vd = Abbe number (n_d-based).
-No values are fabricated — unknown materials fall back to the zmx placeholder (if
-usable) or a conservative typical-plastic default, with a logged warning.
+No values are fabricated — unknown materials fall back to the zmx placeholder
+(only if BOTH nd and vd are usable) or a conservative typical-plastic default,
+with a logged warning. A usable placeholder index with unknown dispersion
+(vd 0/None, Zemax's "unspecified" convention) fails closed with ValueError
+instead of forging an Abbe number.
 """
 
 from __future__ import annotations
 
 import logging
+import math
 import re
 
 logger = logging.getLogger(__name__)
@@ -101,16 +105,31 @@ def resolve_material(
 ):
     """Return an optiland ``AbbeMaterial`` for a zmx material name.
 
-    Resolution order (honest — never fabricates an index):
+    Resolution order (honest — never fabricates an index or a dispersion):
     1. name in the real datasheet table -> AbbeMaterial(real nd, real vd)
-    2. else a usable zmx placeholder (fallback_nd > 1.4) -> AbbeMaterial(fallback)
+    2. else a fully usable zmx placeholder (fallback_nd > 1.4 AND real
+       fallback_vd > 0) -> AbbeMaterial(fallback)
     3. else a conservative typical optical-plastic default (1.54 / 56) + warning
+
+    Raises ValueError when the placeholder index is usable but the dispersion is
+    unknown (vd 0/None, Zemax's "unspecified" convention) — fail-closed, per the
+    provenance contract in `engines/codev_readout.py` (unknown vd stays None,
+    never a number).
     """
     real = lookup_nd_vd(name)
     if real is not None:
         return _abbe(real[0], real[1])
     if fallback_nd is not None and fallback_nd > 1.4:
-        return _abbe(fallback_nd, fallback_vd if (fallback_vd and fallback_vd > 0) else 50.0)
+        if fallback_vd is not None and math.isfinite(fallback_vd) and fallback_vd > 0:
+            return _abbe(fallback_nd, fallback_vd)
+        # AbbeMaterial requires a real Abbe number; substituting one (formerly a
+        # silent 50.0) would pass fabricated dispersion off as measured — refuse.
+        raise ValueError(
+            f"zmx_materials: unknown material {name!r} has a usable placeholder "
+            f"index (nd={fallback_nd!r}) but no usable dispersion "
+            f"(vd={fallback_vd!r}); refusing to fabricate an Abbe number — "
+            "supply real (nd, vd) or add the material to MATERIAL_ND_VD"
+        )
     logger.warning(
         "zmx_materials: unknown material %r with unusable placeholder nd; "
         "using conservative 1.54/56 default",

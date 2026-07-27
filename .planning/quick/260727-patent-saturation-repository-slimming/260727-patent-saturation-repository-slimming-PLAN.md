@@ -123,6 +123,24 @@ same explicit non-`real_machine` marker. A pre-publication transport audit at
 a 4,557,660-byte maximum blob and a 30,010,009-byte standalone pack; the LFS path count
 remains 4,269. The branch is zero commits behind `origin/main@756aeffd`.
 
+## PR CI correction
+
+Draft PR #92 successfully uploaded all 4,226 LFS objects. Its first CI run
+`30253145666` hydrated and verified the evidence in about two minutes, but the inherited
+`-n 4` test command emitted seven failure markers and was cancelled by the 45-minute
+job limit at 76%, before pytest could print the failure summary. This run is not a
+merge pass.
+
+While that run was executing, `main` measured the private runner as two cores / 7 GB,
+proved both `-n 4` and `-n 2` slower than serial, and reverted xdist. Serial
+`main@758ad099` passed 2,707 tests with 17 skipped in 29 minutes 42 seconds. The expanded
+patent branch adds about 1,426 offline tests, so the approved resolution merges
+`origin/main@a5d3eb07`, preserves its serial `--durations=25` configuration, adds the
+explicit non-`real_machine` marker, retains LFS hydration, and raises the bounded job
+timeout to 75 minutes. The newly merged acceptance, wavelength and material tests pass
+122/122 locally (three real-machine tests deselected) in 15 minutes 52 seconds. A new
+PR CI run remains required.
+
 ## Safety boundary
 
 - Preserve the source branch and worktree unchanged as the complete local evidence
@@ -158,4 +176,8 @@ remains 4,269. The branch is zero commits behind `origin/main@756aeffd`.
   make the inherited parallel CI command explicitly offline-safe.
 - [x] Integrate the two commits from PR #89 that reached `origin/main` after the final
   full local gate and rerun the affected gates.
-- [ ] Push the slim branch and publish it through a reviewed PR.
+- [x] Push all 4,226 LFS objects and publish draft PR #92.
+- [x] Integrate `origin/main@a5d3eb07` after the first PR CI exposed the superseded
+  xdist configuration; resolve CI to bounded serial/offline-safe execution.
+- [ ] Obtain a green replacement PR CI run, record review evidence and merge through
+  the PR path.

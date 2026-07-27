@@ -67,7 +67,7 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
 - fresh-checkout 修复补入此前被忽略、但被测试/账本引用的 865 个 patent-lake 文件与
   8,675 个 conversion-attempt/staging 文件；两个无引用 OCR ONNX 模型继续忽略。
 - 首轮传输/证据闭包门禁为 4,133 passed、1 skipped、10 deselected；合入
-  `origin/main@42e05fbb` 后的最终 CI 等价离线门禁为 4,133 passed、1 skipped，
+  `origin/main@42e05fbb` 后的本地完整离线门禁为 4,133 passed、1 skipped，
   31 条定向并行回归全绿；Ruff、CI YAML、diff、LFS fsck 与 hydrated manifest
   rehash 均通过。
 - 合入主线后首次照搬 `uv run pytest -q -n 4` 时，因上游命令未排除 marker 且本机
@@ -76,6 +76,14 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   `uv run pytest -q -n 4 -m "not real_machine"`，后续全量验证未再触发 CODE V。
 - `origin/main` 在最终全量门禁后通过 PR #89 前移的两提交已由 `17d71802` 合入；
   四个受影响 Stage C/orchestration 测试文件 193/193 通过。
+- Draft PR #92 已完整上传 4,226/4,226 LFS 对象；首轮 CI `30253145666` 的 LFS
+  hydration/fsck 成功，但旧 `-n 4` 路径出现七个失败标记并在 45 分钟、76% 时取消，
+  不构成 merge pass。
+- 主线已实测私有 runner 为 2 cores / 7 GB 并证伪 xdist；当前合入
+  `origin/main@a5d3eb07`，保留主线串行 `--durations=25`，叠加
+  `-m "not real_machine"` 与 LFS hydration，扩展套件 timeout 有界提高到 75 分钟。
+  新增 acceptance/wavelength/material 受影响套件 122/122 通过、3 条真实机 deselected；
+  替换 PR CI 尚待远端验证。
 
 ## Blockers / Concerns
 
