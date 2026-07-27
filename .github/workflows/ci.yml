@@ -55,11 +55,18 @@ jobs:
           OPENAI_API_KEY: ci-placeholder
           OPENAI_BASE_URL: https://example.invalid/v1
           CORS_ALLOWED_ORIGINS: "http://localhost:3000"
-        # -n 2：保守值，等上面 nproc 的实测结果再定终值。
-        # 实测证伪记录（2026-07-27，run 30242379840）：-n 4 跑 37 分 38 秒，
-        # 反而比串行基线（~35 分钟，install 仅占 13 秒）**更慢** ——
-        # 典型的 worker 数超过物理核数后 CPU 争用 + Optiland/numpy 导入开销 ×N。
-        # 不用 -n auto：runner 规格若变，worker 数会跟着涨并撞 Optiland 内存峰值。
-        # --durations=25：暴露慢测试分布。若少数光学测试占大头，分档比加并行度有效得多。
+        # 串行。并行化在这台 runner 上是负优化，三次实测（同一套测试）：
+        #   串行基线   ~35 分钟   (install 仅占 13 秒)
+        #   -n 4       37 分 38 秒  run 30242379840
+        #   -n 2       40 分 30 秒  run 30245575480
+        # worker 越多越慢。上面 Report runner spec 实测出根因：nproc=2 / 7GB
+        # （不是本注释原先断言的 4 核 16GB——本仓库是 PRIVATE），且关键路径
+        # 被单个 1027 秒的测试锁死，天然不可并行。每个 worker 还要各自重新
+        # 导入 Optiland/scipy/numpy，2 核上纯属自相争用。
+        #
+        # 真正的瓶颈是重复计算而非并行度：--durations=25 显示前 25 个测试吃掉
+        # 约 85% CPU 时间，其中三个 acceptance 测试参数完全相同、各跑约 260 秒。
+        # 见 tests/test_acceptance_task_export.py 的 _report() memo。
+        # --durations=25 保留：慢测试分布是后续分档决策的依据。
         # 不用 -v：逐条输出对 CI 日志无价值，只增加 IO。
-        run: uv run pytest -q -n 2 --durations=25
+        run: uv run pytest -q --durations=25
