@@ -60,8 +60,10 @@ Loop2 G docs PR #82 merge `d35b3d07cead830396d24d2b10665199c73985e0`；匹配 ma
   `codex/patent-saturation-ledger@6dad8ab8`；发布分支
   `codex/patent-saturation-slim` 只改变传输/证据闭包。
 - 最终 LFS 清单为 4,269 路径、4,226 个唯一 SHA-256 对象、
-  2,043,282,327 logical bytes / 1,942,561,003 unique bytes；普通 Git delta 的最大
-  blob 为 4,557,660 bytes，独立 pack 为 29,439,968 bytes。
+  2,043,282,327 logical bytes / 1,942,561,003 unique bytes。
+- `20572753` 的发布前传输审计：普通 Git delta 为 22,510 blobs /
+  1,015,117,510 uncompressed bytes，最大 blob 4,557,660 bytes，独立 pack
+  30,010,009 bytes，远低于 GitHub 2 GiB 单次 push 限制。
 - fresh-checkout 修复补入此前被忽略、但被测试/账本引用的 865 个 patent-lake 文件与
   8,675 个 conversion-attempt/staging 文件；两个无引用 OCR ONNX 模型继续忽略。
 - 首轮传输/证据闭包门禁为 4,133 passed、1 skipped、10 deselected；合入

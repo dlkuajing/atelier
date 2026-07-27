@@ -118,7 +118,10 @@ passed and one skipped in 22 minutes 12 seconds. The focused parallel regression
 31/31; Ruff, CI YAML parsing, diff checks, `git lfs fsck`, manifest rehash, source
 worktree and process inventories also pass. The later PR #89 pair was merged through
 `17d71802`; its four affected Stage C/orchestration test files pass 193/193 under the
-same explicit non-`real_machine` marker.
+same explicit non-`real_machine` marker. A pre-publication transport audit at
+`20572753` finds 22,510 ordinary delta blobs totaling 1,015,117,510 uncompressed bytes,
+a 4,557,660-byte maximum blob and a 30,010,009-byte standalone pack; the LFS path count
+remains 4,269. The branch is zero commits behind `origin/main@756aeffd`.
 
 ## Safety boundary
 
