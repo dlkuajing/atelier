@@ -89,3 +89,32 @@ def test_matching_is_by_import_not_substring() -> None:
 def test_no_changed_source_files_selects_nothing() -> None:
     assert affected_modules([ROOT / "README.md"]) == set()
     assert select_test_files(set()) == []
+
+
+def test_uncommitted_edits_are_included(tmp_path: Path, monkeypatch) -> None:
+    """A pre-push check that only sees committed work is silent exactly when it matters.
+
+    First real use returned one irrelevant test file because the edits under
+    review were still in the working tree.
+    """
+    import subprocess as sp
+
+    from scripts import impact_slice
+
+    calls: list[list[str]] = []
+
+    def fake_run(argv, **kwargs):  # noqa: ANN001, ANN202
+        calls.append(argv)
+        out = (
+            "app/core/engines/codev_readout.py\n"
+            if "HEAD" in argv and "..." not in argv[-1]
+            else ""
+        )
+        return sp.CompletedProcess(argv, 0, stdout=out, stderr="")
+
+    monkeypatch.setattr(impact_slice.subprocess, "run", fake_run)
+    changed = impact_slice.changed_files("origin/main")
+    assert any("codev_readout" in str(path) for path in changed)
+    # All four sources must be consulted, not just the committed diff.
+    assert any("--cached" in call for call in calls)
+    assert any("ls-files" in call for call in calls)

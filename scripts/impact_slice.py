@@ -160,20 +160,25 @@ def select_test_files(modules: set[str]) -> list[Path]:
 
 
 def changed_files(base: str) -> list[Path]:
-    result = subprocess.run(
-        ["git", "diff", "--name-only", f"{base}...HEAD"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        # Fall back to the working tree when the base ref is unknown (fresh
-        # worktree, detached history) rather than silently reporting nothing.
-        result = subprocess.run(
-            ["git", "diff", "--name-only", "HEAD"], cwd=ROOT, capture_output=True, text=True
-        )
-    return [ROOT / line for line in result.stdout.split("\n") if line.strip()]
+    """Committed changes vs ``base`` **plus** whatever is still uncommitted.
+
+    Both halves are needed. This is a pre-push check, and the first real use of
+    it reported one irrelevant test file because the edits under review had not
+    been committed yet -- a tool that goes quiet exactly when you are about to
+    push is worse than no tool.
+    """
+
+    names: set[str] = set()
+    for argv in (
+        ["git", "diff", "--name-only", f"{base}...HEAD"],  # committed since base
+        ["git", "diff", "--name-only", "HEAD"],  # unstaged
+        ["git", "diff", "--name-only", "--cached"],  # staged
+        ["git", "ls-files", "--others", "--exclude-standard"],  # untracked
+    ):
+        result = subprocess.run(argv, cwd=ROOT, capture_output=True, text=True, check=False)
+        if result.returncode == 0:
+            names.update(line for line in result.stdout.split("\n") if line.strip())
+    return [ROOT / name for name in sorted(names)]
 
 
 def _anchor(value: str) -> Path:

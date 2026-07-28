@@ -19,6 +19,7 @@ from app.core.engines.codev_batch import (
     run_codev_batch,
 )
 from app.core.engines.codev_readout import (
+    ASPHERE_EXPORT_SCALE,
     CODEV_READOUT_RESULT_SCHEMA,
     CodeVReadout,
     parse_codev_readout_file,
@@ -2839,6 +2840,13 @@ def _optimized_readout_block(*, source_name: str) -> list[str]:
     _append_dynamic_surface_row(lines, ".is_stop", "^isstop")
     for label in _ASPHERE_COEFFICIENT_LABELS:
         _append_dynamic_surface_row(lines, f".asphere.{label}", f"^coef{label}")
+        # Must stay in lockstep with codev_readout's emitter: both write result
+        # files that the same parser reads. See ASPHERE_EXPORT_SCALE.
+        _append_dynamic_surface_row(
+            lines,
+            f".asphere_scaled.{label}",
+            f"^coef{label}*{ASPHERE_EXPORT_SCALE:.0f}",
+        )
     lines.append("END FOR")
     lines.extend(
         [
