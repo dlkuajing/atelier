@@ -3194,3 +3194,49 @@ def test_optimize_sequence_emits_wavelength_count(tmp_path: Path) -> None:
     assert "^after_num_wavelengths == (NUM W)" in sequence
     assert '"before.num_wavelengths"' in sequence
     assert '"after.num_wavelengths"' in sequence
+
+
+# ---------------------------------------------------------------------------
+# Distortion operand (2026-07-29)
+# ---------------------------------------------------------------------------
+
+
+def _target_sequence(**kwargs: object) -> str:
+    return codev_optimize.build_codev_target_sequence(
+        source_zmx=default_optimize_seed(),
+        result_path=Path("out.tsv"),
+        target_efl_mm=4.0,
+        **kwargs,  # type: ignore[arg-type]
+    )
+
+
+def test_distortion_operand_is_absent_by_default() -> None:
+    """Zero regression: the merit AUT has converged against for every prior run
+    must be byte-identical unless the caller opts in."""
+    assert "@atelier_distortion" not in _target_sequence()
+
+
+def test_distortion_operand_is_emitted_when_weighted() -> None:
+    """P2 judges RMS spot / MTF / distortion; distortion was the only one of the
+    three with no operand, so the optimiser traded it away freely. Measured
+    2026-07-29: distortion was the *sole* loss in 3 of 12 judged trials."""
+    sequence = _target_sequence(distortion_weight=0.005)
+    assert "  @atelier_distortion == @dstpct(1)" in sequence
+    assert "  @atelier_distortion = 0" in sequence
+    assert "  WTC 0.005" in sequence
+
+
+def test_distortion_operand_sits_inside_the_aut_block_before_the_constraints() -> None:
+    """Order matters: operands must precede MNT/MNE/MXT/MNA or CODE V reads the
+    weight as belonging to a constraint."""
+    sequence = _target_sequence(distortion_weight=0.005)
+    body = sequence.split("AUT")[1].split("GO")[0]
+    assert body.index("@atelier_distortion") < body.index("MNT")
+    assert body.index("@atelier_rmsspot") < body.index("@atelier_distortion")
+
+
+@pytest.mark.parametrize("bad", [0.0, -1.0])
+def test_a_non_positive_distortion_weight_is_refused_not_silently_ignored(bad: float) -> None:
+    """0 would neuter the operand while looking enabled. If you mean off, pass None."""
+    with pytest.raises(ValueError, match="distortion_weight"):
+        _target_sequence(distortion_weight=bad)
