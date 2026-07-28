@@ -33,6 +33,9 @@ build/
 # loop/codex 运行时临时目录（曾误入 commit，2026-07-04 清除）
 .tmp/
 .verify-tmp/
+# CODE V 跑批的 work dir 不能带点前缀组件（否则 ZEMAXOS_TO_CV 静默导入哑元系统），
+# 所以 demo cache 的运行目录必须用无点名字，单列一条 ignore。
+tmp-demo-cache-codev/
 scratch_probe/
 scratch_experiment/
 scratch_diag/
