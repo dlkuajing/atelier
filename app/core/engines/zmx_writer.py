@@ -248,11 +248,18 @@ def _append_surface(
     )
     if surface_type == "EVENASPH":
         _append_even_asphere_terms(lines, surface)
+    elif surface_type == "XASPHERE":
+        _append_extended_asphere_terms(lines, surface)
     lines.append(f"  DISZ {_fmt_distance(surface.thickness_mm)}")
     glass = _glass_line(surface)
     if glass is not None:
         lines.append(glass)
-    conic = surface.asphere_coefficients.get("K")
+    # A SPS ODD surface keeps its conic constant in C1, not in the even-asphere
+    # K slot (perturb.seq:547) -- reading the wrong one would emit CONI 0 and
+    # quietly turn a strongly conic surface into a sphere-plus-polynomial.
+    conic = surface.odd_asphere_coefficients.get("C1")
+    if conic is None:
+        conic = surface.asphere_coefficients.get("K")
     if conic is not None and math.isfinite(conic):
         lines.append(f"  CONI {_fmt_number(conic)}")
     lines.extend(
@@ -272,6 +279,70 @@ def _append_even_asphere_terms(lines: list[str], surface: CodeVSurfaceReadout) -
     for offset, label in enumerate(_WRITABLE_ASPHERE_TERMS, start=2):
         value = surface.asphere_coefficients.get(label, 0.0)
         lines.append(f"  PARM {offset} {_fmt_number(value)}")
+
+
+#: Zemax XASPHERE reserves XDAT 1 for the maximum term number (CODE V's import
+#: macro discards it -- "WARNING - Maximum term number not used.") and XDAT 2
+#: for the normalisation radius. XDAT 3..17 carry r^2..r^30.
+_XDAT_FIRST_TERM_SLOT = 3
+_XDAT_LAST_TERM_SLOT = 17
+
+#: Every XASPHERE surface in the corpus normalises by 1 -- all 158 files, 1302
+#: surfaces, checked 2026-07-28 by reading XDAT 2 straight off the files.
+#:
+#: **Known limitation, stated rather than hidden:** CODE V exposes no way to
+#: read the value back (``(SCO S<n> NRADIUS)`` is rejected with "Expecting 1
+#: coefficient qualifier" and aborts the entire macro), so this is written as a
+#: constant. A future seed normalising by anything else would round-trip with
+#: mis-scaled coefficients and nothing here would notice. The check belongs on
+#: the ingest side, where the source file is still in hand.
+_XASPHERE_NORMALISATION_RADIUS = 1.0
+
+
+def _append_extended_asphere_terms(lines: list[str], surface: CodeVSurfaceReadout) -> None:
+    """Write a CODE V ``SPS ODD`` surface back out as a Zemax ``XASPHERE``.
+
+    ``C(2k+1)`` holds the r^(2k) term, so XDAT slot ``j`` takes ``C(2*(j-2)+1)``
+    -- the inverse of the mapping CODE V's own import macro applies
+    (``zemaxos_to_cv.seq:3492``), verified against real hardware.
+    """
+
+    _reject_odd_power_terms(surface)
+    coefficients = surface.odd_asphere_coefficients
+    lines.append(f"  PARM 1 {_fmt_number(0.0)}")
+    lines.append(f"  XDAT 1 {_XDAT_LAST_TERM_SLOT} 0 0 1 0 0 \"\"")
+    lines.append(f"  XDAT 2 {_fmt_number(_XASPHERE_NORMALISATION_RADIUS)} 0 0 1 0 0 \"\"")
+    for slot in range(_XDAT_FIRST_TERM_SLOT, _XDAT_LAST_TERM_SLOT + 1):
+        value = coefficients.get(f"C{2 * (slot - 2) + 1}", 0.0)
+        lines.append(f'  XDAT {slot} {_fmt_number(value)} 0 0 1 0 0 ""')
+
+
+def _reject_odd_power_terms(surface: CodeVSurfaceReadout) -> None:
+    """Refuse a surface carrying r^1, r^3, ... terms.
+
+    ``SPS ODD`` can express every power; a Zemax ``XASPHERE`` only the even
+    ones. Writing such a surface would drop those terms and produce a file that
+    is not the design we measured -- the very failure this whole seam exists to
+    stop. Nothing in the corpus uses them (all 158 XASPHERE seeds import with
+    the odd slots at zero), so this is a guard, not a limitation in practice.
+    """
+
+    offenders = {
+        key: value
+        for key, value in surface.odd_asphere_coefficients.items()
+        # C1 is the conic constant, not a polynomial term; C3, C5, ... are the
+        # even powers. The remaining even-numbered slots are the odd powers.
+        if key != "C1" and int(key[1:]) % 2 == 0 and value != 0.0
+    }
+    if offenders:
+        raise ValueError(
+            "CODE V SPS ODD surface carries odd-power terms that Zemax XASPHERE cannot express",
+            {
+                "surface_index": surface.index,
+                "odd_power_terms": offenders,
+                "why": "XASPHERE encodes r^2..r^30 only; writing this would silently drop them",
+            },
+        )
 
 
 def _glass_line(surface: CodeVSurfaceReadout) -> str | None:
@@ -358,6 +429,11 @@ def _zemax_surface_type(surface: CodeVSurfaceReadout) -> str:
     """
 
     raw_type = (surface.surface_type or "").strip().upper()
+    # SPS ODD is now readable (see codev_readout.ODD_ASPHERE_COEFFICIENT_INDICES),
+    # so it round-trips as the Zemax type it came from instead of being refused.
+    # The refusal below still stands for anything we cannot read.
+    if surface.odd_asphere_coefficients:
+        return "XASPHERE"
     has_even_terms = any(
         abs(surface.asphere_coefficients.get(label, 0.0)) > 0.0
         for label in (*_WRITABLE_ASPHERE_TERMS, *_UNSUPPORTED_EVENASPH_TERMS)

@@ -295,3 +295,70 @@ def test_unknown_type_carrying_real_even_terms_is_still_written() -> None:
     readout = _readout_with_surface_type("SPS ODD")
     text = build_zmx_from_codev_readout(readout, name="odd-with-even-terms")
     assert "TYPE EVENASPH" in text
+
+
+# ---------------------------------------------------------------------------
+# SPS ODD -> XASPHERE round trip (2026-07-28)
+# ---------------------------------------------------------------------------
+
+
+def _odd_asphere_readout(**coefficients: float) -> CodeVReadout:
+    """A readout whose first surface came back from CODE V as SPS ODD."""
+    readout = _manual_readout()
+    surfaces = (
+        replace(
+            readout.surfaces[0],
+            surface_type="SPS ODD",
+            asphere_coefficients={},
+            odd_asphere_coefficients=coefficients,
+        ),
+        *readout.surfaces[1:],
+    )
+    return replace(readout, surfaces=surfaces)
+
+
+def test_sps_odd_surface_is_written_as_xasphere_not_a_sphere() -> None:
+    readout = _odd_asphere_readout(C1=-90.0, C5=0.13053, C7=-0.082904)
+    text = build_zmx_from_codev_readout(readout, name="odd")
+    assert "TYPE XASPHERE" in text
+    assert "TYPE STANDARD" not in text.split("SURF 1")[1].split("SURF 2")[0]
+
+
+def test_xdat_slots_follow_the_codev_import_mapping_inverted() -> None:
+    """XDAT j <- C(2*(j-2)+1); verified against US-12124006-B2-e2 on hardware."""
+    readout = _odd_asphere_readout(C1=-90.0, C5=0.13053, C7=-0.082904, C21=9.6683e-08)
+    block = build_zmx_from_codev_readout(readout, name="odd").split("SURF 1")[1]
+    assert "XDAT 4 0.13053" in block  # C5  -> r^4
+    assert "XDAT 5 -0.082904" in block  # C7  -> r^6
+    assert "XDAT 12 9.6683e-08" in block or "XDAT 12 0.000000096683" in block  # C21 -> r^20
+    assert "XDAT 2 1" in block  # normalisation radius
+    assert "XDAT 1 17" in block  # maximum term slot
+
+
+def test_conic_comes_from_c1_not_the_even_asphere_k_slot() -> None:
+    """Reading the wrong slot would emit CONI 0 and flatten a strongly conic surface."""
+    readout = _odd_asphere_readout(C1=-90.0, C5=0.1)
+    block = build_zmx_from_codev_readout(readout, name="odd").split("SURF 1")[1]
+    assert "CONI -90" in block
+
+
+def test_odd_power_terms_are_refused_rather_than_dropped() -> None:
+    """SPS ODD can hold r^1, r^3...; XASPHERE cannot. Silently dropping them is the
+    exact failure this whole seam exists to stop."""
+    readout = _odd_asphere_readout(C1=0.0, C4=1.5e-3)
+    with pytest.raises(ValueError, match="odd-power terms"):
+        build_zmx_from_codev_readout(readout, name="odd")
+
+
+def test_even_power_slots_do_not_trip_the_odd_power_guard() -> None:
+    """The guard must not over-reach onto the terms we can actually write."""
+    readout = _odd_asphere_readout(C1=-2.0, C3=1e-3, C5=2e-4, C31=1e-20)
+    assert "TYPE XASPHERE" in build_zmx_from_codev_readout(readout, name="odd")
+
+
+def test_sps_odd_with_nothing_read_back_is_still_refused() -> None:
+    """The PR #105 guard must survive: an SPS ODD surface we could not read is
+    still indistinguishable from a sphere and must not be written as one."""
+    readout = _odd_asphere_readout()  # no coefficients recovered
+    with pytest.raises(ValueError, match="silently dropping its shape"):
+        build_zmx_from_codev_readout(readout, name="odd")

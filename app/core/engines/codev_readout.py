@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from app.core.engines.codev_batch import (
@@ -63,6 +63,26 @@ _READOUT_REQUIRED_KEYS = (
 )
 _READOUT_OK_RETURNCODES = {0, 1}
 _ASPHERE_COEFFICIENT_LABELS = ("K", "A", "B", "C", "D", "E", "F", "G", "H", "J")
+
+#: ``SPS ODD`` coefficient slots worth reading, verified on real hardware.
+#:
+#: Mapping taken from CODE V's own macros, not guesswork:
+#:   * ``perturb.seq:547`` -- for ``SPS ODD`` the conic constant is ``C1``
+#:     (``SPS CN1``/``CN2`` keep theirs in ``C3``; do not confuse them)
+#:   * ``perturb.seq:587`` ``ar4 <- c5`` and ``:635`` ``ar6 <- c7`` -- so
+#:     ``C(2k+1)`` carries the ``r^(2k)`` term
+#:   * ``zemaxos_to_cv.seq:3492`` -- Zemax ``XDAT j`` maps to ``C(2*(j-2)+1)``
+#:     for ``j`` in 3..17, i.e. ``C3, C5, ... C31`` = r^2 .. r^30
+#:
+#: Confirmed 2026-07-28 against US-12124006-B2-e2's own XDAT rows, 9/9 exact:
+#: ``C1 = -90`` (its ``CONI``), ``C5 = 0.13053`` (``XDAT 4``), ``C7 =
+#: -0.082904``, ``C9 = 0.040334``, ``C11 = -0.0142``, ``C21 = 9.6683e-08``
+#: (``XDAT 12``), and ``C2 = C3 = C4 = 0``.
+#:
+#: The even slots ``C2, C4, ...`` carry odd powers r^1, r^3, ... which a Zemax
+#: ``XASPHERE`` cannot express. They are read anyway so the writer can refuse
+#: rather than silently drop them.
+ODD_ASPHERE_COEFFICIENT_INDICES = tuple(range(1, 32))
 _FIELD_COORDINATE_BY_TYPE = {
     "OBJ": ("XOB", "YOB"),
     "IMG": ("XIM", "YIM"),
@@ -86,6 +106,12 @@ class CodeVSurfaceReadout:
     is_stop: bool
     asphere_coefficients: dict[str, float]
     vd_source: str | None = None
+    #: ``SPS ODD`` slots keyed ``"C1".."C31"``; empty for every other surface
+    #: type. Kept separate from ``asphere_coefficients`` on purpose -- the two
+    #: are different parameterisations (A..J are even-asphere terms, C1 is a
+    #: conic constant and C3.. are r^2.. terms), and merging them would let the
+    #: writer's "does this surface have aspheric terms" test read the wrong one.
+    odd_asphere_coefficients: dict[str, float] = field(default_factory=dict)
 
     def describe(self) -> dict[str, object]:
         return {
@@ -100,6 +126,7 @@ class CodeVSurfaceReadout:
             "surface_type": self.surface_type,
             "is_stop": self.is_stop,
             "asphere_coefficients": self.asphere_coefficients,
+            "odd_asphere_coefficients": self.odd_asphere_coefficients,
         }
 
 
@@ -315,6 +342,7 @@ def build_codev_readout_sequence(
             "  END IF",
         ]
     )
+    _append_odd_asphere_block(lines)
     _append_dynamic_surface_row(lines, ".radius_y_mm", "(RDY S^s)")
     _append_dynamic_surface_row(lines, ".thickness_mm", "(THI S^s)")
     _append_dynamic_surface_row(lines, ".semi_diameter_mm", "(MAP S^s)")
@@ -566,7 +594,45 @@ def _parse_surface(
         surface_type=_optional_text(data.get(f"{prefix}.surface_type")),
         is_stop=(surface_index == stop_surface if is_stop is None else is_stop),
         asphere_coefficients=coefficients,
+        odd_asphere_coefficients=odd_asphere_coefficients(data, prefix),
     )
+
+
+def _append_odd_asphere_block(lines: list[str]) -> None:
+    """Read the coefficients of a ``SPS ODD`` surface, or emit nothing.
+
+    A Zemax ``XASPHERE`` imports into CODE V as ``SPS ODD`` (confirmed by CODE
+    V's own conversion log: "Zemax surface type XASPHERE / CODE V surface type
+    SPS ODD"). The even-asphere accessors ``(A S^s)..(J S^s)`` read 0 on such a
+    surface, which is indistinguishable from a sphere -- that is exactly how
+    twelve aspheres got silently flattened out of a delivered candidate.
+
+    Emission is inside the ``IF`` so ordinary spherical and even-aspheric
+    surfaces cost nothing; the parser keys off presence.
+    """
+
+    lines.append('  IF ^surf_type = "SPS ODD"')
+    for index in ODD_ASPHERE_COEFFICIENT_INDICES:
+        # Only the scaled form is written. There is no legacy reader to stay
+        # compatible with here, and the unscaled row is the one BUF EXP mangles
+        # (see ASPHERE_EXPORT_SCALE).
+        lines.append(f"    ^oddc == (SCO S^s C{index})")
+        lines.append(f'    ^key == CONCAT(^surface_prefix, ".odd_asphere_scaled.C{index}")')
+        lines.append("    BUF PUT B1 I^row J1 ^key")
+        lines.append(f"    BUF PUT B1 I^row J2 ^oddc*{ASPHERE_EXPORT_SCALE:.0f}")
+        lines.append("    ^row == ^row+1")
+    lines.append("  END IF")
+
+
+def odd_asphere_coefficients(data: Mapping[str, str], prefix: str) -> dict[str, float]:
+    """``{"C1": k, "C3": r^2 term, ...}`` for a ``SPS ODD`` surface, else empty."""
+
+    found: dict[str, float] = {}
+    for index in ODD_ASPHERE_COEFFICIENT_INDICES:
+        raw = _optional_float(data.get(f"{prefix}.odd_asphere_scaled.C{index}"))
+        if raw is not None:
+            found[f"C{index}"] = raw / ASPHERE_EXPORT_SCALE
+    return found
 
 
 def _asphere_coefficient(data: Mapping[str, str], prefix: str, label: str) -> float | None:
