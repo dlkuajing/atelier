@@ -124,9 +124,10 @@ def test_angular_field_at_or_beyond_90_degrees_is_flagged(tmp_path: Path, angle:
 
 
 def test_image_height_field_type_is_exempt_from_the_angle_rule(tmp_path: Path) -> None:
-    """The 17 real designs use a paraxial-image-height field type, where YFLN is
-    millimetres. A 3.4 mm field is ordinary; only angular fields have a 90 limit,
-    so the exemption must key on FTYP rather than pass everything large."""
+    """The 17 real designs use the real-image-height field type (``FTYP 3``;
+    ``FTYP 2`` is the paraxial one), where YFLN is millimetres. A 3.4 mm field is
+    ordinary; only angular fields have a 90 limit, so the exemption must key on
+    FTYP rather than pass everything large."""
     path = _write(tmp_path, _zmx(ftyp=3, yfln="0 1.63 3.414"))
     assert audit_seed(path, "t").hard == ()
 

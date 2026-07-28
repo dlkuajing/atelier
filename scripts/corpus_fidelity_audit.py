@@ -37,9 +37,11 @@ Two families of finding, kept apart because they carry different confidence:
         carries only the conic constant.
 
 Field-type note: seeds written by the patent pipeline use an angular field
-type, while the 17 hand-built real designs use a paraxial-image-height field
-type, so ``angular_field_at_or_beyond_90deg`` does not apply to them by
-construction -- that is a real exemption, not a silent pass.
+type (``FTYP 0``), while the 17 hand-built real designs use a real-image-height
+field type (``FTYP 3``; ``FTYP 2`` is the paraxial one), so
+``angular_field_at_or_beyond_90deg`` does not apply to them by construction --
+that is a real exemption, not a silent pass. Codes per
+``app/core/engines/zmx_writer.py::_FIELD_TYPE_TO_FTYP``.
 
 Usage::
 
