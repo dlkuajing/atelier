@@ -3065,8 +3065,97 @@ def test_tolerance_rows_reject_the_mtfmin_seed_value(raw: str, expected: float |
     if expected is None:
         assert rows[0].nominal_mtf is None
         assert rows[0].perturbed_mtf is None
+        # The drop is the *difference* of these two, so withholding only the
+        # endpoints left the derived value standing on a seed reading.
+        assert rows[0].mtf_drop is None
     else:
         assert rows[0].nominal_mtf == pytest.approx(expected)
+        assert rows[0].mtf_drop == pytest.approx(0.05)
+
+
+def _tolerance_row(index: int, name: str, drop: str, nominal: str, perturbed: str) -> dict[str, str]:
+    prefix = f"tolerance.{index}"
+    return {
+        f"{prefix}.parameter_name": name,
+        f"{prefix}.perturbation": "+0.005 mm",
+        f"{prefix}.mtf_drop": drop,
+        f"{prefix}.nominal_mtf": nominal,
+        f"{prefix}.perturbed_mtf": perturbed,
+    }
+
+
+def test_a_drop_measured_against_a_degenerate_nominal_is_withheld() -> None:
+    """Degenerate nominal minus a real perturbed value is the *largest* possible
+    drop, so this row would otherwise become the run's headline sensitivity."""
+
+    rows = _parse_tolerance_sensitivity(
+        {"tolerance.count": "1", **_tolerance_row(1, "S3 thickness", "0.6", "1.0", "0.4")}
+    )
+
+    assert rows[0].mtf_drop is None
+
+
+def test_a_drop_measured_against_a_degenerate_perturbed_value_is_withheld() -> None:
+    """The macro clamps the resulting negative difference to 0, which reads as
+    'perfectly insensitive to this perturbation' -- a degenerate value landing
+    exactly on the ideal reading."""
+
+    rows = _parse_tolerance_sensitivity(
+        {"tolerance.count": "1", **_tolerance_row(1, "S3 thickness", "0.0", "0.4", "1.0")}
+    )
+
+    assert rows[0].mtf_drop is None
+
+
+def test_an_unmeasured_drop_never_outranks_a_measured_one() -> None:
+    """Ranking is the whole point of the table: it names the parameter a
+    designer should tighten first. A withheld row must not take that slot even
+    though its raw difference is an order of magnitude larger."""
+
+    rows = _parse_tolerance_sensitivity(
+        {
+            "tolerance.count": "2",
+            **_tolerance_row(1, "degenerate parameter", "0.9", "1.0", "0.1"),
+            **_tolerance_row(2, "real parameter", "0.05", "0.412", "0.362"),
+        }
+    )
+
+    assert [(row.parameter_name, row.mtf_drop) for row in rows] == [
+        ("real parameter", pytest.approx(0.05)),
+        ("degenerate parameter", None),
+    ]
+
+
+def test_a_row_with_both_endpoints_measured_keeps_its_drop() -> None:
+    rows = _parse_tolerance_sensitivity(
+        {"tolerance.count": "1", **_tolerance_row(1, "S3 thickness", "0.05", "0.412", "0.362")}
+    )
+
+    assert rows[0].mtf_drop == pytest.approx(0.05)
+
+
+def test_a_row_with_no_endpoint_readings_cannot_vouch_for_its_drop() -> None:
+    """The macro always emits both endpoints. A row without them is a reading
+    whose provenance cannot be checked, so it is reported as unmeasured rather
+    than trusted."""
+
+    rows = _parse_tolerance_sensitivity(
+        {
+            "tolerance.count": "1",
+            "tolerance.1.parameter_name": "S3 thickness",
+            "tolerance.1.perturbation": "+0.005 mm",
+            "tolerance.1.mtf_drop": "0.05",
+        }
+    )
+
+    assert rows[0].mtf_drop is None
+
+
+def test_a_withheld_drop_renders_as_unavailable_not_as_zero() -> None:
+    from app.main import _format_mtf_drop
+
+    assert _format_mtf_drop(None) == "Unavailable"
+    assert _format_mtf_drop(0.0) == "0.0000"
 
 
 def test_optimize_sequence_emits_wavelength_count(tmp_path: Path) -> None:

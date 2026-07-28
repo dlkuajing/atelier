@@ -604,13 +604,19 @@ class CodeVRefinementMetricSnapshot(BaseModel):
 
 
 class CodeVToleranceSensitivityRow(BaseModel):
-    """One top-N tolerance sensitivity row sourced from CODE V."""
+    """One top-N tolerance sensitivity row sourced from CODE V.
+
+    ``mtf_drop`` is ``None`` when the macro's subtraction was fed a degenerate
+    ``@mtfmin`` endpoint; the perturbation still ran, but its effect was not
+    measured. Consumers must render that as unavailable rather than as zero --
+    zero here would read as "perfectly insensitive".
+    """
 
     provenance: ProvenanceSource = ProvenanceSource.CODEV_RUN
     rank: int = Field(..., ge=1)
     parameter_name: str
     perturbation: str
-    mtf_drop: float = Field(..., ge=0.0)
+    mtf_drop: float | None = Field(default=None, ge=0.0)
 
 
 class CodeVRefinementComparison(BaseModel):
