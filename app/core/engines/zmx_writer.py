@@ -321,15 +321,65 @@ def _glass_line(surface: CodeVSurfaceReadout) -> str | None:
     return f"  GLAS {name} {model_flag} 0 {_fmt_number(nd)} {_fmt_number(vd)} 0 0 0 0 0 0 "
 
 
+#: CODE V ``(TYP SUR)`` spellings this writer can faithfully represent in ZMX.
+#: Observed live in 2026-07-28 pilot readouts: ``SPH`` 140, ``ASP`` 332,
+#: ``SPS ODD`` 72. ``CON`` is read by codev_readout's conic branch. The ZMX
+#: spellings are accepted too because callers may hand back a Zemax-side type.
+_EVEN_ASPHERE_SURFACE_TYPES = frozenset({"ASP", "ASPH", "EVENASPH", "XASPHERE"})
+_SPHERICAL_SURFACE_TYPES = frozenset({"", "SPH", "CON", "STANDARD"})
+
+
 def _zemax_surface_type(surface: CodeVSurfaceReadout) -> str:
+    """Map a CODE V surface type to a ZMX one, or refuse.
+
+    Fail-closed on unknown types (2026-07-28). The previous ``return
+    "STANDARD"`` fallback was the project's **seventh** instance of "the
+    degenerate value is indistinguishable from a benign reading", and the first
+    one on the *output* side:
+
+    ``codev_readout`` seeds every asphere coefficient to 0 and only fills them
+    for ``^surf_type = "ASP"`` or ``"CON"``. A Zemax ``XASPHERE`` imports into
+    CODE V as ``SPS ODD`` (odd-order asphere), which matches neither branch --
+    so all ten coefficients stay 0, and 0 is exactly what a plain sphere reads.
+    This function then saw "no even terms, unfamiliar type" and wrote
+    ``STANDARD``, turning a 12-asphere mobile lens into an all-spherical one.
+
+    Real-machine evidence: seed ``US-12124006-B2-e2`` (12 ``XASPHERE`` / 204
+    ``XDAT`` lines) optimised to RMS 60.8 µm inside CODE V, and the delivered
+    ZMX came back with 17 ``STANDARD`` surfaces and 0 ``XDAT`` lines -- it
+    traced nothing on re-import. Same pilot, ``EVENASPH`` seeds round-tripped
+    their aspheres intact, so this is specific to the odd-asphere path.
+    ``158/442`` of ``data/zmx`` carry ``XASPHERE`` surfaces.
+
+    Refusing is the honest behaviour: ``run_codev_target``'s rebuild is already
+    fail-open and records ``zmx_rebuild_error``, so the caller reports "no
+    candidate" instead of shipping a lens that is not the design we measured.
+    Reading the odd-asphere coefficients properly is a separate piece of work.
+    """
+
     raw_type = (surface.surface_type or "").strip().upper()
     has_even_terms = any(
         abs(surface.asphere_coefficients.get(label, 0.0)) > 0.0
         for label in (*_WRITABLE_ASPHERE_TERMS, *_UNSUPPORTED_EVENASPH_TERMS)
     )
-    if raw_type in {"ASP", "ASPH", "EVENASPH", "XASPHERE"} or has_even_terms:
+    if raw_type in _EVEN_ASPHERE_SURFACE_TYPES or has_even_terms:
         return "EVENASPH"
-    return "STANDARD"
+    if raw_type in _SPHERICAL_SURFACE_TYPES:
+        return "STANDARD"
+    raise ValueError(
+        "cannot represent CODE V surface type in ZMX without silently dropping its shape",
+        {
+            "surface_index": surface.index,
+            "surface_type": surface.surface_type,
+            "known_even_asphere_types": sorted(_EVEN_ASPHERE_SURFACE_TYPES),
+            "known_spherical_types": sorted(_SPHERICAL_SURFACE_TYPES),
+            "why": (
+                "codev_readout only reads asphere coefficients for ASP/CON, so an "
+                "unrecognised type arrives with all coefficients at their 0 seed and "
+                "is indistinguishable from a sphere"
+            ),
+        },
+    )
 
 
 def _vignette_axis(
