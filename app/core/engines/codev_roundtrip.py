@@ -257,7 +257,10 @@ def run_codev_zmx_import(
     """Import one ZMX into CODE V and export structured import facts."""
 
     source_zmx = Path(source_zmx)
-    work_dir = Path(work_dir)
+    # Absolute before ANY path is derived from it: CODE V runs with ``work_dir``
+    # as its cwd, so a relative ``BUF EXP`` / ``WRL`` target would be resolved
+    # against it twice and written to ``work_dir/work_dir/...``.
+    work_dir = Path(work_dir).resolve()
     # Import through a wavelength-normalized copy (see zmx_import_prep); the
     # returned result keeps ``source_zmx`` so provenance points at the original.
     import_zmx = stage_zmx_for_codev(source_zmx, work_dir)
