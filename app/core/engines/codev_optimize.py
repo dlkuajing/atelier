@@ -22,6 +22,7 @@ from app.core.engines.codev_readout import (
     ASPHERE_EXPORT_SCALE,
     CODEV_READOUT_RESULT_SCHEMA,
     CodeVReadout,
+    _append_odd_asphere_block,
     parse_codev_readout_file,
 )
 from app.core.engines.codev_roundtrip import DEFAULT_PATENT_ROUNDTRIP_SEED
@@ -2825,6 +2826,13 @@ def _optimized_readout_block(*, source_name: str) -> list[str]:
             "  END IF",
         ]
     )
+    # This emitter and codev_readout's write result files that the same parser
+    # reads, so every surface-level block has to exist in both. PR #107 added
+    # the SPS ODD block to codev_readout only, and the consequence was silent
+    # and expensive: run_codev_readout round-tripped aspheres correctly while
+    # the *candidate-producing* path still refused every SPS ODD seed
+    # (7 of 14 trials `candidate_zmx_missing` in the 2026-07-29 pilot re-run).
+    _append_odd_asphere_block(lines)
     _append_dynamic_surface_row(lines, ".radius_y_mm", "(RDY S^s)")
     _append_dynamic_surface_row(lines, ".thickness_mm", "(THI S^s)")
     _append_dynamic_surface_positive_row(

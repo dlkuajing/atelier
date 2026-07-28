@@ -440,3 +440,56 @@ def test_scale_round_trips_every_plausible_coefficient_magnitude() -> None:
             _surface_data(**{"surface.1.asphere_scaled.A": exported}), 1, stop_surface=1
         )
         assert surface.asphere_coefficients["A"] == pytest.approx(true_value, rel=1e-6)
+
+
+def test_both_emitters_write_the_odd_asphere_block(tmp_path: Path) -> None:
+    """PR #107 added the SPS ODD block to codev_readout only.
+
+    The consequence was silent and expensive: `run_codev_readout` round-tripped
+    aspheres correctly -- which is what the real-machine verification used --
+    while the *candidate-producing* path still refused every SPS ODD seed. The
+    2026-07-29 pilot re-run showed 7 of 14 trials still `candidate_zmx_missing`
+    with `surface_type: 'SPS ODD'` in the rebuild error.
+    """
+    from app.core.engines.codev_optimize import _optimized_readout_block
+    from app.core.engines.codev_readout import build_codev_readout_sequence
+
+    zmx = tmp_path / "seed.zmx"
+    zmx.write_text("", encoding="ascii")
+    readout_seq = build_codev_readout_sequence(source_zmx=zmx, result_path=tmp_path / "o.tsv")
+    optimize_seq = "\n".join(_optimized_readout_block(source_name="seed.zmx"))
+    for sequence in (readout_seq, optimize_seq):
+        assert '"SPS ODD"' in sequence
+        assert ".odd_asphere_scaled.C1" in sequence
+        assert ".odd_asphere_scaled.C31" in sequence
+
+
+def test_every_surface_key_emitted_by_one_emitter_is_emitted_by_the_other(
+    tmp_path: Path,
+) -> None:
+    """The general form of the bug, so the next added block cannot drift either.
+
+    Both emitters feed one parser. Pinning a hand-written list of blocks only
+    catches the blocks someone remembered; comparing the emitted key suffixes
+    catches whatever is added next.
+    """
+    import re
+
+    from app.core.engines.codev_optimize import _optimized_readout_block
+    from app.core.engines.codev_readout import build_codev_readout_sequence
+
+    zmx = tmp_path / "seed.zmx"
+    zmx.write_text("", encoding="ascii")
+
+    def surface_keys(sequence: str) -> set[str]:
+        return set(re.findall(r'CONCAT\(\^surface_prefix, "(\.[^"]+)"\)', sequence))
+
+    readout_keys = surface_keys(
+        build_codev_readout_sequence(source_zmx=zmx, result_path=tmp_path / "o.tsv")
+    )
+    optimize_keys = surface_keys("\n".join(_optimized_readout_block(source_name="seed.zmx")))
+    assert readout_keys, "regex stopped matching the emitter -- fix the test, not the guard"
+    assert readout_keys == optimize_keys, {
+        "only_in_readout": sorted(readout_keys - optimize_keys),
+        "only_in_optimize": sorted(optimize_keys - readout_keys),
+    }
