@@ -87,10 +87,16 @@
 
 ## 4. 当前状态（2026-07-28）
 
-- `origin/main` = `bffc06c4`（#104 合入后；**PR #105 待合**）
-- 已合入：#93–#104（多波长导入根治 / 可追迹率普查 / 保真度审计 / P2 样本量普查 /
-  `mtf_drop` 收口 / 追迹失败消融 / 视场 A/B / HFOV 核对 / P2 对照侧基线）
+- `origin/main` = `00a5c7e6`（**#105 已合，merge 后 main CI 实测 success**）
+- 已合入：#93–#105（多波长导入根治 / 可追迹率普查 / 保真度审计 / P2 样本量普查 /
+  `mtf_drop` 收口 / 追迹失败消融 / 视场 A/B / HFOV 核对 / P2 对照侧基线 /
+  **P2 首测 + 三处交付物缺陷修复**）
 - 未做的技术债见 §5
+
+⚠️ **`NORTH-STAR.md` §3 的 P2 行已与实况不符，但 AI 不得自改（红线②）**：
+它仍写「待建：异源跨规格对拍器」「当前**零数据**，从未系统实测」。
+实况：对拍器 = `scripts/p2_crosssource_trial.py`（已建成并跑批两轮），
+P2 已有首个读数 0 打平 / 5 可判定 / 24 trial。**需主公拍板后代笔落盘。**
 
 ### 🔴 北极星主指标第一次有数：**0 打平 / 5 条可判定 / 24 条 trial**（PR #105）
 
@@ -183,10 +189,16 @@ Zemax `XASPHERE` 进 CODE V 是 `SPS ODD`，而 `codev_readout` 只在
    PR #105 只把「悄悄错」改成「响亮失败」：`codev_readout` 读不懂 `SPS ODD`，
    `zmx_writer` 现在拒绝交付而不是写出全球面 ZMX。后果是**35.7% 的 `data/zmx` seed
    目前交付不出候选**（先导 24 条里 11 条 `candidate_zmx_missing`）。
-   要做的两件：① 查 CODE V 奇次非球面的系数访问子（`(TYP SUR)` 已知返回 `SPS ODD`，
-   偶次用 `(A S^s)..(J S^s)`，奇次用什么需查文档/真机探针）
-   ② 定它在 ZMX 里的表示（Zemax `XASPHERE` + `XDAT`，与写回路径对齐）。
-   **要真机验证**，走红线①协议。
+   **映射已解出，不需要试错**（取自 CODE V 官方宏源码，与多波长根治同一条路子；
+   完整表见 memory `reference-codev-sps-odd-coefficient-map`）：
+   - 查询式 `(SCO S<n> C<i>)`（`perturb.seq:587` `ar4 ← c5`、`:635` `ar6 ← c7`）
+   - **圆锥常数 K 在 `C1`**（`perturb.seq:547-549`；注意 `SPS CN1/CN2` 的 K 在 `C3`，别串）
+   - Zemax `XDAT j` → `C(2*(j-2)+1)`，即 `XDAT 3..17` → `C3,C5,…,C31` = r²…r³⁰；
+     `XDAT 2` → `SCO NRADIUS`；`XDAT 1`（最大项号）被官方宏丢弃
+     （`zemaxos_to_cv.seq:3492`）
+   - `C2,C4,…` 是**奇次幂**，Zemax `XASPHERE` 表达不了 → **非零必须 fail-closed**
+   剩下的是：写回侧 `zmx_writer` 现有 `EVENASPH` 路径只有 `PARM 1..8`，装不下 15 项，
+   需要新的 `XASPHERE` + `XDAT` 分支。**要真机验证往返**，走红线①协议。
 
 2. **P2 已有首个读数，下一步是把分母做大** —— `scripts/p2_crosssource_trial.py`
    已建成并跑批两轮（**对拍器不存在**这条卡点已解除）。
