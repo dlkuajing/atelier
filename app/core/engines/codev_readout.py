@@ -19,6 +19,29 @@ from app.core.engines.zmx_import_prep import stage_zmx_for_codev
 
 CODEV_READOUT_RESULT_SCHEMA = "atelier-codev-readout-v1"
 
+#: Factor applied to aspheric coefficients before ``BUF EXP`` writes them.
+#:
+#: CODE V's export format was characterised on real hardware (2026-07-28, 18
+#: known values spanning 1e17 down to 1e-20):
+#:
+#:   * ``|x| >= 1e-4``  -> 6 significant figures        (relative error ~1e-6)
+#:   * ``1e-6 <= |x| < 1e-4`` -> **fixed 6 decimals**   (0.0000123457 -> "0.000012",
+#:     2.8% error; 0.00000123457 -> "0.000001", **19% error**)
+#:   * ``|x| <= 1e-7``  -> scientific, 7 significant figures
+#:
+#: The value in CODE V's database is full precision -- ``(SCO S1 C17)`` exported
+#: "0.000059" while ``(SCO S1 C17)*1000000`` exported "59.426" for a true
+#: 5.9426e-05. Only the export formatting loses digits.
+#:
+#: Aspheric high-order terms live at 1e-3..1e-9, i.e. straddling the bad band,
+#: and production readouts already show the signature (``D = 0.000051``,
+#: ``G = -0.000003``). Scaling by 1e12 moves every plausible coefficient into a
+#: safe range: 1.23e-6 -> 1.23e6 and 0.13 -> 1.3e11 both export in scientific
+#: notation with 7 significant figures, and 1e-24 -> 1e-12 stays scientific.
+#: Measured end to end: ``0.00000123456789*1e12`` exports "1.234568e+06",
+#: recovering the value with 9e-8 relative error instead of 19%.
+ASPHERE_EXPORT_SCALE = 1.0e12
+
 _READOUT_SEQUENCE_NAME = "atelier_codev_readout.seq"
 _READOUT_RESULT_NAME = "atelier_codev_readout.tsv"
 _READOUT_REQUIRED_KEYS = (
@@ -302,6 +325,15 @@ def build_codev_readout_sequence(
     _append_dynamic_surface_row(lines, ".is_stop", "^isstop")
     for label in _ASPHERE_COEFFICIENT_LABELS:
         _append_dynamic_surface_row(lines, f".asphere.{label}", f"^coef{label}")
+        # Scaled twin -- see ASPHERE_EXPORT_SCALE. CODE V's BUF EXP writes a
+        # value like 1.23e-06 as the fixed-point "0.000001", a 19% error, and
+        # aspheric high-order terms sit squarely in that band. Multiplying into
+        # the safe range before export costs one extra row per coefficient.
+        _append_dynamic_surface_row(
+            lines,
+            f".asphere_scaled.{label}",
+            f"^coef{label}*{ASPHERE_EXPORT_SCALE:.0f}",
+        )
     lines.append("END FOR")
 
     lines.extend(
@@ -505,7 +537,7 @@ def _parse_surface(
     coefficients = {
         label: value
         for label in _ASPHERE_COEFFICIENT_LABELS
-        if (value := _optional_float(data.get(f"{prefix}.asphere.{label}"))) is not None
+        if (value := _asphere_coefficient(data, prefix, label)) is not None
     }
     is_stop = _optional_bool(data.get(f"{prefix}.is_stop"))
     glass = _optional_text(data.get(f"{prefix}.glass"))
@@ -535,6 +567,21 @@ def _parse_surface(
         is_stop=(surface_index == stop_surface if is_stop is None else is_stop),
         asphere_coefficients=coefficients,
     )
+
+
+def _asphere_coefficient(data: Mapping[str, str], prefix: str, label: str) -> float | None:
+    """One aspheric coefficient, preferring the precision-preserving twin.
+
+    The scaled row is authoritative when present (see ``ASPHERE_EXPORT_SCALE``).
+    Result files written before it existed carry only the unscaled row, and
+    those are read as-is rather than rejected -- the value is degraded, not
+    absent, and refusing to parse old artefacts would buy nothing.
+    """
+
+    scaled = _optional_float(data.get(f"{prefix}.asphere_scaled.{label}"))
+    if scaled is not None:
+        return scaled / ASPHERE_EXPORT_SCALE
+    return _optional_float(data.get(f"{prefix}.asphere.{label}"))
 
 
 def _parse_field(

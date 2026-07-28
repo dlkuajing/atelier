@@ -364,3 +364,79 @@ def test_real_codev_readout_patent_seed_smoke(tmp_path: Path) -> None:
     assert result.readout.surfaces
     assert all(surface.semi_diameter_mm is not None for surface in result.readout.surfaces)
     assert any(surface.asphere_coefficients for surface in result.readout.surfaces)
+
+
+# ---------------------------------------------------------------------------
+# Aspheric coefficient export precision (2026-07-28)
+# ---------------------------------------------------------------------------
+
+
+def _surface_data(**overrides: str) -> dict[str, str]:
+    data = {
+        "surface.1.radius_y_mm": "10.0",
+        "surface.1.thickness_mm": "1.0",
+        "surface.1.semi_diameter_mm": "1.0",
+        "surface.1.surface_type": "ASP",
+        "surface.1.is_stop": "0",
+    }
+    data.update(overrides)
+    return data
+
+
+def test_scaled_row_is_preferred_over_the_truncated_one() -> None:
+    """The unscaled row is what BUF EXP mangles; the scaled twin carries the truth.
+
+    Real vector: CODE V exported "0.000001" for a coefficient whose true value
+    is 1.23456789e-06 (a 19% error), while the same value times 1e12 exported
+    as 1.234568e+06.
+    """
+    from app.core.engines.codev_readout import _parse_surface
+
+    surface = _parse_surface(
+        _surface_data(
+            **{
+                "surface.1.asphere.A": "0.000001",
+                "surface.1.asphere_scaled.A": "1.234568e+06",
+            }
+        ),
+        1,
+        stop_surface=1,
+    )
+    assert surface.asphere_coefficients["A"] == pytest.approx(1.234568e-06, rel=1e-9)
+
+
+def test_legacy_files_without_the_scaled_row_still_parse() -> None:
+    """Degraded is not absent -- refusing to read old artefacts would buy nothing."""
+    from app.core.engines.codev_readout import _parse_surface
+
+    surface = _parse_surface(
+        _surface_data(**{"surface.1.asphere.A": "0.000001"}), 1, stop_surface=1
+    )
+    assert surface.asphere_coefficients["A"] == pytest.approx(1e-06)
+
+
+def test_both_emitters_write_the_scaled_row(tmp_path: Path) -> None:
+    """codev_readout and codev_optimize feed the same parser; they must agree."""
+    from app.core.engines.codev_optimize import _optimized_readout_block
+    from app.core.engines.codev_readout import build_codev_readout_sequence
+
+    zmx = tmp_path / "seed.zmx"
+    zmx.write_text("", encoding="ascii")
+    readout_seq = build_codev_readout_sequence(source_zmx=zmx, result_path=tmp_path / "o.tsv")
+    optimize_seq = "\n".join(_optimized_readout_block(source_name="seed.zmx"))
+    for sequence in (readout_seq, optimize_seq):
+        assert ".asphere_scaled." in sequence
+        assert "*1000000000000" in sequence
+
+
+def test_scale_round_trips_every_plausible_coefficient_magnitude() -> None:
+    """1e-3..1e-9 is where aspheric high-order terms live."""
+    from app.core.engines.codev_readout import ASPHERE_EXPORT_SCALE, _parse_surface
+
+    for true_value in (0.13053, 1.42e-2, 5.9426e-05, 3.61e-06, 9.6683e-08, 1.147e-24):
+        # What CODE V would export for the scaled value: 7 significant figures.
+        exported = f"{true_value * ASPHERE_EXPORT_SCALE:.6e}"
+        surface = _parse_surface(
+            _surface_data(**{"surface.1.asphere_scaled.A": exported}), 1, stop_surface=1
+        )
+        assert surface.asphere_coefficients["A"] == pytest.approx(true_value, rel=1e-6)
