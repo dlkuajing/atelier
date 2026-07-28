@@ -31,6 +31,7 @@ from app.core.engines.zmx_import_prep import (
     CODEV_WAVM_SLOTS,
     STAGED_INPUT_DIRNAME,
     count_wavm_rows,
+    declared_field_count,
     declared_wavelength_count,
     decode_zmx_text,
     encode_zmx_text,
@@ -258,3 +259,32 @@ def test_every_codev_import_site_routes_through_the_prep() -> None:
         if not hasattr(module, "stage_zmx_for_codev") and not hasattr(module, "pad_wavm_bytes")
     ]
     assert not missing, f"CODE V import sites without wavelength normalization: {missing}"
+
+
+def test_declared_field_count_reads_the_column_left_of_wavelengths() -> None:
+    """FTYP j4 is fields, j5 is wavelengths -- an off-by-one here silently
+    injects the wrong num_fields into the autovig ladder."""
+    text = "FTYP 0 0 2 3 0 0 0 2\nWAVM 1 0.4861 1\n"
+    assert declared_field_count(text) == 2
+    assert declared_wavelength_count(text) == 3
+
+
+def test_declared_field_count_needs_a_full_ftyp_row() -> None:
+    """A short row declares nothing usable; 0 would be a wrong answer, not a missing one."""
+    assert declared_field_count("FTYP 0 0 2 3\n") is None
+    assert declared_field_count("NAME lens\n") is None
+
+
+def test_declared_field_count_rejects_non_numeric_columns() -> None:
+    assert declared_field_count("FTYP 0 0 x 3 0 0 0 2\n") is None
+
+
+def test_declared_field_count_matches_a_real_corpus_seed() -> None:
+    from pathlib import Path
+
+    from app.core.engines.zmx_import_prep import decode_zmx_text
+
+    seed = Path("data/zmx/US-12124006-B2-e2.zmx")
+    text, _ = decode_zmx_text(seed.read_bytes())
+    # CODE V read (NUM F) == 2 for this seed in the 2026-07-28 pilot.
+    assert declared_field_count(text) == 2

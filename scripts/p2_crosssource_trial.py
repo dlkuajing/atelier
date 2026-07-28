@@ -521,6 +521,7 @@ def compare(candidate: ImageQuality, control: ImageQuality) -> dict[str, object]
 def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_optimize import run_codev_target_standard
+    from app.core.engines.zmx_import_prep import declared_field_count, decode_zmx_text
 
     started = time.time()
     work = out_dir / f"trial_{plan.control_case_id}"
@@ -532,14 +533,24 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
         "mtf_nrd": MTF_NRD,
     }
 
+    # autovig learns num_fields from its rung-0 run, so a rung-0 timeout leaves
+    # it unable to build any higher rung and it abandons the ladder after one
+    # attempt per config. The 2026-07-28 pre-fix pilot lost 3/24 trials exactly
+    # that way (elapsed pinned at 2 x the 180s hard timeout, to 0.1s). Reading
+    # the declared count off the seed costs no CODE V call.
+    seed_zmx = ZMX_DIR / plan.seed_zmx
+    num_fields = declared_field_count(decode_zmx_text(seed_zmx.read_bytes())[0])
+    record["seed_declared_num_fields"] = num_fields
+
     # --- candidate: optimise the cross-brand seed toward the control's spec ---
     try:
         standard = run_codev_target_standard(
-            source_zmx=ZMX_DIR / plan.seed_zmx,
+            source_zmx=seed_zmx,
             work_dir=work / "optimize",
             target_efl_mm=plan.spec_efl_mm,
             target_f_number=plan.spec_f_number,
             target_imh_mm=plan.spec_imh_mm,
+            num_fields=num_fields,
             timeout_seconds=timeout_seconds,
             emit_optimized_zmx=True,
         )
