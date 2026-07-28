@@ -240,3 +240,58 @@ def test_unknown_dispersion_keeps_glass_as_vd_zero_not_air() -> None:
     )
     glas = [line for line in text.splitlines() if line.lstrip().startswith("GLAS")]
     assert any(" 1.5168 0 " in line for line in glas), glas
+
+
+def _readout_with_surface_type(surface_type: str) -> CodeVReadout:
+    readout = _manual_readout()
+    surfaces = (replace(readout.surfaces[0], surface_type=surface_type), *readout.surfaces[1:])
+    return replace(readout, surfaces=surfaces)
+
+
+def test_odd_asphere_is_refused_instead_of_written_as_a_sphere() -> None:
+    """A Zemax XASPHERE imports into CODE V as ``SPS ODD``.
+
+    ``codev_readout`` only reads asphere coefficients for ``ASP``/``CON``, so an
+    ``SPS ODD`` surface arrives with all ten coefficients at their 0 seed --
+    indistinguishable from a sphere. The writer used to fall through to
+    ``STANDARD`` and ship a 12-asphere mobile lens as an all-spherical one
+    (real-machine: seed US-12124006-B2-e2, optimised to RMS 60.8 µm inside
+    CODE V, delivered ZMX had 17 STANDARD surfaces / 0 XDAT and traced nothing).
+    """
+    readout = _readout_with_surface_type("SPS ODD")
+    readout.surfaces[0].asphere_coefficients.clear()  # what the readout actually hands over
+    with pytest.raises(ValueError, match="silently dropping its shape"):
+        build_zmx_from_codev_readout(readout, name="odd-asphere")
+
+
+def test_refusal_names_the_surface_and_the_type_it_could_not_represent() -> None:
+    readout = _readout_with_surface_type("SPS XYP")
+    readout.surfaces[0].asphere_coefficients.clear()
+    with pytest.raises(ValueError) as excinfo:
+        build_zmx_from_codev_readout(readout, name="unknown-asphere")
+    detail = excinfo.value.args[1]
+    assert detail["surface_index"] == 1
+    assert detail["surface_type"] == "SPS XYP"
+
+
+def test_recognised_spherical_types_still_write_standard() -> None:
+    """The guard must not over-reach: real spheres and conics are representable."""
+    for surface_type in ("SPH", "CON", "STANDARD", ""):
+        readout = _readout_with_surface_type(surface_type)
+        readout.surfaces[0].asphere_coefficients.clear()
+        text = build_zmx_from_codev_readout(readout, name="spherical")
+        assert text.count("TYPE STANDARD") == 4  # object + 3 surfaces
+
+
+def test_even_asphere_types_still_write_evenasph() -> None:
+    for surface_type in ("ASP", "ASPH", "EVENASPH", "XASPHERE"):
+        readout = _readout_with_surface_type(surface_type)
+        text = build_zmx_from_codev_readout(readout, name="even-asphere")
+        assert "TYPE EVENASPH" in text
+
+
+def test_unknown_type_carrying_real_even_terms_is_still_written() -> None:
+    """Coefficients present are proof the shape survived; the type string is then moot."""
+    readout = _readout_with_surface_type("SPS ODD")
+    text = build_zmx_from_codev_readout(readout, name="odd-with-even-terms")
+    assert "TYPE EVENASPH" in text

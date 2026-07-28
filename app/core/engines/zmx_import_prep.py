@@ -110,6 +110,26 @@ def count_wavm_rows(text: str) -> int:
     return sum(1 for line in text.splitlines() if _WAVM_RE.match(line))
 
 
+def declared_field_count(text: str) -> int | None:
+    """Return the field count declared in ``FTYP`` column ``j4``.
+
+    Sits one column left of :func:`declared_wavelength_count` and follows the
+    same rule (only read when ``FTYP`` has >= 8 columns), so the two agree about
+    which files declare usable data.
+
+    Why this is worth having offline: ``run_codev_target_autovig`` learns
+    ``num_fields`` from its rung-0 run, so when rung-0 itself times out it cannot
+    build any higher rung and abandons the whole ladder after one attempt per
+    config. Its docstring already names the escape hatch -- inject ``num_fields``
+    -- and this reads it from the seed without spending a CODE V call.
+
+    Validated against CODE V's own ``(NUM F)`` on the 14 pilot trials that got a
+    control reading: 14 match, 0 mismatch (2026-07-28).
+    """
+
+    return _ftyp_column(text, 3)
+
+
 def declared_wavelength_count(text: str) -> int | None:
     """Return the wavelength count CODE V reads from ``FTYP`` column ``j5``.
 
@@ -119,6 +139,16 @@ def declared_wavelength_count(text: str) -> int | None:
     usable ``FTYP`` row (the macro only reads j5 when ``FTYP`` has >= 8 columns).
     """
 
+    return _ftyp_column(text, 4)
+
+
+def _ftyp_column(text: str, column: int) -> int | None:
+    """Read one integer column out of the first ``FTYP`` row, or ``None``.
+
+    The import macro only reads ``FTYP`` when it carries >= 8 columns, so a
+    shorter row means "declares nothing usable" rather than "declares zero".
+    """
+
     for line in text.splitlines():
         if not line.startswith("FTYP"):
             continue
@@ -126,7 +156,7 @@ def declared_wavelength_count(text: str) -> int | None:
         if len(fields) < 8:
             return None
         try:
-            return int(float(fields[4]))
+            return int(float(fields[column]))
         except ValueError:
             return None
     return None
