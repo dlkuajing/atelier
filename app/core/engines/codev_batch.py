@@ -806,9 +806,12 @@ def ensure_buf_exp_safe_filename(path: Path | str, *, role: str = "path") -> Non
     """Reject basenames CODE V refuses to open — Python 侧提前 ValueError，
     不让 CODE V 到真机批跑时才静默中止宏（见 `_BUF_EXP_HAZARD_RE` 注释）。
 
-    只守卫会传给 CODE V 宏 / ``BUF EXP`` 打开的路径；纯 Python 落盘、不经
-    CODE V 打开的文件（如 zmx_writer 重建的 ``*_target3.797_*.zmx``）不适用
-    本守卫，勿对它们调用。
+    守卫任何 CODE V 会打开的路径——包括**将来**会被打开的。2026-07-28 真机
+    单变量 A/B 推翻了本段原先的豁免建议：zmx_writer 重建的候选
+    ``*_target3.797_*.zmx`` 当时确实没有消费者，但它是交付物，第三方独立复核
+    与 P2 异源打平率都要把它导回 CODE V，而 ``ZEMAXOS_TO_CV`` 对这个形状报
+    ``ERROR - Zemax File ...`` 并导入一个空系统。判断"会不会被 CODE V 打开"
+    要按文件的用途，不是按它当前有没有调用方。
     """
     name = Path(path).name
     if _BUF_EXP_HAZARD_RE.search(name):

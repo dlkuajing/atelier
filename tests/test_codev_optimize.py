@@ -1706,17 +1706,39 @@ def test_run_codev_target_rejects_buf_exp_hazard_readout_filename(tmp_path: Path
     assert list(tmp_path.glob("*.seq")) == []  # 守卫先于 seq 落盘
 
 
-def test_run_codev_target_dangerous_shaped_zmx_output_name_is_exempt() -> None:
-    """守卫只管 CODE V 会打开的路径：优化后 ZMX（zmx_writer Python 落盘、不经
-    CODE V）文件名天然含小数点（"_target4.057_"），必须豁免——由
-    test_mock_run_codev_target_emit_optimized_zmx_rebuilds_and_ingests 的
-    文件名断言回归锁定；此处锁定 readout 文件名生成器本身对合法 token 安全。"""
+def test_optimized_zmx_output_name_is_reimportable_by_codev() -> None:
+    """候选 ZMX 的文件名必须能被 CODE V 重新打开。
+
+    本测试**取代**了先前的 ``..._is_exempt``，后者断言 ``".057_" in
+    dangerous_zmx``，理由是该文件"由 zmx_writer Python 落盘、不经 CODE V 打开"。
+    2026-07-28 真机单变量 A/B 推翻了那个前提：候选 ZMX 是交付物，第三方独立复
+    核（北极星 P4）与 P2 异源打平率都要把它导回 CODE V，而带小数点的名字会让
+    ZEMAXOS_TO_CV 报错并导入一个空系统。
+    """
     safe_readout = codev_optimize._target_optimized_readout_filename("A", "_vig0200")
     ensure_buf_exp_safe_filename(safe_readout)  # 合法 token 不误伤
-    dangerous_zmx = codev_optimize._target_optimized_zmx_filename(
+    zmx_name = codev_optimize._target_optimized_zmx_filename(
         default_optimize_seed(), 4.057, "_vig0200"
     )
-    assert ".057_" in dangerous_zmx  # 危险形状确实存在，但该路径不经守卫
+    ensure_buf_exp_safe_filename(zmx_name, role="optimized_zmx_path")
+    assert "." not in Path(zmx_name).stem
+    assert "_target004057_" in zmx_name
+
+
+def test_optimized_zmx_name_keeps_sub_micron_targets_distinct() -> None:
+    """微米分辨率必须真的区分相邻目标，否则两次 run 会静默互相覆写。"""
+    seed = default_optimize_seed()
+    names = {
+        codev_optimize._target_optimized_zmx_filename(seed, efl, "_vig0200")
+        for efl in (4.057, 4.058, 5.680244)
+    }
+    assert len(names) == 3
+
+
+@pytest.mark.parametrize("bad", [0.0, -1.0, float("nan"), float("inf")])
+def test_optimized_zmx_name_rejects_impossible_targets(bad: float) -> None:
+    with pytest.raises(ValueError, match="target_efl_mm"):
+        codev_optimize._fmt_efl_filename_token(bad)
 
 
 def test_mock_run_codev_target_default_optimized_zmx_path_is_none(
@@ -1771,7 +1793,9 @@ def test_mock_run_codev_target_emit_optimized_zmx_rebuilds_and_ingests(
     assert data["optimized_zmx_path"] is not None
     zmx_path = Path(data["optimized_zmx_path"])
     assert zmx_path.is_file()
-    assert zmx_path.name == f"{default_optimize_seed().stem}_target4.057_optimized.zmx"
+    # 微米定宽整数，无小数点——带小数点的旧命名 CODE V 拒绝重新导入，
+    # 见 _fmt_efl_filename_token 的真机 A/B。
+    assert zmx_path.name == f"{default_optimize_seed().stem}_target004057_optimized.zmx"
     assert math.isfinite(data["optimized_zmx_ingested_efl_mm"])
 
 
@@ -1811,7 +1835,7 @@ def test_mock_run_codev_target_stale_readout_is_not_claimed(
 
     stale_readout = tmp_path / "atelier_codev_target_A_optimized_readout.tsv"
     _write_optimized_readout(stale_readout)  # 完全合法的旧 readout，最具迷惑性
-    stale_zmx = tmp_path / f"{default_optimize_seed().stem}_target4.057_optimized.zmx"
+    stale_zmx = tmp_path / f"{default_optimize_seed().stem}_target004057_optimized.zmx"
     stale_zmx.write_text("! stale optimized zmx from a previous run\n", encoding="ascii")
 
     class FakePopen:

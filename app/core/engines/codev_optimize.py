@@ -1011,11 +1011,39 @@ def _target_optimized_readout_filename(stage: str, vignetting_token: str) -> str
     return f"atelier_codev_target_{stage}{vignetting_token}_optimized_readout.tsv"
 
 
+def _fmt_efl_filename_token(target_efl_mm: float) -> str:
+    """目标 EFL 的**不含小数点**文件名消歧后缀，如 5.680244mm -> ``"_target005680"``。
+
+    与 ``_fmt_edge_filename_token`` 同一个 CODE V 文件名怪癖，但这里踩的是
+    **重新导入**而不是 BUF EXP 导出。原实现用 ``f"{efl:.6g}"`` 拼出
+    ``"..._target5.68024_vig0600_optimized.zmx"``，正是 ``_BUF_EXP_HAZARD_RE``
+    描述的危险形状（小数点后跟数字、同一点分段内还有非数字内容）。
+
+    此前刻意不守卫，理由是"该文件由 zmx_writer Python 侧落盘、不经 CODE V
+    打开"——**该前提已不成立**。北极星四件套要求候选处方 ZMX 可被第三方导入
+    CODE V/Zemax 独立复核（P4），P2 异源打平率也必须重新导入候选才能量它。
+
+    真机单变量 A/B（2026-07-28，同一份字节、同一文件名长度、只把 stem 里的
+    ``.`` 换成 ``x``）：``..._target5.68024_vig0600_optimized.zmx`` 报
+    ``ERROR - Zemax File ...`` 后导入一个空系统（EFL 1e+35 / NUM W=1 /
+    NUM F=1 / 全零度量）；``..._target5x68024_vig0600_optimized.zmx`` 正常导入
+    （NUM W=3 / NUM F=2 / EFL 4.507）。即**此前每一颗交付出去的候选 ZMX，
+    文件名本身就挡住了独立复核**。
+
+    编码沿用渐晕 token 的约定：微米分辨率的定宽整数（0.001mm，手机镜头 EFL
+    量级 1-30mm，六位可覆盖到 999.999mm）。
+    """
+    efl = float(target_efl_mm)
+    if not math.isfinite(efl) or efl <= 0:
+        raise ValueError(f"target_efl_mm must be finite and positive: {target_efl_mm!r}")
+    return f"_target{round(efl * 1000):06d}"
+
+
 def _target_optimized_zmx_filename(
     source_zmx: Path, target_efl_mm: float, vignetting_token: str
 ) -> str:
-    efl_token = f"{target_efl_mm:.6g}"
-    return f"{source_zmx.stem}_target{efl_token}{vignetting_token}_optimized.zmx"
+    efl_token = _fmt_efl_filename_token(target_efl_mm)
+    return f"{source_zmx.stem}{efl_token}{vignetting_token}_optimized.zmx"
 
 
 def run_codev_target(
@@ -1096,15 +1124,18 @@ def run_codev_target(
         # run_codev_batch（那里只守卫 seq/主 TSV）——危险文件名（如带小数点的
         # stage/rung tag 拼出 "..._vig0.20_optimized_readout.tsv"）必须在这里
         # 提前 ValueError，否则 CODE V 真机上静默中止宏尾、readout 永不落盘
-        # （fail-open 只留 zmx_rebuild_error，病灶极难归因）。注意
-        # optimized_zmx_out **刻意不守卫**：它由 zmx_writer Python 侧落盘、
-        # 不经 CODE V 打开，文件名带小数点（如 "_target3.797_"）是合法的。
+        # （fail-open 只留 zmx_rebuild_error，病灶极难归因）。
         ensure_buf_exp_safe_filename(
             optimized_readout_path, role="optimized_readout_path"
         )
         optimized_zmx_out = work_dir / _target_optimized_zmx_filename(
             source_zmx, target_efl_mm, filename_token
         )
+        # 候选 ZMX 同样守卫。它由 zmx_writer Python 侧落盘不假，但它是**交付
+        # 物**：北极星四件套要求第三方能把它导进 CODE V/Zemax 独立复核，P2 异
+        # 源打平率也要重新导入它才能量。真机 A/B 已证实带小数点的名字会让
+        # ZEMAXOS_TO_CV 报错并导入一个空系统（见 _fmt_efl_filename_token）。
+        ensure_buf_exp_safe_filename(optimized_zmx_out, role="optimized_zmx_path")
         # 批跑前清理同名陈旧产物（对齐 baseline run_codev_optimize 的清理模式）：
         # 本轮宏尾 readout 导出若失败（如 BUF EXP 拒开文件中止宏），fail-open 的
         # 重建管线绝不能认领上一轮遗留的 readout/ZMX 伪装"成功"——宁可如实报
