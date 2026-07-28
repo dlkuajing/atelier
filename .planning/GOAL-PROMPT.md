@@ -66,9 +66,10 @@
 
 ## 4. 当前状态（2026-07-28）
 
-- `origin/main` = `7bff065b`
-- **PR #95 待合**：CODE V 暂存路径归一化（异底座审查捕获的 #93 回归）。CI 绿即合，主公已授权
-- 已合入：#93（多波长导入根治 + 指标种子值 fail-closed）、#94（底库可追迹率普查）
+- `origin/main` = `dc4ac457`，无待合 PR
+- 本轮已合入：**#93**（多波长导入根治 + 四指标种子值 fail-closed）、**#94**（可追迹率普查）、
+  **#95**（CODE V 路径归一化，异底座审查捕获的 #93 回归）、**#96**（分母更正 + 本文件）
+- 未做的技术债见 §5 第 4–6 项
 
 ### ⚠️ 底库有三个池，报任何比例前先确认你在说哪个
 
@@ -100,27 +101,29 @@
 
 ## 5. 下一步排序（附理由；有更好的判断就改，但要在 decisions.log 说明为什么）
 
-1. **合 PR #95** —— CI 绿即合，然后同步 main、清理 worktree
-2. **127 颗失败 seed 的根因** —— 直接决定底库能否从 218 回升。**五条假设已用数据排除**
-   （渐晕 / `RAIM` / 视场角 / 片数 / `CRADJ`，**别重走**）。已知最锋利的事实：
-   失败**集中在边缘视场**（轴上 `err=0` 但点列径恰好 `0.0`），且**所有 setup 侧杠杆无效**
-   → 嫌疑指向 `scripts/patent_to_zmx.py` 生成环节。
-   **验证方式**：拿失败 seed 的处方与专利原表逐面对拍。这条未验证
-3. **P2 异源打平率首次实测** —— 北极星主指标当前**零数据**。对照组用 218 颗可用 seed，
-   同族判定用专利家族。做出第一版数字比数字好看重要
-4. **四件套缺件**：公差敏感度与良率（MC 饱和）、相对成本指数（模型不存在）。
+1. **343 颗全失败 + 256 颗半残的根因** —— 直接决定 456 能回升多少。**五条假设已用数据排除**
+   （渐晕 / `RAIM` / 视场角 / 片数 / `CRADJ`，**别重走，那是几十次真机 run**）。
+   最锋利的三条事实：① 失败**集中在边缘视场**（轴上 `err=0` 但点列径恰好 `0.0`）；
+   ② **所有 setup 侧杠杆均无效**；③ **两个独立生成批次呈现相似失败结构**（32.5%），
+   偶发不会稳定复现 → 嫌疑指向 `scripts/patent_to_zmx.py` 生成环节。
+   **验证方式**：拿失败 seed 的处方与专利原表**逐面对拍**。这条未验证
+2. **P2 异源打平率首次实测** —— 北极星主指标当前**零数据**。对照组用可用 seed
+   （今天可路由 218；若走 staging 需先解决其 ledger 的 fail-closed 提升条件），
+   同族判定用专利家族。**做出第一版数字比数字好看重要**
+3. **四件套缺件**：公差敏感度与良率（MC 饱和）、相对成本指数（模型不存在）。
    两者都是「**同一张表同时施于候选与对照**」的相对量，绝对值不准不影响排序 —— 这是解开
    「阈值须专家 ratify」死结的那把钥匙，别把它做成需要绝对精度的东西
-5. **`tolerance.mtf_drop` 未收口** —— 它是排序键，而 `nominal_mtf` 的 `1.0` 哨兵已归 None，
+4. **`tolerance.mtf_drop` 未收口** —— 它是排序键，而 `nominal_mtf` 的 `1.0` 哨兵已归 None，
    drop 却仍是原值。已判低危留档，修它要动类型面
-6. **CI 瓶颈**：`test_acceptance_runner_has_no_upstream_seed_blocking_after_evidence_cleared`
+5. **CI 瓶颈**：`test_acceptance_runner_has_no_upstream_seed_blocking_after_evidence_cleared`
    单项占总时长 33–38%（4 case 串行 fork）。分档与并行 fork 都没做
 
 ## 6. 证据在哪（不在任何 worktree 下，仓库里 grep 必然找不到）
 
 - 可追迹率普查：`D:\atelier-stagec-runs\trace-census-20260728\`
-  （`census.jsonl` 宽判据 442 行 / `perfield-census.jsonl` 严格判据 442 行 /
-  `work/<seed>/` 仅失败样本保留原始 listing）
+  （`census.jsonl` 442 宽判据 / `perfield-census.jsonl` 442 严格判据 /
+  `perfield-staging-census.jsonl` **613 严格判据** / `optiland-census.jsonl` 28 交叉验证 /
+  `work/<seed>/` 仅 data/zmx 失败样本保留原始 listing）
 - Stage C 矩阵：`D:\atelier-stagec-runs\stagec-real-matrix-20260713\`
 - 每 run 制品：`~/.atelier/stagec-runs/stagec_<hex>/`（52 个目录）
 - 定位技巧：receipt 的 `process.lock_owner.argv` 里记着原始命令行
