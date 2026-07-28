@@ -42,6 +42,7 @@ import collections
 import json
 import re
 import warnings
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -235,14 +236,33 @@ def load_usable_case_ids(
     *,
     case_index_path: Path = CASE_INDEX,
     quarantine_path: Path = QUARANTINE,
+    require_in_domain: bool = True,
 ) -> tuple[list[str], list[str]]:
     """Return (usable, all) case ids.
 
-    Usable = strictly traceable (every field produces a spot radius) AND free of
-    the prescription-fidelity defects recorded by
-    ``scripts/corpus_fidelity_audit.py``. Both filters are required: a seed that
-    cannot produce per-field 像质指标 is not a control, and a seed that lost its
-    aspheric terms is a *worse* lens than the patent, which biases 打平率 up.
+    Usable needs **three** independent screens, not two:
+
+    1. **strictly traceable** -- every field produces a spot radius, else the
+       design yields no per-field 像质指标 and cannot be a control
+    2. **fidelity-clean** -- a seed stripped of its aspheric terms is a *worse*
+       lens than the patent, which biases 打平率 up
+    3. **inside the product's domain** -- the control's own spec must pass
+       ``parameter_guards.validate_scenario_params``
+
+    Screen 3 was added 2026-07-29 after the pilot exposed the gap. A control
+    defines the spec a customer would ask for; if the product's own guard would
+    reject that request with HTTP 400, measuring against it says nothing about
+    the product. Measured on `data/zmx`: of the 192 that pass screens 1+2, only
+    **55 (28.6%)** pass this one -- the corpus's own `scenario` labels are far
+    looser than ``SCENARIO_BOUNDS`` (violations: FOV 88, EFL 60, image height
+    44, f/# 32, n_elements 31).
+
+    The consequence is not cosmetic. In the 24-trial pilot, **both** trials that
+    scored 打平 sat on specs the guard rejects, so the headline 8.3% was carried
+    entirely by out-of-domain designs; in-domain it was 0.
+
+    ``require_in_domain=False`` reproduces the old two-screen number for
+    comparison. It is not the reporting default.
     """
     strict: dict[str, bool] = {}
     for line in census_path.read_text(encoding="utf-8").splitlines():
@@ -258,9 +278,35 @@ def load_usable_case_ids(
     usable = [
         r["case_id"]
         for r in index
-        if strict.get(r["source_zmx"], False) and r["source_zmx"] not in defective
+        if strict.get(r["source_zmx"], False)
+        and r["source_zmx"] not in defective
+        and (not require_in_domain or spec_is_in_product_domain(r))
     ]
     return usable, everything
+
+
+def spec_is_in_product_domain(record: Mapping[str, object]) -> bool:
+    """Would the product accept this case's own spec as a request?
+
+    Imported lazily so the pure-provenance helpers stay importable without the
+    optical stack.
+    """
+
+    from app.core.lens_system import Scenario
+    from app.core.parameter_guards import ParameterGuardError, validate_scenario_params
+
+    try:
+        validate_scenario_params(
+            Scenario(str(record["scenario"])),
+            efl_mm=float(record["efl_mm"]),  # type: ignore[arg-type]
+            f_number=float(record["fnum"]),  # type: ignore[arg-type]
+            fov_deg=float(record["fov_deg"]),  # type: ignore[arg-type]
+            image_height_mm=float(record["image_height_mm"]),  # type: ignore[arg-type]
+            n_elements=int(record["n_pieces"]),  # type: ignore[arg-type]
+        )
+    except (ParameterGuardError, ValueError, KeyError, TypeError):
+        return False
+    return True
 
 
 def census(census_path: Path) -> dict:
