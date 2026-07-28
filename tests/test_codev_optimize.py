@@ -2862,6 +2862,71 @@ def test_lateral_color_fails_closed_below_three_wavelengths() -> None:
         assert parsed.wavelength_count is None
 
 
+def test_run_codev_optimize_emits_absolute_paths_for_a_relative_work_dir(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A relative work_dir must not reach the macro or the process cwd.
+
+    ``run_codev_batch`` hands ``work_dir`` to CODE V as the process cwd, so any
+    relative path embedded in the sequence -- the ZMX import AND both
+    ``BUF EXP`` targets -- gets resolved against it a second time and lands in
+    ``work_dir/work_dir/...``.
+
+    Adversarial review (2026-07-28) caught that resolving inside
+    ``stage_zmx_for_codev`` fixes only the import line: the runner still derived
+    its export paths from the unresolved ``work_dir``, and a staging-helper-only
+    test passed while the runner stayed broken. This asserts at the runner.
+    """
+
+    executable = _fake_codev_executable(tmp_path)
+
+    class FakePopen:
+        pid = 2469
+        returncode = 1
+
+        def __init__(self, command: list[str], **kwargs: Mapping[str, object]) -> None:
+            self.command = command
+            self.kwargs = kwargs
+
+        def communicate(self, timeout: float | None = None) -> tuple[str, str]:
+            sequence_path = Path(self.kwargs["cwd"]) / self.command[-1]
+            optimize_result_path, optimized_readout_path = _buf_exp_paths_from_sequence(
+                sequence_path
+            )
+            _write_optimize_result(optimize_result_path)
+            _write_optimized_readout(optimized_readout_path)
+            return "", ""
+
+    monkeypatch.setattr(codev_batch.subprocess, "Popen", FakePopen)
+    monkeypatch.chdir(tmp_path)
+
+    result = run_codev_optimize(
+        source_zmx=default_optimize_seed(),
+        work_dir=Path("relative-work"),
+        executable=executable,
+    )
+
+    sequence_text = (tmp_path / "relative-work" / "atelier_codev_optimize.seq").read_text(
+        encoding="ascii"
+    )
+    # Only the lines that actually hand CODE V a filesystem path: the ZMX import
+    # and every BUF EXP target. Matching every quoted string would also pick up
+    # macro labels such as "MNT/MNE/MXT/MNA bounded in AUT".
+    embedded = re.findall(
+        r'(?:IN CV_MACRO:ZEMAXOS_TO_CV|BUF EXP B\d+)\s+"([^"]+)"', sequence_text
+    )
+    assert len(embedded) >= 3, (
+        f"expected the ZMX import plus both BUF EXP targets, got {embedded!r} "
+        "-- the assertion below would otherwise be vacuous"
+    )
+    for value in embedded:
+        assert Path(value).is_absolute(), f"relative path leaked into the macro: {value}"
+
+    assert result.optimized_readout_path.is_absolute()
+    assert result.optimized_zmx.is_file()
+
+
 def test_parse_metrics_fails_closed_when_no_field_traced() -> None:
     """Every metric FCT seeds an accumulator whose seed value is the ideal reading.
 

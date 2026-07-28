@@ -345,7 +345,12 @@ def run_codev_optimize(
     """Run CODE V AUT optimization and ingest the rebuilt optimized ZMX."""
 
     source_zmx = default_optimize_seed() if source_zmx is None else Path(source_zmx)
-    work_dir = Path(work_dir)
+    # Absolute before ANY path is derived from it: run_codev_batch hands
+    # ``work_dir`` to CODE V as the process cwd, so every relative path embedded
+    # in the macro (the ZMX import, and both ``BUF EXP`` targets) would be
+    # resolved against it a second time and land in ``work_dir/work_dir/...``.
+    # run_codev_target and codev_tolerance already resolve for this reason.
+    work_dir = Path(work_dir).resolve()
     work_dir.mkdir(parents=True, exist_ok=True)
     # Import through a wavelength-normalized copy; ``source_zmx`` stays the
     # original so provenance and derived filenames are unaffected.

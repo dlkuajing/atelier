@@ -22,8 +22,11 @@ control read ``NUM W=5`` with ``4/4``.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
+from app.core.engines.codev_batch import ensure_codev_safe_input_path
 from app.core.engines.zmx_import_prep import (
     CODEV_WAVM_SLOTS,
     STAGED_INPUT_DIRNAME,
@@ -159,6 +162,55 @@ def test_stage_zmx_for_codev_copies_an_already_padded_file_verbatim(tmp_path) ->
     staged = stage_zmx_for_codev(source, tmp_path / "work")
 
     assert staged.read_bytes() == source.read_bytes()
+
+
+def test_stage_zmx_for_codev_returns_an_absolute_path_for_a_relative_work_dir(
+    tmp_path, monkeypatch
+) -> None:
+    """A relative work_dir would be applied twice and import a dummy system.
+
+    The staged path is written into ``IN CV_MACRO:ZEMAXOS_TO_CV``, and CODE V
+    resolves a relative path there against its own working directory -- which
+    ``run_codev_batch`` sets to ``work_dir``. Only three of the five runners
+    resolved their ``work_dir`` themselves, so the guarantee belongs here.
+    """
+
+    source = tmp_path / "seed.zmx"
+    source.write_bytes(encode_zmx_text(_THREE_ROW_HEADER, "latin-1"))
+    monkeypatch.chdir(tmp_path)
+
+    staged = stage_zmx_for_codev(source, Path("relative-work"))
+
+    assert staged.is_absolute()
+    assert staged.is_file()
+    assert staged.parent == (tmp_path / "relative-work" / STAGED_INPUT_DIRNAME).resolve()
+
+
+def test_stage_zmx_for_codev_rejects_a_dot_prefixed_work_dir(tmp_path) -> None:
+    """CODE V cannot import from a dotted path, so such a work_dir must fail loudly.
+
+    Real regression (2026-07-28 adversarial review): ``precompute_demo_cache``
+    ran under ``ROOT/.tmp/demo-cache-codev``. That was fine while the dotted
+    directory only held OUTPUT, but staging put the run's ZMX *input* there too.
+    """
+
+    source = tmp_path / "seed.zmx"
+    source.write_bytes(encode_zmx_text(_THREE_ROW_HEADER, "latin-1"))
+
+    with pytest.raises(ValueError, match="dot-prefixed"):
+        stage_zmx_for_codev(source, tmp_path / ".tmp" / "run")
+
+
+def test_codev_work_dirs_in_repo_scripts_are_importable() -> None:
+    """Guard the caller that this regression actually broke.
+
+    A dot-prefixed run directory is only detectable at run time on a machine with
+    CODE V, so pin the constant itself rather than waiting for a real-machine run.
+    """
+
+    from scripts.precompute_demo_cache import _CODEV_CACHE_WORK_ROOT
+
+    ensure_codev_safe_input_path(_CODEV_CACHE_WORK_ROOT, role="demo_cache_work_root")
 
 
 def test_every_corpus_seed_imports_with_a_flush_sentinel_after_staging() -> None:

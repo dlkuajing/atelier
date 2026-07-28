@@ -38,7 +38,11 @@ from app.core.engines.codev_optimize import CodeVOptimizeResult, run_codev_optim
 from app.core.mtf_fields import MTF_FIELD_FALLBACK_SETS  # noqa: E402
 from app.core.zmx_ingest import ZMX_AMMO_DIR, load_normalized_zmx  # noqa: E402
 
-_CODEV_CACHE_WORK_ROOT = ROOT / ".tmp" / "demo-cache-codev"
+# Deliberately NOT under ``.tmp``: CODE V cannot import a ZMX whose path carries
+# a dot-prefixed component (``ensure_codev_safe_input_path``; a dotted path makes
+# ZEMAXOS_TO_CV silently import a dummy system), and since the run's ZMX is now
+# staged inside this work dir, the directory itself has to be importable.
+_CODEV_CACHE_WORK_ROOT = ROOT / "tmp-demo-cache-codev"
 _CODEV_CACHE_TIMEOUT_SECONDS = 240.0
 _CODEV_CACHE_MAX_CYCLES = 3
 _CODEV_CACHE_MIN_CYCLES = 1

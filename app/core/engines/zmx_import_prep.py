@@ -202,10 +202,27 @@ def stage_zmx_for_codev(
     The copy is byte-identical to the source apart from the appended ``WAVM``
     filler rows, so encoding, line endings and every optical value are carried
     through untouched. Already-padded files are copied verbatim.
+
+    ``work_dir`` is resolved to an absolute path first. The staged path is what
+    gets written into the macro's ``IN CV_MACRO:ZEMAXOS_TO_CV`` line, and CODE V
+    resolves a relative path there against its own working directory -- which
+    ``run_codev_batch`` sets to ``work_dir``. A relative ``work_dir`` would
+    therefore be applied twice and the import would silently fall back to a dummy
+    system. Three of the five CODE V runners already resolved their ``work_dir``
+    for exactly this reason (``codev_readout``, ``run_codev_target``,
+    ``codev_tolerance``); resolving here covers the remaining two without
+    depending on each caller to remember.
+
+    Raises:
+        ValueError: when the staged path would contain a dot-prefixed component.
+            CODE V cannot import from such a path (``ensure_codev_safe_input_path``),
+            so a run directory like ``.tmp/...`` has to be renamed rather than
+            worked around -- staging the copy somewhere else would hide a run's
+            input outside its own work directory.
     """
 
     source_zmx = Path(source_zmx)
-    staged_dir = Path(work_dir) / STAGED_INPUT_DIRNAME
+    staged_dir = Path(work_dir).resolve() / STAGED_INPUT_DIRNAME
     staged = staged_dir / source_zmx.name
     ensure_codev_safe_input_path(staged, role=role)
     staged_dir.mkdir(parents=True, exist_ok=True)
