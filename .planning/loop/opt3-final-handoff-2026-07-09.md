@@ -1,5 +1,17 @@
 # ③ 优化落地 · 自主 loop 终版 handoff（2026-07-09）
 
+> **⚠️ 2026-07-28 后记（本文写于合并之前，下面两处「未合 main」已过时）**：
+> `spike/codev-target-convergence` **已由 PR #45 于 2026-07-09 14:05Z 合入 main**
+> （merge commit `0ea76505`）。实测：`git merge-base --is-ancestor` 判定 fully merged，
+> `origin/main..origin/spike/codev-target-convergence` **零未合提交**。
+> 优化能力现在就在 main 上——`app/core/engines/codev_optimize.py` 的
+> `run_codev_target` / `run_codev_target_autovig` / `run_codev_target_standard` /
+> `run_codev_target_fno_ladder`。
+> **加这条后记的原因**：本文这句话被一条 memory 原样继承，导致「优化能力尚未落地」
+> 的错误认知，差点误导 P2 的排序。**P2 的卡点不是优化能力**，是配对协议与真机时间。
+> 另注：文中 `[EXPERT] 红线` 的表述属北极星 v0.1 体系，**v2 已把 `[EXPERT]` 移出开发 gate**
+> （见 `.planning/NORTH-STAR.md`）；本文其余内容作为 2026-07-09 的历史记录保留不动。
+
 > **边界声明**：本报告只出量化数据、候选设计与机器可判事实。**"良品/合格/可用/值得看"判定全部留给资深（[EXPERT] 红线）**，go/no-go 由主公与资深依据本报告数据裁定。
 > 真值来源：真机 CODE V tsv/.lis、pytest、git commit——非 AI 自报。
 
