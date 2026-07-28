@@ -100,12 +100,19 @@ class CodeVOptimizationMetrics:
 
 @dataclass(frozen=True)
 class CodeVToleranceSensitivity:
-    """One CODE V perturbation replay row emitted by the sensitivity block."""
+    """One CODE V perturbation replay row emitted by the sensitivity block.
+
+    ``mtf_drop`` is ``None`` when the macro's own subtraction
+    (``^tol_drop == ^tol_nominal_mtf - ^tol_perturbed_mtf``) was fed a degenerate
+    endpoint, because the difference of an unmeasured value is not a measurement.
+    See ``_parse_tolerance_sensitivity`` for why that matters more here than for
+    the endpoints themselves.
+    """
 
     rank: int
     parameter_name: str
     perturbation: str
-    mtf_drop: float
+    mtf_drop: float | None
     nominal_mtf: float | None = None
     perturbed_mtf: float | None = None
     provenance: str = "codev-run"
@@ -2260,6 +2267,28 @@ def parse_codev_optimize_data(data: Mapping[str, str]) -> CodeVOptimizeSummary:
 def _parse_tolerance_sensitivity(
     data: Mapping[str, str],
 ) -> tuple[CodeVToleranceSensitivity, ...]:
+    """Parse the perturbation replay rows, withholding drops built on seed values.
+
+    ``mtf_drop`` is not an independent reading: the macro computes it as
+    ``^tol_nominal_mtf - ^tol_perturbed_mtf`` and clamps a negative result to 0.
+    Both endpoints pass through ``_measured_mtf_or_none``, so a degenerate
+    ``@mtfmin`` seed of 1.0 is already withheld there -- but the *difference*
+    was still reported, and it is the sort key, so a degenerate endpoint does
+    more damage than a degenerate endpoint reading:
+
+    * degenerate nominal (1.0) minus a real perturbed value yields the largest
+      possible drop, which sorts the row to **rank 1** -- the run's headline
+      "most sensitive parameter" becomes the one that produced no data at all;
+    * degenerate perturbed value yields a negative difference that the macro
+      clamps to ``0`` -- "perfectly insensitive to this perturbation", which is
+      the recurring trap of a degenerate value landing exactly on the ideal
+      reading.
+
+    A drop therefore counts as measured only when both endpoints are present and
+    inside the measurable band. Rows whose drop is withheld are still reported
+    (the perturbation was run) but sort **after** every measured row, so an
+    unmeasured row can never occupy the top of the ranking.
+    """
     count_text = data.get("tolerance.count", "").strip()
     if not count_text:
         return ()
@@ -2287,22 +2316,32 @@ def _parse_tolerance_sensitivity(
                 "CODE V tolerance data contains a negative MTF drop",
                 details={"key": f"{prefix}.mtf_drop", "value": mtf_drop},
             )
+        # 1.0 是 @mtfmin 的"无一视场出数"种子值，不是"完美 MTF"。
+        nominal_mtf = _measured_mtf_or_none(_optional_float(data, f"{prefix}.nominal_mtf"))
+        perturbed_mtf = _measured_mtf_or_none(_optional_float(data, f"{prefix}.perturbed_mtf"))
         items.append(
             CodeVToleranceSensitivity(
                 rank=index,
                 parameter_name=parameter_name,
                 perturbation=perturbation,
-                mtf_drop=mtf_drop,
-                # 1.0 是 @mtfmin 的"无一视场出数"种子值，不是"完美 MTF"。
-                nominal_mtf=_measured_mtf_or_none(_optional_float(data, f"{prefix}.nominal_mtf")),
-                perturbed_mtf=_measured_mtf_or_none(
-                    _optional_float(data, f"{prefix}.perturbed_mtf")
+                mtf_drop=(
+                    mtf_drop if nominal_mtf is not None and perturbed_mtf is not None else None
                 ),
+                nominal_mtf=nominal_mtf,
+                perturbed_mtf=perturbed_mtf,
                 provenance=data.get("tolerance.provenance", "codev-run"),
             )
         )
 
-    ranked = sorted(items, key=lambda item: (-item.mtf_drop, item.parameter_name))
+    # Unmeasured drops sort last, never into the headline slot.
+    ranked = sorted(
+        items,
+        key=lambda item: (
+            item.mtf_drop is None,
+            -(item.mtf_drop if item.mtf_drop is not None else 0.0),
+            item.parameter_name,
+        ),
+    )
     return tuple(
         CodeVToleranceSensitivity(
             rank=rank,

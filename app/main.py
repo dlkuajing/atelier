@@ -469,8 +469,10 @@ def _format_signed_waves(value: float | None) -> str:
     return "Unavailable" if value is None else f"{value:+.3f} waves"
 
 
-def _format_mtf_drop(value: float) -> str:
-    return f"{value:.4f}"
+def _format_mtf_drop(value: float | None) -> str:
+    # Never render a withheld drop as 0.0000 -- that reads as "perfectly
+    # insensitive to this perturbation", which is the opposite of "not measured".
+    return "Unavailable" if value is None else f"{value:.4f}"
 
 
 def _mtf_mean_curve(mtf: MTFResult) -> list[float]:
