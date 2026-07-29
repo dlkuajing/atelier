@@ -70,6 +70,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 ZMX_DIR = ROOT / "data" / "zmx"
+
+#: Kill a CODE V rung that has produced no new output for this long. CODE V can
+#: stop computing after a ray error yet never exit; the hard timeout still bounds
+#: the run, this just stops paying it in full for a process that is already dead.
+IDLE_TIMEOUT_SECONDS = 60.0
 CASE_INDEX = ROOT / "app" / "data" / "optical_cases" / "index.json"
 
 #: Same MTF sampling as the production tolerance block, so a number produced
@@ -566,6 +571,11 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
             target_imh_mm=plan.spec_imh_mm,
             num_fields=num_fields,
             timeout_seconds=timeout_seconds,
+            # CODE V can stop computing after a ray error yet never exit. On one
+            # measured trial nine such rungs each burned the full 300s timeout --
+            # ~2700s of its 2735s wall clock. Cut those off by absence of output
+            # progress, not by the error text (healthy runs print ray errors too).
+            idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
             emit_optimized_zmx=True,
         )
     except CodeVBatchError as exc:
