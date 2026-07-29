@@ -379,3 +379,53 @@ def test_the_tolerance_table_is_declared_uncalibrated() -> None:
     for key in out_keys:
         assert f'"{key}"' in source
     assert '"calibrated": False' in source
+
+
+# ---------------------------------------------------------------------------
+# Trial roll-up: a confirmed "worse" settles the trial (2026-07-29)
+# ---------------------------------------------------------------------------
+
+
+def _iq(**kw: object) -> object:
+    from scripts.p2_crosssource_trial import ImageQuality
+
+    base = {
+        "source": "probe", "efl_y_mm": 4.0, "f_number": 2.0, "num_wavelengths": 3,
+        "num_fields": 3, "image_height_mm": 3.0, "rms_spot_um": 10.0,
+        "rms_wavefront_waves": 0.1, "distortion_pct": 1.0, "lateral_color_um": 1.0,
+        "mtf_min": 0.5, "withheld": (),
+    }
+    base.update(kw)
+    return ImageQuality(**base)  # type: ignore[arg-type]
+
+
+def test_a_confirmed_worse_settles_the_trial_even_with_an_unmeasurable_metric() -> None:
+    """打平 needs every metric 不劣于, so one worse decides it regardless of the
+    rest. Real case US-11906710-B2-e5: RMS 30.5x worse, distortion 14.1x worse,
+    MTF withheld -- no MTF reading could have rescued it."""
+    from scripts.p2_crosssource_trial import compare
+
+    result = compare(_iq(rms_spot_um=300.0, mtf_min=None), _iq())
+    assert result["verdict"] == "worse"
+
+
+def test_unmeasurable_still_wins_when_nothing_is_confirmed_worse() -> None:
+    """Withholding must not be quietly resolved into a pass."""
+    from scripts.p2_crosssource_trial import compare
+
+    result = compare(_iq(rms_spot_um=1.0, distortion_pct=0.1, mtf_min=None), _iq())
+    assert result["verdict"] == "unmeasurable"
+
+
+def test_par_still_requires_every_metric_measured_and_not_worse() -> None:
+    from scripts.p2_crosssource_trial import compare
+
+    assert compare(_iq(rms_spot_um=1.0, distortion_pct=0.1, mtf_min=0.9), _iq())["verdict"] == "par"
+
+
+def test_the_correction_can_never_manufacture_a_par() -> None:
+    """It only moves trials out of unmeasurable into worse."""
+    from scripts.p2_crosssource_trial import compare
+
+    for cand in (_iq(rms_spot_um=300.0, mtf_min=None), _iq(distortion_pct=99.0, mtf_min=None)):
+        assert compare(cand, _iq())["verdict"] != "par"
