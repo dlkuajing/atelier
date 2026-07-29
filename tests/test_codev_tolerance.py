@@ -279,3 +279,83 @@ def test_yield_fail_closed_branches(mutation, reason: str) -> None:
     result = compute_mc_yield(changed, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
     assert result.status == "unavailable"
     assert reason in result.reason
+
+
+# ---------------------------------------------------------------------------
+# PER export: RMS wavefront variant (2026-07-29)
+# ---------------------------------------------------------------------------
+
+_REAL_RMS_PER = "\n".join(
+    [
+        "29-Jul-2026\t13:45:19\tUS-12124006-B2",
+        "",
+        "\tLens file name:\t ",
+        "\tScalar   probability density function:\t1-D Uniform  ",
+        "\tDecenter probability density function:\t2-D Gaussian \t0.135335",
+        "",
+        "\t\tRelative Field\t\t\t\t\t\t\tDesign + tolerances\t\t\t\tChanges\t\t\t\tCompensator Range(+/-)",
+        "Eval Zoom\tEval Field\tX\tY\t\t\tWeight\tDesign\tCriterion\t"
+        "50.0D0%\t84.1D0%\t97.7D0%\t99.9D0%\t50.0D0%\t84.1D0%\t97.7D0%\t99.9D0%\tDLZ SI",
+        "1\t1\t0\t0\t\t\t1\t0.501924\tRMS\t"
+        "0.599139\t0.844229\t1.0327\t1.19174\t0.0972144\t0.342305\t0.530781\t0.689812\t0.0824",
+    ]
+)
+
+
+def _rows(text: str) -> list[list[str]]:
+    return [line.split("\t") for line in text.splitlines()]
+
+
+def test_an_rms_per_export_parses() -> None:
+    """A metric="rms" TOR completes and exports both files, but its PER header
+    leaves Frequency/Azimuth blank -- RMS wavefront has neither. Parsing only the
+    MTF shape made every RMS run unreadable (real machine, 2026-07-29)."""
+    from app.core.engines.codev_tolerance import _parse_per
+
+    rows, compensators = _parse_per(_rows(_REAL_RMS_PER))
+    assert len(rows) == 1
+    assert compensators == ("DLZ SI",)
+    row = rows[0]
+    assert row.criterion == "RMS"
+    assert row.design == pytest.approx(0.501924)
+    assert len(row.probability_columns) == 8
+
+
+def test_rms_rows_report_no_frequency_rather_than_zero() -> None:
+    """0.0 would read as a real measurement at DC; absent must stay absent."""
+    from app.core.engines.codev_tolerance import _parse_per
+
+    row = _parse_per(_rows(_REAL_RMS_PER))[0][0]
+    assert row.frequency_lp_per_mm is None
+    assert row.azimuth_deg is None
+
+
+def test_an_mtf_per_export_still_parses_with_its_frequency() -> None:
+    """The MTF variant must keep working -- this is an additive fix."""
+    from app.core.engines.codev_tolerance import _parse_per
+
+    mtf = _REAL_RMS_PER.replace(
+        "Eval Zoom\tEval Field\tX\tY\t\t\tWeight",
+        "Eval Zoom\tEval Field\tX\tY\tFrequency\tAzimuth\tWeight",
+    ).replace("1\t1\t0\t0\t\t\t1\t0.501924\tRMS", "1\t1\t0\t0\t100\t90\t1\t0.501924\tMTF")
+    row = _parse_per(_rows(mtf))[0][0]
+    assert row.frequency_lp_per_mm == pytest.approx(100.0)
+    assert row.azimuth_deg == pytest.approx(90.0)
+
+
+def test_a_header_and_row_that_disagree_are_refused() -> None:
+    """Fail closed: an export that is not the shape its own header claims."""
+    from app.core.engines.codev_tolerance import _parse_per
+
+    mtf_header_rms_row = _REAL_RMS_PER.replace(
+        "Eval Zoom\tEval Field\tX\tY\t\t\tWeight",
+        "Eval Zoom\tEval Field\tX\tY\tFrequency\tAzimuth\tWeight",
+    )
+    with pytest.raises(ValueError, match="missing frequency/azimuth"):
+        _parse_per(_rows(mtf_header_rms_row))
+
+    rms_header_mtf_row = _REAL_RMS_PER.replace(
+        "1\t1\t0\t0\t\t\t1\t0.501924\tRMS", "1\t1\t0\t0\t100\t90\t1\t0.501924\tRMS"
+    )
+    with pytest.raises(ValueError, match="unexpected frequency/azimuth"):
+        _parse_per(_rows(rms_header_mtf_row))
