@@ -22,6 +22,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # 全仓库 ruff 在本机实测 All checks passed，所以这道闸是「守住现状」而非
+  # 「先清债」——它现在就该绿，任何一次变红都是本次改动引入的。
+  # 单独一个 job：约 20 秒出结果，不必等 20 分钟的 pytest 分片才知道格式坏了。
+  # mypy 不进闸：同一时刻实测 `uv run mypy app` 报 698 errors / 38 files，
+  # 挂上去只会是一道永远红的闸。清它是另一铲。
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies (dev only)
+        run: uv sync --frozen --group dev
+
+      - name: ruff check
+        run: uv run ruff check .
+
   backend:
     name: Backend (pytest ${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
