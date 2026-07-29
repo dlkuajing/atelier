@@ -278,7 +278,7 @@ def test_yield_is_off_until_a_policy_is_ratified() -> None:
 def test_ratified_yield_math_on_plausible_readings() -> None:
     """A sample counts only if *every* field passes."""
     measured = compute_mc_yield(
-        _clean_mc(_CLEAN), TorYieldPolicy("MTF", 0.3, "min", True, "Tolerancing.pdf + probe", 0.0)
+        _clean_mc(_CLEAN), TorYieldPolicy("MTF", 0.3, "min", True, "Tolerancing.pdf + probe", 0.0, 0.0)
     )
     assert measured.status == "measured"
     assert measured.trials == 4
@@ -303,28 +303,33 @@ def test_the_real_mtf_fixture_is_too_contaminated_to_yield_a_number() -> None:
     This test previously asserted ``per_field_yield["z1:f1"] == 0.9`` from this
     data -- a 90% pass rate manufactured out of fake-perfect readings, since
     each 1.0 clears the 0.1 threshold. That is the number this guard prevents.
+
+    18 of its 20 samples carry at least one 1.0, so disclosing rather than
+    refusing would mean reporting a yield computed from 2 survivors.
     """
     parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
     assert mc_saturation_fraction(parsed) == pytest.approx(58 / 60)
     assert ideal_reading_count(parsed, "min") == 31
-    result = compute_mc_yield(parsed, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
+    result = compute_mc_yield(parsed, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0, 0.2))
     assert result.status == "unavailable"
     assert result.yield_fraction is None
-    assert "cannot be perfect" in result.reason
+    assert result.out_of_model_fraction == pytest.approx(0.9)
+    assert "policy maximum" in result.reason
 
 
 def test_saturation_is_policy_independent_and_gates_ratified_yield() -> None:
     parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
     saturated = replace(parsed, monte_carlo_rows=tuple(replace(row, value=1.0) for row in parsed.monte_carlo_rows))
     assert mc_saturation_fraction(saturated) == 1.0
-    blocked = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 0.5))
+    blocked = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 0.5, 1.0))
     assert blocked.status == "unavailable"
     # The saturation knob cannot buy its way past an impossible reading: even a
     # policy tolerating 100% saturation is still refused, because these are not
     # measurements to tolerate.
-    permissive = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
+    permissive = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0, 1.0))
     assert permissive.status == "unavailable"
-    assert "cannot be perfect" in permissive.reason
+    assert permissive.out_of_model_fraction == 1.0
+    assert "outside the linear model" in permissive.reason
 
 
 @pytest.mark.parametrize("mutation, reason", [
@@ -335,7 +340,7 @@ def test_saturation_is_policy_independent_and_gates_ratified_yield() -> None:
 def test_yield_fail_closed_branches(mutation, reason: str) -> None:
     parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
     changed = replace(parsed, monte_carlo_rows=tuple(mutation(parsed.monte_carlo_rows)))
-    result = compute_mc_yield(changed, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
+    result = compute_mc_yield(changed, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0, 1.0))
     assert result.status == "unavailable"
     assert reason in result.reason
 
@@ -441,3 +446,66 @@ def test_sensitivity_mode_precedes_the_monte_carlo_trial_count() -> None:
     be set when it runs, or the samples come from inverse-derived tolerances."""
     sequence = _build()
     assert sequence.index("\nSNS\n") < sequence.index("\nNTR ")
+
+
+# ---------------------------------------------------------------------------
+# Yield with disclosure (ratified 2026-07-29)
+# ---------------------------------------------------------------------------
+
+_MIXED = {
+    1: {1: 0.55, 2: 0.42},   # both pass
+    2: {1: 1.00, 2: 0.28},   # f1 out of model -> whole sample dropped
+    3: {1: 0.35, 2: 0.31},   # both pass
+    4: {1: 0.22, 2: 0.40},   # f1 fails
+}
+_RATIFIED = TorYieldPolicy("MTF", 0.3, "min", True, "26 real runs 2026-07-29", 1.0, 0.5)
+
+
+def test_yield_is_computed_over_the_samples_inside_the_model() -> None:
+    """Sample 2 is dropped, leaving 3 judged of which 2 pass."""
+    measured = compute_mc_yield(_clean_mc(_MIXED), _RATIFIED)
+    assert measured.status == "measured"
+    assert measured.trials == 3
+    assert measured.yield_fraction == pytest.approx(2 / 3)
+
+
+def test_the_dropped_fraction_travels_with_the_number() -> None:
+    """A yield over a shrunken denominator is only honest if the shrinkage is
+    reported; 2/3 and 2/4 are different claims."""
+    measured = compute_mc_yield(_clean_mc(_MIXED), _RATIFIED)
+    assert measured.out_of_model_samples == 1
+    assert measured.out_of_model_fraction == pytest.approx(0.25)
+    assert "3/4" in measured.reason
+
+
+def test_one_unmeasurable_field_drops_the_whole_sample() -> None:
+    """Sample 2's f2 reads 0.28, which would *fail* the 0.3 threshold. If the
+    sample were judged on its measurable fields alone it would count as a fail;
+    it must instead be dropped, because a build whose f1 could not be measured
+    is not a build we judged either way."""
+    measured = compute_mc_yield(_clean_mc(_MIXED), _RATIFIED)
+    assert measured.trials == 3
+    # 2/3 (dropped), not 2/4 (counted as a fail)
+    assert measured.yield_fraction == pytest.approx(2 / 3)
+
+
+def test_per_field_yield_uses_the_same_denominator_as_the_overall() -> None:
+    measured = compute_mc_yield(_clean_mc(_MIXED), _RATIFIED)
+    # f1 among judged samples 1,3,4: 0.55 and 0.35 pass, 0.22 fails -> 2/3
+    assert measured.per_field_yield["z1:f1"] == pytest.approx(2 / 3)
+
+
+def test_disclosure_is_not_a_licence_to_report_from_survivors() -> None:
+    """Above the ceiling the yield is refused outright, not disclosed."""
+    mostly_broken = {1: {1: 0.55, 2: 0.42}, 2: {1: 1.00, 2: 1.00}, 3: {1: 1.00, 2: 0.31}}
+    strict = compute_mc_yield(_clean_mc(mostly_broken), _RATIFIED)
+    assert strict.status == "unavailable"
+    assert strict.yield_fraction is None
+    assert strict.out_of_model_fraction == pytest.approx(2 / 3)
+    assert "policy maximum" in strict.reason
+
+
+def test_a_ratified_policy_must_state_the_out_of_model_ceiling() -> None:
+    """No default: the caller has to decide how much disclosure is too much."""
+    with pytest.raises(ValueError, match="max_out_of_model_fraction"):
+        TorYieldPolicy("MTF", 0.3, "min", True, "evidence", 1.0)
