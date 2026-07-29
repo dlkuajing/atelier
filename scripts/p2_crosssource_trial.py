@@ -479,6 +479,91 @@ P2_METRICS: dict[str, bool] = {
     "distortion_pct": True,
 }
 
+#: Readout-rounding slack for the conformance screens below, **not** a quality
+#: threshold. The probe prints ~6 significant figures, so its own relative error
+#: is around 1e-6; 1e-3 is a thousandfold allowance and no candidate is decided
+#: by it. 红线③ forbids pre-set 判据 numbers -- this is not one, and neither
+#: screen has a tunable pass level: both are "the candidate must not have been
+#: handed an easier job than the control".
+CONFORMANCE_RELATIVE_SLACK = 1e-3
+
+
+def field_tangent(quality: ImageQuality) -> float | None:
+    """``tan(max field angle)`` = paraxial image height / EFL, or ``None``.
+
+    ``image_height_mm`` comes from ``^maximh``, which CODE V fills from paraxial
+    data: it is ``EFL * tan(theta)`` for the outermost field, **not** the real
+    ray height. Dividing it by that same side's own EFL therefore recovers the
+    field angle the lens was actually evaluated over -- one quantity, derived the
+    same way on both sides, so the two are comparable even when the underlying
+    ZMX files disagree about how fields are declared.
+    """
+
+    if quality.image_height_mm is None or quality.efl_y_mm is None:
+        return None
+    if quality.efl_y_mm <= 0.0:
+        return None
+    return quality.image_height_mm / quality.efl_y_mm
+
+
+def conformance_screen(
+    candidate: ImageQuality, control: ImageQuality
+) -> tuple[str | None, dict[str, object]]:
+    """Is this candidate answering the same question the control answers?
+
+    Two of the spec's fields (NORTH-STAR §1.1 lists 像高 and FOV alongside EFL
+    and F/#) are **not** enforced anywhere in the optimisation path --
+    ``codev_optimize.build_target_standard`` documents it in so many words:
+    "未落地：IMH/FOV ... ``target_imh_mm`` 目前仅透传进三快照读数". The candidate
+    therefore inherits its seed's field definition, and two trials measured on
+    2026-07-29 confirm it: both candidates came out at ``imh/efl = 0.3317``
+    (18.35°) against controls at 37.5° and 33.1°, from the same seed at two
+    different EFLs.
+
+    Comparing those is not comparing. A lens evaluated over half the field angle
+    is being asked for less, and the 2026-07-29 run shows exactly how that
+    flatters the headline: ``US-20230288669-A1-e2`` scored 打平 on 畸变 with
+    2.38% against the control's 86.97% -- and the control's 86.97% is *correct*,
+    because it is a genuine super-wide design whose real image height (3.58 mm)
+    sits far below the paraxial ``EFL*tan(theta)`` reference (27.47 mm) that the
+    rectilinear distortion definition measures against. Nothing was broken; the
+    two lenses simply cover different fields.
+
+    So a trial is only judged when the candidate was given **at least** the
+    control's job on both counts it can be handed for free:
+
+    * field coverage -- candidate ``tan(theta)`` >= control ``tan(theta)``
+    * aperture -- candidate F/# <= control F/# (a slower lens has smaller
+      aberrations for nothing)
+
+    Over-delivery on either is allowed and judged as-is: it can only make the
+    candidate's own numbers harder to win with.
+
+    Returns ``(blocked_at | None, diagnostics)``. The diagnostics are recorded
+    whatever the outcome so a rejected trial still says by how much it missed.
+    """
+
+    cand_tan, ctrl_tan = field_tangent(candidate), field_tangent(control)
+    details: dict[str, object] = {
+        "candidate_field_tangent": cand_tan,
+        "control_field_tangent": ctrl_tan,
+        "field_coverage_ratio": (
+            (cand_tan / ctrl_tan) if cand_tan is not None and ctrl_tan else None
+        ),
+        "candidate_f_number": candidate.f_number,
+        "control_f_number": control.f_number,
+    }
+
+    if cand_tan is None or ctrl_tan is None:
+        return "field_not_comparable", details
+    if cand_tan < ctrl_tan * (1.0 - CONFORMANCE_RELATIVE_SLACK):
+        return "field_not_covered", details
+    if candidate.f_number is None or control.f_number is None:
+        return "f_number_not_comparable", details
+    if candidate.f_number > control.f_number * (1.0 + CONFORMANCE_RELATIVE_SLACK):
+        return "f_number_not_met", details
+    return None, details
+
 
 def compare(candidate: ImageQuality, control: ImageQuality) -> dict[str, object]:
     """Per-metric 不劣于 verdict plus the trial-level roll-up.
@@ -657,10 +742,16 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
         # comparing it to the control is not a comparison -- a lens that came out
         # 20% short of the target EFL has a smaller spot for free. The metrics
         # stay in the record for diagnosis; the verdict does not.
+        blocked_at, conformance = conformance_screen(
+            measurements["candidate"], measurements["control"]
+        )
+        record["conformance"] = conformance
         if str(record.get("aut_converged")) != "1":
+            blocked_at = "aut_not_converged"
+        if blocked_at is not None:
             record["spec_verdict_override"] = record["verdict"]
             record["verdict"] = "spec_not_met"
-            record["blocked_at"] = "aut_not_converged"
+            record["blocked_at"] = blocked_at
     record["elapsed_s"] = round(time.time() - started, 1)
     return record
 
@@ -829,6 +920,21 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
     # optimiser converge, and that clipping is written into the candidate ZMX --
     # so a candidate with edge > 0 is measured with a narrower aperture than the
     # control, which biases the headline UP. Reported, not silently folded in.
+    # How far the pipeline is from producing a design for the requested field at
+    # all. Reported over *every* trial that got as far as two measurements, not
+    # only judged ones -- the screened-out trials are exactly the interesting
+    # ones here, and their absence from the headline is what this number explains.
+    coverage = [
+        r["conformance"]["field_coverage_ratio"]
+        for r in records
+        if isinstance(r.get("conformance"), dict)
+        and isinstance(r["conformance"].get("field_coverage_ratio"), (int, float))
+    ]
+    summary["field_coverage_ratio_n"] = len(coverage)
+    summary["field_coverage_ratio_median"] = (
+        round(statistics.median(coverage), 4) if coverage else None
+    )
+    summary["field_coverage_ratio_min"] = round(min(coverage), 4) if coverage else None
     unclipped = [r for r in judged_records if _edge_used(r) == 0.0]
     summary["judged_unclipped"] = len(unclipped)
     summary["par_rate_unclipped_only"] = (
@@ -870,6 +976,13 @@ def render(summary: dict[str, Any]) -> str:
     )
     for metric in P2_METRICS:
         lines.append(f"  {metric:<22} par on {summary.get(f'{metric}_par', 0)} of judged")
+    coverage_median = summary.get("field_coverage_ratio_median")
+    if coverage_median is not None:
+        lines.append(
+            "field coverage cand/ctl   "
+            f"median {coverage_median}  min {summary.get('field_coverage_ratio_min')}"
+            f"   (n={summary.get('field_coverage_ratio_n', 0)}, 1.0 = same field)"
+        )
     if summary.get("blocked_at"):
         lines.append("blocked at:")
         for key, count in sorted(summary["blocked_at"].items()):
