@@ -223,3 +223,78 @@ def test_quarantine_evidence_is_present_for_the_usable_filter() -> None:
 
     payload = json.loads(QUARANTINE.read_text(encoding="utf-8"))
     assert "data/zmx" in payload["pools"]
+
+
+# ---------------------------------------------------------------------------
+# Third screen: the product must be willing to accept the control's own spec
+# ---------------------------------------------------------------------------
+
+
+def _record(**overrides: object) -> dict[str, object]:
+    # A legitimate smartphone-wide request: inside SCENARIO_BOUNDS on every axis.
+    record = {
+        "case_id": "US-1-B2-e1",
+        "source_zmx": "US-1-B2-e1.zmx",
+        "scenario": "smartphone-wide",
+        "efl_mm": 4.0,
+        "fnum": 2.0,
+        "fov_deg": 75.0,
+        "image_height_mm": 3.5,
+        "n_pieces": 6,
+    }
+    record.update(overrides)
+    return record
+
+
+def test_an_in_bounds_spec_is_accepted() -> None:
+    """Negative screens are worthless if nothing passes them."""
+    from scripts.p2_pair_census import spec_is_in_product_domain
+
+    assert spec_is_in_product_domain(_record()) is True
+
+
+def test_a_spec_the_product_would_reject_is_excluded() -> None:
+    """A control defines the request a customer would make. If the product's own
+    guard answers that request with HTTP 400, measuring against it says nothing
+    about the product. Measured 2026-07-29: both 打平 trials in the 24-trial
+    pilot sat on specs the guard rejects, so the 8.3% headline was carried
+    entirely by out-of-domain designs; in-domain the rate was 0."""
+    from scripts.p2_pair_census import spec_is_in_product_domain
+
+    # 133.8 deg full field, labelled smartphone-ultrawide, whose ceiling is 105.
+    assert (
+        spec_is_in_product_domain(_record(scenario="smartphone-ultrawide", fov_deg=133.8)) is False
+    )
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("efl_mm", 40.0),
+        ("fnum", 9.9),
+        ("fov_deg", 5.0),
+        ("image_height_mm", 40.0),
+        ("n_pieces", 25),
+    ],
+)
+def test_every_bounded_axis_can_reject(field: str, value: object) -> None:
+    from scripts.p2_pair_census import spec_is_in_product_domain
+
+    assert spec_is_in_product_domain(_record(**{field: value})) is False
+
+
+def test_a_malformed_record_is_excluded_not_crashed_on() -> None:
+    """Unknown scenario or missing key means we cannot show it is in domain."""
+    from scripts.p2_pair_census import spec_is_in_product_domain
+
+    assert spec_is_in_product_domain(_record(scenario="not-a-scenario")) is False
+    assert spec_is_in_product_domain({"scenario": "smartphone-wide"}) is False
+
+
+def test_the_domain_screen_is_on_by_default() -> None:
+    """Reporting must not silently use the looser two-screen pool."""
+    import inspect
+
+    from scripts.p2_pair_census import load_usable_case_ids
+
+    assert inspect.signature(load_usable_case_ids).parameters["require_in_domain"].default is True

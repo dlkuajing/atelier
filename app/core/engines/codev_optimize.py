@@ -650,6 +650,7 @@ def build_codev_target_sequence(
     min_cycles: int = 3,
     lateral_color_weight: float = 0.01,
     rms_spot_weight: float = 0.001,
+    distortion_weight: float | None = None,
     min_center_thickness_mm: float = 0.025,
     min_edge_thickness_mm: float = 0.025,
     max_center_thickness_mm: float = 10.0,
@@ -691,6 +692,10 @@ def build_codev_target_sequence(
     _validate_vignetting(vignetting)
     _validate_positive_int(max_cycles, "max_cycles")
     _validate_positive_int(min_cycles, "min_cycles")
+    if distortion_weight is not None:
+        # A zero or negative weight would silently neuter the operand rather
+        # than disable it -- if you mean off, pass None.
+        _validate_positive(distortion_weight, "distortion_weight")
     if emit_optimized_zmx and optimized_readout_path is None:
         raise ValueError("optimized_readout_path is required when emit_optimized_zmx=True")
 
@@ -731,6 +736,25 @@ def build_codev_target_sequence(
         "  @atelier_rmsspot == @rmssum(1)",
         "  @atelier_rmsspot = 0",
         f"  WTC {_fmt_number(rms_spot_weight)}",
+    ]
+    if distortion_weight is not None:
+        # Distortion is one of the three metrics P2 judges (NORTH-STAR §1.1) and
+        # was the only one with no operand here, so the optimiser has been free
+        # to trade it away. Measured cost, 2026-07-29 pilot (12 judged trials):
+        # distortion is a losing metric in 8, and in **3 it is the only loss** --
+        # US-12124006-B2-e3 (1.7x the control), US-12571987-B2-e1 (5.3x), and
+        # US-20240176104-A1-e2 (14.5x, while beating its control 3.2x on RMS and
+        # 2.2x on MTF). Matching distortion on those three alone would move par
+        # from 2/12 to 5/12.
+        #
+        # Default stays None: this changes what AUT converges to, so it is opt-in
+        # until a real-machine A/B shows what it costs the other two metrics.
+        aut_lines += [
+            "  @atelier_distortion == @dstpct(1)",
+            "  @atelier_distortion = 0",
+            f"  WTC {_fmt_number(distortion_weight)}",
+        ]
+    aut_lines += [
         f"  MNT {_fmt_number(min_center_thickness_mm)}",
         f"  MNE {_fmt_number(min_edge_thickness_mm)}",
         f"  MXT {_fmt_number(max_center_thickness_mm)}",
