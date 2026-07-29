@@ -478,9 +478,23 @@ P2_METRICS: dict[str, bool] = {
 def compare(candidate: ImageQuality, control: ImageQuality) -> dict[str, object]:
     """Per-metric 不劣于 verdict plus the trial-level roll-up.
 
-    ``None`` on either side makes the whole trial ``unmeasurable``. It is never
+    ``None`` on either side makes that *metric* unmeasurable. It is never
     resolved to a pass, and never dropped from the denominator: a trial we could
     not judge is a trial we did not win.
+
+    An unmeasurable metric does not, however, make the *trial* unmeasurable when
+    another metric already reads ``worse``. 打平 requires **every** metric to be
+    不劣于, so one confirmed ``worse`` settles the trial no matter what the rest
+    would have said. Filing such a trial as unmeasurable discards something we
+    actually know and inflates the "cannot judge" bucket that P1 is measured by.
+
+    Real case (2026-07-29, US-11906710-B2-e5): RMS 30.5x worse and distortion
+    14.1x worse, with MTF withheld because the candidate returned the metric
+    macro's seed value -- previously filed unmeasurable, though no MTF reading
+    could have rescued it.
+
+    The correction only ever moves trials *out* of the unmeasurable bucket and
+    into ``worse``; it can never create a 打平, so it cannot flatter the headline.
     """
 
     per_metric: dict[str, object] = {}
@@ -504,12 +518,12 @@ def compare(candidate: ImageQuality, control: ImageQuality) -> dict[str, object]
             "verdict": "par" if won else "worse",
             "ratio": (cand / ctrl) if ctrl not in (0.0,) else None,
         }
-    if not measurable:
-        verdict = "unmeasurable"
-    elif all(m["verdict"] == "par" for m in per_metric.values()):  # type: ignore[index]
-        verdict = "par"
-    else:
+    if any(m["verdict"] == "worse" for m in per_metric.values()):  # type: ignore[index]
         verdict = "worse"
+    elif not measurable:
+        verdict = "unmeasurable"
+    else:
+        verdict = "par"
     return {"verdict": verdict, "metrics": per_metric}
 
 
