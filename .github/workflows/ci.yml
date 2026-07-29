@@ -23,12 +23,18 @@ concurrency:
 
 jobs:
   backend:
-    name: Backend (pytest)
+    name: Backend (pytest ${{ matrix.shard }}/4)
     runs-on: ubuntu-latest
-    # Patent-saturation adds ~1,426 offline tests to main's ~2,707-test suite.
-    # Main's measured serial baseline is ~30 minutes; the expanded suite needs
-    # headroom beyond the previous 45-minute limit without hiding a hang forever.
-    timeout-minutes: 75
+    strategy:
+      # 分片，不是 -n 并行。两者根因不同：-n 在同一台 nproc=2 的机器上争用
+      # 且每个 worker 重复导入 Optiland/scipy/numpy（三次实测均为负优化，见下）；
+      # 分片是各自独立的 runner VM，两条根因都不成立。
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    # 单片预算。全量串行实测 53 分钟（run 30443200160），4 片本地实测均衡到
+    # 每片约 1/4，折算 CI 约 14 分钟 + setup。留足余量但不至于把挂死藏一小时。
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
         with:
@@ -69,6 +75,16 @@ jobs:
           free -g
           df -h / | tail -1
 
+      # 覆盖面守卫：分片漏掉的测试表现为「更快的绿」，与真绿无法区分——
+      # 正是本仓库反复中招的那类陷阱在 CI 层的变体。所以在**跑任何测试之前**
+      # 断言各分片 node-id 并集 == 当前实际收集到的全量、且两两不相交。
+      # 全量列表来自 --collect-only（运行时事实），不是 durations 文件（可能过期），
+      # 所以新增的测试会被分配而不是被跳过。
+      - name: Build and verify shard partition
+        run: |
+          uv run python scripts/ci_shards.py             --shards 4 --index ${{ matrix.shard }} --out /tmp/shard.txt
+          echo "shard test count: $(wc -l < /tmp/shard.txt)"
+
       - name: Run tests
         env:
           OPENAI_API_KEY: ci-placeholder
@@ -88,4 +104,12 @@ jobs:
         # 见 tests/test_acceptance_task_export.py 的 _report() memo。
         # --durations=25 保留：慢测试分布是后续分档决策的依据。
         # 不用 -v：逐条输出对 CI 日志无价值，只增加 IO。
-        run: uv run pytest -q --durations=25 -m "not real_machine"
+        # --durations=25 保留：慢测试分布是刷新 tests/ci-shard-durations.json 的依据。
+        run: |
+          # -d 参数用换行符：每行逐字当一个参数。xargs 默认会解释引号和反斜杠
+          # 并按空白拆分，而参数化 node-id 里这些字符很常见（单是分片 1 就有 25 条）。
+          # 首次分片自测正是死在这里：unrecognized arguments: -55.65n4。
+          # 实测 1083 行 -> 默认 xargs 产出 1358 个参数，-d 换行 产出 1083 个。
+          # -x: 参数超长时宁可报错也不静默分批（分批会把一片拆成多次 pytest 调用、
+          # 各出一份 summary）。单片实测 112KB，远低于 2MB ARG_MAX。
+          xargs -x -d '\n' -a /tmp/shard.txt uv run pytest -q --durations=25 -m "not real_machine"
