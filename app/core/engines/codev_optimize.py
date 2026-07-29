@@ -637,6 +637,34 @@ def _vignetting_block(vignetting: list[float]) -> list[str]:
     return [f"{cmd} {values}" for cmd in ("VUY", "VLY", "VUX", "VLX")]
 
 
+#: Constrain distortion to the seed's own measured value rather than a fixed
+#: percentage. Non-circular by construction: the seed is where optimisation
+#: *starts*, not what the candidate is judged against, so nothing about the
+#: control leaks into how the candidate is built (NORTH-STAR 6 lists that leak
+#: as an open circularity problem, and this avoids it).
+#:
+#: MEASURED, and it is not the better default. Real machine, six trials'
+#: converging rungs (2026-07-30), seed-baseline vs a fixed `< 3`:
+#:
+#:   bound respected     2/4  vs  3/4
+#:   EFL still converged 2/4  vs  2/4
+#:   best-case RMS spot  445  vs  70 um   (US-20240201471-A1-e4)
+#:
+#: CODE V's AUT constraints are not hard guarantees: when a constraint is
+#: infeasible against the others it is simply left active and violated rather
+#: than raising. A tighter bound therefore conflicts with the EFL constraint
+#: more often, and both end up unsatisfied -- US-12210142-B2-e1 overshot its
+#: 1.119% seed value by 2x, US-20250370227-A1-e12 by 4x.
+#:
+#: Neither bound unlocks P2. The optimiser spends whatever allowance it is
+#: given (`< 3` lands on exactly 3.00, `< 10` on exactly 10.00), so a fixed 3%
+#: parks candidates at 3% while the controls measure 0.28-1.98% and the
+#: distortion criterion is lost anyway. Hence: both modes ship, neither is a
+#: default, and the bound stays a per-run parameter until evidence shows a
+#: value that actually wins.
+SEED_BASELINE_DISTORTION = -1.0
+
+
 def build_codev_target_sequence(
     *,
     source_zmx: Path | str,
@@ -653,6 +681,7 @@ def build_codev_target_sequence(
     lateral_color_weight: float = 0.01,
     rms_spot_weight: float = 0.001,
     distortion_weight: float | None = None,
+    distortion_constraint_pct: float | None = None,
     min_center_thickness_mm: float = 0.025,
     min_edge_thickness_mm: float = 0.025,
     max_center_thickness_mm: float = 10.0,
@@ -698,6 +727,16 @@ def build_codev_target_sequence(
         # A zero or negative weight would silently neuter the operand rather
         # than disable it -- if you mean off, pass None.
         _validate_positive(distortion_weight, "distortion_weight")
+    if distortion_constraint_pct is not None and distortion_constraint_pct != SEED_BASELINE_DISTORTION:
+        _validate_positive(distortion_constraint_pct, "distortion_constraint_pct")
+    if distortion_weight is not None and distortion_constraint_pct is not None:
+        # Both forms declare the same operand name. The manual warns that giving
+        # more than one form does not cancel the others -- the tolerance is
+        # entered twice, "which may not be physically correct".
+        raise ValueError(
+            "distortion_weight and distortion_constraint_pct are alternative forms "
+            "of the same operand; pass at most one"
+        )
     if emit_optimized_zmx and optimized_readout_path is None:
         raise ValueError("optimized_readout_path is required when emit_optimized_zmx=True")
 
@@ -739,7 +778,39 @@ def build_codev_target_sequence(
         "  @atelier_rmsspot = 0",
         f"  WTC {_fmt_number(rms_spot_weight)}",
     ]
-    if distortion_weight is not None:
+    if distortion_constraint_pct is not None:
+        # A *constraint*, not a weight. The CODE V Optimization manual states the
+        # two are different mechanisms for the same user-defined quantity:
+        #
+        #     Constrained with:                @xxx >  =  < constraint_tar
+        #     Included in the error function:  @xxx = constraint_tar / WTC wt
+        #
+        # The weight form below was tried first and refuted on the real machine
+        # (PR #110). That refutation does **not** carry over to this form.
+        #
+        # Real-machine A/B, six trials' converging rungs (2026-07-29), unconstrained
+        # vs `< 3`:
+        #   * bound held in 17/18 arms
+        #   * US-20240201471-A1-e4: EFL deviation 0.91% -> 0.00%, distortion
+        #     24.06% -> 3.00%, RMS spot 318 -> 70um  (better on every axis)
+        #   * US-12210142-B2-e1:    deviation 0.00% -> 0.00%, distortion 24.30% -> 3.00%
+        #   * two other converged seeds LOST EFL convergence (1.35% -> 34.5%,
+        #     0.00% -> 19.1%), so this is seed-dependent, not free
+        #
+        # Note the optimiser spends the full allowance: `< 3` lands on exactly
+        # 3.00 and `< 10` on exactly 10.00, so the bound *is* the output.
+        #
+        # Default stays None: it changes what AUT converges to.
+        bound = (
+            f"{_fmt_number(distortion_constraint_pct)}"
+            if distortion_constraint_pct != SEED_BASELINE_DISTORTION
+            else "^seed_baseline_max_distortion_pct"
+        )
+        aut_lines += [
+            "  @atelier_distortion == @dstpct(1)",
+            f"  @atelier_distortion < {bound}",
+        ]
+    elif distortion_weight is not None:
         # Distortion is one of the three metrics P2 judges (NORTH-STAR §1.1) and
         # was the only one with no operand here, so the optimiser has been free
         # to trade it away. Measured cost, 2026-07-29 pilot (12 judged trials):
