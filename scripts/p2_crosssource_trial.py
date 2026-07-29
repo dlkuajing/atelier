@@ -615,6 +615,15 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
         Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx
     )
 
+    # Third 交付物 piece (NORTH-STAR §1.1): 公差敏感度 + 良率. Same table on both
+    # sides -- that equal treatment is what §3's 「表错了两边一起错，排序不变」
+    # rests on, and it is why the sequence has to run SNS rather than TOR's
+    # default inverse mode, which would derive a *different* table per lens.
+    record["tolerance"] = _tolerance_pair(
+        Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx,
+        work / "tolerance", timeout_seconds,
+    )
+
     if measurements["candidate"] is None or measurements["control"] is None:
         record["verdict"] = "unmeasurable"
         record["blocked_at"] = "probe"
@@ -631,6 +640,86 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
     record["elapsed_s"] = round(time.time() - started, 1)
     return record
 
+
+
+#: Uncalibrated starter tolerances, mobile moulded-plastic order of magnitude
+#: (thickness +/-5um, radius +/-10um). NORTH-STAR §3 permits coarse absolute
+#: values *because the same table goes to both sides*, so there is one table
+#: here and no per-side knob. It is not a manufacturing budget and must never be
+#: reported as one.
+TOLERANCE_COMMANDS = ("DLT S1..I 0.005", "DLR S1..I 0.01")
+COMPENSATOR_COMMANDS = ("CMP DLZ SI",)
+TOLERANCE_TRIALS = 20
+
+#: Illustrative, uncalibrated. Applied identically to candidate and control, so
+#: the comparison survives the number being wrong; the absolute yield does not.
+YIELD_THRESHOLD_WAVES = 0.25
+#: Above this share of samples outside TOR's linear model the yield is refused
+#: rather than disclosed -- see tor_yield for why disclosure needs a ceiling.
+MAX_OUT_OF_MODEL_FRACTION = 0.25
+
+
+def _tolerance_pair(
+    candidate_zmx: Path, control_zmx: Path, work_dir: Path, timeout_seconds: float
+) -> dict[str, object]:
+    """Run the same tolerance table on both sides and report yield + disclosure."""
+
+    from app.core.engines.codev_batch import CodeVBatchError
+    from app.core.engines.codev_tolerance import (
+        TorCompensators,
+        TorMonteCarlo,
+        TorToleranceTable,
+        run_codev_tor,
+    )
+    from app.core.engines.tor_yield import TorYieldPolicy, compute_mc_yield
+
+    policy = TorYieldPolicy(
+        metric="RMS",
+        threshold=YIELD_THRESHOLD_WAVES,
+        direction="max",
+        semantics_ratified=True,
+        semantics_evidence=(
+            "TOR linear-model out-of-range rate measured across 26 real runs "
+            "(2026-07-29): 11.7%/4.4%/2.9% by nominal-RMS field rank"
+        ),
+        max_saturation_fraction=1.0,
+        max_out_of_model_fraction=MAX_OUT_OF_MODEL_FRACTION,
+    )
+    out: dict[str, object] = {
+        "tolerance_commands": list(TOLERANCE_COMMANDS),
+        "compensator_commands": list(COMPENSATOR_COMMANDS),
+        "trials": TOLERANCE_TRIALS,
+        "yield_threshold_waves": YIELD_THRESHOLD_WAVES,
+        "max_out_of_model_fraction": MAX_OUT_OF_MODEL_FRACTION,
+        "calibrated": False,
+    }
+    for side, zmx in (("candidate", candidate_zmx), ("control", control_zmx)):
+        try:
+            run = run_codev_tor(
+                source_zmx=zmx,
+                work_dir=work_dir / side,
+                tolerance_table=TorToleranceTable(TOLERANCE_COMMANDS, "uncalibrated starter set"),
+                compensators=TorCompensators(
+                    COMPENSATOR_COMMANDS, "image-plane focus only", "back focus refocus at assembly"
+                ),
+                monte_carlo=TorMonteCarlo(TOLERANCE_TRIALS),
+                metric="rms",
+                timeout_seconds=timeout_seconds,
+            )
+        except (CodeVBatchError, OSError, ValueError) as exc:
+            out[side] = {"error": f"{type(exc).__name__}: {exc}"[:400]}
+            continue
+        computed = compute_mc_yield(run.parse_result, policy)
+        out[side] = {
+            "status": computed.status,
+            "yield_fraction": computed.yield_fraction,
+            "judged_samples": computed.trials,
+            "out_of_model_samples": computed.out_of_model_samples,
+            "out_of_model_fraction": computed.out_of_model_fraction,
+            "per_field_yield": computed.per_field_yield,
+            "reason": computed.reason,
+        }
+    return out
 
 def _relative_cost(candidate_zmx: Path, control_zmx: Path) -> dict[str, object] | None:
     """Candidate cost relative to its control, or ``None`` when either is unreadable."""
