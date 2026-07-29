@@ -29,6 +29,11 @@ Fail-closed, and honest about which side of a mismatch is which:
 * A metric CODE V withheld is not "reproduced" by an Optiland number; it stays
   withheld and is counted separately.
 
+All three metrics the North Star judges on are covered: RMS spot, MTF (same
+frequency and the same worst-over-fields-and-azimuths reduction as ``@mtfmin``),
+and distortion (``f-tan(theta)`` reference, which is what a distortion percentage
+means and what ``@dstpct`` reports).
+
 Each recompute runs in its own subprocess with a timeout: Optiland is known to
 hang on a minority of this corpus, and a hang inside a loop reads as slowness.
 """
@@ -58,7 +63,9 @@ _WORKER = """
 import json, math, sys, warnings
 warnings.simplefilter("ignore")
 sys.path.insert(0, sys.argv[1])
-from app.core.aberration import compute_mtf
+import numpy as np
+from optiland.analysis import Distortion
+from app.core.aberration import compute_mtf, nearest_mtf_freq_index
 from app.core.engines.seed_field_rebuild import max_field_angle_deg
 from app.core.engines.zmx_import_prep import decode_zmx_text
 from app.core.zmx_ingest import load_normalized_zmx, regularize_fields_to_angle
@@ -74,10 +81,32 @@ except Exception:
     out["f_number"] = None
 if half is not None:
     regularize_fields_to_angle(optic, 2.0 * half)
-    rms = [float(v) for v in compute_mtf(optic).rms_spot_radius_um_by_field]
+    mtf = compute_mtf(optic)
+    rms = [float(v) for v in mtf.rms_spot_radius_um_by_field]
     out["max_rms_spot_um"] = max(rms) if rms else None
+    # Same frequency the trial's CODE V probe uses, and the same "worst over
+    # every field and both azimuths" reduction as @mtfmin.
+    idx = nearest_mtf_freq_index(mtf, 100.0)
+    if idx is None:
+        out["mtf_min"] = None
+    else:
+        vals = []
+        for field in mtf.fields:
+            vals.extend([float(field.sagittal[idx]), float(field.tangential[idx])])
+        out["mtf_min"] = min(vals) if vals else None
+        out["mtf_freq_lp_per_mm"] = float(mtf.freq_lp_per_mm[idx])
+    # f-tan(theta) reference, which is what a distortion percentage means and
+    # what CODE V's @dstpct reports. Worst magnitude over fields and wavelengths.
+    try:
+        data = np.asarray(Distortion(optic, distortion_type="f-tan").data, dtype=float)
+        finite = data[np.isfinite(data)]
+        out["distortion_pct"] = float(np.max(np.abs(finite))) if finite.size else None
+    except Exception:
+        out["distortion_pct"] = None
 else:
     out["max_rms_spot_um"] = None
+    out["mtf_min"] = None
+    out["distortion_pct"] = None
 print(json.dumps(out))
 """
 
@@ -133,6 +162,8 @@ def recheck(*, run_dir: Path, worker: Path, timeout_s: float) -> dict[str, objec
                     "efl_mm": reported.get("efl_y_mm"),
                     "f_number": reported.get("f_number"),
                     "max_rms_spot_um": reported.get("rms_spot_um"),
+                    "mtf_min": reported.get("mtf_min"),
+                    "distortion_pct": reported.get("distortion_pct"),
                 },
             }
             if isinstance(other, str):
@@ -144,6 +175,10 @@ def recheck(*, run_dir: Path, worker: Path, timeout_s: float) -> dict[str, objec
                     "f_number": _ratio(reported.get("f_number"), other.get("f_number")),
                     "max_rms_spot_um": _ratio(
                         reported.get("rms_spot_um"), other.get("max_rms_spot_um")
+                    ),
+                    "mtf_min": _ratio(reported.get("mtf_min"), other.get("mtf_min")),
+                    "distortion_pct": _ratio(
+                        reported.get("distortion_pct"), other.get("distortion_pct")
                     ),
                 }
             rows.append(row)
@@ -169,7 +204,14 @@ def recheck(*, run_dir: Path, worker: Path, timeout_s: float) -> dict[str, objec
             1 for r in rows if isinstance(r.get("optiland"), str)
         ),
         "reproduction_ratio_optiland_over_codev": {
-            metric: spread(metric) for metric in ("efl_mm", "f_number", "max_rms_spot_um")
+            metric: spread(metric)
+            for metric in (
+                "efl_mm",
+                "f_number",
+                "max_rms_spot_um",
+                "mtf_min",
+                "distortion_pct",
+            )
         },
         "caveat": (
             "Optiland is a second engine, not a third party. Agreement here means a "
