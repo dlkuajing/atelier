@@ -36,6 +36,9 @@ HEALTHY = {
     "distortion_pct": "1.72",
     "lateral_color_um": "0.68",
     "mtf_min": "0.312",
+    # Every declared field produced a reading -- the healthy case.
+    "rms_fields_ok": "2",
+    "mtf_fields_ok": "2",
 }
 
 
@@ -932,3 +935,72 @@ def test_an_unprobeable_control_ends_the_trial_before_the_expensive_stage(
     record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
     assert record["verdict"] == "unmeasurable"
     assert record["blocked_at"] == "control_probe"
+
+
+# ---------------------------------------------------------------------------
+# Partial-field extrema (2026-07-29 adversarial audit, 8 findings, one root)
+# ---------------------------------------------------------------------------
+
+
+def test_a_max_over_fewer_fields_than_declared_is_not_the_max_we_report() -> None:
+    """@rmssum skips a field whose SPOTDATA errors and returns the survivors' max."""
+    quality = q(num_fields="4", rms_fields_ok="3")
+    assert quality.rms_spot_um is None
+    assert "rms_spot_partial_field_coverage" in quality.withheld
+    # The other metrics are untouched: only the extremum over fields is affected.
+    assert quality.efl_y_mm == pytest.approx(5.68)
+
+
+def test_a_min_over_fewer_fields_than_declared_is_not_the_min_we_report() -> None:
+    """Every dropped field moves MTF UP, and higher is better."""
+    quality = q(num_fields="4", mtf_fields_ok="1")
+    assert quality.mtf_min is None
+    assert "mtf_partial_field_coverage" in quality.withheld
+
+
+def test_full_field_coverage_passes_so_the_screen_is_not_a_blanket() -> None:
+    """The negative control: a screen that withholds everything measures nothing."""
+    quality = q(num_fields="4", rms_fields_ok="4", mtf_fields_ok="4")
+    assert quality.rms_spot_um == pytest.approx(10.4)
+    assert quality.mtf_min == pytest.approx(0.312)
+    assert quality.withheld == ()
+
+
+def test_a_missing_witness_withholds_rather_than_assumes_full_coverage() -> None:
+    """Fail-closed: a probe that did not report the witness proves nothing."""
+    data = dict(HEALTHY)
+    data.pop("rms_fields_ok")
+    data.pop("mtf_fields_ok")
+    quality = ImageQuality.from_data(data, source="probe.zmx")
+    assert quality.rms_spot_um is None
+    assert quality.mtf_min is None
+
+
+def test_the_witness_counts_are_required_probe_keys() -> None:
+    """A probe build that forgets them must fail loudly, not silently pass."""
+    from scripts.p2_crosssource_trial import _PROBE_REQUIRED_KEYS
+
+    assert "rms_fields_ok" in _PROBE_REQUIRED_KEYS
+    assert "mtf_fields_ok" in _PROBE_REQUIRED_KEYS
+
+
+def test_the_probe_sequence_asks_code_v_for_the_witness_counts() -> None:
+    from scripts.p2_crosssource_trial import build_probe_sequence
+
+    seq = build_probe_sequence(source_zmx="D:/x/a.zmx", result_path="D:/x/r.tsv")
+    assert "@rmsnf(1)" in seq
+    assert "@mtfnf(" in seq
+    assert '"rms_fields_ok"' in seq
+    assert '"mtf_fields_ok"' in seq
+
+
+def test_the_counting_macros_mirror_the_functions_they_witness() -> None:
+    """A witness that succeeds where its metric fails would be worse than none."""
+    from app.core.engines.codev_optimize import _metric_function_block
+
+    block = "\n".join(_metric_function_block())
+    assert "FCT @rmsnf(NUM ^dummy)" in block
+    assert "FCT @mtfnf(NUM ^freq, NUM ^nrd)" in block
+    # Same guard expressions as @rmssum / @mtfmin.
+    assert block.count("^err == SPOTDATA(1,^f,1,0.01,'CEN',0,0,^spot)") == 2
+    assert block.count("IF ^xmtf >= 0 and ^ymtf >= 0") == 2

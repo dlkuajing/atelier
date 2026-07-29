@@ -2648,6 +2648,36 @@ def _metric_function_block() -> list[str]:
         "  END IF",
         "END FOR",
         "END FCT ^min",
+        # Witness counts for the two extremum metrics above. Both skip a field
+        # whose trace fails -- @rmssum on `^err = 0`, @mtfmin on `^xmtf/^ymtf >= 0`
+        # -- and return the extremum over the survivors, so a lens that images
+        # only on axis reports its axial spot as an all-field maximum and its
+        # axial MTF as an all-field minimum. Every drop moves RMS **down** and MTF
+        # **up**, and both of those directions are "better". `NUM F` reports the
+        # **declared** field count, so without these no consumer can tell 1-of-2
+        # from 2-of-2. Built from the same constructs as the functions they
+        # witness, so they succeed exactly where those succeed.
+        "FCT @rmsnf(NUM ^dummy)",
+        "LCL NUM ^dummy ^f ^spot(10) ^err ^n",
+        "^n == 0",
+        "FOR ^f 1 (NUM F)",
+        "  ^err == SPOTDATA(1,^f,1,0.01,'CEN',0,0,^spot)",
+        "  IF ^err = 0",
+        "    ^n == ^n + 1",
+        "  END IF",
+        "END FOR",
+        "END FCT ^n",
+        "FCT @mtfnf(NUM ^freq, NUM ^nrd)",
+        "LCL NUM ^freq ^nrd ^f ^xout(6) ^yout(6) ^xmtf ^ymtf ^n",
+        "^n == 0",
+        "FOR ^f 1 (NUM F)",
+        "  ^xmtf == MTF_1FLD(1,^f,^freq,0,^nrd,^xout,'DIF','SIN')",
+        "  ^ymtf == MTF_1FLD(1,^f,^freq,90,^nrd,^yout,'DIF','SIN')",
+        "  IF ^xmtf >= 0 and ^ymtf >= 0",
+        "    ^n == ^n + 1",
+        "  END IF",
+        "END FOR",
+        "END FCT ^n",
         "FCT @wfewav(NUM ^dummy)",
         "LCL NUM ^dummy ^f ^ok ^rwe(10,26) ^value ^max",
         "^max == 0",

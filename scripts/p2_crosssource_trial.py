@@ -100,6 +100,8 @@ _PROBE_REQUIRED_KEYS = (
     "distortion_pct",
     "lateral_color_um",
     "mtf_min",
+    "rms_fields_ok",
+    "mtf_fields_ok",
 )
 
 
@@ -166,6 +168,10 @@ class ImageQuality:
     distortion_pct: float | None
     lateral_color_um: float | None
     mtf_min: float | None
+    #: How many fields actually produced a reading, against the declared count.
+    #: ``None`` means the probe did not report it.
+    rms_fields_ok: int | None = None
+    mtf_fields_ok: int | None = None
     withheld: tuple[str, ...] = ()
 
     @property
@@ -240,6 +246,28 @@ class ImageQuality:
             mtf = None
             withheld.append("mtf_seed_value")
 
+        # Partial-field extrema (2026-07-29 adversarial audit). ``@rmssum`` skips
+        # a field whose SPOTDATA errors and ``@mtfmin`` skips one whose MTF_1FLD
+        # returns negative, then each returns its extremum over the survivors. A
+        # candidate whose outer field died therefore reports its **axial** spot as
+        # an all-field maximum and its axial MTF as an all-field minimum -- both
+        # in the flattering direction, and invisible because ``num_fields`` is the
+        # declared count. A max over a subset is not the max we claim to report.
+        raw_rms_ok = num("rms_fields_ok")
+        raw_mtf_ok = num("mtf_fields_ok")
+        rms_fields_ok = int(raw_rms_ok) if raw_rms_ok is not None else None
+        mtf_fields_ok = int(raw_mtf_ok) if raw_mtf_ok is not None else None
+        if rms_spot is not None and (
+            fields is None or rms_fields_ok is None or rms_fields_ok < fields
+        ):
+            rms_spot = None
+            withheld.append("rms_spot_partial_field_coverage")
+        if mtf is not None and (
+            fields is None or mtf_fields_ok is None or mtf_fields_ok < fields
+        ):
+            mtf = None
+            withheld.append("mtf_partial_field_coverage")
+
         # Joint criterion: 0.0 distortion and 0.0 lateral colour are physically
         # legitimate, so they cannot be judged by value. They are only trustworthy
         # when at least one positive-definite metric survived to vouch that
@@ -271,6 +299,8 @@ class ImageQuality:
             distortion_pct=distortion,
             lateral_color_um=lateral,
             mtf_min=mtf,
+            rms_fields_ok=rms_fields_ok,
+            mtf_fields_ok=mtf_fields_ok,
             withheld=tuple(withheld),
         )
 
@@ -324,6 +354,13 @@ def build_probe_sequence(
         "^dst == @dstpct(1)",
         "^lat == @lcum(1)",
         f"^mtf == @mtfmin({_fmt(mtf_frequency_lpmm)},{int(mtf_nrd)})",
+        # Witnesses for the two extremum metrics: how many fields actually
+        # produced a reading. `(NUM F)` is the **declared** count, so without
+        # these a lens that images on axis only is indistinguishable from one
+        # that images everywhere -- and every dropped field moves RMS down and
+        # MTF up, both of which read as "better".
+        "^rmsnf == @rmsnf(1)",
+        f"^mtfnf == @mtfnf({_fmt(mtf_frequency_lpmm)},{int(mtf_nrd)})",
     ]
 
     def put(key: str, value: str) -> None:
@@ -344,6 +381,8 @@ def build_probe_sequence(
     put('"distortion_pct"', "^dst")
     put('"lateral_color_um"', "^lat")
     put('"mtf_min"', "^mtf")
+    put('"rms_fields_ok"', "^rmsnf")
+    put('"mtf_fields_ok"', "^mtfnf")
     put('"mtf_frequency_lpmm"', _fmt(mtf_frequency_lpmm))
     put('"mtf_nrd"', str(int(mtf_nrd)))
 
