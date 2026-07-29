@@ -155,11 +155,84 @@ class CodeVRawProcessCapture:
     lock_owner: dict[str, object]
 
 
+class CodeVIdleTimeout(subprocess.TimeoutExpired):
+    """CODE V stopped producing output but never exited.
+
+    Distinct from the hard timeout: the run did not take too long, it stopped
+    doing anything. Subclasses TimeoutExpired so existing kill/reap handling
+    treats it identically.
+    """
+
+
+def _output_fingerprint(work_dir: Path) -> tuple[tuple[str, int, int], ...]:
+    """Size+mtime of everything CODE V may be writing under ``work_dir``."""
+
+    entries: list[tuple[str, int, int]] = []
+    try:
+        for path in sorted(work_dir.iterdir()):
+            try:
+                stat = path.stat()
+            except OSError:
+                continue
+            entries.append((path.name, stat.st_size, int(stat.st_mtime_ns)))
+    except OSError:
+        return ()
+    return tuple(entries)
+
+
+def _communicate_with_idle_watch(
+    process: subprocess.Popen[bytes],
+    *,
+    timeout_seconds: float,
+    idle_timeout_seconds: float | None,
+    work_dir: Path,
+    poll_seconds: float = 5.0,
+) -> tuple[bytes, bytes]:
+    """``communicate`` plus a "stopped making progress" deadline.
+
+    CODE V can enter a state where it has stopped computing yet never exits --
+    observed 2026-07-29 after ``RAY ERROR`` during AUT: zero CPU accumulation,
+    no further output, process alive until the caller's hard timeout fires. On
+    one real trial nine such rungs each burned the full 300s, i.e. ~2700s of a
+    2735s trial -- about 99% of its wall clock.
+
+    **A ray error is not the signal.** Healthy runs print ``RAY ERROR`` while
+    the optimiser explores bad configurations and then finish normally (verified
+    on four arms that completed in 9-19s with ray errors in their listing).
+    Killing on that string would abort good runs. The signal is the *absence of
+    progress*, so this watches the work directory for output growth instead.
+
+    Re-entering ``communicate`` after ``TimeoutExpired`` is the documented
+    pattern and loses no output.
+    """
+
+    if idle_timeout_seconds is None:
+        return process.communicate(timeout=timeout_seconds)
+
+    deadline = time.monotonic() + timeout_seconds
+    fingerprint = _output_fingerprint(work_dir)
+    last_progress = time.monotonic()
+    while True:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(process.args, timeout_seconds)
+        try:
+            return process.communicate(timeout=min(poll_seconds, remaining))
+        except subprocess.TimeoutExpired:
+            now = time.monotonic()
+            current = _output_fingerprint(work_dir)
+            if current != fingerprint:
+                fingerprint, last_progress = current, now
+            elif now - last_progress >= idle_timeout_seconds:
+                raise CodeVIdleTimeout(process.args, idle_timeout_seconds) from None
+
+
 def run_codev_process_bytes(
     command: list[str],
     *,
     work_dir: Path,
     timeout_seconds: float,
+    idle_timeout_seconds: float | None = None,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
     lock_root: Path | None = None,
@@ -202,7 +275,12 @@ def run_codev_process_bytes(
                 },
             ) from exc
         try:
-            stdout, stderr = process.communicate(timeout=timeout_seconds)
+            stdout, stderr = _communicate_with_idle_watch(
+                process,
+                timeout_seconds=timeout_seconds,
+                idle_timeout_seconds=idle_timeout_seconds,
+                work_dir=Path(work_dir),
+            )
             if process.returncode is None:
                 raise RuntimeError("communicate returned before CODE V exit was proven")
         except BaseException as exc:
@@ -231,11 +309,15 @@ def run_codev_process_bytes(
             kind: CodeVBatchErrorKind = (
                 "timeout" if isinstance(exc, subprocess.TimeoutExpired) else "failure"
             )
-            message = (
-                "CODE V batch run exceeded its hard timeout"
-                if kind == "timeout"
-                else "CODE V process communication failed after startup"
-            )
+            if isinstance(exc, CodeVIdleTimeout):
+                message = (
+                    "CODE V stopped producing output and never exited "
+                    f"(no progress for {idle_timeout_seconds}s)"
+                )
+            elif kind == "timeout":
+                message = "CODE V batch run exceeded its hard timeout"
+            else:
+                message = "CODE V process communication failed after startup"
             error = CodeVBatchError(
                 kind,
                 message,
@@ -318,6 +400,7 @@ def run_codev_process(
     *,
     work_dir: Path,
     timeout_seconds: float,
+    idle_timeout_seconds: float | None = None,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
     lock_root: Path | None = None,
@@ -328,6 +411,7 @@ def run_codev_process(
         command,
         work_dir=work_dir,
         timeout_seconds=timeout_seconds,
+        idle_timeout_seconds=idle_timeout_seconds,
         env=env,
         platform_name=platform_name,
         lock_root=lock_root,
@@ -474,6 +558,7 @@ def run_codev_batch(
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     work_dir: Path | str | None = None,
     timeout_seconds: float = 30.0,
+    idle_timeout_seconds: float | None = None,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
     expected_schema: str = CODEV_BATCH_RESULT_SCHEMA,
@@ -536,6 +621,7 @@ def run_codev_batch(
             command,
             work_dir=work_dir,
             timeout_seconds=timeout_seconds,
+            idle_timeout_seconds=idle_timeout_seconds,
             env=env,
             platform_name=platform_name,
         )

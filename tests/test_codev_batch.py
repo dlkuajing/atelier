@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import time
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -884,3 +885,105 @@ def test_real_codev_trivial_batch_smoke(tmp_path: Path) -> None:
     assert result.data["schema"] == CODEV_BATCH_RESULT_SCHEMA
     assert result.data["status"] == "ok"
     assert result.data["engine"] == "codev"
+
+
+# ---------------------------------------------------------------------------
+# Idle watchdog: CODE V that stops working but never exits (2026-07-29)
+# ---------------------------------------------------------------------------
+
+
+def test_output_fingerprint_changes_when_the_work_dir_grows(tmp_path: Path) -> None:
+    from app.core.engines.codev_batch import _output_fingerprint
+
+    before = _output_fingerprint(tmp_path)
+    (tmp_path / "run.lis").write_text("line one\n", encoding="ascii")
+    grew = _output_fingerprint(tmp_path)
+    assert grew != before
+    (tmp_path / "run.lis").write_text("line one\nline two\n", encoding="ascii")
+    assert _output_fingerprint(tmp_path) != grew
+
+
+def test_idle_watch_is_off_unless_asked(tmp_path: Path) -> None:
+    """Default stays None so no existing caller changes behaviour."""
+    import inspect
+
+    from app.core.engines.codev_batch import run_codev_process, run_codev_process_bytes
+
+    for fn in (run_codev_process, run_codev_process_bytes):
+        assert inspect.signature(fn).parameters["idle_timeout_seconds"].default is None
+
+
+def test_a_process_that_keeps_writing_is_not_killed(tmp_path: Path) -> None:
+    """The whole point: a slow-but-working run must survive.
+
+    Killing on `RAY ERROR` would have failed here -- healthy CODE V runs print
+    ray errors while the optimiser explores bad configurations (verified on four
+    arms that finished in 9-19s with ray errors in their listing). Progress, not
+    error text, is the signal.
+    """
+    from app.core.engines.codev_batch import _communicate_with_idle_watch
+
+    class _Fake:
+        args = ["fake"]
+
+        def __init__(self) -> None:
+            self.calls = 0
+
+        def communicate(self, timeout: float | None = None):  # noqa: ANN202
+            self.calls += 1
+            if self.calls < 4:
+                (tmp_path / "run.lis").write_text("x" * self.calls, encoding="ascii")
+                raise subprocess.TimeoutExpired(self.args, timeout or 0)
+            return (b"done", b"")
+
+    out, err = _communicate_with_idle_watch(
+        _Fake(),  # type: ignore[arg-type]
+        timeout_seconds=60.0,
+        idle_timeout_seconds=0.0,  # would fire immediately if progress were ignored
+        work_dir=tmp_path,
+        poll_seconds=0.001,
+    )
+    assert out == b"done" and err == b""
+
+
+def test_a_process_that_stops_writing_is_cut_off(tmp_path: Path) -> None:
+    """Nine such rungs burned ~2700s of one 2735s trial."""
+    from app.core.engines.codev_batch import CodeVIdleTimeout, _communicate_with_idle_watch
+
+    (tmp_path / "run.lis").write_text("stalled after a ray error\n", encoding="ascii")
+
+    class _Catatonic:
+        args = ["fake"]
+
+        def communicate(self, timeout: float | None = None):  # noqa: ANN202
+            raise subprocess.TimeoutExpired(self.args, timeout or 0)
+
+    with pytest.raises(CodeVIdleTimeout):
+        _communicate_with_idle_watch(
+            _Catatonic(),  # type: ignore[arg-type]
+            timeout_seconds=60.0,
+            idle_timeout_seconds=0.05,
+            work_dir=tmp_path,
+            poll_seconds=0.001,
+        )
+
+
+def test_the_hard_timeout_still_wins_when_it_comes_first(tmp_path: Path) -> None:
+    """Idle watching must not extend a run past its hard deadline."""
+    from app.core.engines.codev_batch import _communicate_with_idle_watch
+
+    class _Busy:
+        args = ["fake"]
+
+        def communicate(self, timeout: float | None = None):  # noqa: ANN202
+            (tmp_path / "run.lis").write_text(str(time.time_ns()), encoding="ascii")
+            raise subprocess.TimeoutExpired(self.args, timeout or 0)
+
+    with pytest.raises(subprocess.TimeoutExpired):
+        _communicate_with_idle_watch(
+            _Busy(),  # type: ignore[arg-type]
+            timeout_seconds=0.05,
+            idle_timeout_seconds=600.0,
+            work_dir=tmp_path,
+            poll_seconds=0.001,
+        )
