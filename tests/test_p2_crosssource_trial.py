@@ -429,3 +429,103 @@ def test_the_correction_can_never_manufacture_a_par() -> None:
 
     for cand in (_iq(rms_spot_um=300.0, mtf_min=None), _iq(distortion_pct=99.0, mtf_min=None)):
         assert compare(cand, _iq())["verdict"] != "par"
+
+
+# ---------------------------------------------------------------------------
+# Conformance screen: the candidate must not have been handed an easier job
+# (2026-07-29 -- `codev_optimize` never enforces IMH/FOV, so the candidate
+# inherits its seed's field definition)
+# ---------------------------------------------------------------------------
+
+
+def test_field_tangent_is_image_height_over_efl_from_the_same_side() -> None:
+    from scripts.p2_crosssource_trial import field_tangent
+
+    assert field_tangent(_iq(image_height_mm=3.0, efl_y_mm=4.0)) == pytest.approx(0.75)
+    assert field_tangent(_iq(image_height_mm=None)) is None
+    assert field_tangent(_iq(efl_y_mm=None)) is None
+    assert field_tangent(_iq(efl_y_mm=0.0)) is None
+
+
+def test_same_field_and_aperture_passes_the_conformance_screen() -> None:
+    """The negative control: a like-for-like pair must not be screened out."""
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    blocked, details = conformance_screen(_iq(), _iq())
+    assert blocked is None
+    assert details["field_coverage_ratio"] == pytest.approx(1.0)
+
+
+def test_a_candidate_covering_less_field_than_the_control_is_not_judged() -> None:
+    """The measured case: candidate at 18.35 deg against a control at 37.5 deg."""
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    candidate = _iq(efl_y_mm=5.312, image_height_mm=1.762)
+    control = _iq(efl_y_mm=5.312, image_height_mm=4.078)
+    blocked, details = conformance_screen(candidate, control)
+    assert blocked == "field_not_covered"
+    assert details["field_coverage_ratio"] == pytest.approx(1.762 / 4.078)
+
+
+def test_a_candidate_covering_more_field_is_still_judged() -> None:
+    """Over-delivery only makes the candidate's own numbers harder to win with."""
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    assert conformance_screen(_iq(image_height_mm=4.0), _iq(image_height_mm=3.0))[0] is None
+
+
+def test_a_slower_candidate_is_not_judged_because_a_small_pupil_is_a_free_win() -> None:
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    assert conformance_screen(_iq(f_number=2.8), _iq(f_number=2.0))[0] == "f_number_not_met"
+    assert conformance_screen(_iq(f_number=1.8), _iq(f_number=2.0))[0] is None
+
+
+def test_an_unreadable_field_or_aperture_blocks_rather_than_passes() -> None:
+    """Fail-closed: a pair we cannot prove comparable is not quietly compared."""
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    assert conformance_screen(_iq(image_height_mm=None), _iq())[0] == "field_not_comparable"
+    assert conformance_screen(_iq(), _iq(efl_y_mm=None))[0] == "field_not_comparable"
+    assert conformance_screen(_iq(f_number=None), _iq())[0] == "f_number_not_comparable"
+
+
+def test_the_screen_slack_is_readout_rounding_not_a_quality_threshold() -> None:
+    """A hair under counts as covered; a real shortfall does not."""
+    from scripts.p2_crosssource_trial import CONFORMANCE_RELATIVE_SLACK, conformance_screen
+
+    assert CONFORMANCE_RELATIVE_SLACK < 1e-2
+    hair = _iq(image_height_mm=3.0 * (1.0 - CONFORMANCE_RELATIVE_SLACK / 2.0))
+    assert conformance_screen(hair, _iq(image_height_mm=3.0))[0] is None
+    real = _iq(image_height_mm=3.0 * (1.0 - CONFORMANCE_RELATIVE_SLACK * 10.0))
+    assert conformance_screen(real, _iq(image_height_mm=3.0))[0] == "field_not_covered"
+
+
+def test_the_screen_can_only_remove_trials_from_the_headline_never_add_a_par() -> None:
+    """Same guarantee the 2026-07-29 roll-up correction carries."""
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    # A candidate that would have scored par on every metric, but on half the field.
+    winner = _iq(rms_spot_um=1.0, distortion_pct=0.1, mtf_min=0.9, image_height_mm=1.5)
+    assert conformance_screen(winner, _iq(image_height_mm=3.0))[0] == "field_not_covered"
+
+
+def test_summary_reports_field_coverage_so_the_missing_trials_are_explained() -> None:
+    records = [
+        {
+            "verdict": "spec_not_met",
+            "plan": {"seed_case_id": "s1"},
+            "conformance": {"field_coverage_ratio": 0.43},
+        },
+        {
+            "verdict": "spec_not_met",
+            "plan": {"seed_case_id": "s2"},
+            "conformance": {"field_coverage_ratio": 0.51},
+        },
+    ]
+    summary = summarise(records)
+    assert summary["field_coverage_ratio_n"] == 2
+    assert summary["field_coverage_ratio_median"] == pytest.approx(0.47)
+    assert summary["field_coverage_ratio_min"] == pytest.approx(0.43)
+    assert summary["judged"] == 0
+    assert summary["par_rate_over_judged"] is None
