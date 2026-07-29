@@ -9,9 +9,10 @@ The mechanism, from code
 **full** FOV.
 
 `.planning/evidence/fov-unit-mix-2026-07-29.md` showed it was not: 253 of 442
-cases stored a **half** angle there. For those, the stored quality was computed
-at **half the lens' true field** -- and a smaller field means smaller spots and
-higher MTF, so those numbers are flattering.
+cases stored a **half** angle there. That makes "the stored quality was computed
+at half the lens' true field" a *hypothesis* worth testing -- a smaller field
+means smaller spots and higher MTF, so it would be flattering. Testing it is the
+point of this script, and the positive control below is what decides it.
 
 What this script measures
 -------------------------
@@ -19,9 +20,16 @@ For a sample of the affected cases it recomputes the Optiland MTF twice -- once
 with the old (halved) ``fov_deg`` and once with the re-anchored one -- and
 compares both against the number stored in the case JSON.
 
-* old-recompute ≈ stored  ⇒ confirms the stored numbers came from the wrong field
-  (this is the positive control; without it the mechanism is only an argument)
-* new-recompute vs stored ⇒ how flattering the stored number was
+* old-recompute ≈ stored  ⇒ would confirm the stored numbers came from the wrong field.
+  **Measured 2026-07-29: it does not.** Only 1 of 22 lands within 5% of 1.0; the
+  median is 1.43 and the range 0.96-1.88. So today's code does not reproduce the
+  stored numbers even at the field they were supposedly computed with, and the
+  "stored quality came from half the field" story is **not** established -- other
+  things changed between corpus generation and now (ingest repairs, ray clipping,
+  Optiland version). The finding that survives is narrower and more useful: the
+  stored image quality is **not reproducible with the current code at all**.
+* new-recompute vs old-recompute ⇒ what the true field costs, engine held fixed.
+  This comparison does not depend on the stored numbers and is the one to trust.
 
 Each case runs in its **own subprocess with a timeout**. Optiland is known to
 hang on a minority of this corpus, and a hang inside a batch loop looks exactly
@@ -107,8 +115,8 @@ def audit(*, limit: int, timeout_s: float, worker: Path) -> dict[str, object]:
     old_fov = {row["case_id"]: float(row["fov_deg"]) for row in json.loads(baseline.stdout)}
     index = json.loads((CASES_DIR / "index.json").read_text(encoding="utf-8"))
 
-    # Only the cases the migration actually doubled: those are the ones whose
-    # stored quality was produced at half their true field.
+    # Only the cases the migration actually doubled -- the ones the hypothesis
+    # is about.
     affected = [
         row
         for row in index
