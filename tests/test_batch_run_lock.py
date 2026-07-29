@@ -201,7 +201,15 @@ def test_explicit_recovery_preserves_safe_evidence_for_malformed_owner(
     assert evidence["byte_count"] == len(raw_owner)
     assert evidence["parse_error"].startswith(parse_error)
     assert evidence["raw_content_recorded"] is False
-    assert "secret-that-must-not-leak" not in receipt_text
+    # The receipt legitimately echoes the *recovering* process' own ``sys.argv``
+    # as forensics (see ``_new_owner``). Under node-id selection -- which the CI
+    # shards use -- that argv carries this test's own parametrised id, sentinel
+    # included, so scanning the whole receipt text would fail on the command
+    # line rather than on anything the lock wrote. Everything else is scanned.
+    leak_scan = json.loads(receipt_text)
+    replacement_argv = leak_scan["replacement_owner"].pop("argv")
+    assert isinstance(replacement_argv, list)
+    assert "secret-that-must-not-leak" not in json.dumps(leak_scan)
     assert not owner_path.exists()
 
 
