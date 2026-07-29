@@ -63,14 +63,35 @@ FOR ^f 1 (NUM F)
 在今晚的见证量落地之前，这三条会把**轴上**那个值当作全场最大值报出来——
 第 2 条对照 RMS 是 4.566 µm，候选的轴上值极可能读成 **par**。
 
-## 修法方向（未实施）
+## ⛔ 修法：我提的第一个方案被手册否掉了
 
-merit 里加视场数见证，让「出数视场数 < 声明视场数」变成**惩罚**或**硬约束**。
-今晚已经有了现成的计数宏 `@rmsnf` / `@mtfnf`（真机冒烟已过），可直接作操作数。
+**原方案**：merit 里加视场数见证，让「出数视场数 < 声明数」变惩罚或硬约束
+（用现成的 `@rmsnf` / `@mtfnf` 作操作数）。
 
-⚠️ 这会改变 AUT 收敛到什么，是**真机行为变更**，必须 A/B。
+**手册明确反对。** CODE V *Optimization* 手册
+「General Guidelines for User-Defined Constraints」：
+
+> With constraints, avoid:
+> · Expressions that are **discontinuous in value or slope** as a function of a variable parameter.
+> · **Erratic behavior will occur if the point of discontinuity is in the range of possible values.**
+
+视场**计数**按构造就是值不连续的，而不连续点——某个视场从追得出变成追不出——
+**恰好就是我们想约束的那一点**。`max × (NUM F / n_ok)` 这类缩放惩罚同样不连续。
+
+⇒ **正确框架不是改 merit，是改「接受 / 搜索控制」。**
+不连续的损失只能在优化器**外面**抓——今晚的见证量已经在**测量侧**抓到了；
+余下的问题是抓到之后**怎么办**（重试策略：降 autovig / 换 DOF / 换 seed），
+而不是怎么在 merit 里罚它。
+
+📌 这条更正是**查手册**得到的，不是试出来的。照原方案实施会烧掉真机时间
+去发现 erratic behavior——`feedback-measurement-traps` 里「别猜外部语法，
+查手册比试错快」这条在这里直接省了钱。
+
+**根因诊断依然成立**（merit 看不见丢失的视场），只是修法要换。
+
 ⚠️ 与 `_select_preferred` 是同一个盲点的两半：它跨配置排序用的也是同一个会跳视场的
-`@rmssum`（见 `p2-audit-open-items-2026-07-29.md` 第 2 条），两者要一起看。
+`@rmssum`（见 `p2-audit-open-items-2026-07-29.md` 第 2 条）。
+**它那一半反而可以直接修**——排序是我们自己的 Python 代码，不受 AUT 的连续性约束限制。
 
 ## 诚实边界
 
