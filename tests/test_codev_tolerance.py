@@ -55,7 +55,7 @@ def _build(**overrides: object) -> str:
 
 def test_build_tor_sequence_uses_verified_single_go_two_buffer_grammar() -> None:
     sequence = _build()
-    assert "TOR\nFRE 100\nAZI 90\nNTR 1000" in sequence
+    assert "TOR\nSNS\nFRE 100\nAZI 90\nNTR 1000" in sequence
     assert "WBF B1 PER\nWBF B2 MC\nGO" in sequence
     assert 'BUF EXP B1 "tor_per.tsv"' in sequence
     assert 'BUF EXP B2 "tor_mc.tsv"' in sequence
@@ -418,3 +418,26 @@ def test_a_header_and_row_that_disagree_are_refused() -> None:
     )
     with pytest.raises(ValueError, match="unexpected frequency/azimuth"):
         _parse_per(_rows(rms_header_mtf_row))
+
+
+def test_the_sequence_asks_for_sensitivity_mode_not_inverse() -> None:
+    """CODE V 11.5 defaults TOR to *inverse* sensitivity, which ignores the
+    tolerance values we just wrote and solves for its own within the LIM table.
+
+    Real machine (US9651759B2, 2026-07-29): under the default, entering
+    0.001 vs 0.3 -- a 300x swing -- produced byte-identical applied tolerances
+    (0.5 / 0.02, i.e. LIM DLT max/min, reported marked ``v``). Under SNS the
+    applied column tracks the entered value exactly.
+    """
+    sequence = _build()
+    assert "\nSNS\n" in sequence
+    assert sequence.index("\nSNS\n") > sequence.index("\nTOR\n")
+    # The mode has to come after the tolerances it is meant to apply.
+    assert sequence.index("\nSNS\n") > sequence.index("DLT S1")
+
+
+def test_sensitivity_mode_precedes_the_monte_carlo_trial_count() -> None:
+    """NTR drives the sampling that produces the yield; the mode must already
+    be set when it runs, or the samples come from inverse-derived tolerances."""
+    sequence = _build()
+    assert sequence.index("\nSNS\n") < sequence.index("\nNTR ")
