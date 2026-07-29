@@ -622,9 +622,20 @@ def compare(candidate: ImageQuality, control: ImageQuality) -> dict[str, object]
 # ---------------------------------------------------------------------------
 
 
-def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0) -> dict[str, Any]:
+def run_trial(
+    plan: TrialPlan,
+    *,
+    out_dir: Path,
+    timeout_seconds: float = 180.0,
+    rebuild_seed_field: bool = True,
+) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_optimize import run_codev_target_standard
+    from app.core.engines.seed_field_rebuild import (
+        max_field_angle_deg,
+        rebuild_seed_field_angles,
+        rebuilt_bytes,
+    )
     from app.core.engines.zmx_import_prep import declared_field_count, decode_zmx_text
 
     started = time.time()
@@ -646,10 +657,49 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
     num_fields = declared_field_count(decode_zmx_text(seed_zmx.read_bytes())[0])
     record["seed_declared_num_fields"] = num_fields
 
+    # --- re-aim the seed at the requested field before optimising ---
+    # Without this the candidate answers a different question: the optimiser
+    # targets EFL and F/# only, so the field comes from the seed and the spec's
+    # 像高/FOV are decoration. The conformance screen below would then reject
+    # every trial, so the rebuild has to happen here rather than be diagnosed
+    # after 46 minutes of CODE V time.
+    optimise_from = seed_zmx
+    if rebuild_seed_field:
+        control_text = decode_zmx_text((ZMX_DIR / plan.control_zmx).read_bytes())[0]
+        target_angle = max_field_angle_deg(control_text)
+        rebuild = (
+            rebuild_seed_field_angles(seed_zmx.read_bytes(), target_angle)
+            if target_angle is not None
+            else None
+        )
+        record["seed_field_rebuild"] = {
+            "target_max_angle_deg": target_angle,
+            "source_max_angle_deg": rebuild.source_max_angle_deg if rebuild else None,
+            "scale": rebuild.scale if rebuild else None,
+            "rebuilt": bool(rebuild and rebuild.rebuilt),
+            "reason": (
+                rebuild.reason
+                if rebuild
+                else "control ZMX states no field angle (non-angular FTYP)"
+            ),
+        }
+        if rebuild is None or not rebuild.rebuilt:
+            # Fail closed *before* spending CODE V time: a seed we cannot re-aim
+            # can only produce a candidate for the wrong field.
+            record["verdict"] = "spec_not_met"
+            record["blocked_at"] = (
+                "control_field_not_angular" if rebuild is None else "seed_field_not_rebuildable"
+            )
+            record["elapsed_s"] = round(time.time() - started, 1)
+            return record
+        optimise_from = work / f"{seed_zmx.stem}_field{target_angle:g}.zmx"
+        optimise_from.write_bytes(rebuilt_bytes(rebuild))
+        record["seed_field_rebuild"]["output_zmx"] = str(optimise_from)
+
     # --- candidate: optimise the cross-brand seed toward the control's spec ---
     try:
         standard = run_codev_target_standard(
-            source_zmx=seed_zmx,
+            source_zmx=optimise_from,
             work_dir=work / "optimize",
             target_efl_mm=plan.spec_efl_mm,
             target_f_number=plan.spec_f_number,
@@ -1007,6 +1057,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, help="run directory")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--timeout", type=float, default=180.0)
+    parser.add_argument(
+        "--no-field-rebuild",
+        action="store_true",
+        help=(
+            "keep the pre-2026-07-29 behaviour: optimise the seed at its own field angle. "
+            "Kept only so the rebuild can be A/B-ed on the real machine -- candidates "
+            "produced this way answer a different spec and the conformance screen "
+            "rejects them."
+        ),
+    )
     args = parser.parse_args(argv)
 
     if args.plan:
@@ -1059,7 +1119,12 @@ def main(argv: list[str] | None = None) -> int:
                 f"seed={plan.seed_case_id}",
                 flush=True,
             )
-            record = run_trial(plan, out_dir=out_dir, timeout_seconds=args.timeout)
+            record = run_trial(
+                plan,
+                out_dir=out_dir,
+                timeout_seconds=args.timeout,
+                rebuild_seed_field=not args.no_field_rebuild,
+            )
             (out_dir / f"trial_{plan.control_case_id}.json").write_text(
                 json.dumps(record, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
             )

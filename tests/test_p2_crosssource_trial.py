@@ -529,3 +529,134 @@ def test_summary_reports_field_coverage_so_the_missing_trials_are_explained() ->
     assert summary["field_coverage_ratio_min"] == pytest.approx(0.43)
     assert summary["judged"] == 0
     assert summary["par_rate_over_judged"] is None
+
+
+# ---------------------------------------------------------------------------
+# Seed field re-aim: refuse *before* spending CODE V time (2026-07-29)
+# ---------------------------------------------------------------------------
+
+
+_REBUILD_ZMX = "\r\n".join(
+    [
+        "VERS 190513",
+        "MODE SEQ",
+        "FTYP 0 0 3 3 0 0 0",
+        "XFLN 0 0 0",
+        "YFLN 0 12.5 25",
+        "SURF 0",
+        "",
+    ]
+)
+
+
+def _rebuild_plan():
+    from scripts.p2_crosssource_trial import TrialPlan
+
+    return TrialPlan(
+        control_case_id="CTL", control_zmx="ctl.zmx", control_brand="A",
+        seed_case_id="SEED", seed_zmx="seed.zmx", seed_brand="B",
+        spec_efl_mm=3.0, spec_f_number=2.0, spec_imh_mm=2.5,
+        spec_fov_deg=75.0, spec_n_pieces=6,
+    )
+
+
+def _stage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, *, control: str, seed: str) -> Path:
+    import scripts.p2_crosssource_trial as trial_module
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    (zmx_dir / "ctl.zmx").write_bytes(control.encode("latin-1"))
+    (zmx_dir / "seed.zmx").write_bytes(seed.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+
+    def _never(*args: object, **kwargs: object) -> None:
+        raise AssertionError("CODE V must not be started for a seed that cannot be re-aimed")
+
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard", _never
+    )
+    return zmx_dir
+
+
+def test_a_non_angular_control_blocks_the_trial_before_any_codev_time(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A FTYP 3 control states millimetres; there is no spec angle to aim at."""
+    from scripts.p2_crosssource_trial import run_trial
+
+    _stage(
+        tmp_path, monkeypatch,
+        control=_REBUILD_ZMX.replace("FTYP 0 ", "FTYP 3 "), seed=_REBUILD_ZMX,
+    )
+    record = run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert record["verdict"] == "spec_not_met"
+    assert record["blocked_at"] == "control_field_not_angular"
+    assert record["seed_field_rebuild"]["rebuilt"] is False
+
+
+def test_a_seed_that_cannot_be_re_aimed_blocks_before_any_codev_time(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from scripts.p2_crosssource_trial import run_trial
+
+    _stage(
+        tmp_path, monkeypatch,
+        control=_REBUILD_ZMX, seed=_REBUILD_ZMX.replace("XFLN 0 0 0", "XFLN 0 1 2"),
+    )
+    record = run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert record["verdict"] == "spec_not_met"
+    assert record["blocked_at"] == "seed_field_not_rebuildable"
+
+
+def test_the_re_aimed_seed_is_what_gets_optimised_not_the_original(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The 2026-07-29 bug in one assertion: the optimiser must see the new field."""
+    import scripts.p2_crosssource_trial as trial_module
+    from app.core.engines.seed_field_rebuild import max_field_angle_deg
+    from app.core.engines.zmx_import_prep import decode_zmx_text
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    control = _REBUILD_ZMX.replace("YFLN 0 12.5 25", "YFLN 0 18.75 37.5")
+    (zmx_dir / "ctl.zmx").write_bytes(control.encode("latin-1"))
+    (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+
+    seen: dict[str, Path] = {}
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        seen["source"] = Path(str(kwargs["source_zmx"]))
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    record = run_trial_entry = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert run_trial_entry is record
+    assert seen["source"].name != "seed.zmx"
+    rebuilt_text = decode_zmx_text(seen["source"].read_bytes())[0]
+    assert max_field_angle_deg(rebuilt_text) == pytest.approx(37.5)
+    assert record["seed_field_rebuild"]["scale"] == pytest.approx(1.5)
+
+
+def test_the_old_behaviour_is_still_reachable_for_a_b_comparison(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import scripts.p2_crosssource_trial as trial_module
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    (zmx_dir / "ctl.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
+    (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    seen: dict[str, Path] = {}
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        seen["source"] = Path(str(kwargs["source_zmx"]))
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    record = trial_module.run_trial(
+        _rebuild_plan(), out_dir=tmp_path / "out", rebuild_seed_field=False
+    )
+    assert seen["source"].name == "seed.zmx"
+    assert "seed_field_rebuild" not in record
