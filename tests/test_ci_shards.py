@@ -92,3 +92,20 @@ def test_committed_durations_are_parseable_and_nonempty() -> None:
 def test_a_nonsense_shard_count_is_refused(shards: int) -> None:
     with pytest.raises(ValueError, match="shards must be"):
         partition(_ids(5), shards, {})
+
+
+def test_ci_passes_shard_lines_literally_to_pytest() -> None:
+    r"""xargs must run with -d '\n'.
+
+    Its default mode interprets quotes and backslashes and splits on whitespace.
+    Parametrised node ids contain all three -- shard 1 alone holds 25, e.g.
+    ``[D:\safe\lens.zmx]`` and ``[Abnormal AUTO Completion - Scaled down ...]``
+    -- and the first sharded CI run died on exactly this
+    (``pytest: error: unrecognized arguments: -55.65n4``).
+    """
+    from pathlib import Path
+
+    workflow = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
+    assert "xargs" in workflow
+    assert "-d '\n'" in workflow, "xargs must take each line literally"
+    assert "-x" in workflow, "xargs must fail rather than silently batch"

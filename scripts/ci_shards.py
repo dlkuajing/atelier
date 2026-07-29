@@ -156,6 +156,13 @@ def main(argv: list[str] | None = None) -> int:
         if not 1 <= args.index <= args.shards:
             raise SystemExit(f"--index must be in 1..{args.shards}")
         chosen = buckets[args.index - 1]
+        # The shard file is consumed one line per argument by xargs -d newline,
+        # so a node id containing a newline would split into two bogus
+        # arguments. Quotes, backslashes and spaces are fine there (taken
+        # literally) and are common in parametrised ids; a newline is not.
+        embedded = [n for n in chosen if "\n" in n or "\r" in n]
+        if embedded:
+            raise SystemExit(f"{len(embedded)} node id(s) contain a newline; cannot shard safely")
         if args.out:
             args.out.write_text("\n".join(chosen) + "\n", encoding="utf-8")
         else:

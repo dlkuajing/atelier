@@ -106,7 +106,12 @@ jobs:
         # 不用 -v：逐条输出对 CI 日志无价值，只增加 IO。
         # --durations=25 保留：慢测试分布是刷新 tests/ci-shard-durations.json 的依据。
         run: |
-          # -x: 参数超长时宁可报错也不静默分批。分批会把一个分片拆成多次 pytest 调用，
-          # 各自出一份 summary，静默改变语义。实测单片约 1080 条 node-id、约 92KB，
-          # 远低于 Linux 2MB ARG_MAX，但让越界变成响亮的失败而不是悄悄的分裂。
-          xargs -x -a /tmp/shard.txt uv run pytest -q --durations=25 -m "not real_machine"
+          # -d '
+': 每行**逐字**当一个参数。xargs 默认会解释引号和反斜杠并按空白拆分，
+          # 而参数化 node-id 里这些字符很常见（单是分片 1 就有 25 条，例如
+          # `[D:\safe\lens.zmx]` 和 `[Abnormal AUTO Completion - Scaled down ...]`），
+          # 会被打碎成 pytest 不认识的碎片。首次分片自测就是栽在这里。
+          # -x: 参数超长时宁可报错也不静默分批。分批会把一片拆成多次 pytest 调用、
+          # 各出一份 summary，静默改变语义。实测单片 112KB，远低于 2MB ARG_MAX。
+          xargs -x -d '
+' -a /tmp/shard.txt uv run pytest -q --durations=25 -m "not real_machine"
