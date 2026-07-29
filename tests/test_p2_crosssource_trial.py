@@ -1004,3 +1004,42 @@ def test_the_counting_macros_mirror_the_functions_they_witness() -> None:
     # Same guard expressions as @rmssum / @mtfmin.
     assert block.count("^err == SPOTDATA(1,^f,1,0.01,'CEN',0,0,^spot)") == 2
     assert block.count("IF ^xmtf >= 0 and ^ymtf >= 0") == 2
+
+
+def test_the_rebuilt_seed_filename_is_code_v_safe(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`f"{angle:g}"` gave `_field45.1`, and CODE V aborts the macro on a
+    `.<digits>` infix. The guard caught it on the first real-machine run; this
+    pins the fix so it cannot come back by way of a tidier-looking format."""
+    import scripts.p2_crosssource_trial as trial_module
+    from app.core.engines.codev_batch import ensure_buf_exp_safe_filename
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    # Control at 45.1 deg half field -- the exact value that broke.
+    control = _REBUILD_ZMX.replace("YFLN 0 12.5 25", "YFLN 0 22.55 45.1")
+    (zmx_dir / "ctl.zmx").write_bytes(control.encode("latin-1"))
+    (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch, efl_y_mm=3.0, image_height_mm=2.5)
+
+    seen: dict[str, Path] = {}
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        seen["source"] = Path(str(kwargs["source_zmx"]))
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+
+    name = seen["source"].name
+    assert "_field0451" in name
+    assert "45.1" not in name
+    # The real contract: the guard that fired on the real machine must accept it,
+    # both for this file and for the optimiser's derived candidate name.
+    ensure_buf_exp_safe_filename(seen["source"], role="rebuilt_seed")
+    derived = seen["source"].with_name(
+        seen["source"].stem + "_target002837_vig0000_optimized.zmx"
+    )
+    ensure_buf_exp_safe_filename(derived, role="optimized_zmx_path")

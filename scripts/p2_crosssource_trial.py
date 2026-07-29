@@ -875,7 +875,13 @@ def run_trial(
             )
             record["elapsed_s"] = round(time.time() - started, 1)
             return record
-        optimise_from = work / f"{seed_zmx.stem}_field{target_angle:g}.zmx"
+        # Deci-degrees, zero-padded and **dot-free**, mirroring the existing
+        # `_vig0700` convention. `f"{angle:g}"` produced `_field45.1`, and a
+        # `.<digits>` infix followed by non-extension content makes CODE V abort
+        # the macro with "ERROR - Unable to open file" -- which
+        # `ensure_buf_exp_safe_filename` exists to catch, and did, on the first
+        # real-machine run of the field rebuild (2026-07-29).
+        optimise_from = work / f"{seed_zmx.stem}_field{round(target_angle * 10):04d}.zmx"
         optimise_from.write_bytes(rebuilt_bytes(rebuild))
         record["seed_field_rebuild"]["output_zmx"] = str(optimise_from)
 
