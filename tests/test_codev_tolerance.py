@@ -9,7 +9,10 @@ from app.core.engines.codev_batch import CodeVBatchError
 from app.core.engines.codev_tolerance import (
     TorCompensators,
     TorMonteCarlo,
+    TorMonteCarloRow,
+    TorParseResult,
     TorParseStatus,
+    TorProvenance,
     TorToleranceTable,
     build_codev_tor_sequence,
     parse_codev_tor_exports,
@@ -19,6 +22,7 @@ from app.core.engines.tor_yield import (
     UNRATIFIED_TOR_YIELD_POLICY,
     TorYieldPolicy,
     compute_mc_yield,
+    ideal_reading_count,
     mc_saturation_fraction,
 )
 
@@ -246,15 +250,67 @@ def test_tor_runner_rc2_errors(tmp_path: Path) -> None:
         run_codev_tor(source_zmx=REAL_ZMX, work_dir=tmp_path / "tor", runner=lambda *a, **k: type("P", (), {"returncode": 2, "stderr": "bad"})(), tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100)
 
 
-def test_tor_yield_default_off_and_ratified_math() -> None:
-    parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
-    assert compute_mc_yield(parsed, UNRATIFIED_TOR_YIELD_POLICY).status == "unavailable"
-    measured = compute_mc_yield(parsed, TorYieldPolicy("MTF", 0.1, "min", True, "Tolerancing.pdf + probe", 1.0))
+def _clean_mc(values: dict[int, dict[int, float]], criterion: str = "MTF") -> TorParseResult:
+    """A TOR result whose readings are all plausible measurements."""
+    rows = tuple(
+        TorMonteCarloRow(sample=s, zoom=1, field=f, criterion=criterion, value=v)
+        for s, fields in values.items()
+        for f, v in fields.items()
+    )
+    return TorParseResult(
+        TorParseStatus.UNAVAILABLE, TorProvenance.UNAVAILABLE, "synthetic",
+        declared_trials=len(values), monte_carlo_rows=rows,
+    )
+
+
+_CLEAN = {
+    1: {1: 0.55, 2: 0.42},   # both pass
+    2: {1: 0.48, 2: 0.28},   # f2 fails
+    3: {1: 0.35, 2: 0.31},   # both pass
+    4: {1: 0.22, 2: 0.40},   # f1 fails
+}
+
+
+def test_yield_is_off_until_a_policy_is_ratified() -> None:
+    assert compute_mc_yield(_clean_mc(_CLEAN), UNRATIFIED_TOR_YIELD_POLICY).status == "unavailable"
+
+
+def test_ratified_yield_math_on_plausible_readings() -> None:
+    """A sample counts only if *every* field passes."""
+    measured = compute_mc_yield(
+        _clean_mc(_CLEAN), TorYieldPolicy("MTF", 0.3, "min", True, "Tolerancing.pdf + probe", 0.0)
+    )
     assert measured.status == "measured"
-    assert measured.trials == 20
-    assert measured.yield_fraction == pytest.approx(0.0)
-    assert measured.per_field_yield["z1:f1"] == pytest.approx(0.9)
-    assert measured.saturation_fraction == pytest.approx(58 / 60)
+    assert measured.trials == 4
+    assert measured.yield_fraction == pytest.approx(0.5)
+    assert measured.per_field_yield["z1:f1"] == pytest.approx(0.75)
+    assert measured.per_field_yield["z1:f2"] == pytest.approx(0.75)
+
+
+def test_the_real_mtf_fixture_is_too_contaminated_to_yield_a_number() -> None:
+    """This fixture is a genuine CODE V 11.5 run whose 60 MC readings are 31 at
+    exactly 1.0, 27 at exactly 0.0, and 2 actual measurements.
+
+    Only the 1.0s are the defect. MTF reaches 1.0 only at zero spatial
+    frequency, so a perturbed sample reading 1.0 at 100 lp/mm is impossible.
+    The 0.0s are *not* assumed to be broken: this lens traces with RMS spot
+    radii of 5.8-9.6um, which genuinely washes out a 10um period, and the
+    nominal design column reads 0.0699/0.4505/0.0257. A real zero is a
+    legitimate reading of a bad lens, and it fails the threshold on its own --
+    which is exactly why the guard keys off the metric's *ideal* value by
+    direction rather than refusing anything that sits on a bound.
+
+    This test previously asserted ``per_field_yield["z1:f1"] == 0.9`` from this
+    data -- a 90% pass rate manufactured out of fake-perfect readings, since
+    each 1.0 clears the 0.1 threshold. That is the number this guard prevents.
+    """
+    parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
+    assert mc_saturation_fraction(parsed) == pytest.approx(58 / 60)
+    assert ideal_reading_count(parsed, "min") == 31
+    result = compute_mc_yield(parsed, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
+    assert result.status == "unavailable"
+    assert result.yield_fraction is None
+    assert "cannot be perfect" in result.reason
 
 
 def test_saturation_is_policy_independent_and_gates_ratified_yield() -> None:
@@ -263,9 +319,12 @@ def test_saturation_is_policy_independent_and_gates_ratified_yield() -> None:
     assert mc_saturation_fraction(saturated) == 1.0
     blocked = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 0.5))
     assert blocked.status == "unavailable"
-    assert "1" in blocked.reason and "0.5" in blocked.reason
-    measured = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
-    assert measured.status == "measured"
+    # The saturation knob cannot buy its way past an impossible reading: even a
+    # policy tolerating 100% saturation is still refused, because these are not
+    # measurements to tolerate.
+    permissive = compute_mc_yield(saturated, TorYieldPolicy("MTF", 0.1, "min", True, "pinned", 1.0))
+    assert permissive.status == "unavailable"
+    assert "cannot be perfect" in permissive.reason
 
 
 @pytest.mark.parametrize("mutation, reason", [
