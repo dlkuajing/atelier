@@ -660,3 +660,89 @@ def test_the_old_behaviour_is_still_reachable_for_a_b_comparison(
     )
     assert seen["source"].name == "seed.zmx"
     assert "seed_field_rebuild" not in record
+
+
+# ---------------------------------------------------------------------------
+# Per-trial wall-clock budget (2026-07-29). 46 trials x 46 minutes is 35 hours;
+# a bounded run needs a stop that does not lie about why it stopped.
+# ---------------------------------------------------------------------------
+
+
+def _budget_corpus(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import scripts.p2_crosssource_trial as trial_module
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    for name in ("ctl.zmx", "seed.zmx"):
+        (zmx_dir / name).write_bytes(_REBUILD_ZMX.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+
+
+def test_a_trial_out_of_clock_gets_its_own_verdict_not_worse_or_unmeasurable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Filing it as `worse` would invent a loss; as `unmeasurable`, blame the optics."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+
+    def _never(**kwargs: object) -> None:
+        raise AssertionError("CODE V must not be started once the budget is spent")
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _never)
+    record = trial_module.run_trial(
+        _rebuild_plan(), out_dir=tmp_path / "out", wall_clock_budget_s=0.0
+    )
+    assert record["verdict"] == "budget_exhausted"
+    assert record["blocked_at"] == "before_optimize"
+    assert record["wall_clock_budget_s"] == 0.0
+
+
+def test_no_budget_means_no_gate(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The negative control: the default path must be untouched."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    called: list[str] = []
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        called.append(str(kwargs["source_zmx"]))
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert called
+    assert record["verdict"] == "unmeasurable"
+
+
+def test_budget_exhausted_is_outside_judged_and_reported_on_its_own() -> None:
+    records = [
+        {"verdict": "budget_exhausted", "plan": {"seed_case_id": "s1"}},
+        {"verdict": "worse", "plan": {"seed_case_id": "s2"}, "metrics": {}},
+        {"verdict": "par", "plan": {"seed_case_id": "s3"}, "metrics": {}},
+    ]
+    summary = summarise(records)
+    assert summary["judged"] == 2
+    assert summary["budget_exhausted"] == 1
+    assert summary["par_rate_over_judged"] == pytest.approx(0.5)
+    # Still in the honest denominator: a trial we ran out of time on is a trial
+    # we did not win.
+    assert summary["par_rate_over_all_trials"] == pytest.approx(1 / 3)
+
+
+def test_a_budget_skipped_tolerance_is_named_not_merely_absent() -> None:
+    from scripts.p2_crosssource_trial import render
+
+    records = [
+        {
+            "verdict": "worse",
+            "plan": {"seed_case_id": "s1"},
+            "metrics": {},
+            "tolerance": {"skipped": "wall_clock_budget", "budget_s": 60.0},
+        }
+    ]
+    summary = summarise(records)
+    assert summary["tolerance_skipped_for_budget"] == 1
+    # The trial keeps its P2 verdict: the three metrics were measured.
+    assert summary["judged"] == 1
+    assert "budget_exhausted" in render(summary)

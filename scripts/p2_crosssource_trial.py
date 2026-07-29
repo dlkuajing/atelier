@@ -628,6 +628,7 @@ def run_trial(
     out_dir: Path,
     timeout_seconds: float = 180.0,
     rebuild_seed_field: bool = True,
+    wall_clock_budget_s: float | None = None,
 ) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_optimize import run_codev_target_standard
@@ -639,6 +640,37 @@ def run_trial(
     from app.core.engines.zmx_import_prep import declared_field_count, decode_zmx_text
 
     started = time.time()
+
+    def over_budget() -> bool:
+        """True once this trial has already spent its wall-clock allowance.
+
+        Checked **between** stages, never inside one: a CODE V call in flight is
+        bounded by ``timeout_seconds`` and the idle watchdog, not by this. So the
+        budget caps what a trial *starts*, and a trial can overrun by at most one
+        stage. Saying that plainly matters more than pretending to preempt.
+        """
+
+        return (
+            wall_clock_budget_s is not None
+            and (time.time() - started) >= wall_clock_budget_s
+        )
+
+    def exhausted(stage: str) -> dict[str, Any]:
+        """`budget_exhausted` is its own verdict and is never folded elsewhere.
+
+        Filing it as ``worse`` would invent a loss we never measured; filing it as
+        ``unmeasurable`` would blame the optics for a stopwatch. It sits outside
+        ``judged`` either way, so it can never flatter the headline -- but it must
+        stay separable, because a run full of it means "buy more time", while a
+        run full of ``unmeasurable`` means "the chain is broken".
+        """
+
+        record["verdict"] = "budget_exhausted"
+        record["blocked_at"] = stage
+        record["wall_clock_budget_s"] = wall_clock_budget_s
+        record["elapsed_s"] = round(time.time() - started, 1)
+        return record
+
     work = out_dir / f"trial_{plan.control_case_id}"
     work.mkdir(parents=True, exist_ok=True)
     record: dict[str, Any] = {
@@ -696,6 +728,9 @@ def run_trial(
         optimise_from.write_bytes(rebuilt_bytes(rebuild))
         record["seed_field_rebuild"]["output_zmx"] = str(optimise_from)
 
+    if over_budget():
+        return exhausted("before_optimize")
+
     # --- candidate: optimise the cross-brand seed toward the control's spec ---
     try:
         standard = run_codev_target_standard(
@@ -744,6 +779,9 @@ def run_trial(
         return record
     record["candidate_zmx"] = str(candidate_zmx)
 
+    if over_budget():
+        return exhausted("before_probe")
+
     # --- measure both sides with the same probe ---
     measurements: dict[str, ImageQuality | None] = {}
     for side, zmx in (
@@ -778,10 +816,18 @@ def run_trial(
     # sides -- that equal treatment is what §3's 「表错了两边一起错，排序不变」
     # rests on, and it is why the sequence has to run SNS rather than TOR's
     # default inverse mode, which would derive a *different* table per lens.
-    record["tolerance"] = _tolerance_pair(
-        Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx,
-        work / "tolerance", timeout_seconds,
-    )
+    # The tolerance pair is the most expensive stage by far (51 minutes for one
+    # trial, measured 2026-07-29), so it is the one the budget most often lands
+    # on. Skipping it does **not** make the trial `budget_exhausted`: the three
+    # P2 metrics were measured and their verdict stands. What is lost is a piece
+    # of the P3 四件套, and the record says so by name rather than by absence.
+    if over_budget():
+        record["tolerance"] = {"skipped": "wall_clock_budget", "budget_s": wall_clock_budget_s}
+    else:
+        record["tolerance"] = _tolerance_pair(
+            Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx,
+            work / "tolerance", timeout_seconds,
+        )
 
     if measurements["candidate"] is None or measurements["control"] is None:
         record["verdict"] = "unmeasurable"
@@ -939,6 +985,10 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
             verdicts.get(str(record.get("verdict", "missing")), 0) + 1
         )
     judged = verdicts.get("par", 0) + verdicts.get("worse", 0)
+    # Kept separable on purpose: a run full of budget_exhausted means "buy more
+    # time", a run full of unmeasurable means "the chain is broken". Both sit
+    # outside `judged`, so neither can flatter the headline.
+    budget_exhausted = verdicts.get("budget_exhausted", 0)
     seeds = {r["plan"]["seed_case_id"] for r in records if "plan" in r}
     summary: dict[str, Any] = {
         "trials": len(records),
@@ -950,6 +1000,13 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
         "par_rate_over_all_trials": (verdicts.get("par", 0) / len(records)) if records else None,
         "par_rate_over_judged": (verdicts.get("par", 0) / judged) if judged else None,
         "distinct_seeds_used": len(seeds),
+        "budget_exhausted": budget_exhausted,
+        "tolerance_skipped_for_budget": sum(
+            1
+            for r in records
+            if isinstance(r.get("tolerance"), dict)
+            and r["tolerance"].get("skipped") == "wall_clock_budget"
+        ),
         "blocked_at": {},
     }
     for record in records:
@@ -1006,6 +1063,8 @@ def render(summary: dict[str, Any]) -> str:
         f"  worse                   {summary['verdicts'].get('worse', 0)}",
         f"  spec_not_met            {summary['verdicts'].get('spec_not_met', 0)}",
         f"  unmeasurable            {summary['verdicts'].get('unmeasurable', 0)}",
+        f"  budget_exhausted        {summary['verdicts'].get('budget_exhausted', 0)}"
+        "   <- ran out of clock, not of quality",
         f"distinct seeds used       {summary['distinct_seeds_used']}",
     ]
     rate_all = summary["par_rate_over_all_trials"]
@@ -1057,6 +1116,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, help="run directory")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--timeout", type=float, default=180.0)
+    parser.add_argument(
+        "--trial-budget-seconds",
+        type=float,
+        default=None,
+        help=(
+            "per-trial wall-clock allowance. Checked between stages, so a trial "
+            "can overrun by at most one stage; a trial that runs out is filed as "
+            "its own `budget_exhausted` verdict, never as worse or unmeasurable."
+        ),
+    )
     parser.add_argument(
         "--no-field-rebuild",
         action="store_true",
@@ -1124,6 +1193,7 @@ def main(argv: list[str] | None = None) -> int:
                 out_dir=out_dir,
                 timeout_seconds=args.timeout,
                 rebuild_seed_field=not args.no_field_rebuild,
+                wall_clock_budget_s=args.trial_budget_seconds,
             )
             (out_dir / f"trial_{plan.control_case_id}.json").write_text(
                 json.dumps(record, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
