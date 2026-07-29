@@ -72,7 +72,7 @@ def test_an_unknown_glass_is_not_free() -> None:
 
 
 def test_bigger_and_thicker_elements_cost_more() -> None:
-    base = dict(material="APL", aspheric_surfaces=0, semi_diameter_mm=1.0, thickness_mm=0.5)
+    base = {"material": "APL", "aspheric_surfaces": 0, "semi_diameter_mm": 1.0, "thickness_mm": 0.5}
     assert element_cost_units(**{**base, "semi_diameter_mm": 4.0}) > element_cost_units(**base)
     assert element_cost_units(**{**base, "thickness_mm": 2.0}) > element_cost_units(**base)
 
