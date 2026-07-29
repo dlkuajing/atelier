@@ -1990,7 +1990,7 @@
     "n_imaging": 7,
     "n_filter": 1,
     "materials": [],
-    "fov_deg": 39.9,
+    "fov_deg": 79.8,
     "nominal_efl_mm": 4.703936121,
     "computed_efl_mm": 4.703936121057454,
     "efl_error_pct": 1.2214129642846336e-9,

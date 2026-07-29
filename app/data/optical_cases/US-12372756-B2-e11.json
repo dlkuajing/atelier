@@ -430,7 +430,7 @@
     "n_imaging": 5,
     "n_filter": 1,
     "materials": [],
-    "fov_deg": 15.1,
+    "fov_deg": 30.2,
     "nominal_efl_mm": 10.648055956,
     "computed_efl_mm": 10.648055956361016,
     "efl_error_pct": 3.3904414795570643e-9,

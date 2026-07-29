@@ -66,8 +66,13 @@ def test_telephoto_tier_is_populated_after_reclassification():
     ]
     # 115 in the 343-library baseline + 4 genuine long-focus DATA-06i seeds
     # (US-12443014-B2 e1-e4) from the 353 intake + 15 DATA-10b Sunny/Ability
-    # long-focus seeds from the 436 intake + 5 Phase 12 NEWMAX telephoto seeds.
-    assert len(telephoto) == 139
+    # long-focus seeds from the 436 intake + 5 Phase 12 NEWMAX telephoto seeds
+    # = 139, **minus 29** re-anchored out on 2026-07-29: those seeds stored a
+    # half field angle in a field documented as full FOV, so a 72-degree lens
+    # read as 36 and slipped under the 45-degree telephoto ceiling. The ceiling
+    # is unchanged; the numbers it compares are now one unit throughout
+    # (see .planning/evidence/fov-unit-mix-2026-07-29.md).
+    assert len(telephoto) == 110
     # Every telephoto seed must satisfy the guard-aligned classifier contract.
     for c in telephoto:
         assert c.metadata.computed_efl_mm >= 5.0
