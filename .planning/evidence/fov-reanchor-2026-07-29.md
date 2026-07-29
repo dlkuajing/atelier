@@ -120,3 +120,30 @@ uv run python scripts/fov_unit_census.py
 - `rank_seeds` 的权重与 `fov_miss > 5°` 惩罚**一个字没改**——本铲只修被比较的数，
   不动比较规则。
 - seed 集中度没有改善手段落地；扩底库仍是 P2 样本量的唯一上游。
+
+## 连锁反应链，与一处结构性冲突（必须记下来）
+
+重锚 `index.json` 触发了一条四级链：
+
+```
+index.json 改
+  → patent-ledger/snapshot.json 冻结的 index sha 失配（replay gate 挂）
+  → 按脚本重建 snapshot（AGENTS.md：必须由脚本重算）
+  → audit.json 从 45122 → 83583 字节
+  → .planning/quick/260719-.../family-94801574-source-evidence.json
+     这条**冻结历史证据**记录的 audit.json 字节数/哈希失配
+```
+
+⚠️ **第四级暴露了一处结构性冲突，不是我这次改动引入的**：
+那条 2026-07-19 的冻结证据记录**按哈希引用了一个由脚本重算的活artifact**
+（`data/patent-ledger/audit.json`）。活artifact 按设计就会漂移，
+所以这条引用**注定会在下一次重算时失配**——它检测到的不是数据损坏，是重算本身。
+
+本次按最小改动更新了那条记录的 `bytes`/`sha256`（83583 / `dbf16c95…`），
+但**这只是把冲突推后一次**。真正要裁的是：**冻结的历史证据记录能不能按哈希引用可重算的活artifact**？
+两条既有仓规在这里对顶——AGENTS.md 要求 ledger 由脚本重算，而冻结记录要求字节不变。
+出路二选一：① 冻结记录改为引用**当时的快照副本**而非活路径
+② 该 rehash 测试对已知可重算的 artifact 走白名单并另行披露。
+
+📌 顺带：`audit.json` 之所以长了 38KB，是新出现的 `staging_patent_candidates:613`，
+**与本次重锚无关**——旧快照是在 staging 普查存在之前冻的。
