@@ -431,16 +431,27 @@ def test_efl_band_material_real_library_counterexample_anchors(
 
 
 def test_zmx_backed_pool_matches_known_routable_seed_counts():
-    # AGENTS.md / MEMORY 记录的可路由底库：wide 224 / tele 134 / ultrawide 78
-    # （家族分组：wide 请求池与 ultrawide 请求池是同一个 302 颗合并池，见
+    # 家族分组：wide 请求池与 ultrawide 请求池是同一个合并池，见
     # `_candidate_scenarios` 的 `_PHONE_SHORT_FOCUS` 分组——这里锁的是"至少
-    # 不比已知真值小"而非精确家族数字，避免和未来入库新 seed 打架）。
+    # 不比已知真值小"而非精确家族数字，避免和未来入库新 seed 打架。
+    #
+    # 2026-07-29 `fov_deg` 重锚后实测 wide 332 / tele 110 / ultrawide 332
+    # （旧下限 224 / 134 / 78）。**tele 少了 24 颗不是能力变少，是分桶纠正**：
+    # 那些 case 存的是半视场，一颗 72° 的镜头被读成 36°、从 45° 长焦上限底下
+    # 溜了进去。上限一个字没动，动的是喂给它的数的单位。
+    # 真正该守的性质是**没有 case 掉出可路由**，所以下面额外锁住三池并集 == 全库。
     wide_pool = _zmx_backed_pool(Scenario.SMARTPHONE_WIDE)
     tele_pool = _zmx_backed_pool(Scenario.SMARTPHONE_TELEPHOTO)
     ultrawide_pool = _zmx_backed_pool(Scenario.SMARTPHONE_ULTRAWIDE)
-    assert len(wide_pool) >= 224
-    assert len(tele_pool) >= 134
-    assert len(ultrawide_pool) >= 78
+    assert len(wide_pool) >= 332
+    assert len(tele_pool) >= 110
+    assert len(ultrawide_pool) >= 332
+    routable = {
+        case.metadata.case_id
+        for case in wide_pool + tele_pool + ultrawide_pool
+        if case.metadata is not None
+    }
+    assert len(routable) == 442
     for case in wide_pool + tele_pool + ultrawide_pool:
         assert case.metadata is not None
         assert (ZMX_AMMO_DIR / case.metadata.source_zmx).is_file()

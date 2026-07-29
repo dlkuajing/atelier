@@ -3,9 +3,9 @@
 ## Result
 
 - saturation_complete: `false`
-- snapshot_sha256: `c86527b71e0500074bf14e1668bc3ab6701e5d54d3d22ef5826686101d6b5ec1`
+- snapshot_sha256: `5dcebb2008cc8f1430c66bf85b5c068800b35212195de128315b3f3ea4feed1d`
 - pool_concat_sha256: `bba21147e576ee4674105884a95eb31b466b0f1aa6e8166e627dd9ba8867309e`
-- case_index_sha256: `3845d04dff1a86048a3dc8552a3e815db0ac24d37ce8f38573660676cf50a441`
+- case_index_sha256: `1f7f8f73b92a99a0de53e5462203dc9ff8fe2d518016981b7fa6515cc164b735`
 
 The snapshot is intentionally fail-closed. Existing formal patent ZMX/case files are recorded
 as artifacts, but are not promoted to `intaken` until retained source/full-text and exact
@@ -24,7 +24,7 @@ embodiment provenance satisfy the stricter saturation contract.
 - known formal embodiments / legacy-unspecified: 425 /
   25
 - retained raw documents: 0
-- staging-only patent candidates: 0
+- staging-only patent candidates: 613
 
 ## Terminal status counts
 
@@ -43,6 +43,7 @@ embodiment provenance satisfy the stricter saturation contract.
 
 - `legacy_unspecified_embodiments:25`
 - `roots_without_retained_fulltext:735`
+- `staging_patent_candidates:613`
 - `unresolved_embodiment_outcomes:425`
 - `unresolved_family_roots:735`
 - `unresolved_root_outcomes:735`
