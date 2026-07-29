@@ -163,6 +163,12 @@ class ImageQuality:
     num_wavelengths: int | None
     num_fields: int | None
     image_height_mm: float | None
+    #: CODE V's RMS spot **diameter** in microns -- SPOTDATA output(1), which the
+    #: Geometrical Analysis manual defines as "twice the square root of the mean
+    #: squared spot radius". `codev_optimize` names the same macro's output
+    #: `max_rms_spot_diameter_um`; this shorter name is kept for schema stability,
+    #: but anything comparing it against a *radius* (Optiland's
+    #: `rms_spot_radius()`, `_SEED_ROUTING_MAX_RMS_UM`) is out by a factor of two.
     rms_spot_um: float | None
     rms_wavefront_waves: float | None
     distortion_pct: float | None

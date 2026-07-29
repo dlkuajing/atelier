@@ -22,6 +22,12 @@ For each trial record produced by ``p2_crosssource_trial``:
 2. Recompute EFL, F/#, and max RMS spot radius with Optiland.
 3. Compare against what the trial recorded from CODE V.
 
+Units are matched before comparing, not after: Optiland reports an RMS spot
+**radius** and CODE V an RMS spot **diameter** (manual: "computed as twice the
+square root of the mean squared spot radius"). The first run of this script
+missed that and reported a median ratio of 0.4925 -- which read as "the engines
+disagree" when half of it was a convention.
+
 Fail-closed, and honest about which side of a mismatch is which:
 
 * Optiland failing is reported as ``engine_failed``, **never** as a CODE V error.
@@ -75,7 +81,13 @@ except Exception:
 if half is not None:
     regularize_fields_to_angle(optic, 2.0 * half)
     rms = [float(v) for v in compute_mtf(optic).rms_spot_radius_um_by_field]
-    out["max_rms_spot_um"] = max(rms) if rms else None
+    # Optiland's rms_spot_radius() is an RMS **radius**; CODE V's SPOTDATA
+    # output(1) -- what @rmssum reports -- is an RMS **diameter**: the CODE V
+    # Geometrical Analysis manual states it outright ("The RMS spot diameter ...
+    # is computed as twice the square root of the mean squared spot radius").
+    # Comparing them raw was a factor-of-two apples-to-oranges, and it showed:
+    # the first run's median ratio came out at 0.4925.
+    out["max_rms_spot_um"] = (2.0 * max(rms)) if rms else None
 else:
     out["max_rms_spot_um"] = None
 print(json.dumps(out))
