@@ -653,6 +653,7 @@ def build_codev_target_sequence(
     lateral_color_weight: float = 0.01,
     rms_spot_weight: float = 0.001,
     distortion_weight: float | None = None,
+    distortion_constraint_pct: float | None = None,
     min_center_thickness_mm: float = 0.025,
     min_edge_thickness_mm: float = 0.025,
     max_center_thickness_mm: float = 10.0,
@@ -698,6 +699,16 @@ def build_codev_target_sequence(
         # A zero or negative weight would silently neuter the operand rather
         # than disable it -- if you mean off, pass None.
         _validate_positive(distortion_weight, "distortion_weight")
+    if distortion_constraint_pct is not None:
+        _validate_positive(distortion_constraint_pct, "distortion_constraint_pct")
+    if distortion_weight is not None and distortion_constraint_pct is not None:
+        # Both forms declare the same operand name. The manual warns that giving
+        # more than one form does not cancel the others -- the tolerance is
+        # entered twice, "which may not be physically correct".
+        raise ValueError(
+            "distortion_weight and distortion_constraint_pct are alternative forms "
+            "of the same operand; pass at most one"
+        )
     if emit_optimized_zmx and optimized_readout_path is None:
         raise ValueError("optimized_readout_path is required when emit_optimized_zmx=True")
 
@@ -739,7 +750,34 @@ def build_codev_target_sequence(
         "  @atelier_rmsspot = 0",
         f"  WTC {_fmt_number(rms_spot_weight)}",
     ]
-    if distortion_weight is not None:
+    if distortion_constraint_pct is not None:
+        # A *constraint*, not a weight. The CODE V Optimization manual states the
+        # two are different mechanisms for the same user-defined quantity:
+        #
+        #     Constrained with:                @xxx >  =  < constraint_tar
+        #     Included in the error function:  @xxx = constraint_tar / WTC wt
+        #
+        # The weight form below was tried first and refuted on the real machine
+        # (PR #110). That refutation does **not** carry over to this form.
+        #
+        # Real-machine A/B, six trials' converging rungs (2026-07-29), unconstrained
+        # vs `< 3`:
+        #   * bound held in 17/18 arms
+        #   * US-20240201471-A1-e4: EFL deviation 0.91% -> 0.00%, distortion
+        #     24.06% -> 3.00%, RMS spot 318 -> 70um  (better on every axis)
+        #   * US-12210142-B2-e1:    deviation 0.00% -> 0.00%, distortion 24.30% -> 3.00%
+        #   * two other converged seeds LOST EFL convergence (1.35% -> 34.5%,
+        #     0.00% -> 19.1%), so this is seed-dependent, not free
+        #
+        # Note the optimiser spends the full allowance: `< 3` lands on exactly
+        # 3.00 and `< 10` on exactly 10.00, so the bound *is* the output.
+        #
+        # Default stays None: it changes what AUT converges to.
+        aut_lines += [
+            "  @atelier_distortion == @dstpct(1)",
+            f"  @atelier_distortion < {_fmt_number(distortion_constraint_pct)}",
+        ]
+    elif distortion_weight is not None:
         # Distortion is one of the three metrics P2 judges (NORTH-STAR §1.1) and
         # was the only one with no operand here, so the optimiser has been free
         # to trade it away. Measured cost, 2026-07-29 pilot (12 judged trials):

@@ -3240,3 +3240,57 @@ def test_a_non_positive_distortion_weight_is_refused_not_silently_ignored(bad: f
     """0 would neuter the operand while looking enabled. If you mean off, pass None."""
     with pytest.raises(ValueError, match="distortion_weight"):
         _target_sequence(distortion_weight=bad)
+
+
+# ---------------------------------------------------------------------------
+# Distortion as a CONSTRAINT rather than a weight (2026-07-29)
+# ---------------------------------------------------------------------------
+
+
+def _target_seq(**kw: object) -> str:
+    from app.core.engines.codev_optimize import build_codev_target_sequence
+
+    base: dict[str, object] = {
+        "source_zmx": "C:/x/seed.zmx",
+        "result_path": "C:/x/out.tsv",
+        "target_efl_mm": 4.0,
+    }
+    base.update(kw)
+    return build_codev_target_sequence(**base)  # type: ignore[arg-type]
+
+
+def test_the_constraint_form_emits_an_inequality_not_a_weight() -> None:
+    """`@xxx < tar` constrains; `@xxx = tar` + WTC only weights the error
+    function. The manual is explicit they are different mechanisms, and the
+    weight form was already refuted on the real machine (PR #110)."""
+    seq = _target_seq(distortion_constraint_pct=3.0)
+    assert "  @atelier_distortion == @dstpct(1)" in seq
+    assert "  @atelier_distortion < 3" in seq
+    assert "@atelier_distortion = 0" not in seq
+
+
+def test_the_weight_form_still_works_and_is_unchanged() -> None:
+    seq = _target_seq(distortion_weight=0.05)
+    assert "  @atelier_distortion = 0" in seq
+    assert "  WTC 0.05" in seq
+    assert "@atelier_distortion <" not in seq
+
+
+def test_distortion_is_absent_unless_asked() -> None:
+    """Default off: it changes what AUT converges to."""
+    seq = _target_seq()
+    assert "@atelier_distortion" not in seq
+
+
+def test_the_two_forms_are_refused_together() -> None:
+    """Both declare the same operand; the manual warns the quantity would be
+    entered twice rather than one form overriding the other."""
+    with pytest.raises(ValueError, match="at most one"):
+        _target_seq(distortion_weight=0.05, distortion_constraint_pct=3.0)
+
+
+@pytest.mark.parametrize("bad", [0.0, -1.0])
+def test_a_non_positive_bound_is_refused(bad: float) -> None:
+    """A 0 bound would demand perfect rectilinearity and silently never converge."""
+    with pytest.raises(ValueError, match="distortion_constraint_pct"):
+        _target_seq(distortion_constraint_pct=bad)
