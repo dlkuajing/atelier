@@ -156,10 +156,16 @@ def test_marker_suffixed_glass_is_written_as_model_glass() -> None:
     assert "  DIAM 1.1 0 0 0 1 \"\"\n" in text
     assert "  DIAM 2.2 0 0 0 1 \"\"\n" in text
     assert "  DIAM 3.3 0 0 0 1 \"\"\n" in text
-    assert "VDXN 0 0.05\n" in text
-    assert "VDYN 0 0.2\n" in text
-    assert "VCXN 0 0.15\n" in text
-    assert "VCYN 0 0.1\n" in text
+    # Vignetting, asymmetric case (field 2: vuy=0.3 vly=0.1 vux=0.2 vlx=-0.1).
+    # decenter = (lower - upper)/2, compression = (upper + lower)/2 -- see
+    # `_vignette_axis`. Until 2026-07-29 the two were swapped, so these four
+    # expectations read 0.05 / 0.2 / 0.15 / 0.1: the same numbers with decenter
+    # and compression exchanged. The symmetric case (the one autovig actually
+    # produces) has its own test below.
+    assert "VDXN 0 -0.15\n" in text
+    assert "VDYN 0 -0.1\n" in text
+    assert "VCXN 0 0.05\n" in text
+    assert "VCYN 0 0.2\n" in text
 
 
 def test_write_zmx_from_codev_readout_roundtrips_through_normalized_ingest(
@@ -362,3 +368,41 @@ def test_sps_odd_with_nothing_read_back_is_still_refused() -> None:
     readout = _odd_asphere_readout()  # no coefficients recovered
     with pytest.raises(ValueError, match="silently dropping its shape"):
         build_zmx_from_codev_readout(readout, name="odd")
+
+
+def test_a_symmetric_autovig_clip_becomes_compression_not_decenter() -> None:
+    """The case that actually occurs, and the one the old swap got most wrong.
+
+    `codev_optimize._vignetting_block` sets VUY, VLY, VUX and VLX to the **same**
+    per-field values, so every autovig clip is symmetric. A symmetric clip of `e`
+    is a centred pupil narrowed by `e` -- decenter 0, compression `e`. The swapped
+    formulas produced the opposite: decenter `e`, compression 0, i.e. a full-size
+    pupil shoved off-centre. The candidate ZMX then declared a pupil it was never
+    optimised under.
+    """
+    from dataclasses import replace
+
+    readout = _manual_readout()
+    symmetric = tuple(
+        replace(field, vuy=0.4, vly=0.4, vux=0.4, vlx=0.4) if field.index == 2 else field
+        for field in readout.fields
+    )
+    text = build_zmx_from_codev_readout(replace(readout, fields=symmetric))
+    assert "VDXN 0 0\n" in text
+    assert "VDYN 0 0\n" in text
+    assert "VCXN 0 0.4\n" in text
+    assert "VCYN 0 0.4\n" in text
+
+
+def test_the_four_readout_values_survive_the_conversion() -> None:
+    """decenter/compression must be invertible back to upper/lower, or the ZMX
+    carries less than the readout did."""
+    from app.core.engines.zmx_writer import _vignette_axis
+
+    fields = _manual_readout().fields
+    decenter, compression = _vignette_axis(fields, upper_attr="vuy", lower_attr="vly")
+    for field, dec, comp in zip(fields, decenter, compression, strict=True):
+        upper = comp - dec
+        lower = comp + dec
+        assert upper == pytest.approx(field.vuy or 0.0)
+        assert lower == pytest.approx(field.vly or 0.0)

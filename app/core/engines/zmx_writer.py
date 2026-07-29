@@ -464,13 +464,36 @@ def _vignette_axis(
     upper_attr: str,
     lower_attr: str,
 ) -> tuple[list[float], list[float]]:
+    """CODE V upper/lower pupil clips -> Zemax (decenter, compression).
+
+    Derived, not guessed. CODE V's ``VUY`` clips the fraction ``u`` off the upper
+    pupil edge and ``VLY`` the fraction ``l`` off the lower, so in normalised
+    pupil coordinates the surviving pupil spans ``[-1 + l, +1 - u]``. Its centre
+    is ``(l - u) / 2`` and its half-width is ``1 - (u + l) / 2``. Zemax stores a
+    decenter ``VDY`` (where the pupil centre moved) and a compression ``VCY``
+    (how much the half-width shrank), so:
+
+        decenter    = (l - u) / 2
+        compression = (u + l) / 2
+
+    **These two were swapped** until 2026-07-29, and the swap was worst in the
+    case that actually occurs: ``codev_optimize._vignetting_block`` sets ``VUY``,
+    ``VLY``, ``VUX`` and ``VLX`` to the **same** per-field values, so every
+    ``autovig`` clip is symmetric (``u == l``). Under the old formulas a
+    symmetric clip of ``e`` came out as ``decenter = e, compression = 0`` -- a
+    full-size pupil shoved off-centre, rather than a centred pupil narrowed by
+    ``e``. The candidate ZMX we hand out therefore declared a different pupil
+    from the one it was optimised under, which the probe then re-imported and
+    measured, and which a third party recomputing from the file would inherit.
+    """
+
     decenter: list[float] = []
     compression: list[float] = []
     for field in fields:
         upper = _value_or_zero(getattr(field, upper_attr))
         lower = _value_or_zero(getattr(field, lower_attr))
-        decenter.append((upper + lower) / 2.0)
-        compression.append((upper - lower) / 2.0)
+        decenter.append((lower - upper) / 2.0)
+        compression.append((upper + lower) / 2.0)
     return decenter, compression
 
 
