@@ -107,5 +107,23 @@ def test_ci_passes_shard_lines_literally_to_pytest() -> None:
 
     workflow = Path(".github/workflows/ci.yml").read_text(encoding="utf-8")
     assert "xargs" in workflow
-    assert "-d '\n'" in workflow, "xargs must take each line literally"
+    # Raw string on purpose. Written as a normal literal this reads as a real
+    # newline and would match the *broken* form -- which is exactly what
+    # happened: the first version of this guard passed against a ci.yml whose
+    # xargs line had a literal newline inside the quotes.
+    assert r"-d '\n'" in workflow, "xargs must take each line literally"
     assert "-x" in workflow, "xargs must fail rather than silently batch"
+
+
+def test_the_ci_workflow_still_parses_as_yaml() -> None:
+    """The stronger guard: a real newline inside the xargs quotes breaks the
+    document outright, and GitHub would only tell us after a push.
+    """
+    from pathlib import Path
+
+    import yaml
+
+    doc = yaml.safe_load(Path('.github/workflows/ci.yml').read_text(encoding='utf-8'))
+    run = doc['jobs']['backend']['steps'][-1]['run']
+    xargs_line = next(x for x in run.splitlines() if x.strip().startswith('xargs'))
+    assert '-d ' + chr(39) + chr(92) + 'n' + chr(39) in xargs_line
