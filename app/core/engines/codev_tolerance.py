@@ -288,6 +288,21 @@ def build_codev_tor_sequence(
         *tolerance_table.commands,
         *compensators.commands,
         "TOR",
+        # Sensitivity mode, explicitly. CODE V 11.5 defaults TOR to *inverse*
+        # sensitivity, which does not apply the tolerances above -- it solves for
+        # tolerance values that hit a performance-degradation target, bounded by
+        # its own LIM table, and reports them marked `v` (variable).
+        #
+        # Verified on the real machine (US9651759B2, 2026-07-29): under the
+        # default, a 300x swing in the entered value (0.001 -> 0.3) produced
+        # byte-identical applied tolerances (0.5/0.02 = the LIM DLT max/min);
+        # under SNS the applied column tracks the entered value exactly.
+        #
+        # Beyond correctness this is what NORTH-STAR 1.1 requires: 「同一张公差表
+        # 同时施于候选与对照专利」. Inverse mode derives a *different* table per
+        # lens, so the equal-treatment premise the yield comparison rests on
+        # cannot hold under it.
+        "SNS",
     ]
     if metric == "mtf":
         lines.extend(
