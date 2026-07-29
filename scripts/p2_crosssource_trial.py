@@ -607,6 +607,14 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
     )
     record["control_quality"] = asdict(measurements["control"]) if measurements["control"] else None
 
+    # Fourth 交付物 piece (NORTH-STAR §1.1). Read straight off both ZMX files, so
+    # it costs no CODE V time and is available even when a trial is unjudgeable
+    # on image quality. Reported as a ratio only -- an absolute is meaningless
+    # here and 「绝对成本报价」 is an explicit 反目标.
+    record["relative_cost_index"] = _relative_cost(
+        Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx
+    )
+
     if measurements["candidate"] is None or measurements["control"] is None:
         record["verdict"] = "unmeasurable"
         record["blocked_at"] = "probe"
@@ -622,6 +630,33 @@ def run_trial(plan: TrialPlan, *, out_dir: Path, timeout_seconds: float = 180.0)
             record["blocked_at"] = "aut_not_converged"
     record["elapsed_s"] = round(time.time() - started, 1)
     return record
+
+
+def _relative_cost(candidate_zmx: Path, control_zmx: Path) -> dict[str, object] | None:
+    """Candidate cost relative to its control, or ``None`` when either is unreadable."""
+
+    from app.core.cost_index import CostIndex, cost_index_from_zmx, cost_ratio
+    from app.core.engines.zmx_import_prep import decode_zmx_text
+
+    def read(path: Path) -> CostIndex | None:
+        try:
+            return cost_index_from_zmx(decode_zmx_text(path.read_bytes())[0])
+        except OSError:
+            return None
+
+    candidate, control = read(candidate_zmx), read(control_zmx)
+    ratio = cost_ratio(candidate, control)
+    if ratio is None:
+        return None
+    return {
+        "ratio": ratio,
+        "candidate_units": candidate.total_units,  # type: ignore[union-attr]
+        "control_units": control.total_units,  # type: ignore[union-attr]
+        "candidate_elements": candidate.element_count,  # type: ignore[union-attr]
+        "control_elements": control.element_count,  # type: ignore[union-attr]
+        "candidate_aspheric_surfaces": candidate.aspheric_surface_count,  # type: ignore[union-attr]
+        "control_aspheric_surfaces": control.aspheric_surface_count,  # type: ignore[union-attr]
+    }
 
 
 def _config_summary(config: object) -> dict[str, object]:
