@@ -127,3 +127,75 @@ def test_the_comparator_reports_the_cost_ratio() -> None:
     source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
     assert "relative_cost_index" in source
     assert "_relative_cost(" in source
+
+
+# ---------------------------------------------------------------------------
+# Model glass priced by index (2026-07-29 adversarial audit): CODE V writes a
+# model glass whenever glass is a DOF, so pricing by name made the DOF free.
+# ---------------------------------------------------------------------------
+
+
+def test_a_model_glass_is_priced_from_its_index_not_defaulted() -> None:
+    from app.core.cost_index import material_cost_units
+
+    low = material_cost_units("___BLANK", nd=1.53)
+    high = material_cost_units("___BLANK", nd=1.80)
+    assert high > low
+    # Both must land inside the range a *named* material can reach.
+    assert 1.0 <= low <= 4.0
+    assert 1.0 <= high <= 4.0
+
+
+def test_a_named_material_still_wins_over_the_index_fallback() -> None:
+    """The name is the better evidence when it is there."""
+    from app.core.cost_index import _MATERIAL_COST_UNITS, material_cost_units
+
+    named = dict(_MATERIAL_COST_UNITS)
+    assert material_cost_units("ZEONEX-E48R", nd=1.90) == named["ZEONEX"]
+    assert material_cost_units("H-ZLAF", nd=1.45) == named["H-ZLAF"]
+
+
+def test_an_unnamed_glass_with_no_index_keeps_the_mid_range_default() -> None:
+    from app.core.cost_index import _DEFAULT_MATERIAL_COST_UNITS, material_cost_units
+
+    assert material_cost_units("___BLANK") == _DEFAULT_MATERIAL_COST_UNITS
+    assert material_cost_units("___BLANK", nd=0.0) == _DEFAULT_MATERIAL_COST_UNITS
+    assert material_cost_units("___BLANK", nd=float("nan")) == _DEFAULT_MATERIAL_COST_UNITS
+
+
+def test_the_index_price_is_monotone_and_clamped() -> None:
+    from app.core.cost_index import model_glass_cost_units
+
+    values = [model_glass_cost_units(nd) for nd in (1.40, 1.50, 1.60, 1.70, 1.85, 2.10)]
+    assert values == sorted(values)
+    # Clamped: outside the anchor range it never leaves the named table's span.
+    assert model_glass_cost_units(1.0) == pytest.approx(1.0)
+    assert model_glass_cost_units(3.0) == pytest.approx(4.0)
+
+
+def test_a_higher_index_model_glass_costs_more_in_a_whole_prescription() -> None:
+    """The property the audit says was missing: the glass DOF is no longer free."""
+    from app.core.cost_index import cost_index_from_zmx
+
+    def zmx(nd: float) -> str:
+        return "\n".join(
+            [
+                "VERS 190513",
+                "SURF 1",
+                "  TYPE STANDARD",
+                f"  GLAS ___BLANK 1 0 {nd} 55 0 0 0 0 0 0 ",
+                "  DIAM 1.0 0 0 0 1 \"\"",
+                "  DISZ 0.5",
+                "SURF 2",
+                "  TYPE STANDARD",
+                "  DIAM 1.0 0 0 0 1 \"\"",
+                "  DISZ 0.2",
+                "",
+            ]
+        )
+
+    cheap = cost_index_from_zmx(zmx(1.50))
+    dear = cost_index_from_zmx(zmx(1.85))
+    assert cheap is not None and dear is not None
+    assert dear.total_units > cheap.total_units
+    assert cheap.element_count == dear.element_count == 1
