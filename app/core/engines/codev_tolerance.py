@@ -63,8 +63,10 @@ class TorMonteCarlo:
 class TorPerformanceRow:
     zoom: int
     field: int
-    frequency_lp_per_mm: float
-    azimuth_deg: float
+    #: ``None`` for an RMS wavefront TOR -- that criterion has no spatial
+    #: frequency or azimuth. Never 0.0, which would read as a real measurement.
+    frequency_lp_per_mm: float | None
+    azimuth_deg: float | None
     criterion: str
     design: float
     probability_columns: tuple[float, ...]
@@ -315,13 +317,32 @@ def _read_tsv(path: Path) -> list[list[str]]:
     return list(csv.reader(text.splitlines(), delimiter="\t"))
 
 
+#: The two PER header shapes CODE V 11.5 emits, verified on real hardware.
+#: They differ only in columns 4-5: an MTF tolerancing run labels them
+#: Frequency/Azimuth, an RMS wavefront run leaves them blank because neither
+#: quantity exists for that criterion.
+_PER_HEADER_MTF = [
+    "Eval Zoom", "Eval Field", "X", "Y", "Frequency", "Azimuth", "Weight", "Design", "Criterion",
+]
+_PER_HEADER_RMS = [
+    "Eval Zoom", "Eval Field", "X", "Y", "", "", "Weight", "Design", "Criterion",
+]
+_PER_HEADERS = (_PER_HEADER_MTF, _PER_HEADER_RMS)
+
+
 def _parse_per(
     rows: list[list[str]],
 ) -> tuple[tuple[TorPerformanceRow, ...], tuple[str, ...]]:
-    header = ["Eval Zoom", "Eval Field", "X", "Y", "Frequency", "Azimuth", "Weight", "Design", "Criterion"]
-    index = next((i for i, row in enumerate(rows) if row[:9] == header), None)
+    index = next((i for i, row in enumerate(rows) if row[:9] in _PER_HEADERS), None)
     if index is None or not any("probability density function:" in "\t".join(r) for r in rows):
         raise ValueError("PER declarations/header missing")
+    # Which TOR metric produced this export. RMS wavefront has no spatial
+    # frequency or azimuth, so CODE V leaves those two columns blank rather than
+    # dropping them -- the column *count* is identical (18 = 18), only the labels
+    # differ. Parsing for the MTF shape alone made every metric="rms" run
+    # unreadable even though it completed and exported both files
+    # (real machine, 2026-07-29).
+    expects_mtf_columns = rows[index][:9] == _PER_HEADER_MTF
     header_row = rows[index]
     if len(header_row) < 17 or any(not name.strip() for name in header_row[17:]):
         raise ValueError("PER header has an invalid column layout")
@@ -333,16 +354,26 @@ def _parse_per(
             continue
         if len(row) != expected_width:
             raise ValueError("PER data row has unexpected column count")
-        frequency = float(row[4])
-        azimuth = float(row[5])
+        # Fail closed rather than coercing: a blank frequency under an MTF
+        # header, or a value under an RMS header, means the export is not the
+        # shape its own header claims.
+        if expects_mtf_columns:
+            if not row[4].strip() or not row[5].strip():
+                raise ValueError("MTF PER row is missing frequency/azimuth")
+            frequency: float | None = float(row[4])
+            azimuth: float | None = float(row[5])
+        else:
+            if row[4].strip() or row[5].strip():
+                raise ValueError("RMS PER row carries unexpected frequency/azimuth")
+            frequency = None
+            azimuth = None
         design = float(row[7])
         probability_columns = tuple(float(value) for value in row[9:17])
         compensator_ranges = tuple(float(value) for value in row[17:])
         if not all(
             math.isfinite(value)
             for value in (
-                frequency,
-                azimuth,
+                *(v for v in (frequency, azimuth) if v is not None),
                 design,
                 *probability_columns,
                 *compensator_ranges,
