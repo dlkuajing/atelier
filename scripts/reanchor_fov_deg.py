@@ -19,14 +19,21 @@ resulting bucket.
 
 What this does
 --------------
-Rewrites ``fov_deg`` to ``2 * theta`` in ``index.json`` and in each per-case JSON
-(`load_case_library` reads the per-case files, **not** the index, and re-derives
-the scenario from ``fov_deg`` at load time -- so both have to move together or
-routing and reporting drift apart).
+Rewrites ``fov_deg`` to ``2 * theta`` **and the ``scenario`` label that
+``_classify_scenario`` derives from it**, in ``index.json`` and in every per-case
+JSON.
 
-The edit is textual and touches exactly the one ``"fov_deg": ...`` line in each
-file. Re-serialising 442 files of Pydantic output would rewrite every float in
-the corpus to chase one field.
+Both files, because `load_case_library` reads the per-case files, **not** the
+index. Both fields, because moving the FOV alone leaves the corpus
+self-contradictory: `load_case_library` re-derives the scenario at load time and
+would disagree with the persisted string, while `p2_pair_census`'s in-domain
+screen reads the *persisted* label and would check the new FOV against the old
+bucket's bounds. Measured: re-anchoring the FOV alone puts 104/442 labels at odds
+with the classifier, up from 2.
+
+The edit is textual and touches exactly one ``"fov_deg"`` line and one
+``"scenario"`` line per case. Re-serialising 442 files of Pydantic output would
+rewrite every float in the corpus to chase two fields.
 
 Fail-closed
 -----------
@@ -57,8 +64,9 @@ ZMX_DIR = ROOT / "data" / "zmx"
 #: land on a binary artefact (0.1 + 0.1 style), which ``.9g`` rounds away.
 _FOV_FORMAT = ".9g"
 _FOV_LINE = re.compile(r'^(?P<lead>\s*"fov_deg"\s*:\s*)(?P<value>-?[\d.eE+]+)(?P<tail>,?\s*)$')
+_SCENARIO_LINE = re.compile(r'^(?P<lead>\s*"scenario"\s*:\s*)"(?P<value>[^"]*)"(?P<tail>,?\s*)$')
 
-__all__ = ["ReanchorPlan", "apply_plan", "plan_reanchor", "render_fov"]
+__all__ = ["CaseAnchor", "ReanchorPlan", "apply_plan", "plan_reanchor", "render_fov"]
 
 
 def render_fov(value: float) -> str:
@@ -71,19 +79,27 @@ def render_fov(value: float) -> str:
 
 
 @dataclass(frozen=True)
+class CaseAnchor:
+    """The two fields that have to move together."""
+
+    fov_deg: float
+    scenario: str
+
+
+@dataclass(frozen=True)
 class ReanchorPlan:
     """What would change, computed before anything is written."""
 
-    #: case_id -> new fov_deg
-    targets: dict[str, float]
-    #: case_id -> old fov_deg (only for cases whose value actually moves)
-    changed: dict[str, float]
+    #: case_id -> anchored (fov_deg, scenario)
+    targets: dict[str, CaseAnchor]
+    #: case_id -> the stored values, for cases whose text would actually move
+    changed: dict[str, CaseAnchor]
     #: case_id -> why it could not be anchored
     skipped: dict[str, str]
 
     @property
     def is_clean(self) -> bool:
-        """True when every anchorable case already carries its anchored value."""
+        """True when every anchorable case already carries its anchored values."""
 
         return not self.changed
 
@@ -91,11 +107,12 @@ class ReanchorPlan:
 def plan_reanchor(*, cases_dir: Path = CASES_DIR, zmx_dir: Path = ZMX_DIR) -> ReanchorPlan:
     from app.core.engines.seed_field_rebuild import max_field_angle_deg
     from app.core.engines.zmx_import_prep import decode_zmx_text
+    from app.core.lens_system import _classify_scenario
 
     index_path = cases_dir / "index.json"
     entries = json.loads(index_path.read_text(encoding="utf-8"))
-    targets: dict[str, float] = {}
-    changed: dict[str, float] = {}
+    targets: dict[str, CaseAnchor] = {}
+    changed: dict[str, CaseAnchor] = {}
     skipped: dict[str, str] = {}
     for entry in entries:
         case_id = str(entry.get("case_id", ""))
@@ -107,35 +124,68 @@ def plan_reanchor(*, cases_dir: Path = CASES_DIR, zmx_dir: Path = ZMX_DIR) -> Re
         if theta is None:
             skipped[case_id] = "ZMX is not angular (FTYP 3 states millimetres)"
             continue
+        efl = entry.get("efl_mm")
+        if not isinstance(efl, (int, float)):
+            skipped[case_id] = "index row has no usable efl_mm to classify with"
+            continue
         anchored = 2.0 * theta
-        targets[case_id] = anchored
-        current = entry.get("fov_deg")
-        # Compared on the *rendered* string, which is what actually lands in the
-        # file. A stored 16.8885802 and a freshly doubled 8.4442901 differ in the
-        # last binary bit while rendering identically; comparing the doubles
-        # would mark such a case dirty forever and make ``--check`` unusable as
-        # a gate. Only a case whose written text would differ counts as changed.
-        if not isinstance(current, (int, float)) or render_fov(
-            float(current)
-        ) != render_fov(anchored):
-            changed[case_id] = float(current) if isinstance(current, (int, float)) else float("nan")
+        scenario = _classify_scenario(anchored, float(efl))
+        anchor = CaseAnchor(
+            fov_deg=anchored,
+            scenario=scenario.value if hasattr(scenario, "value") else str(scenario),
+        )
+        targets[case_id] = anchor
+        current_fov = entry.get("fov_deg")
+        current_scenario = str(entry.get("scenario", ""))
+        # ``fov_deg`` is compared on the *rendered* string, which is what actually
+        # lands in the file. A stored 16.8885802 and a freshly doubled 8.4442901
+        # differ in the last binary bit while rendering identically; comparing the
+        # doubles would mark such a case dirty forever and make ``--check``
+        # unusable as a gate.
+        fov_moves = not isinstance(current_fov, (int, float)) or render_fov(
+            float(current_fov)
+        ) != render_fov(anchored)
+        if fov_moves or current_scenario != anchor.scenario:
+            changed[case_id] = CaseAnchor(
+                fov_deg=(
+                    float(current_fov) if isinstance(current_fov, (int, float)) else float("nan")
+                ),
+                scenario=current_scenario,
+            )
     return ReanchorPlan(targets=targets, changed=changed, skipped=skipped)
 
 
-def _rewrite_fov_line(text: str, value: float, *, expected: int) -> str:
-    rendered = render_fov(value)
+def _scenario_row(match: re.Match[str], scenario: str, carriage: str) -> str:
+    quoted = '"' + scenario + '"'
+    return f"{match.group('lead')}{quoted}{match.group('tail').rstrip()}{carriage}"
+
+
+def _fov_row(match: re.Match[str], value: float, carriage: str) -> str:
+    return f"{match.group('lead')}{render_fov(value)}{match.group('tail').rstrip()}{carriage}"
+
+
+def _rewrite_case_text(text: str, anchor: CaseAnchor) -> str:
+    """Rewrite the one ``fov_deg`` line and the one ``scenario`` line, nothing else."""
+
     out: list[str] = []
-    hits = 0
+    hits = {"fov_deg": 0, "scenario": 0}
     for line in text.split("\n"):
-        match = _FOV_LINE.match(line.rstrip("\r"))
-        if match is None:
-            out.append(line)
-            continue
+        bare = line.rstrip("\r")
         carriage = "\r" if line.endswith("\r") else ""
-        out.append(f"{match.group('lead')}{rendered}{match.group('tail').rstrip()}{carriage}")
-        hits += 1
-    if hits != expected:
-        raise ValueError(f"expected {expected} fov_deg line(s), found {hits}")
+        fov_match = _FOV_LINE.match(bare)
+        if fov_match is not None:
+            out.append(_fov_row(fov_match, anchor.fov_deg, carriage))
+            hits["fov_deg"] += 1
+            continue
+        scenario_match = _SCENARIO_LINE.match(bare)
+        if scenario_match is not None:
+            out.append(_scenario_row(scenario_match, anchor.scenario, carriage))
+            hits["scenario"] += 1
+            continue
+        out.append(line)
+    for field, count in hits.items():
+        if count != 1:
+            raise ValueError(f"expected exactly one {field} line, found {count}")
     return "\n".join(out)
 
 
@@ -144,43 +194,46 @@ def apply_plan(plan: ReanchorPlan, *, cases_dir: Path = CASES_DIR) -> dict[str, 
 
     written = 0
     for case_id in plan.changed:
-        value = plan.targets[case_id]
         case_path = cases_dir / f"{case_id}.json"
         if not case_path.is_file():
             continue
         text = case_path.read_text(encoding="utf-8")
-        case_path.write_text(_rewrite_fov_line(text, value, expected=1), encoding="utf-8")
+        case_path.write_text(_rewrite_case_text(text, plan.targets[case_id]), encoding="utf-8")
         written += 1
 
     index_path = cases_dir / "index.json"
     entries = json.loads(index_path.read_text(encoding="utf-8"))
     index_text = index_path.read_text(encoding="utf-8")
-    lines = index_text.split("\n")
-    order = [
-        str(entry.get("case_id", ""))
-        for entry in entries
-    ]
-    position = 0
+    order = [str(entry.get("case_id", "")) for entry in entries]
+    # index.json lists "scenario" before "fov_deg" inside each object, so the two
+    # fields get their own cursors rather than sharing one position counter.
+    cursors = {"scenario": 0, "fov_deg": 0}
     rebuilt: list[str] = []
-    for line in lines:
-        match = _FOV_LINE.match(line.rstrip("\r"))
-        if match is None:
+    for line in index_text.split("\n"):
+        bare = line.rstrip("\r")
+        carriage = "\r" if line.endswith("\r") else ""
+        fov_match = _FOV_LINE.match(bare)
+        scenario_match = None if fov_match is not None else _SCENARIO_LINE.match(bare)
+        if fov_match is None and scenario_match is None:
             rebuilt.append(line)
             continue
-        case_id = order[position] if position < len(order) else ""
-        position += 1
+        field = "fov_deg" if fov_match is not None else "scenario"
+        case_id = order[cursors[field]] if cursors[field] < len(order) else ""
+        cursors[field] += 1
         if case_id not in plan.changed:
             rebuilt.append(line)
             continue
-        carriage = "\r" if line.endswith("\r") else ""
-        rendered = render_fov(plan.targets[case_id])
-        rebuilt.append(
-            f"{match.group('lead')}{rendered}{match.group('tail').rstrip()}{carriage}"
-        )
-    if position != len(order):
-        raise ValueError(f"index.json has {position} fov_deg rows for {len(order)} cases")
+        anchor = plan.targets[case_id]
+        if fov_match is not None:
+            rebuilt.append(_fov_row(fov_match, anchor.fov_deg, carriage))
+        else:
+            assert scenario_match is not None
+            rebuilt.append(_scenario_row(scenario_match, anchor.scenario, carriage))
+    for field, count in cursors.items():
+        if count != len(order):
+            raise ValueError(f"index.json has {count} {field} rows for {len(order)} cases")
     index_path.write_text("\n".join(rebuilt), encoding="utf-8")
-    return {"per_case_written": written, "index_rows": position}
+    return {"per_case_written": written, "index_rows": cursors["fov_deg"]}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -201,7 +254,11 @@ def main(argv: list[str] | None = None) -> int:
             print("corpus is anchored to its own ZMX field angles")
             return 0
         for case_id, old in sorted(plan.changed.items())[:10]:
-            print(f"  {case_id:<28} {old} -> {render_fov(plan.targets[case_id])}")
+            new = plan.targets[case_id]
+            print(
+                f"  {case_id:<28} {old.fov_deg} {old.scenario}"
+                f" -> {render_fov(new.fov_deg)} {new.scenario}"
+            )
         return 1
     counts = apply_plan(plan)
     print(f"written: {counts}")

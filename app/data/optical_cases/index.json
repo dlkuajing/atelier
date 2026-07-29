@@ -670,7 +670,7 @@
   {
     "case_id": "US-11927729-B2-e8",
     "source_zmx": "US-11927729-B2-e8.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -738,7 +738,7 @@
   {
     "case_id": "US-12169265-B2-e1",
     "source_zmx": "US-12169265-B2-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -891,7 +891,7 @@
   {
     "case_id": "US-12248126-B2-e2",
     "source_zmx": "US-12248126-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -908,7 +908,7 @@
   {
     "case_id": "US-12248126-B2-e3",
     "source_zmx": "US-12248126-B2-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -925,7 +925,7 @@
   {
     "case_id": "US-12248126-B2-e4",
     "source_zmx": "US-12248126-B2-e4.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -942,7 +942,7 @@
   {
     "case_id": "US-12248126-B2-e5",
     "source_zmx": "US-12248126-B2-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -959,7 +959,7 @@
   {
     "case_id": "US-12248126-B2-e6",
     "source_zmx": "US-12248126-B2-e6.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 2,
@@ -976,7 +976,7 @@
   {
     "case_id": "US-12248126-B2-e7",
     "source_zmx": "US-12248126-B2-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1010,7 +1010,7 @@
   {
     "case_id": "US-12416791-B2-e2",
     "source_zmx": "US-12416791-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 0,
@@ -1061,7 +1061,7 @@
   {
     "case_id": "US-12468127-B2",
     "source_zmx": "US-12468127-B2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 2,
@@ -1078,7 +1078,7 @@
   {
     "case_id": "US-12650578-B2",
     "source_zmx": "US-12650578-B2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1095,7 +1095,7 @@
   {
     "case_id": "US-20200003996-A1-e3",
     "source_zmx": "US-20200003996-A1-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1112,7 +1112,7 @@
   {
     "case_id": "US-20200003996-A1-e4",
     "source_zmx": "US-20200003996-A1-e4.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1129,7 +1129,7 @@
   {
     "case_id": "US-20200003996-A1-e5",
     "source_zmx": "US-20200003996-A1-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1180,7 +1180,7 @@
   {
     "case_id": "US-20220035131-A1-e10",
     "source_zmx": "US-20220035131-A1-e10.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -1197,7 +1197,7 @@
   {
     "case_id": "US-20220035131-A1-e5",
     "source_zmx": "US-20220035131-A1-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -1214,7 +1214,7 @@
   {
     "case_id": "US-20220035131-A1-e6",
     "source_zmx": "US-20220035131-A1-e6.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -1401,7 +1401,7 @@
   {
     "case_id": "US-20230288669-A1-e5",
     "source_zmx": "US-20230288669-A1-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1452,7 +1452,7 @@
   {
     "case_id": "US-20240264412-A1-e2",
     "source_zmx": "US-20240264412-A1-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1469,7 +1469,7 @@
   {
     "case_id": "US-20240264412-A1-e3",
     "source_zmx": "US-20240264412-A1-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1486,7 +1486,7 @@
   {
     "case_id": "US-20240264412-A1-e4",
     "source_zmx": "US-20240264412-A1-e4.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1503,7 +1503,7 @@
   {
     "case_id": "US-20240264412-A1-e5",
     "source_zmx": "US-20240264412-A1-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1520,7 +1520,7 @@
   {
     "case_id": "US-20240264412-A1-e6",
     "source_zmx": "US-20240264412-A1-e6.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 2,
@@ -1537,7 +1537,7 @@
   {
     "case_id": "US-20240264412-A1-e7",
     "source_zmx": "US-20240264412-A1-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1571,7 +1571,7 @@
   {
     "case_id": "US-20250035890-A1-e2",
     "source_zmx": "US-20250035890-A1-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1588,7 +1588,7 @@
   {
     "case_id": "US-20250035890-A1-e4",
     "source_zmx": "US-20250035890-A1-e4.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1605,7 +1605,7 @@
   {
     "case_id": "US-20250035890-A1-e6",
     "source_zmx": "US-20250035890-A1-e6.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1622,7 +1622,7 @@
   {
     "case_id": "US-20250216655-A1",
     "source_zmx": "US-20250216655-A1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -1639,7 +1639,7 @@
   {
     "case_id": "US-20250306338-A1-e1",
     "source_zmx": "US-20250306338-A1-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1656,7 +1656,7 @@
   {
     "case_id": "US-20250306338-A1-e10",
     "source_zmx": "US-20250306338-A1-e10.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1673,7 +1673,7 @@
   {
     "case_id": "US-20250306338-A1-e11",
     "source_zmx": "US-20250306338-A1-e11.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1690,7 +1690,7 @@
   {
     "case_id": "US-20250306338-A1-e12",
     "source_zmx": "US-20250306338-A1-e12.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1707,7 +1707,7 @@
   {
     "case_id": "US-20250306338-A1-e2",
     "source_zmx": "US-20250306338-A1-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -1724,7 +1724,7 @@
   {
     "case_id": "US-20250370227-A1-e12",
     "source_zmx": "US-20250370227-A1-e12.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -1758,7 +1758,7 @@
   {
     "case_id": "US-20250370227-A1-e8",
     "source_zmx": "US-20250370227-A1-e8.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -1775,7 +1775,7 @@
   {
     "case_id": "US-20250383531-A1-e7",
     "source_zmx": "US-20250383531-A1-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -1792,7 +1792,7 @@
   {
     "case_id": "US-20250383531-A1-e8",
     "source_zmx": "US-20250383531-A1-e8.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -1826,7 +1826,7 @@
   {
     "case_id": "US-11940597-B2-e2",
     "source_zmx": "US-11940597-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-telephoto",
     "n_pieces": 4,
     "n_imaging": 4,
     "n_filter": 1,
@@ -2659,7 +2659,7 @@
   {
     "case_id": "US-20240192468-A1-e1",
     "source_zmx": "US-20240192468-A1-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-telephoto",
     "n_pieces": 3,
     "n_imaging": 3,
     "n_filter": 2,
@@ -3050,7 +3050,7 @@
   {
     "case_id": "US-20210364765-A1-e3",
     "source_zmx": "US-20210364765-A1-e3.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -3067,7 +3067,7 @@
   {
     "case_id": "US-20210364765-A1-e4",
     "source_zmx": "US-20210364765-A1-e4.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -3101,7 +3101,7 @@
   {
     "case_id": "US-20210373297-A1-e11",
     "source_zmx": "US-20210373297-A1-e11.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -3118,7 +3118,7 @@
   {
     "case_id": "US-20210389571-A1-e1",
     "source_zmx": "US-20210389571-A1-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -3135,7 +3135,7 @@
   {
     "case_id": "US-20210389571-A1-e2",
     "source_zmx": "US-20210389571-A1-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -3152,7 +3152,7 @@
   {
     "case_id": "US-20210389571-A1-e3",
     "source_zmx": "US-20210389571-A1-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -3169,7 +3169,7 @@
   {
     "case_id": "US-20210389571-A1-e4",
     "source_zmx": "US-20210389571-A1-e4.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -3186,7 +3186,7 @@
   {
     "case_id": "US-20210389571-A1-e5",
     "source_zmx": "US-20210389571-A1-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -3203,7 +3203,7 @@
   {
     "case_id": "US-20210389571-A1-e6",
     "source_zmx": "US-20210389571-A1-e6.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -3220,7 +3220,7 @@
   {
     "case_id": "US-20210389571-A1-e7",
     "source_zmx": "US-20210389571-A1-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -3237,7 +3237,7 @@
   {
     "case_id": "US-20210389572-A1-e1",
     "source_zmx": "US-20210389572-A1-e1.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -3254,7 +3254,7 @@
   {
     "case_id": "US-20210389572-A1-e2",
     "source_zmx": "US-20210389572-A1-e2.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -3747,7 +3747,7 @@
   {
     "case_id": "US-20260140349-A1-e3",
     "source_zmx": "US-20260140349-A1-e3.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -3764,7 +3764,7 @@
   {
     "case_id": "US-20260140349-A1-e4",
     "source_zmx": "US-20260140349-A1-e4.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -3781,7 +3781,7 @@
   {
     "case_id": "US-12345855-B2-e2",
     "source_zmx": "US-12345855-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -3798,7 +3798,7 @@
   {
     "case_id": "US-12345855-B2-e3",
     "source_zmx": "US-12345855-B2-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -3815,7 +3815,7 @@
   {
     "case_id": "US-12345855-B2-e4",
     "source_zmx": "US-12345855-B2-e4.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -3849,7 +3849,7 @@
   {
     "case_id": "US-12607827-B2-e3",
     "source_zmx": "US-12607827-B2-e3.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -3866,7 +3866,7 @@
   {
     "case_id": "US-20260133409-A1-e1",
     "source_zmx": "US-20260133409-A1-e1.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -3883,7 +3883,7 @@
   {
     "case_id": "US-20260186251-A1-e1",
     "source_zmx": "US-20260186251-A1-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 9,
     "n_imaging": 9,
     "n_filter": 2,
@@ -3900,7 +3900,7 @@
   {
     "case_id": "US-20260186251-A1-e2",
     "source_zmx": "US-20260186251-A1-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 9,
     "n_imaging": 9,
     "n_filter": 2,
@@ -3917,7 +3917,7 @@
   {
     "case_id": "US-20260186251-A1-e3",
     "source_zmx": "US-20260186251-A1-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 9,
     "n_imaging": 9,
     "n_filter": 2,
@@ -3934,7 +3934,7 @@
   {
     "case_id": "US-20260186251-A1-e4",
     "source_zmx": "US-20260186251-A1-e4.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 9,
     "n_imaging": 9,
     "n_filter": 2,
@@ -4053,7 +4053,7 @@
   {
     "case_id": "US-11933948-B2-e6",
     "source_zmx": "US-11933948-B2-e6.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4121,7 +4121,7 @@
   {
     "case_id": "US-12000991-B2-e1",
     "source_zmx": "US-12000991-B2-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -4138,7 +4138,7 @@
   {
     "case_id": "US-12000991-B2-e2",
     "source_zmx": "US-12000991-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -4155,7 +4155,7 @@
   {
     "case_id": "US-12000991-B2-e7",
     "source_zmx": "US-12000991-B2-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -4172,7 +4172,7 @@
   {
     "case_id": "US-12000991-B2-e8",
     "source_zmx": "US-12000991-B2-e8.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 1,
@@ -4206,7 +4206,7 @@
   {
     "case_id": "US-12210142-B2-e1",
     "source_zmx": "US-12210142-B2-e1.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 2,
@@ -4240,7 +4240,7 @@
   {
     "case_id": "US-12210142-B2-e3",
     "source_zmx": "US-12210142-B2-e3.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4274,7 +4274,7 @@
   {
     "case_id": "US-12210142-B2-e5",
     "source_zmx": "US-12210142-B2-e5.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4291,7 +4291,7 @@
   {
     "case_id": "US-12210142-B2-e6",
     "source_zmx": "US-12210142-B2-e6.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4325,7 +4325,7 @@
   {
     "case_id": "US-12210142-B2-e8",
     "source_zmx": "US-12210142-B2-e8.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4410,7 +4410,7 @@
   {
     "case_id": "US-12259531-B2-e6",
     "source_zmx": "US-12259531-B2-e6.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4478,7 +4478,7 @@
   {
     "case_id": "US-12282142-B2-e1",
     "source_zmx": "US-12282142-B2-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4529,7 +4529,7 @@
   {
     "case_id": "US-12282142-B2-e3",
     "source_zmx": "US-12282142-B2-e3.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4563,7 +4563,7 @@
   {
     "case_id": "US-12282142-B2-e6",
     "source_zmx": "US-12282142-B2-e6.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4597,7 +4597,7 @@
   {
     "case_id": "US-12282142-B2-e9",
     "source_zmx": "US-12282142-B2-e9.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -4818,7 +4818,7 @@
   {
     "case_id": "US-12416792-B2-e12",
     "source_zmx": "US-12416792-B2-e12.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -4852,7 +4852,7 @@
   {
     "case_id": "US-12416792-B2-e8",
     "source_zmx": "US-12416792-B2-e8.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -4869,7 +4869,7 @@
   {
     "case_id": "US-12429675-B2-e7",
     "source_zmx": "US-12429675-B2-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -4886,7 +4886,7 @@
   {
     "case_id": "US-12429675-B2-e8",
     "source_zmx": "US-12429675-B2-e8.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -5039,7 +5039,7 @@
   {
     "case_id": "US-12468127-B2-e1",
     "source_zmx": "US-12468127-B2-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 2,
@@ -5056,7 +5056,7 @@
   {
     "case_id": "US-12468127-B2-e11",
     "source_zmx": "US-12468127-B2-e11.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 2,
@@ -5073,7 +5073,7 @@
   {
     "case_id": "US-12468127-B2-e2",
     "source_zmx": "US-12468127-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 2,
@@ -5090,7 +5090,7 @@
   {
     "case_id": "US-12468127-B2-e5",
     "source_zmx": "US-12468127-B2-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 2,
@@ -5107,7 +5107,7 @@
   {
     "case_id": "US-12468127-B2-e7",
     "source_zmx": "US-12468127-B2-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 2,
@@ -5124,7 +5124,7 @@
   {
     "case_id": "US-12468127-B2-e8",
     "source_zmx": "US-12468127-B2-e8.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 2,
@@ -5175,7 +5175,7 @@
   {
     "case_id": "US-12650578-B2-e1",
     "source_zmx": "US-12650578-B2-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5192,7 +5192,7 @@
   {
     "case_id": "US-12650578-B2-e3",
     "source_zmx": "US-12650578-B2-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5209,7 +5209,7 @@
   {
     "case_id": "US-12650578-B2-e5",
     "source_zmx": "US-12650578-B2-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5226,7 +5226,7 @@
   {
     "case_id": "US-12650578-B2-e6",
     "source_zmx": "US-12650578-B2-e6.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5243,7 +5243,7 @@
   {
     "case_id": "US-12650578-B2-e7",
     "source_zmx": "US-12650578-B2-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5260,7 +5260,7 @@
   {
     "case_id": "US-20220011544-A1-e2",
     "source_zmx": "US-20220011544-A1-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -5277,7 +5277,7 @@
   {
     "case_id": "US-20220011544-A1-e3",
     "source_zmx": "US-20220011544-A1-e3.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
@@ -5294,7 +5294,7 @@
   {
     "case_id": "US-20220011544-A1-e5",
     "source_zmx": "US-20220011544-A1-e5.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,
@@ -5396,7 +5396,7 @@
   {
     "case_id": "US-20240168263-A1-e6",
     "source_zmx": "US-20240168263-A1-e6.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5464,7 +5464,7 @@
   {
     "case_id": "US-20240176110-A1-e7",
     "source_zmx": "US-20240176110-A1-e7.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -5481,7 +5481,7 @@
   {
     "case_id": "US-20240176110-A1-e8",
     "source_zmx": "US-20240176110-A1-e8.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,
@@ -5549,7 +5549,7 @@
   {
     "case_id": "US-20250189767-A1-e6",
     "source_zmx": "US-20250189767-A1-e6.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5617,7 +5617,7 @@
   {
     "case_id": "US-20250216655-A1-e1",
     "source_zmx": "US-20250216655-A1-e1.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5668,7 +5668,7 @@
   {
     "case_id": "US-20250216655-A1-e3",
     "source_zmx": "US-20250216655-A1-e3.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5702,7 +5702,7 @@
   {
     "case_id": "US-20250216655-A1-e6",
     "source_zmx": "US-20250216655-A1-e6.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5736,7 +5736,7 @@
   {
     "case_id": "US-20250216655-A1-e9",
     "source_zmx": "US-20250216655-A1-e9.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 7,
     "n_imaging": 7,
     "n_filter": 1,
@@ -5906,7 +5906,7 @@
   {
     "case_id": "US-20260160979-A1-e4",
     "source_zmx": "US-20260160979-A1-e4.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 8,
     "n_imaging": 8,
     "n_filter": 1,

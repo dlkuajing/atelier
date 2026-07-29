@@ -1985,7 +1985,7 @@
   "metadata": {
     "case_id": "US-12210142-B2-e1",
     "source_zmx": "US-12210142-B2-e1.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 2,

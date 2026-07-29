@@ -1945,7 +1945,7 @@
   "metadata": {
     "case_id": "US-12345855-B2-e2",
     "source_zmx": "US-12345855-B2-e2.zmx",
-    "scenario": "smartphone-wide",
+    "scenario": "smartphone-ultrawide",
     "n_pieces": 6,
     "n_imaging": 6,
     "n_filter": 1,

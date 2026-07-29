@@ -1925,7 +1925,7 @@
   "metadata": {
     "case_id": "US-20210364765-A1-e4",
     "source_zmx": "US-20210364765-A1-e4.zmx",
-    "scenario": "smartphone-telephoto",
+    "scenario": "smartphone-wide",
     "n_pieces": 5,
     "n_imaging": 5,
     "n_filter": 2,
