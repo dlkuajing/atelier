@@ -486,7 +486,9 @@ def test_an_unreadable_field_or_aperture_blocks_rather_than_passes() -> None:
     from scripts.p2_crosssource_trial import conformance_screen
 
     assert conformance_screen(_iq(image_height_mm=None), _iq())[0] == "field_not_comparable"
-    assert conformance_screen(_iq(), _iq(efl_y_mm=None))[0] == "field_not_comparable"
+    # A missing EFL is now caught one leg earlier, by the scale check that runs
+    # first -- still fail-closed, just named for the leg that actually saw it.
+    assert conformance_screen(_iq(), _iq(efl_y_mm=None))[0] == "efl_not_comparable"
     assert conformance_screen(_iq(f_number=None), _iq())[0] == "f_number_not_comparable"
 
 
@@ -575,6 +577,7 @@ def _stage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, *, control: str, see
     monkeypatch.setattr(
         "app.core.engines.codev_optimize.run_codev_target_standard", _never
     )
+    _stub_control_probe(monkeypatch)
     return zmx_dir
 
 
@@ -622,6 +625,7 @@ def test_the_re_aimed_seed_is_what_gets_optimised_not_the_original(
     (zmx_dir / "ctl.zmx").write_bytes(control.encode("latin-1"))
     (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
     monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch)
 
     seen: dict[str, Path] = {}
 
@@ -648,6 +652,7 @@ def test_the_old_behaviour_is_still_reachable_for_a_b_comparison(
     (zmx_dir / "ctl.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
     (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
     monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch)
     seen: dict[str, Path] = {}
 
     def _capture(**kwargs: object) -> dict[str, object]:
@@ -668,6 +673,24 @@ def test_the_old_behaviour_is_still_reachable_for_a_b_comparison(
 # ---------------------------------------------------------------------------
 
 
+def _stub_control_probe(monkeypatch: pytest.MonkeyPatch, **overrides: object) -> object:
+    """The control probe runs first now -- the spec is taken from it."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    # EFL matches `_rebuild_plan().spec_efl_mm` so the engine-agreement gate is
+    # satisfied by default; tests that want the disagreement path override it.
+    base = {
+        "source": "ctl.zmx", "efl_y_mm": 3.0, "f_number": 2.0, "num_wavelengths": 3,
+        "num_fields": 2, "image_height_mm": 2.5, "rms_spot_um": 10.0,
+        "rms_wavefront_waves": 0.1, "distortion_pct": 1.0, "lateral_color_um": 1.0,
+        "mtf_min": 0.5,
+    }
+    base.update(overrides)
+    probed = trial_module.ImageQuality(**base)  # type: ignore[arg-type]
+    monkeypatch.setattr(trial_module, "measure_image_quality", lambda **k: probed)
+    return probed
+
+
 def _budget_corpus(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import scripts.p2_crosssource_trial as trial_module
 
@@ -676,6 +699,7 @@ def _budget_corpus(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     for name in ("ctl.zmx", "seed.zmx"):
         (zmx_dir / name).write_bytes(_REBUILD_ZMX.encode("latin-1"))
     monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch)
 
 
 def test_a_trial_out_of_clock_gets_its_own_verdict_not_worse_or_unmeasurable(
@@ -690,11 +714,17 @@ def test_a_trial_out_of_clock_gets_its_own_verdict_not_worse_or_unmeasurable(
         raise AssertionError("CODE V must not be started once the budget is spent")
 
     monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _never)
+    monkeypatch.setattr(
+        "scripts.p2_crosssource_trial.measure_image_quality",
+        lambda **k: (_ for _ in ()).throw(
+            AssertionError("no probe may run once the budget is spent")
+        ),
+    )
     record = trial_module.run_trial(
         _rebuild_plan(), out_dir=tmp_path / "out", wall_clock_budget_s=0.0
     )
     assert record["verdict"] == "budget_exhausted"
-    assert record["blocked_at"] == "before_optimize"
+    assert record["blocked_at"] == "before_control_probe"
     assert record["wall_clock_budget_s"] == 0.0
 
 
@@ -786,3 +816,119 @@ def test_every_codev_stage_in_a_trial_names_the_watchdog() -> None:
     """
     source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
     assert source.count("idle_timeout_seconds=IDLE_TIMEOUT_SECONDS") >= 3
+
+
+# ---------------------------------------------------------------------------
+# Absolute scale (2026-07-29 adversarial audit): the spec came from Optiland
+# while the control was scored by CODE V, and both existing legs are ratios.
+# ---------------------------------------------------------------------------
+
+
+def test_a_smaller_candidate_at_the_same_field_and_aperture_is_not_judged() -> None:
+    """The measured case: 2.84 mm against 4.40 mm, F/# 2.0 both sides, scored par."""
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    # Uniform scale: same tan(theta), same F/#, 0.646x the focal length.
+    candidate = _iq(efl_y_mm=2.84062, image_height_mm=2.84062 * 1.131, rms_spot_um=1.848)
+    control = _iq(efl_y_mm=4.39859, image_height_mm=4.39859 * 1.131, rms_spot_um=51.4502)
+    blocked, details = conformance_screen(candidate, control)
+    assert blocked == "efl_not_matched"
+    assert details["efl_ratio"] == pytest.approx(0.646, abs=1e-3)
+    # The two older legs really are blind to it -- that is why this one exists.
+    assert details["field_coverage_ratio"] == pytest.approx(1.0)
+    assert details["candidate_f_number"] == details["control_f_number"]
+
+
+def test_scale_is_checked_before_field_so_the_reason_names_the_real_problem() -> None:
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    both_wrong = _iq(efl_y_mm=2.0, image_height_mm=1.0)
+    assert conformance_screen(both_wrong, _iq(efl_y_mm=4.0, image_height_mm=3.0))[0] == (
+        "efl_not_matched"
+    )
+
+
+def test_the_efl_leg_uses_the_engines_own_achieved_target_tolerance() -> None:
+    """A candidate the optimiser itself calls converged must not fail here."""
+    from scripts.p2_crosssource_trial import EFL_PARITY_TOLERANCE, conformance_screen
+
+    assert pytest.approx(0.02) == EFL_PARITY_TOLERANCE
+    inside = _iq(efl_y_mm=4.0 * 1.019, image_height_mm=3.0 * 1.019)
+    assert conformance_screen(inside, _iq(efl_y_mm=4.0, image_height_mm=3.0))[0] is None
+    outside = _iq(efl_y_mm=4.0 * 1.03, image_height_mm=3.0 * 1.03)
+    assert conformance_screen(outside, _iq(efl_y_mm=4.0, image_height_mm=3.0))[0] == (
+        "efl_not_matched"
+    )
+
+
+def test_an_unreadable_efl_blocks_rather_than_passes() -> None:
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    assert conformance_screen(_iq(efl_y_mm=None), _iq())[0] == "efl_not_comparable"
+    assert conformance_screen(_iq(), _iq(efl_y_mm=None))[0] == "efl_not_comparable"
+    assert conformance_screen(_iq(), _iq(efl_y_mm=0.0))[0] == "efl_not_comparable"
+
+
+def test_a_control_the_two_engines_disagree_about_is_refused_before_the_expensive_stage(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """41/440 of the corpus disagrees, 37 of them at exactly the cover-glass index."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    # Manifest (Optiland) says 3.0; the CODE V probe reads 1.5177x that.
+    _stub_control_probe(monkeypatch, efl_y_mm=3.0 * 1.5177, image_height_mm=3.0 * 1.5177)
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard",
+        lambda **k: (_ for _ in ()).throw(
+            AssertionError("no CODE V time may be spent on a control we cannot trust")
+        ),
+    )
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert record["verdict"] == "unmeasurable"
+    assert record["blocked_at"] == "control_engine_disagreement"
+    assert record["control_engine_agreement"]["probe_over_manifest"] == pytest.approx(1.5177)
+
+
+def test_an_agreeing_control_supplies_the_spec_from_the_engine_that_scores(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """When both engines agree there is no choice to make -- and none is invented."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    _stub_control_probe(monkeypatch, efl_y_mm=3.0, image_height_mm=2.5)
+    seen: dict[str, object] = {}
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        seen.update(kwargs)
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert seen["target_efl_mm"] == pytest.approx(3.0)
+    assert record["control_engine_agreement"]["probe_over_manifest"] == pytest.approx(1.0)
+    assert record["blocked_at"] != "control_engine_disagreement"
+
+
+def test_an_unprobeable_control_ends_the_trial_before_the_expensive_stage(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import scripts.p2_crosssource_trial as trial_module
+    from app.core.engines.codev_batch import CodeVBatchError
+
+    _budget_corpus(tmp_path, monkeypatch)
+
+    def _boom(**kwargs: object) -> object:
+        raise CodeVBatchError("failure", "control will not import")
+
+    monkeypatch.setattr(trial_module, "measure_image_quality", _boom)
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard",
+        lambda **k: (_ for _ in ()).throw(
+            AssertionError("the optimiser must not run without a measured control")
+        ),
+    )
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert record["verdict"] == "unmeasurable"
+    assert record["blocked_at"] == "control_probe"

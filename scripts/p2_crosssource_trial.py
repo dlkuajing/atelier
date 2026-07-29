@@ -493,6 +493,15 @@ P2_METRICS: dict[str, bool] = {
 #: handed an easier job than the control".
 CONFORMANCE_RELATIVE_SLACK = 1e-3
 
+#: How far the candidate's measured EFL may sit from the control's. This is the
+#: engine's **own** definition of "the EFL target was achieved"
+#: (``codev_optimize.EFL_TARGET_TOLERANCE_PCT`` = 2%), reused rather than
+#: reinvented -- a trial whose candidate the optimiser itself calls converged must
+#: not then be rejected here for the same number, and 红线③ forbids inventing a
+#: fresh threshold. It is a *conformance* tolerance, not a quality one: nothing
+#: about how good the candidate is depends on it.
+EFL_PARITY_TOLERANCE = 0.02
+
 
 def field_tangent(quality: ImageQuality) -> float | None:
     """``tan(max field angle)`` = paraxial image height / EFL, or ``None``.
@@ -536,8 +545,12 @@ def conformance_screen(
     two lenses simply cover different fields.
 
     So a trial is only judged when the candidate was given **at least** the
-    control's job on both counts it can be handed for free:
+    control's job on the three counts it can be handed for free:
 
+    * absolute scale -- candidate EFL within the engine's own achieved-target
+      tolerance of the control's EFL. Checked **first**, because the other two
+      legs are blind to it: both are ratios and survive a uniform scaling of the
+      whole lens untouched.
     * field coverage -- candidate ``tan(theta)`` >= control ``tan(theta)``
     * aperture -- candidate F/# <= control F/# (a slower lens has smaller
       aberrations for nothing)
@@ -558,7 +571,27 @@ def conformance_screen(
         ),
         "candidate_f_number": candidate.f_number,
         "control_f_number": control.f_number,
+        "candidate_efl_mm": candidate.efl_y_mm,
+        "control_efl_mm": control.efl_y_mm,
+        "efl_ratio": (
+            (candidate.efl_y_mm / control.efl_y_mm)
+            if candidate.efl_y_mm is not None and control.efl_y_mm
+            else None
+        ),
     }
+
+    # Absolute scale, checked first because the other two legs cannot see it.
+    # ``tan(theta) = imh/efl`` and F/# are both invariant under a uniform scale of
+    # the whole lens, so a candidate built at 0.65x the control's focal length --
+    # measured, `US-20220011544-A1-e5`, 2.84 mm against 4.40 mm -- passes both and
+    # collects a linearly smaller spot for nothing. That trial scored **par on RMS
+    # spot** at a ratio of 0.036. Optimising against a probe-derived spec (see
+    # ``run_trial``) is the root fix; this is the screen that makes a regression
+    # of it impossible to miss.
+    if candidate.efl_y_mm is None or control.efl_y_mm is None or control.efl_y_mm <= 0:
+        return "efl_not_comparable", details
+    if abs(candidate.efl_y_mm - control.efl_y_mm) > control.efl_y_mm * EFL_PARITY_TOLERANCE:
+        return "efl_not_matched", details
 
     if cand_tan is None or ctrl_tan is None:
         return "field_not_comparable", details
@@ -695,6 +728,73 @@ def run_trial(
     num_fields = declared_field_count(decode_zmx_text(seed_zmx.read_bytes())[0])
     record["seed_declared_num_fields"] = num_fields
 
+    if over_budget():
+        return exhausted("before_control_probe")
+
+    # --- measure the control BEFORE optimising, and refuse a control the two
+    # --- engines disagree about ---
+    # The spec used to come from `index.json`, whose `efl_mm` is **Optiland's**
+    # paraxial EFL, while the control is scored by the **CODE V** probe. Measured
+    # 2026-07-29 across the corpus: **41 of 440** controls disagree by more than
+    # 2%, and **37 of those sit at a ratio of 1.5177** -- which is the last
+    # element's own index (`GLAS ___BLANK 1 0 1.517 64.2`, the cover glass), so it
+    # is a systematic import artefact, not scatter.
+    #
+    # Which engine is right is decidable from the design's own geometry, and it is
+    # not CODE V: for `US-20210364737-A1-e1` (half field 14.205 deg, real image
+    # height 2.6112 mm) Optiland's 10.3487 mm gives f*tan(theta) = 2.6197 -- 0.3%
+    # off the declared height -- while CODE V's 15.7063 mm gives 3.9759, off by 52%.
+    #
+    # So this does **not** silently adopt either number. A control the two engines
+    # read differently is a control we cannot claim to have measured, and the
+    # candidate would be built to whichever scale we picked: at the same F/# and
+    # the same field angle a uniformly smaller lens collects a linearly smaller
+    # spot for free. `US-20220011544-A1-e5` measured 1.848 um against its
+    # control's 51.45 um and scored **par on RMS spot**, ratio 0.036.
+    #
+    # Probing the control first costs no extra CODE V time -- the trial already
+    # probes it once -- and now a control we cannot trust ends the trial *before*
+    # the expensive stage instead of after it.
+    control_quality = None
+    try:
+        control_quality = measure_image_quality(
+            source_zmx=ZMX_DIR / plan.control_zmx,
+            work_dir=work / "measure_control",
+            tag="control",
+            timeout_seconds=timeout_seconds,
+            idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
+        )
+    except CodeVBatchError as exc:
+        record["control_probe_error"] = {"kind": exc.kind, "detail": exc.message}
+    record["control_quality"] = asdict(control_quality) if control_quality else None
+    if control_quality is None or control_quality.efl_y_mm is None:
+        record["verdict"] = "unmeasurable"
+        record["blocked_at"] = "control_probe"
+        record["elapsed_s"] = round(time.time() - started, 1)
+        return record
+
+    engine_ratio = control_quality.efl_y_mm / plan.spec_efl_mm if plan.spec_efl_mm else None
+    record["control_engine_agreement"] = {
+        "manifest_efl_mm": plan.spec_efl_mm,
+        "probe_efl_mm": control_quality.efl_y_mm,
+        "probe_over_manifest": engine_ratio,
+        "tolerance": EFL_PARITY_TOLERANCE,
+    }
+    if engine_ratio is None or abs(engine_ratio - 1.0) > EFL_PARITY_TOLERANCE:
+        record["verdict"] = "unmeasurable"
+        record["blocked_at"] = "control_engine_disagreement"
+        record["elapsed_s"] = round(time.time() - started, 1)
+        return record
+
+    # Agreed, so there is no choice left to make -- the two readings are the same
+    # number. Taking it from the probe keeps the spec and the score on one engine.
+    spec_efl_mm = float(control_quality.efl_y_mm)
+    spec_f_number = (
+        float(control_quality.f_number)
+        if control_quality.f_number is not None
+        else plan.spec_f_number
+    )
+
     # --- re-aim the seed at the requested field before optimising ---
     # Without this the candidate answers a different question: the optimiser
     # targets EFL and F/# only, so the field comes from the seed and the spec's
@@ -742,8 +842,8 @@ def run_trial(
         standard = run_codev_target_standard(
             source_zmx=optimise_from,
             work_dir=work / "optimize",
-            target_efl_mm=plan.spec_efl_mm,
-            target_f_number=plan.spec_f_number,
+            target_efl_mm=spec_efl_mm,
+            target_f_number=spec_f_number,
             target_imh_mm=plan.spec_imh_mm,
             num_fields=num_fields,
             timeout_seconds=timeout_seconds,
@@ -788,28 +888,23 @@ def run_trial(
     if over_budget():
         return exhausted("before_probe")
 
-    # --- measure both sides with the same probe ---
-    measurements: dict[str, ImageQuality | None] = {}
-    for side, zmx in (
-        ("candidate", Path(str(candidate_zmx))),
-        ("control", ZMX_DIR / plan.control_zmx),
-    ):
-        try:
-            measurements[side] = measure_image_quality(
-                source_zmx=zmx,
-                work_dir=work / f"measure_{side}",
-                tag=side,
-                timeout_seconds=timeout_seconds,
-                idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
-            )
-        except CodeVBatchError as exc:
-            record[f"{side}_probe_error"] = {"kind": exc.kind, "detail": exc.message}
-            measurements[side] = None
+    # --- measure the candidate with the same probe the control already went through ---
+    measurements: dict[str, ImageQuality | None] = {"control": control_quality}
+    try:
+        measurements["candidate"] = measure_image_quality(
+            source_zmx=Path(str(candidate_zmx)),
+            work_dir=work / "measure_candidate",
+            tag="candidate",
+            timeout_seconds=timeout_seconds,
+            idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
+        )
+    except CodeVBatchError as exc:
+        record["candidate_probe_error"] = {"kind": exc.kind, "detail": exc.message}
+        measurements["candidate"] = None
 
     record["candidate_quality"] = (
         asdict(measurements["candidate"]) if measurements["candidate"] else None
     )
-    record["control_quality"] = asdict(measurements["control"]) if measurements["control"] else None
 
     # Fourth 交付物 piece (NORTH-STAR §1.1). Read straight off both ZMX files, so
     # it costs no CODE V time and is available even when a trial is unjudgeable
