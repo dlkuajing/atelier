@@ -288,15 +288,21 @@ def test_ratified_yield_math_on_plausible_readings() -> None:
 
 
 def test_the_real_mtf_fixture_is_too_contaminated_to_yield_a_number() -> None:
-    """This fixture is a genuine CODE V 11.5 run, and it is 58/60 non-data:
-    31 readings at exactly 1.0 and 27 at exactly 0.0, at 100 lp/mm where the
-    nominal design reads 0.0699/0.4505/0.0257. MTF reaches 1.0 only at zero
-    spatial frequency, so a perturbed sample reading 1.0 there is impossible.
+    """This fixture is a genuine CODE V 11.5 run whose 60 MC readings are 31 at
+    exactly 1.0, 27 at exactly 0.0, and 2 actual measurements.
+
+    Only the 1.0s are the defect. MTF reaches 1.0 only at zero spatial
+    frequency, so a perturbed sample reading 1.0 at 100 lp/mm is impossible.
+    The 0.0s are *not* assumed to be broken: this lens traces with RMS spot
+    radii of 5.8-9.6um, which genuinely washes out a 10um period, and the
+    nominal design column reads 0.0699/0.4505/0.0257. A real zero is a
+    legitimate reading of a bad lens, and it fails the threshold on its own --
+    which is exactly why the guard keys off the metric's *ideal* value by
+    direction rather than refusing anything that sits on a bound.
 
     This test previously asserted ``per_field_yield["z1:f1"] == 0.9`` from this
-    data -- a 90% pass rate manufactured almost entirely out of fake-perfect
-    readings, since each 1.0 clears the 0.1 threshold. That is the number this
-    guard exists to prevent.
+    data -- a 90% pass rate manufactured out of fake-perfect readings, since
+    each 1.0 clears the 0.1 threshold. That is the number this guard prevents.
     """
     parsed = parse_codev_tor_exports(REAL_PER, REAL_MC)
     assert mc_saturation_fraction(parsed) == pytest.approx(58 / 60)
