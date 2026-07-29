@@ -36,8 +36,8 @@ def _corpus(tmp_path: Path, rows: list[tuple[str, float, float]]) -> tuple[Path,
         )
         index.append({"case_id": case_id, "source_zmx": zmx_name, "fov_deg": fov})
         (cases_dir / f"{case_id}.json").write_text(
-            '{\n  "metadata": {\n    "case_id": "%s",\n    "fov_deg": %s,\n'
-            '    "nominal_efl_mm": 3.5\n  }\n}\n' % (case_id, fov),
+            f'{{\n  "metadata": {{\n    "case_id": "{case_id}",\n    "fov_deg": {fov},\n'
+            f'    "nominal_efl_mm": 3.5\n  }}\n}}\n',
             encoding="utf-8",
         )
     (cases_dir / "index.json").write_text(json.dumps(index, indent=2), encoding="utf-8")
