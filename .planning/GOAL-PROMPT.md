@@ -157,9 +157,14 @@
 4. **四件套只缺最后一件：公差敏感度 + 良率**（相对成本指数已于 PR #115 合入）。
    **拦路虎已定位到行**（`.planning/evidence/tolerance-yield-blocker-2026-07-29.md`）：
    TOR 真机管线**跑通**、**MC 侧解析完全吻合**，卡在
-   **`_parse_per` 认不出真机的两行表头 + 概率分位列**
-   （`50.0D0%`/`84.1D0%`/… 约 ±1σ/±2σ/±3σ，`codev_tolerance.py:318`）。
-   要**先看懂分位列语义**再动，不是照着改格式。
+   **`_parse_per` 只支持 `metric='mtf'` 变体**——它期望表头含
+   `Frequency`/`Azimuth`，而那两列**只有 MTF 才有**（RMS 波前没有空间频率与
+   方位角，CODE V 输空白）；`run_codev_tor` 却接受 `metric='rms'` 并产出
+   解析不了的输出（`codev_tolerance.py:318`）。
+   → 修法是**按 metric 走两套列布局**，**不是**重写解析器去认真机格式。
+   ⚠️ **换 metric 绕不开**：`US-12124006-B2-e2` 做不了 MTF-metric TOR
+   （`No rays traced in position 1, field 2`，第 2 视场在 100 lp/mm 追不出光线），
+   走 MTF 路线须先换一颗能在该频率出数的 seed。
    ⚠️ 真机 MC 里已出现 `RMS 0`（物理不可能）——**第 10 例退化值=理想读数**，
    `tor_yield` 那道 default-off 闸不是多余的，别绕过 `max_saturation_fraction`。
    公差表与成本表同理：绝对值不准不影响排序，**但必须两侧同表**
