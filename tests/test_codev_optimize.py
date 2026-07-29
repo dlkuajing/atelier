@@ -3289,8 +3289,47 @@ def test_the_two_forms_are_refused_together() -> None:
         _target_seq(distortion_weight=0.05, distortion_constraint_pct=3.0)
 
 
-@pytest.mark.parametrize("bad", [0.0, -1.0])
+@pytest.mark.parametrize("bad", [0.0, -2.5, -99.0])
 def test_a_non_positive_bound_is_refused(bad: float) -> None:
-    """A 0 bound would demand perfect rectilinearity and silently never converge."""
+    """A 0 bound would demand perfect rectilinearity and silently never converge.
+
+    -1.0 is excluded on purpose: it is SEED_BASELINE_DISTORTION, the sentinel
+    meaning "bound it to the seed's own measured distortion". Every other
+    non-positive value is still nonsense and must be refused.
+    """
     with pytest.raises(ValueError, match="distortion_constraint_pct"):
         _target_seq(distortion_constraint_pct=bad)
+
+
+def test_the_seed_baseline_bound_emits_the_macro_variable_not_a_number() -> None:
+    """Non-circular by construction: the bound is where the seed *starts*, not
+    the control it is judged against (NORTH-STAR 6 lists the control leak as an
+    open circularity problem)."""
+    from app.core.engines.codev_optimize import SEED_BASELINE_DISTORTION
+
+    seq = _target_seq(distortion_constraint_pct=SEED_BASELINE_DISTORTION)
+    assert "  @atelier_distortion < ^seed_baseline_max_distortion_pct" in seq
+
+
+def test_the_seed_snapshot_is_taken_before_the_constraint_uses_it() -> None:
+    """A macro variable referenced before assignment would make CODE V compare
+    against garbage, silently."""
+    from app.core.engines.codev_optimize import SEED_BASELINE_DISTORTION
+
+    seq = _target_seq(distortion_constraint_pct=SEED_BASELINE_DISTORTION)
+    assert seq.index("^seed_baseline_max_distortion_pct ==") < seq.index(
+        "@atelier_distortion < ^seed_baseline_max_distortion_pct"
+    )
+
+
+def test_a_fixed_bound_still_emits_a_number() -> None:
+    seq = _target_seq(distortion_constraint_pct=3.0)
+    assert "  @atelier_distortion < 3" in seq
+    assert "^seed_baseline_max_distortion_pct" not in seq.split("AUT")[1].split("GO")[0]
+
+
+def test_the_sentinel_is_not_mistaken_for_a_percentage() -> None:
+    """It is negative precisely so it can never collide with a real bound."""
+    from app.core.engines.codev_optimize import SEED_BASELINE_DISTORTION
+
+    assert SEED_BASELINE_DISTORTION < 0

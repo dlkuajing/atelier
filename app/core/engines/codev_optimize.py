@@ -637,6 +637,34 @@ def _vignetting_block(vignetting: list[float]) -> list[str]:
     return [f"{cmd} {values}" for cmd in ("VUY", "VLY", "VUX", "VLX")]
 
 
+#: Constrain distortion to the seed's own measured value rather than a fixed
+#: percentage. Non-circular by construction: the seed is where optimisation
+#: *starts*, not what the candidate is judged against, so nothing about the
+#: control leaks into how the candidate is built (NORTH-STAR 6 lists that leak
+#: as an open circularity problem, and this avoids it).
+#:
+#: MEASURED, and it is not the better default. Real machine, six trials'
+#: converging rungs (2026-07-30), seed-baseline vs a fixed `< 3`:
+#:
+#:   bound respected     2/4  vs  3/4
+#:   EFL still converged 2/4  vs  2/4
+#:   best-case RMS spot  445  vs  70 um   (US-20240201471-A1-e4)
+#:
+#: CODE V's AUT constraints are not hard guarantees: when a constraint is
+#: infeasible against the others it is simply left active and violated rather
+#: than raising. A tighter bound therefore conflicts with the EFL constraint
+#: more often, and both end up unsatisfied -- US-12210142-B2-e1 overshot its
+#: 1.119% seed value by 2x, US-20250370227-A1-e12 by 4x.
+#:
+#: Neither bound unlocks P2. The optimiser spends whatever allowance it is
+#: given (`< 3` lands on exactly 3.00, `< 10` on exactly 10.00), so a fixed 3%
+#: parks candidates at 3% while the controls measure 0.28-1.98% and the
+#: distortion criterion is lost anyway. Hence: both modes ship, neither is a
+#: default, and the bound stays a per-run parameter until evidence shows a
+#: value that actually wins.
+SEED_BASELINE_DISTORTION = -1.0
+
+
 def build_codev_target_sequence(
     *,
     source_zmx: Path | str,
@@ -699,7 +727,7 @@ def build_codev_target_sequence(
         # A zero or negative weight would silently neuter the operand rather
         # than disable it -- if you mean off, pass None.
         _validate_positive(distortion_weight, "distortion_weight")
-    if distortion_constraint_pct is not None:
+    if distortion_constraint_pct is not None and distortion_constraint_pct != SEED_BASELINE_DISTORTION:
         _validate_positive(distortion_constraint_pct, "distortion_constraint_pct")
     if distortion_weight is not None and distortion_constraint_pct is not None:
         # Both forms declare the same operand name. The manual warns that giving
@@ -773,9 +801,14 @@ def build_codev_target_sequence(
         # 3.00 and `< 10` on exactly 10.00, so the bound *is* the output.
         #
         # Default stays None: it changes what AUT converges to.
+        bound = (
+            f"{_fmt_number(distortion_constraint_pct)}"
+            if distortion_constraint_pct != SEED_BASELINE_DISTORTION
+            else "^seed_baseline_max_distortion_pct"
+        )
         aut_lines += [
             "  @atelier_distortion == @dstpct(1)",
-            f"  @atelier_distortion < {_fmt_number(distortion_constraint_pct)}",
+            f"  @atelier_distortion < {bound}",
         ]
     elif distortion_weight is not None:
         # Distortion is one of the three metrics P2 judges (NORTH-STAR §1.1) and
