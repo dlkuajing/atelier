@@ -105,10 +105,12 @@ class CodeVTorRunResult:
 
 
 def _default_tor_runner(command: list[str], **kwargs: Any) -> Any:
+    idle = kwargs.get("idle_timeout")
     process, stdout, stderr, duration = run_codev_process(
         command,
         work_dir=Path(kwargs["cwd"]),
         timeout_seconds=float(kwargs["timeout"]),
+        idle_timeout_seconds=float(idle) if idle is not None else None,
     )
     return type(
         "CodeVTorProcessResult",
@@ -129,6 +131,11 @@ def run_codev_tor(
     mtf_azimuth_deg: float = 90.0,
     executable: Path | str | os.PathLike[str] = DEFAULT_CODEV_EXECUTABLE,
     timeout_seconds: float = 120.0,
+    #: Kill a TOR run that has stopped producing output, without waiting for the
+    #: hard timeout. TOR is the most expensive stage in a P2 trial (51 minutes
+    #: measured on one trial, 2026-07-29), so a zombie here costs the most.
+    #: ``None`` keeps the pre-watchdog behaviour.
+    idle_timeout_seconds: float | None = None,
     runner: Callable[..., Any] = _default_tor_runner,
 ) -> CodeVTorRunResult:
     """Build and run the two-export TOR contract; return codes 0 and 1 are normal."""
@@ -170,6 +177,7 @@ def run_codev_tor(
         [str(Path(executable)), "/B", sequence_path.name],
         cwd=work,
         timeout=timeout_seconds,
+        idle_timeout=idle_timeout_seconds,
     )
     duration = time.monotonic() - started
     returncode = int(process.returncode)

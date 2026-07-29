@@ -746,3 +746,43 @@ def test_a_budget_skipped_tolerance_is_named_not_merely_absent() -> None:
     # The trial keeps its P2 verdict: the three metrics were measured.
     assert summary["judged"] == 1
     assert "budget_exhausted" in render(summary)
+
+
+# ---------------------------------------------------------------------------
+# Idle watchdog coverage: it landed for the optimiser only (2026-07-29)
+# ---------------------------------------------------------------------------
+
+
+def test_the_probe_runs_under_the_idle_watchdog(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Two probes per trial, one per side -- a stalled one burned its whole timeout."""
+    from scripts.p2_crosssource_trial import IDLE_TIMEOUT_SECONDS, measure_image_quality
+
+    seen: dict[str, object] = {}
+
+    class _Batch:
+        data = dict(HEALTHY)
+
+    def fake_batch(**kwargs: object) -> object:
+        seen.update(kwargs)
+        return _Batch()
+
+    monkeypatch.setattr("app.core.engines.codev_batch.run_codev_batch", fake_batch)
+    monkeypatch.setattr(
+        "app.core.engines.zmx_import_prep.stage_zmx_for_codev",
+        lambda *a, **k: tmp_path / "staged.zmx",
+    )
+    source = tmp_path / "src.zmx"
+    source.write_text("stub", encoding="utf-8")
+    measure_image_quality(source_zmx=source, work_dir=tmp_path / "w", tag="candidate")
+    assert seen["idle_timeout_seconds"] == IDLE_TIMEOUT_SECONDS
+
+
+def test_every_codev_stage_in_a_trial_names_the_watchdog() -> None:
+    """A stage added later without it is the failure this test exists to catch.
+
+    Source-level rather than behavioural on purpose: the tolerance and optimise
+    stages both need a real CODE V to exercise, and the thing worth pinning is
+    that no call site is left without the argument.
+    """
+    source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
+    assert source.count("idle_timeout_seconds=IDLE_TIMEOUT_SECONDS") >= 3

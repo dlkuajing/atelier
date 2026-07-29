@@ -369,6 +369,7 @@ def measure_image_quality(
     work_dir: Path | str,
     tag: str,
     timeout_seconds: float = 180.0,
+    idle_timeout_seconds: float | None = IDLE_TIMEOUT_SECONDS,
 ) -> ImageQuality:
     """Import one ZMX and read the three P2 metrics back out of CODE V."""
 
@@ -393,6 +394,11 @@ def measure_image_quality(
         result_path=result_path,
         work_dir=work_dir,
         timeout_seconds=timeout_seconds,
+        # Same zombie mode as the optimiser: CODE V can stop computing after a
+        # ray error and never exit. The probe was left without the watchdog when
+        # it landed for the optimiser, so a stalled probe still burned its whole
+        # hard timeout -- twice per trial, once per side.
+        idle_timeout_seconds=idle_timeout_seconds,
         expected_schema=PROBE_RESULT_SCHEMA,
         required_keys=_PROBE_REQUIRED_KEYS,
         allow_nonzero_ok_result=True,
@@ -794,6 +800,7 @@ def run_trial(
                 work_dir=work / f"measure_{side}",
                 tag=side,
                 timeout_seconds=timeout_seconds,
+                idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
             )
         except CodeVBatchError as exc:
             record[f"{side}_probe_error"] = {"kind": exc.kind, "detail": exc.message}
@@ -916,6 +923,11 @@ def _tolerance_pair(
                 monte_carlo=TorMonteCarlo(TOLERANCE_TRIALS),
                 metric="rms",
                 timeout_seconds=timeout_seconds,
+                # The most expensive stage in a trial (51 minutes measured on one
+                # trial, 2026-07-29), so a zombie here costs more than anywhere
+                # else in the chain -- and it was the one stage still running
+                # without the watchdog.
+                idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
             )
         except (CodeVBatchError, OSError, ValueError) as exc:
             out[side] = {"error": f"{type(exc).__name__}: {exc}"[:400]}
