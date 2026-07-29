@@ -147,4 +147,9 @@ jobs:
           # 实测 1083 行 -> 默认 xargs 产出 1358 个参数，-d 换行 产出 1083 个。
           # -x: 参数超长时宁可报错也不静默分批（分批会把一片拆成多次 pytest 调用、
           # 各出一份 summary）。单片实测 112KB，远低于 2MB ARG_MAX。
-          xargs -x -d '\n' -a /tmp/shard.txt uv run pytest -q --durations=25 -m "not real_machine"
+          #
+          # --timeout: 单条测试上限，把"某片挂满一小时、日志里什么都没有"变成
+          # "某条测试超时 + 一份栈"。1800s 高于已知最慢的单条（1027s），
+          # 所以正常的慢测试不受影响；--timeout-method=thread 跨平台可用。
+          xargs -x -d '\n' -a /tmp/shard.txt uv run pytest -q --durations=25 \
+            --timeout=1800 --timeout-method=thread -m "not real_machine"
