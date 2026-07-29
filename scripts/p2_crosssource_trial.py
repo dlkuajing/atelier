@@ -915,10 +915,19 @@ def run_trial(
     preferred = standard.get("preferred")
     record["preferred_config"] = preferred
     record["preferred_reason"] = standard.get("preferred_reason")
+    # Both configs, always -- not only when neither could be preferred.
+    #
+    # `_select_preferred` picks best-of-2 on `post_aut.max_rms_spot_diameter_um`,
+    # and RMS spot is **one of the three metrics P2 judges**: choosing on the
+    # judged quantity is selection bias, and the comparison also ignores that the
+    # two arms may have been optimised at different `autovig.edge_used` (a harder
+    # clip is a narrower pupil, which lowers RMS for free). Changing the selection
+    # rule alters what the headline means and wants a real-machine A/B, so this
+    # records what was chosen over what -- disclosure now, rule change later.
+    record["configs"] = {k: _config_summary(v) for k, v in standard.get("configs", {}).items()}
     if preferred is None:
         record["verdict"] = "unmeasurable"
         record["blocked_at"] = "optimize_no_preferred"
-        record["configs"] = {k: _config_summary(v) for k, v in standard.get("configs", {}).items()}
         record["elapsed_s"] = round(time.time() - started, 1)
         return record
 
@@ -1118,9 +1127,26 @@ def _relative_cost(candidate_zmx: Path, control_zmx: Path) -> dict[str, object] 
 
 
 def _config_summary(config: object) -> dict[str, object]:
+    """What each optimiser arm produced, enough to audit which one was picked.
+
+    ``autovig.edge_used`` and ``post_aut.max_rms_spot_diameter_um`` are the two
+    that make the choice auditable: the selection is made on the RMS figure --
+    itself one of the three judged metrics -- without regard to the pupil clip the
+    arm needed to get there.
+    """
+
     if not isinstance(config, dict):
         return {"unexpected": repr(config)[:200]}
-    keep = ("error", "skipped", "aut_converged", "autovig.converged", "autovig.trace")
+    keep = (
+        "error",
+        "skipped",
+        "aut_converged",
+        "autovig.converged",
+        "autovig.trace",
+        "autovig.edge_used",
+        "efl_target_deviation_pct",
+        "post_aut.max_rms_spot_diameter_um",
+    )
     return {k: config[k] for k in keep if k in config}
 
 

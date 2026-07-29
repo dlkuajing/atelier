@@ -1043,3 +1043,45 @@ def test_the_rebuilt_seed_filename_is_code_v_safe(
         seen["source"].stem + "_target002837_vig0000_optimized.zmx"
     )
     ensure_buf_exp_safe_filename(derived, role="optimized_zmx_path")
+
+
+def test_both_optimiser_arms_are_always_recorded_not_only_on_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`_select_preferred` chooses on RMS spot -- a judged metric -- and ignores
+    the pupil clip each arm needed. Until the rule changes, the record must at
+    least show what was chosen over what."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    configs = {
+        "asphere": {
+            "aut_converged": "1",
+            "autovig.edge_used": "0",
+            "post_aut.max_rms_spot_diameter_um": "75.08",
+            "optimized_zmx_path": None,
+        },
+        "both": {
+            "aut_converged": "1",
+            "autovig.edge_used": "0.3",
+            "post_aut.max_rms_spot_diameter_um": "43.77",
+            "optimized_zmx_path": None,
+        },
+    }
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard",
+        lambda **k: {"preferred": "both", "preferred_reason": "both wins on RMS", "configs": configs},
+    )
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+
+    assert record["preferred_config"] == "both"
+    assert set(record["configs"]) == {"asphere", "both"}
+    # The two numbers that make the choice auditable.
+    assert record["configs"]["both"]["autovig.edge_used"] == "0.3"
+    assert record["configs"]["asphere"]["autovig.edge_used"] == "0"
+    assert record["configs"]["both"]["post_aut.max_rms_spot_diameter_um"] == "43.77"
+    # The winning arm was clipped harder than the loser -- exactly the confound
+    # the disclosure exists to make visible.
+    assert float(record["configs"]["both"]["autovig.edge_used"]) > float(
+        record["configs"]["asphere"]["autovig.edge_used"]
+    )
