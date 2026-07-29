@@ -16,8 +16,10 @@ Two real-design quirks are handled here (verified during ingest):
 
 from __future__ import annotations
 
+import concurrent.futures
 import contextlib
 import json
+import logging
 import math
 import re
 import threading
@@ -140,6 +142,8 @@ from app.core.optical_sample import (
 )
 from app.core.zmx_ingest import ZMX_AMMO_DIR, regularize_fields_to_angle
 from app.core.zmx_materials import _canon
+
+logger = logging.getLogger(__name__)
 
 # Generated case JSON lives under the backend root: core -> app -> <root>/data.
 CASES_DIR = Path(__file__).resolve().parents[1] / "data" / "optical_cases"
@@ -998,6 +1002,53 @@ def cases_for_scenario(scenario: Scenario) -> list[OpticalSampleData]:
     return [
         c for c in load_case_library() if c.metadata is not None and c.metadata.scenario in allowed
     ]
+
+
+#: Deadline for the optional diagnostic probes `match_case` runs (full-field
+#: recovery, edge-field stability). Both go through Optiland MTF, which is known to
+#: hang on a minority of this corpus, and both are reached from the
+#: `/api/optical/match` request handler -- so an unbounded probe is an unbounded
+#: request. A healthy `compute_mtf` is sub-second (see `aberration.compute_mtf`) and
+#: each probe runs a handful of them, so this is roughly an order of magnitude of
+#: headroom: it can only fire on a hang, never on a slow-but-working probe.
+#:
+#: This is a containment bound, not a quality threshold: nothing about the routing
+#: result depends on its value, only whether an *optional* diagnostic is present.
+#:
+#: Value reuses `EDGE_SCAN_TIMEOUT_S`'s measured calibration (2026-07-10, 8-seed
+#: sample: healthy 5-point scans finish in 1.5-3.3s) rather than inventing a second
+#: number -- one of the two probes bounded here *is* that scan.
+FULL_FIELD_PROBE_TIMEOUT_SEC = EDGE_SCAN_TIMEOUT_S
+
+
+def _bounded_probe(probe, *args):
+    """Run a diagnostic probe with a deadline; return ``()`` if it does not finish.
+
+    Containment contract, same shape as `batch_runner._run_engine_once` documents:
+    Python cannot forcibly kill the worker thread, so a timed-out probe keeps
+    running in the background. That is harmless here because the probe is pure
+    computation over a private in-memory `Optic` clone -- it writes nothing, and its
+    eventual result is simply never observed. `shutdown(wait=False)` is deliberate;
+    the context-manager form would block on the un-killable thread and defeat the
+    deadline.
+
+    An empty result is already a supported state for both callers: the diagnostic is
+    ``| None`` and the scan is a possibly-empty sequence. So a hang degrades the
+    response to "no diagnostic" rather than hanging the request.
+    """
+
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    try:
+        return pool.submit(probe, *args).result(timeout=FULL_FIELD_PROBE_TIMEOUT_SEC)
+    except concurrent.futures.TimeoutError:
+        logger.warning(
+            "diagnostic_probe_timeout",
+            extra={"probe": getattr(probe, "__name__", repr(probe)),
+                   "timeout_sec": FULL_FIELD_PROBE_TIMEOUT_SEC},
+        )
+        return ()
+    finally:
+        pool.shutdown(wait=False)
 
 
 def _norm_delta(target: float, value: float, lo: float, hi: float) -> float:
@@ -4325,8 +4376,21 @@ def match_case(
         best_partial_rms_delta = merit_optimization_probe.rms_improvement_um
         if best_partial_rms_delta is None:
             best_partial_rms_delta = max(rms_deltas) if rms_deltas else None
+        # Both probes below compute Optiland MTF, and Optiland is known to hang
+        # on a minority of this corpus (the trace census had to run each case in
+        # its own subprocess for exactly this reason). `match_case` is reached from
+        # the `/api/optical/match` request handler, so an unbounded probe here is
+        # an unbounded HTTP request.
+        #
+        # Measured 2026-07-29: CI shard 2 sat at the job timeout with the stack
+        # `optical.py::match -> _match_case_for_request -> match_case ->
+        # _build_full_field_recovery_diagnostic -> protected_full_field_recovery_probe
+        # -> _full_field_recovery_trial -> _verify_probe_optic -> _mtf_with_fallback
+        # -> compute_mtf`. Nothing on that path had a time bound; "protected" in the
+        # probe's name refers to restoring the perturbed optic, not to a deadline.
         recovery_trials = list(
-            protected_full_field_recovery_probe(
+            _bounded_probe(
+                protected_full_field_recovery_probe,
                 best.metadata.source_zmx,
                 best.metadata.fov_deg,
                 max_total_track_mm,
@@ -4337,7 +4401,8 @@ def match_case(
             )
         )
         edge_field_scan = list(
-            protected_edge_field_stability_scan(
+            _bounded_probe(
+                protected_edge_field_stability_scan,
                 best.metadata.source_zmx,
                 best.metadata.fov_deg,
             )
@@ -4527,7 +4592,11 @@ def match_case(
                 full_field_recovery_diagnostic.highest_scanned_stable_field_frac,
                 full_field_recovery_diagnostic.edge_field_cliff_frac,
             )
-        scan = protected_edge_field_stability_scan(
+        # Same deadline as the two probes above, and for a stronger reason: this one
+        # runs inside a loop over sibling cases, so an unbounded scan here is an
+        # unbounded request multiplied by the sibling count.
+        scan = _bounded_probe(
+            protected_edge_field_stability_scan,
             case.metadata.source_zmx,
             case.metadata.fov_deg,
         )
