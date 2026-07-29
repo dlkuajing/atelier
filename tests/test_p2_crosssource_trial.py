@@ -339,3 +339,43 @@ def test_case_index_supplies_every_field_the_spec_needs() -> None:
     required = {"case_id", "source_zmx", "efl_mm", "fnum", "fov_deg", "image_height_mm", "n_pieces"}
     assert required <= set(index[0])
     assert all(required <= set(record) for record in index)
+
+
+def test_the_comparator_reports_tolerance_yield_as_the_fourth_piece() -> None:
+    """Not built ahead of a consumer: the P2 comparator emits it per trial."""
+    from pathlib import Path
+
+    source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
+    assert '_tolerance_pair(' in source
+    assert 'record["tolerance"]' in source
+
+
+def test_both_sides_get_the_same_tolerance_table() -> None:
+    """NORTH-STAR §3's 「表错了两边一起错，排序不变」 only holds if the table is
+    literally the same object for candidate and control, so there is one module
+    constant and no per-side parameter."""
+    import inspect
+
+    import scripts.p2_crosssource_trial as trial
+
+    src = inspect.getsource(trial._tolerance_pair)
+    # one loop over both sides, one table constant referenced inside it
+    assert 'for side, zmx in (("candidate", candidate_zmx), ("control", control_zmx))' in src
+    assert src.count("TorToleranceTable(TOLERANCE_COMMANDS") == 1
+    assert inspect.signature(trial._tolerance_pair).parameters.keys() == {
+        "candidate_zmx", "control_zmx", "work_dir", "timeout_seconds"
+    }
+
+
+def test_the_tolerance_table_is_declared_uncalibrated() -> None:
+    """It is an order-of-magnitude starter set, not a manufacturing budget."""
+    import scripts.p2_crosssource_trial as trial
+
+    assert trial._tolerance_pair.__doc__
+    out_keys = {"tolerance_commands", "trials", "yield_threshold_waves", "calibrated"}
+    from pathlib import Path
+
+    source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
+    for key in out_keys:
+        assert f'"{key}"' in source
+    assert '"calibrated": False' in source

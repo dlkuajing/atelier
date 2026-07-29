@@ -17,6 +17,11 @@ class TorYieldPolicy:
     semantics_ratified: bool
     semantics_evidence: str
     max_saturation_fraction: float | None = None
+    #: Ceiling on the fraction of samples allowed to fall outside TOR's linear
+    #: model before the yield is refused outright. Disclosure is not a licence
+    #: to report a yield derived from a handful of survivors, so a ratified
+    #: policy must state this explicitly -- there is deliberately no default.
+    max_out_of_model_fraction: float | None = None
 
     def __post_init__(self) -> None:
         if not math.isfinite(self.threshold):
@@ -25,6 +30,10 @@ class TorYieldPolicy:
             raise ValueError("ratified policy requires semantics_evidence")
         if self.semantics_ratified and self.max_saturation_fraction is None:
             raise ValueError("ratified policy requires max_saturation_fraction")
+        if self.semantics_ratified and self.max_out_of_model_fraction is None:
+            raise ValueError("ratified policy requires max_out_of_model_fraction")
+        if self.max_out_of_model_fraction is not None and not 0 <= self.max_out_of_model_fraction <= 1:
+            raise ValueError("max_out_of_model_fraction must be in [0, 1]")
         if self.max_saturation_fraction is not None and not 0 <= self.max_saturation_fraction <= 1:
             raise ValueError("max_saturation_fraction must be in [0, 1]")
 
@@ -38,6 +47,13 @@ class TorYieldResult:
     saturation_fraction: float | None
     provenance: str
     reason: str
+    #: Samples dropped because at least one of their readings sat on the
+    #: metric's ideal value -- TOR's linear OPD model extrapolated past the
+    #: bound and clamped. Never silently absorbed: ``yield_fraction`` is
+    #: computed over ``trials`` (the judged samples), and this pair is what
+    #: makes that denominator honest.
+    out_of_model_samples: int = 0
+    out_of_model_fraction: float = 0.0
 
 
 UNRATIFIED_TOR_YIELD_POLICY = TorYieldPolicy(
@@ -108,30 +124,54 @@ def compute_mc_yield(result: TorParseResult, policy: TorYieldPolicy) -> TorYield
         fields.add(key)
     if len(samples) != result.declared_trials or any(set(values) != fields for values in samples.values()):
         return TorYieldResult("unavailable", None, {}, 0, None, provenance, "TOR MC sample/field coverage is malformed")
-    # Fail closed on impossible readings *before* scoring, and unconditionally --
-    # deliberately not behind max_saturation_fraction. That knob tolerates a
-    # fraction of bound-sitting samples, which is defensible for genuine MTF
-    # saturation but never for a reading that cannot physically occur. The
-    # contamination is not even direction-neutral: under direction="max" a fake
-    # 0.0 passes every threshold and *inflates* the yield. One impossible
-    # reading also means the evaluation chain emitted a non-measurement, so the
-    # remaining samples have no claim to being trustworthy either.
-    impossible = ideal_reading_count(result, policy.direction)
-    if impossible:
+    # TOR models the change in OPD linearly, and says so: 「appropriate only
+    # when the tolerance changes cause a small change in performance」
+    # (Tolerancing.pdf, "Limitations of the Linear Model"). At realistic mobile
+    # tolerances that extrapolation runs past the metric's bound on some samples
+    # and is clamped -- 0.0 waves RMS, or 1.0 MTF. Measured across 26 real runs
+    # (2026-07-29), the rate tracks how much headroom a field has: 11.7% at the
+    # field with the smallest nominal RMS, 4.4%, then 2.9%. That gradient is the
+    # signature; these are not trace failures.
+    #
+    # Ratified 2026-07-29: report the yield over the samples that *are* inside
+    # the model, and disclose the rest. A whole sample is dropped when any one of
+    # its fields is out of model -- a build cannot be called passing while one of
+    # its fields is unmeasurable. Dropped samples count as neither pass nor fail,
+    # which is why the fraction has to travel with the number.
+    ideal = _IDEAL_READING.get(policy.direction)
+    out_of_model = {
+        sample for sample, values in samples.items()
+        if ideal is not None and any(value == ideal for value in values.values())
+    }
+    out_fraction = len(out_of_model) / len(samples)
+    if policy.max_out_of_model_fraction is not None and out_fraction > policy.max_out_of_model_fraction:
         return TorYieldResult(
             "unavailable", None, {}, 0, saturation, provenance,
-            f"{impossible} TOR MC reading(s) sit exactly on the metric's ideal value "
-            f"({_IDEAL_READING[policy.direction]:g}); a perturbed system cannot be perfect",
+            f"{len(out_of_model)}/{len(samples)} samples fall outside TOR's linear model "
+            f"({out_fraction:.6g} > policy maximum {policy.max_out_of_model_fraction:.6g})",
+            len(out_of_model), out_fraction,
+        )
+    judged = {s: v for s, v in samples.items() if s not in out_of_model}
+    if not judged:
+        return TorYieldResult(
+            "unavailable", None, {}, 0, saturation, provenance,
+            "every TOR MC sample fell outside the linear model",
+            len(out_of_model), out_fraction,
         )
 
     def passes(value: float) -> bool:
         return value >= policy.threshold if policy.direction == "min" else value <= policy.threshold
-    per_field = {f"z{z}:f{f}": sum(passes(s[(z, f)]) for s in samples.values()) / len(samples) for z, f in sorted(fields)}
-    overall = sum(all(passes(value) for value in sample.values()) for sample in samples.values()) / len(samples)
+    per_field = {f"z{z}:f{f}": sum(passes(s[(z, f)]) for s in judged.values()) / len(judged) for z, f in sorted(fields)}
+    overall = sum(all(passes(value) for value in sample.values()) for sample in judged.values()) / len(judged)
     assert policy.max_saturation_fraction is not None
     if saturation is not None and saturation > policy.max_saturation_fraction:
         return TorYieldResult(
             "unavailable", None, {}, 0, saturation, provenance,
             f"TOR MC saturation_fraction {saturation:.6g} exceeds policy maximum {policy.max_saturation_fraction:.6g}",
+            len(out_of_model), out_fraction,
         )
-    return TorYieldResult("measured", overall, per_field, len(samples), saturation, provenance, "computed from complete TOR MC rows")
+    return TorYieldResult(
+        "measured", overall, per_field, len(judged), saturation, provenance,
+        f"computed over {len(judged)}/{len(samples)} samples inside TOR's linear model",
+        len(out_of_model), out_fraction,
+    )
