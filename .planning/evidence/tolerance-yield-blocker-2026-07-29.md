@@ -1,8 +1,12 @@
 # 四件套最后一件（公差良率）的拦路虎已定位到行（2026-07-29）
 
 **一句话**：TOR 真机管线**跑通了**，MC 侧格式**完全吻合**，卡点是
-**PER 解析器认不出真机导出的表头**。顺带在真机 MC 数据里逮到
+**`_parse_per` 只支持 `metric='mtf'` 变体**——而 `run_codev_tor` 接受
+`metric='rms'` 并产出它解析不了的表头。顺带在真机 MC 数据里逮到
 **第 10 例「退化值 = 理想读数」**。
+
+> ⚠️ **本文首版把这条写成「PER 解析器认不出真机导出的表头」，那个说法太宽、
+> 会误导下一任去改错地方。** 实测更正见文末「更正记录」。
 
 ## 真机跑批结果
 
@@ -82,3 +86,39 @@ comp  = TorCompensators(('CMP DLZ SI',), 'image-plane focus only',
 **踩过的坑**：`CMP THI S16` 是错的——CODE V 报 `ERROR - Expecting tolerance`，
 该位置要的是公差类型（`DLZ`）不是 `THI`。`DLR` 在空气面会被跳过（只是 warning，不致命）。
 产物在 `D:/atelier-stagec-runs/tor-probe2/`（仓库外）。
+
+
+## 更正记录：不是「认不出真机表头」，是「只支持 MTF 变体」
+
+首版结论过宽。补跑 `metric='mtf'` 后拿到决定性证据：
+
+| metric | TOR 是否跑完 | 导出 | 解析 |
+|---|---|---|---|
+| `rms` | ✅ 跑完 | ✅ PER+MC 都生成 | ❌ PER 表头无 `Frequency`/`Azimuth` 两列 |
+| `mtf` | ❌ **跑不完** | ❌ 无 | — |
+
+**`_parse_per` 期望的表头是**：
+
+```python
+["Eval Zoom","Eval Field","X","Y","Frequency","Azimuth","Weight","Design","Criterion"]
+```
+
+`Frequency`/`Azimuth` **只有 MTF 变体才有**——RMS 波前误差没有空间频率与方位角，
+CODE V 在那两列输出空白。**所以解析器不是「读不懂真机」，
+而是只为 MTF 写的，却被一个接受 `metric='rms'` 的 API 喂了 RMS 输出。**
+
+**这仍是真缺陷**，但形状不同：是 **API 接受的入参空间 > 解析器支持的空间**，
+修法是「让 `_parse_per` 按 metric 走两套列布局」，**不是**「重写它去认真机格式」。
+
+### 另一条独立事实：这颗 seed 做不了 MTF-metric TOR
+
+`metric='mtf'` @ 100 lp/mm 在 `US-12124006-B2-e2` 上直接终止：
+
+```
+WARNING - This system is not isoplanatic at field(s) 2.
+ERROR - No rays traced in position 1, field 2 - RUN TERMINATED
+CODE V> BUF EXP B1 ... ERROR - Buffer number 1 does not exist
+```
+
+即**换 metric 绕不开**：这颗 seed 的第 2 视场在该频率下追不出光线。
+下一任若要走 MTF 路线，得先换一颗能在 100 lp/mm 出数的 seed 做语义 ratify。
