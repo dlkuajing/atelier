@@ -194,3 +194,40 @@ def test_sides_checked_counts_sides_not_recomputes(tmp_path: Path) -> None:
     result = recheck(run_dir=run, worker=_arm_echoing_worker(tmp_path), timeout_s=30)
     assert result["sides_checked"] == 1  # only the candidate zmx exists on disk
     assert result["recomputes"] == 2  # one per arm
+
+
+def test_the_recipe_arm_uses_the_declared_field_set_and_the_reported_arm_does_not() -> None:
+    """Source-level, because the branch lives inside the worker string.
+
+    Measured on US-11906710-B2-e2: CODE V measures the 2 declared fields (0.0 and
+    39.0 deg) while the recheck's Optiland side was measuring 4 (0, 19.5, 27.3, 39.0)
+    via MTF_CANONICAL_FIELD_FRACS. For a max-over-fields metric the two extra mid-fields
+    can only raise Optiland's answer, so part of the first P4 pass's "the engines
+    disagree" was our own recheck measuring a field set CODE V never sees. The recipe
+    arm has to honour what the recipe states ("every field declared in the ZMX").
+    """
+
+    from scripts.p4_independent_recheck import _WORKER
+
+    assert "_use_declared_fields" in _WORKER
+    # Gated on the recipe arm only: the reported arm must keep reproducing what our own
+    # Optiland pipeline says, canonical fractions included.
+    assert "_use_declared_fields(optic, text) if arm == 'recipe' else False" in _WORKER
+    # The canonical substitution must remain as the fallback, not be deleted -- a
+    # real-image-height file aimed at its declared heights makes Optiland solve an
+    # inverse that does not terminate on a multi-element design.
+    assert "regularize_fields_to_angle(optic, 2.0 * half)" in _WORKER
+    # And the row must say which set was used, or the arms are indistinguishable.
+    assert "out['field_set']" in _WORKER
+
+
+def test_the_worker_source_is_valid_python() -> None:
+    """The worker is a triple-quoted string, so a nested docstring silently truncates it
+    -- that happened once while writing the field-set fix. Parse it here rather than
+    discovering it in a subprocess that just exits non-zero."""
+
+    import ast
+
+    from scripts.p4_independent_recheck import _WORKER
+
+    ast.parse(_WORKER)

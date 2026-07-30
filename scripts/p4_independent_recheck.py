@@ -65,7 +65,7 @@ import json, math, sys, warnings
 warnings.simplefilter("ignore")
 sys.path.insert(0, sys.argv[1])
 from app.core.aberration import compute_mtf
-from app.core.engines.seed_field_rebuild import max_field_angle_deg
+from app.core.engines.seed_field_rebuild import max_field_angle_deg, read_field_profile
 from app.core.engines.zmx_import_prep import decode_zmx_text
 from app.core.zmx_ingest import load_normalized_zmx, regularize_fields_to_angle
 
@@ -81,7 +81,8 @@ if arm == "recipe":
 
     _ab._robust_clip_spot_data = lambda geometric_mtf: None
 
-half = max_field_angle_deg(decode_zmx_text(open(path, "rb").read())[0])
+text = decode_zmx_text(open(path, "rb").read())[0]
+half = max_field_angle_deg(text)
 optic = load_normalized_zmx(path)
 out = {"half_field_angle_deg": half, "arm": arm}
 out["efl_mm"] = float(optic.paraxial.f2())
@@ -89,8 +90,40 @@ try:
     out["f_number"] = float(optic.paraxial.FNO())
 except Exception:
     out["f_number"] = None
+# Set the optic to the ZMX's OWN angular fields instead of canonical fractions.
+# regularize_fields_to_angle clears every field and substitutes
+# MTF_CANONICAL_FIELD_FRACS = (0.0, 0.5, 0.7, 1.0) x half-FOV. Measured on
+# US-11906710-B2-e2: CODE V measures the 2 declared fields (0.0 and 39.0 deg) while
+# Optiland was measuring 4 (0, 19.5, 27.3, 39.0). For a max-over-fields metric the two
+# extra mid-fields can only raise Optiland's answer -- mid-field is often the worst --
+# so part of what the first P4 pass read as 'the engines disagree' was our own recheck
+# measuring a field set CODE V never sees. Returns True when the file's own angles
+# were used, False when they are unusable.
+def _use_declared_fields(optic, text):
+    profile = read_field_profile(text)
+    # field_type 0 is angular. For a real-image-height file the declared values are
+    # heights, and aiming at them makes Optiland solve an inverse that does not
+    # terminate on a multi-element design -- the reason the substitution exists at all.
+    if profile is None or profile.field_type != 0:
+        return False
+    angles = [abs(float(y)) for y in profile.y_fields]
+    if not angles or max(angles) <= 0.0:
+        return False
+    optic.set_field_type('angle')
+    optic.fields.fields.clear()
+    for angle in angles:
+        optic.add_field(y=angle)
+    try:
+        optic.ray_tracer.set_aiming('robust', max_iter=20)
+    except Exception:
+        pass
+    return True
+
 if half is not None:
-    regularize_fields_to_angle(optic, 2.0 * half)
+    used_declared = _use_declared_fields(optic, text) if arm == 'recipe' else False
+    if not used_declared:
+        regularize_fields_to_angle(optic, 2.0 * half)
+    out['field_set'] = 'declared' if used_declared else 'canonical_fractions'
     rms = [float(v) for v in compute_mtf(optic).rms_spot_radius_um_by_field]
     # Optiland's rms_spot_radius() is an RMS **radius**; CODE V's SPOTDATA
     # output(1) -- what @rmssum reports -- is an RMS **diameter**: the CODE V
