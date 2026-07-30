@@ -72,7 +72,12 @@ def test_a_leaf_script_yields_a_small_slice_not_the_whole_suite() -> None:
     tests = select_test_files(modules)
     all_tests = list((ROOT / "tests").rglob("test_*.py"))
     assert len(tests) < len(all_tests) / 4
-    assert {path.name for path in tests} == {"test_p2_crosssource_trial.py"}
+    assert {path.name for path in tests} == {
+        "test_p2_crosssource_trial.py",
+        # Reads IDLE_TIMEOUT_SECONDS and the calibration constants out of that
+        # script, so a change to it must re-run this too.
+        "test_p2_idle_timeout_calibration.py",
+    }
 
 
 def test_matching_is_by_import_not_substring() -> None:

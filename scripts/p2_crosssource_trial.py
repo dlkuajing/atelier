@@ -74,7 +74,45 @@ ZMX_DIR = ROOT / "data" / "zmx"
 #: Kill a CODE V rung that has produced no new output for this long. CODE V can
 #: stop computing after a ray error yet never exit; the hard timeout still bounds
 #: the run, this just stops paying it in full for a process that is already dead.
-IDLE_TIMEOUT_SECONDS = 60.0
+#:
+#: **Calibrated 2026-07-30 on the real machine** (the 60.0s this replaced was
+#: not -- its comment stated the watchdog's purpose and no measurement).
+#: Method and raw runs: `.planning/evidence/idle-watchdog-calibration-2026-07-30.md`,
+#: `scripts/codev_idle_gap_bench.py`, D:/atelier-stagec-runs/idle-gap-bench-20260730*.
+#: Completed runs cannot supply this number on their own -- each one finished with
+#: a gap under the bound by construction -- so the bench replays real rungs with
+#: the watchdog **watching but not killing**.
+#:
+#:   healthy rungs, n=8, 0.5s poll: worst inter-output gap **7.64s**
+#:     (range 2.03-7.64s over runs of 6.8-123.22s; the 117s rung logged 86 gaps,
+#:      mostly 0.5-2s -- CODE V writes its listing continuously, it does not
+#:      buffer the whole thing to the end)
+#:   parked rungs, n=3 (rungs the 60s bound had killed, incl. both configs of
+#:     the trial that motivated this): silent **581-596s** of a 600s window,
+#:     never resumed, never exited. They were genuinely dead, not slow.
+#:
+#: 150.0s clears two independent anchors:
+#:   * 19.6x the worst measured healthy gap;
+#:   * above the longest *complete* healthy rung on record (123.22s wall). A run's
+#:     duration is the theoretical ceiling on its largest gap, so this anchor
+#:     holds even if some unsampled seed/config did buffer its output to the end.
+#: It stays under the 180.0s default hard timeout on purpose: at or above it the
+#: watchdog can never fire and silently stops existing.
+#: `tests/test_p2_idle_timeout_calibration.py` pins both ends.
+#:
+#: Direction is deliberate. Too tight turns healthy work into `unmeasurable`,
+#: which is indistinguishable from a real failure and biases the North Star's
+#: main indicator; too loose costs wall clock only, and the hard timeout still
+#: bounds the run. Fail toward completing.
+IDLE_TIMEOUT_SECONDS = 150.0
+
+#: Worst inter-output gap measured on a healthy rung (see above). The bound must
+#: stay a wide multiple of this; the calibration test reads it from here.
+MEASURED_HEALTHY_MAX_GAP_SECONDS = 7.64
+
+#: Longest *complete* healthy rung measured, wall clock. An upper bound on that
+#: run's largest possible gap, so the watchdog must clear it too.
+MEASURED_LONGEST_HEALTHY_RUNG_SECONDS = 123.22
 CASE_INDEX = ROOT / "app" / "data" / "optical_cases" / "index.json"
 
 #: Same MTF sampling as the production tolerance block, so a number produced
@@ -627,6 +665,7 @@ def run_trial(
     *,
     out_dir: Path,
     timeout_seconds: float = 180.0,
+    idle_timeout_seconds: float | None = IDLE_TIMEOUT_SECONDS,
     rebuild_seed_field: bool = True,
 ) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
@@ -710,7 +749,8 @@ def run_trial(
             # measured trial nine such rungs each burned the full 300s timeout --
             # ~2700s of its 2735s wall clock. Cut those off by absence of output
             # progress, not by the error text (healthy runs print ray errors too).
-            idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
+            # Calibration of the bound itself: see IDLE_TIMEOUT_SECONDS.
+            idle_timeout_seconds=idle_timeout_seconds,
             emit_optimized_zmx=True,
         )
     except CodeVBatchError as exc:
@@ -1058,6 +1098,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--timeout", type=float, default=180.0)
     parser.add_argument(
+        "--idle-timeout",
+        type=float,
+        default=IDLE_TIMEOUT_SECONDS,
+        help=(
+            "kill a rung that has written nothing for this long; 0 disables the watchdog. "
+            "Runtime-configurable so the bound can be re-calibrated without a code edit "
+            "(see scripts/codev_idle_gap_bench.py)."
+        ),
+    )
+    parser.add_argument(
         "--no-field-rebuild",
         action="store_true",
         help=(
@@ -1123,6 +1173,7 @@ def main(argv: list[str] | None = None) -> int:
                 plan,
                 out_dir=out_dir,
                 timeout_seconds=args.timeout,
+                idle_timeout_seconds=args.idle_timeout or None,
                 rebuild_seed_field=not args.no_field_rebuild,
             )
             (out_dir / f"trial_{plan.control_case_id}.json").write_text(
