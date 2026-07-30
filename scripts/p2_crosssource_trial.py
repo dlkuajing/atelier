@@ -1206,6 +1206,90 @@ def _edge_used(record: Mapping[str, Any]) -> float | None:
         return None
 
 
+def _deliverable_pieces(record: Mapping[str, Any]) -> dict[str, bool]:
+    """Which of NORTH-STAR §1.1's four 交付物 pieces this trial actually produced.
+
+    「缺一不算交付」 is the criterion's own wording, so the headline is the all-four
+    count and the per-piece counts exist to say *which* piece is missing. Each test is
+    for the thing being present and usable, never merely for a key existing:
+
+    - 处方 ZMX: a path AND the file on disk. A recorded path to a file that is not
+      there is not a deliverable.
+    - 像质: all three judged metrics have a candidate reading. A withheld metric is
+      absent by design (the witness gates), and counting a partial set would report
+      exactly the flattering number those gates exist to refuse.
+    - 公差良率: a candidate-side yield fraction. An error or a skip is not a yield.
+    - 相对成本: a finite ratio.
+    """
+
+    candidate_zmx = record.get("candidate_zmx")
+    prescription = bool(candidate_zmx) and Path(str(candidate_zmx)).is_file()
+
+    metrics = record.get("metrics")
+    image_quality = isinstance(metrics, Mapping) and all(
+        isinstance(metrics.get(metric), Mapping)
+        and metrics[metric].get("candidate") is not None
+        for metric in P2_METRICS
+    )
+
+    tolerance = record.get("tolerance")
+    candidate_tolerance = tolerance.get("candidate") if isinstance(tolerance, Mapping) else None
+    yield_ok = isinstance(candidate_tolerance, Mapping) and isinstance(
+        candidate_tolerance.get("yield_fraction"), (int, float)
+    )
+
+    cost = record.get("relative_cost_index")
+    ratio = cost.get("ratio") if isinstance(cost, Mapping) else None
+    cost_ok = isinstance(ratio, (int, float)) and math.isfinite(float(ratio))
+
+    return {
+        "prescription_zmx": prescription,
+        "image_quality": image_quality,
+        "tolerance_yield": yield_ok,
+        "relative_cost": cost_ok,
+    }
+
+
+def _deliverable_completeness(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Criterion ③ over a run: how many trials produced all four pieces.
+
+    A `--skip-tolerance` run can never reach four by construction, so the result says
+    `not_assessable` and names the reason rather than reporting a zero that reads as a
+    failure. That distinction is the whole point: "we did not measure it" and "it did
+    not work" must not share a number.
+    """
+
+    per_piece: dict[str, int] = {}
+    complete = 0
+    for record in records:
+        pieces = _deliverable_pieces(record)
+        for name, ok in pieces.items():
+            per_piece[name] = per_piece.get(name, 0) + int(ok)
+        complete += int(all(pieces.values()))
+
+    skipped_by_request = sum(
+        1
+        for r in records
+        if isinstance(r.get("tolerance"), Mapping)
+        and r["tolerance"].get("skipped") == "cli_request"
+    )
+    assessable = skipped_by_request == 0
+    return {
+        "trials": len(records),
+        "per_piece": per_piece,
+        "all_four": complete if assessable else None,
+        "status": "measured" if assessable else "not_assessable",
+        "reason": (
+            None
+            if assessable
+            else (
+                f"tolerance skipped by request on {skipped_by_request}/{len(records)} trials; "
+                "四件套完整度 needs a run that measures the tolerance pair"
+            )
+        ),
+    }
+
+
 def _distinct_design_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
     """Distinct *designs* behind the trials, by prescription fingerprint.
 
@@ -1252,6 +1336,7 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
     budget_exhausted = verdicts.get("budget_exhausted", 0)
     seeds = {r["plan"]["seed_case_id"] for r in records if "plan" in r}
     designs = _distinct_design_counts(records)
+    deliverables = _deliverable_completeness(records)
     summary: dict[str, Any] = {
         "trials": len(records),
         "verdicts": verdicts,
@@ -1269,6 +1354,8 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
         "distinct_control_designs": designs["controls"],
         "distinct_seed_designs": designs["seeds"],
         "designs_unfingerprinted": designs["unfingerprinted"],
+        # NORTH-STAR criterion ③: 交付物四件套完整度（缺一不算交付）.
+        "deliverables": deliverables,
         "budget_exhausted": budget_exhausted,
         "tolerance_skipped_by_request": sum(
             1
@@ -1345,6 +1432,18 @@ def render(summary: dict[str, Any]) -> str:
         # prescriptions, so publication counts overstate independence.
         f"distinct CONTROL designs  {summary['distinct_control_designs']}",
         f"distinct SEED designs     {summary['distinct_seed_designs']}",
+        # Criterion ③. `all_four` is None on a run that skipped the tolerance pair --
+        # printed as the reason, never as a zero that would read as a failure.
+        "四件套 all four        "
+        + (
+            f"{summary['deliverables']['all_four']}/{summary['deliverables']['trials']}"
+            if summary["deliverables"]["all_four"] is not None
+            else f"not assessable ({summary['deliverables']['reason']})"
+        ),
+        "  per piece              "
+        + ", ".join(
+            f"{name}={count}" for name, count in sorted(summary["deliverables"]["per_piece"].items())
+        ),
     ]
     rate_all = summary["par_rate_over_all_trials"]
     rate_judged = summary["par_rate_over_judged"]

@@ -1085,3 +1085,115 @@ def test_both_optimiser_arms_are_always_recorded_not_only_on_failure(
     assert float(record["configs"]["both"]["autovig.edge_used"]) > float(
         record["configs"]["asphere"]["autovig.edge_used"]
     )
+
+
+# ---------------------------------------------------------------------------
+# Criterion ③: 交付物四件套完整度（缺一不算交付）
+# ---------------------------------------------------------------------------
+
+import scripts.p2_crosssource_trial as trial  # noqa: E402
+
+
+def _four_piece_record(tmp_path, **overrides):
+    zmx = tmp_path / "cand.zmx"
+    zmx.write_bytes(b"VERS 1\n")
+    record = {
+        "plan": {
+            "control_zmx": "c.zmx",
+            "seed_zmx": "s.zmx",
+            "control_case_id": "CTRL-1",
+            "seed_case_id": "SEED-1",
+        },
+        "candidate_zmx": str(zmx),
+        "metrics": {
+            "rms_spot_um": {"candidate": 4.0, "control": 5.0, "verdict": "par"},
+            "mtf_min": {"candidate": 0.5, "control": 0.4, "verdict": "par"},
+            "distortion_pct": {"candidate": 1.0, "control": 1.1, "verdict": "par"},
+        },
+        "tolerance": {"candidate": {"yield_fraction": 0.6}},
+        "relative_cost_index": {"ratio": 0.99},
+        "verdict": "par",
+    }
+    record.update(overrides)
+    return record
+
+
+def test_all_four_pieces_present_counts_as_delivered(tmp_path) -> None:
+    pieces = trial._deliverable_pieces(_four_piece_record(tmp_path))
+    assert pieces == {
+        "prescription_zmx": True,
+        "image_quality": True,
+        "tolerance_yield": True,
+        "relative_cost": True,
+    }
+
+
+def test_a_recorded_zmx_path_that_is_not_on_disk_is_not_a_deliverable(tmp_path) -> None:
+    """A path is a promise; the file is the deliverable."""
+    record = _four_piece_record(tmp_path, candidate_zmx=str(tmp_path / "absent.zmx"))
+    assert trial._deliverable_pieces(record)["prescription_zmx"] is False
+
+
+def test_one_withheld_metric_makes_image_quality_undelivered(tmp_path) -> None:
+    """Counting a partial metric set would report exactly the flattering number the
+    witness gates exist to refuse."""
+    record = _four_piece_record(tmp_path)
+    record["metrics"]["mtf_min"]["candidate"] = None
+    assert trial._deliverable_pieces(record)["image_quality"] is False
+
+
+@pytest.mark.parametrize(
+    "candidate_tolerance",
+    [
+        {"error": "CodeVBatchError: TOR produced no export"},
+        {},
+        None,
+        {"yield_fraction": None},
+        {"yield_fraction": "0.6"},  # a string is not a measurement
+    ],
+)
+def test_a_missing_or_unusable_yield_is_not_a_deliverable(tmp_path, candidate_tolerance) -> None:
+    record = _four_piece_record(tmp_path, tolerance={"candidate": candidate_tolerance})
+    assert trial._deliverable_pieces(record)["tolerance_yield"] is False
+
+
+@pytest.mark.parametrize("ratio", [None, float("inf"), float("nan"), "0.99"])
+def test_a_non_finite_cost_ratio_is_not_a_deliverable(tmp_path, ratio) -> None:
+    record = _four_piece_record(tmp_path, relative_cost_index={"ratio": ratio})
+    assert trial._deliverable_pieces(record)["relative_cost"] is False
+
+
+def test_a_skipped_tolerance_run_reports_not_assessable_not_zero(tmp_path) -> None:
+    """"We did not measure it" and "it did not work" must not share a number.
+
+    A `--skip-tolerance` phase-1 run cannot reach four by construction, so reporting
+    `all_four = 0` would read as a total failure of the deliverable chain.
+    """
+    records = [
+        _four_piece_record(tmp_path, tolerance={"skipped": "cli_request"}),
+        _four_piece_record(tmp_path, tolerance={"skipped": "cli_request"}),
+    ]
+    result = trial._deliverable_completeness(records)
+    assert result["status"] == "not_assessable"
+    assert result["all_four"] is None
+    assert "tolerance skipped by request on 2/2" in result["reason"]
+    # The other three pieces are still counted -- the run is not uninformative.
+    assert result["per_piece"]["prescription_zmx"] == 2
+    assert result["per_piece"]["relative_cost"] == 2
+    assert result["per_piece"]["tolerance_yield"] == 0
+
+
+def test_a_full_run_reports_a_measured_all_four_count(tmp_path) -> None:
+    """Negative control: with no request-skip, the count is a real measurement."""
+    good = _four_piece_record(tmp_path)
+    missing_cost = _four_piece_record(tmp_path, relative_cost_index={"ratio": None})
+    result = trial._deliverable_completeness([good, missing_cost])
+    assert result["status"] == "measured"
+    assert result["all_four"] == 1
+    assert result["per_piece"]["relative_cost"] == 1
+
+
+def test_the_summary_carries_the_deliverable_block(tmp_path) -> None:
+    summary = trial.summarise([_four_piece_record(tmp_path)])
+    assert set(summary["deliverables"]) == {"trials", "per_piece", "all_four", "status", "reason"}
+    assert "四件套" in trial.render(summary)
