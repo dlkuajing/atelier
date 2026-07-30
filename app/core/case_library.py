@@ -32,6 +32,7 @@ from typing import NamedTuple
 import numpy as np
 
 from app.core.aberration import MTFFieldData, MTFResult, compute_mtf
+from app.core.corpus_quality import case_rms_spot_um, rms_at_percentile, rms_percentile
 from app.core.engines.stagec_field import FieldTargetStatus, ResolvedFieldTarget
 from app.core.image_quality_floor import (
     IMAGE_QUALITY_FLOOR_MAX_RMS_UM as _IMAGE_QUALITY_FLOOR_MAX_RMS_UM,
@@ -158,17 +159,54 @@ _PLANE_RADIUS_SENTINEL = 1e9
 # telephoto thresholds) lives in lens_system alongside the Scenario enum so the
 # lightweight RAG store can share it without importing this heavy module.
 
-# Routing floor-violation thresholds. After the XASPHERE ingest fix the library
-# is image-quality healthy (max real RMS ~40 um, min-50lp/mm MTF >= ~0.2, floor
-# gap <= ~1.2); only the two genuinely-broken ingest seeds blow past these
-# (RMS ~1200/4700 um, floor gap ~12/47). Routing hard-penalises seeds beyond
-# these limits; everything else is decided by parameter proximity. These gate
-# routing seed selection only -- the review scorecard and optimizer/replay
-# gates keep the full continuous 200/250 lp/mm evidence.
-_SEED_ROUTING_MAX_RMS_UM = 100.0
+# Routing floor-violation thresholds. Routing hard-penalises seeds beyond these
+# limits; everything else is decided by parameter proximity. These gate routing
+# seed selection only -- the review scorecard and optimizer/replay gates keep the
+# full continuous 200/250 lp/mm evidence.
+#
+# The RMS half was rebuilt 2026-07-30 for two independent reasons
+# (.planning/evidence/stored-routing-quality-diverges-2026-07-30.md):
+#
+# 1. **It measured the wrong thing.** It compared `mtf.rms_spot_radius_um_by_field`
+#    -- an Optiland spot *radius* over whatever field fraction the ingest managed,
+#    and 94.3% of the corpus stopped at part of the field -- against a bound sized
+#    for CODE V's full-field *diameter*, which is what the P2 judgement reads.
+#    Across the 315 cases carrying both readings (both converted to diameter) the
+#    stored value understated CODE V by 1.72x at the median and 188x at the worst.
+#    RMS climbs steeply toward the field edge, so the understatement grows with how
+#    bad the edge is: the gate was blindest to exactly the seeds it exists to reject.
+#    `US-12436366-B2-e10` reads 447.60 um in CODE V and 2.38 um stored, which is how
+#    a lens that looks like one of the corpus's best walked through a 100 um bound.
+# 2. **The bound was sized against the wrong question.** The old 100.0 was set to
+#    block the two genuinely-broken ingest seeds (RMS ~1200/4700 um), not against
+#    what a seed has to compete with. The threshold is now the corpus median rank,
+#    read from the committed distribution, so no absolute number is invented here.
+#
+# The gate now reads the same quantity as the judgement, offline, via
+# `app.core.corpus_quality`; a seed with no full-field reading fails closed.
+_SEED_ROUTING_RMS_PERCENTILE = 50.0
 _SEED_ROUTING_MIN_MTF_50 = 0.08
 _SEED_ROUTING_FLOOR_GAP_LIMIT = 3.0
 _SEED_ROUTING_FIELD_TIEBREAK = 0.15
+
+
+@lru_cache(maxsize=1)
+def _seed_routing_max_rms_um() -> float:
+    """The RMS bound, resolved from the corpus rank rather than written down.
+
+    Kept as a function so the number stays traceable to a line in the committed
+    distribution: change the corpus, rebuild the artifact, and the gate moves with
+    what a seed actually has to compete with.
+
+    Known direction of failure, stated rather than guarded: a rank gate loosens if
+    the reference population gets worse -- ingest 500 bad lenses and p50 rises with
+    them. That is fail-*open*. It is accepted here because the alternative is another
+    absolute number nobody has measured, which is the mistake being corrected; the
+    protection is that `corpus_quality_distribution.json` carries its own n and
+    census sha256, so a shifted population is visible in the diff rather than silent.
+    """
+
+    return rms_at_percentile(_SEED_ROUTING_RMS_PERCENTILE)
 
 
 class ImageQualityFloorResult(NamedTuple):
@@ -1626,20 +1664,34 @@ def rank_seeds(
     def _seed_has_floor_violation(c: OpticalSampleData) -> bool:
         """Whether a seed is a *real* image-quality floor violation.
 
-        A violation means the mid-frequency MTF has collapsed or the spot
-        geometry has blown up (unusable optics). This is distinct from the
-        continuous 200/250 lp/mm floor-gap gradient: after the XASPHERE ingest
-        fix the whole library is image-quality healthy, and that gradient is
-        dominated by high-frequency geometric MTF which structurally favours
-        slow apertures (aperture physics, not a design defect). Routing must not
-        treat it as a gradient, so only genuine violations are detected here.
-        The full 200/250 lp/mm evidence stays in the review scorecard and the
-        optimizer promotion / replay gates (unchanged).
+        A violation means the seed's measured spot fails the corpus median, the
+        mid-frequency MTF has collapsed, or the floor gap has blown up. This is
+        distinct from the continuous 200/250 lp/mm floor-gap gradient, which is
+        dominated by high-frequency geometric MTF and so structurally favours slow
+        apertures (aperture physics, not a design defect). Routing must not treat
+        that as a gradient, so only the three checks below decide admission; the
+        full 200/250 lp/mm evidence stays in the review scorecard and the optimizer
+        promotion / replay gates (unchanged).
+
+        This docstring used to claim the library was image-quality healthy after the
+        XASPHERE ingest fix, on the strength of the stored readings. Measured against
+        CODE V over every declared field (2026-07-30) it is not: the corpus median is
+        10.23 um and its p90 is 400.65 um. The stored numbers that claim was built on
+        were half-field radii.
+
+        Caveat kept deliberately visible: the third check (`_seed_floor_gap`) still
+        feeds `IMAGE_QUALITY_FLOOR_MAX_RMS_UM` the stored half-field radius, i.e. the
+        old convention. That only makes it *miss* violations (understatement shrinks
+        the gap), never invent them, so it cannot reopen what the first check closed
+        -- but it is the same defect class and is tracked separately.
         """
         assert c.metadata is not None
-        rms_values = [v for v in c.mtf.rms_spot_radius_um_by_field if math.isfinite(v)]
-        max_rms = max(rms_values) if rms_values else None
-        if max_rms is None or max_rms > _SEED_ROUTING_MAX_RMS_UM:
+        # Fail closed on a missing reading. `None` means CODE V could not trace every
+        # declared field, i.e. the seed's edge performance is unmeasured -- and the
+        # stored per-case value that used to stand in for it is the very number this
+        # gate stopped trusting.
+        rms_um = case_rms_spot_um(c.metadata.case_id)
+        if rms_um is None or rms_um > _seed_routing_max_rms_um():
             return True
         if mtf_multiband_summary(c.mtf).min_50 < _SEED_ROUTING_MIN_MTF_50:
             return True
@@ -1648,13 +1700,26 @@ def rank_seeds(
 
     def _seed_quality_penalty(c: OpticalSampleData) -> float:
         assert c.metadata is not None
-        # Threshold gate, not a gradient: a real floor violation dominates the
-        # distance so a broken seed never wins over a healthy one (even an exact
-        # parameter match); healthy seeds are separated by parameter proximity
-        # with only a light full-field tiebreak.
+        # Threshold gate, not a gradient: a real floor violation outranks every
+        # healthy seed so a broken one never wins (even on an exact parameter
+        # match); healthy seeds are separated by parameter proximity with only a
+        # light full-field tiebreak.
         field_penalty = max(0.0, 1.0 - c.metadata.mtf_max_field_frac)
         if _seed_has_floor_violation(c):
-            return 1.0
+            # Rejects are ordered, not declared interchangeable. With a flat 1.0 the
+            # quality axis says nothing once every nearby seed violates, so the
+            # argmin falls to whichever *reject* matches parameters best. Measured
+            # 2026-07-30 on cross-brand pools: that handed a slot to a seed CODE V
+            # reads at 17358 um where the previous gate had picked a 443 um one --
+            # tightening the bound made the tail worse. The corpus rank is monotone
+            # in measured quality and invents no constant; flooring it at the gate's
+            # own rank keeps a seed rejected on MTF from re-entering on a good RMS,
+            # and an unmeasured seed stays the worst thing in the pool.
+            rms_um = case_rms_spot_um(c.metadata.case_id)
+            rank = rms_percentile(rms_um) if rms_um is not None else None
+            if rank is None:
+                return 1.0
+            return max(_SEED_ROUTING_RMS_PERCENTILE / 100.0, rank / 100.0)
         return _SEED_ROUTING_FIELD_TIEBREAK * field_penalty
 
     def _seed_spec_guard_penalty(c: OpticalSampleData) -> float:
