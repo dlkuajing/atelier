@@ -1368,3 +1368,121 @@ def test_provenance_never_raises_when_git_is_unavailable(monkeypatch) -> None:
     assert p["git_sha"] is None
     assert p["git_dirty"] is None
     assert p["flags"]["rebuild_seed_field"] is True
+
+
+# ---------------------------------------------------------------------------
+# Config selection audit: how much of the headline is best-of-2 on a judged metric
+# ---------------------------------------------------------------------------
+
+
+def _configs_record(*, asphere: dict, both: dict, preferred: str = "both") -> dict:
+    return {
+        "plan": {
+            "control_zmx": "c.zmx",
+            "seed_zmx": "s.zmx",
+            "control_case_id": "CTRL-1",
+            "seed_case_id": "SEED-1",
+        },
+        "configs": {"asphere": asphere, "both": both},
+        "preferred_config": preferred,
+    }
+
+
+def _cfg(*, converged: str, rms: str, fields: tuple[str, str] | None = ("2", "2")) -> dict:
+    out = {"aut_converged": converged, "post_aut.max_rms_spot_diameter_um": rms}
+    if fields is not None:
+        out["post_aut.rms_fields_ok"], out["post_aut.num_fields"] = fields
+    return out
+
+
+def test_a_choice_made_on_convergence_is_not_attributed_to_rms() -> None:
+    """The open audit item overstates the bias if convergence did the choosing:
+    `aut_converged` is not one of the three judged metrics."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="0", rms="40.0"),
+                both=_cfg(converged="1", rms="90.0"),
+            )
+        ]
+    )
+    assert audit["decided_by"] == {"aut_not_converged": 1}
+    assert audit["rms_gain"]["n"] == 0
+
+
+def test_a_choice_made_on_rms_is_counted_and_its_gain_measured() -> None:
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="1", rms="100.0"),
+                both=_cfg(converged="1", rms="50.0"),
+            )
+        ]
+    )
+    assert audit["decided_by"] == {"rms_spot": 1}
+    assert audit["rms_gain"]["n"] == 1
+    assert audit["rms_gain"]["median"] == 1.0  # 100 vs 50 -> the chosen arm is 100% better
+
+
+def test_the_gain_is_reported_only_for_the_subset_rms_decided() -> None:
+    """A gain quoted without its own n reads as applying to every trial."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="0", rms="40.0"), both=_cfg(converged="1", rms="90.0")
+            ),
+            _configs_record(
+                asphere=_cfg(converged="1", rms="100.0"), both=_cfg(converged="1", rms="50.0")
+            ),
+        ]
+    )
+    assert audit["trials_with_two_usable_configs"] == 2
+    assert audit["rms_gain"]["n"] == 1
+
+
+def test_an_errored_config_leaves_nothing_to_audit() -> None:
+    """With one arm broken there was no choice, so counting it would inflate the
+    denominator of a bias that could not have operated."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere={"error": {"kind": "timeout"}},
+                both=_cfg(converged="1", rms="50.0"),
+            )
+        ]
+    )
+    assert audit["trials_with_two_usable_configs"] == 0
+
+
+def test_field_coverage_outranks_rms_when_the_witness_is_present() -> None:
+    """With the coverage term in the rank tuple, a coverage difference must be named as
+    the decider rather than being reported as an RMS win -- otherwise the audit would
+    credit the bias for a choice that was actually made on correctness."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="1", rms="90.0", fields=("2", "2")),
+                both=_cfg(converged="1", rms="40.0", fields=("1", "2")),
+                preferred="asphere",
+            )
+        ]
+    )
+    assert audit["decided_by"] == {"fields_dropped": 1}
+    assert audit["rms_gain"]["n"] == 0
+
+
+def test_the_audit_reaches_the_rendered_report() -> None:
+    summary = trial.summarise(
+        [
+            _configs_record(
+                asphere=_cfg(converged="1", rms="100.0"), both=_cfg(converged="1", rms="50.0")
+            )
+        ]
+    )
+    rendered = trial.render(summary)
+    assert "config choice decided by" in rendered
+    assert "RMS gain when RMS chose" in rendered

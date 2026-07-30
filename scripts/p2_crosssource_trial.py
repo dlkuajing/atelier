@@ -1206,6 +1206,74 @@ def _edge_used(record: Mapping[str, Any]) -> float | None:
         return None
 
 
+def _config_selection_audit(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """What actually decided the two-config choice, and how much it was worth.
+
+    The open audit item says the chooser ranks on `post_aut.max_rms_spot_diameter_um`,
+    which is one of the three judged metrics -- best-of-2 on the quantity being judged
+    is selection bias. Measured 2026-07-30 over 11 trials with two usable configs, the
+    claim is true less often than it sounds: 6 of 11 were decided by `aut_converged`
+    (which is not a judged metric), and only 5 of 11 by RMS. Where RMS did decide, the
+    chosen arm was better by a median of 30%.
+
+    So this reports the split rather than asserting the bias. `rms_gain` is the number a
+    reader needs to judge how much the bias could be worth on a given run.
+
+    The decider is derived from `_standard_config_rank` itself, not re-implemented and
+    not parsed out of the reason string: a second copy of that ordering would eventually
+    disagree with the real one, and then this audit would describe a selection that did
+    not happen.
+    """
+
+    from app.core.engines.codev_optimize import _standard_config_rank
+
+    deciders: dict[str, int] = {}
+    gains: list[float] = []
+    for record in records:
+        configs = record.get("configs")
+        if not isinstance(configs, Mapping) or len(configs) < 2:
+            continue
+        usable = {
+            name: cfg
+            for name, cfg in configs.items()
+            if isinstance(cfg, Mapping) and "error" not in cfg
+        }
+        if len(usable) < 2:
+            continue
+        ranks = {name: _standard_config_rank(cfg) for name, cfg in usable.items()}
+        ordered = sorted(ranks, key=ranks.__getitem__)
+        best, second = ranks[ordered[0]], ranks[ordered[1]]
+        # rank tuple = (errored, not_converged, [fields_dropped,] rms). Walk it and name
+        # the first position that differs -- that is what decided the choice.
+        names = (
+            ("errored", "aut_not_converged", "fields_dropped", "rms_spot")
+            if len(best) == 4
+            else ("errored", "aut_not_converged", "rms_spot")
+        )
+        decider = "tie_fixed_priority"
+        for index, name in enumerate(names):
+            if best[index] != second[index]:
+                decider = name
+                break
+        deciders[decider] = deciders.get(decider, 0) + 1
+        if decider == "rms_spot" and best[-1] > 0:
+            gains.append((second[-1] - best[-1]) / best[-1])
+
+    gains.sort()
+    return {
+        "trials_with_two_usable_configs": sum(deciders.values()),
+        "decided_by": deciders,
+        # Only meaningful for the subset RMS decided; reported with its own n so it can
+        # never be read as applying to every trial.
+        "rms_gain": {
+            "n": len(gains),
+            "median": round(statistics.median(gains), 4) if gains else None,
+            "min": round(min(gains), 4) if gains else None,
+            "max": round(max(gains), 4) if gains else None,
+        },
+    }
+
+
 def run_provenance(
     *,
     census_path: Path,
@@ -1453,6 +1521,7 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
     designs = _distinct_design_counts(records)
     deliverables = _deliverable_completeness(records)
     witness = _witness_shortfall(records)
+    selection = _config_selection_audit(records)
     summary: dict[str, Any] = {
         "trials": len(records),
         "verdicts": verdicts,
@@ -1474,6 +1543,8 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
         "deliverables": deliverables,
         # Why the unmeasurable trials are unmeasurable, as a number.
         "field_witness": witness,
+        # How much of the headline could be best-of-2 on a judged metric.
+        "config_selection": selection,
         "budget_exhausted": budget_exhausted,
         "tolerance_skipped_by_request": sum(
             1
@@ -1566,6 +1637,21 @@ def render(summary: dict[str, Any]) -> str:
         "field witness shortfall   "
         + ", ".join(
             f"{name}={count}" for name, count in sorted(summary["field_witness"].items()) if count
+        ),
+        "config choice decided by  "
+        + (
+            ", ".join(
+                f"{name}={count}"
+                for name, count in sorted(summary["config_selection"]["decided_by"].items())
+            )
+            or "n/a"
+        ),
+        "  RMS gain when RMS chose "
+        + (
+            f"median {summary['config_selection']['rms_gain']['median']:+.1%} "
+            f"(n={summary['config_selection']['rms_gain']['n']})"
+            if summary["config_selection"]["rms_gain"]["median"] is not None
+            else "n/a"
         ),
     ]
     rate_all = summary["par_rate_over_all_trials"]
