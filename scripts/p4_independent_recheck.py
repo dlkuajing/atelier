@@ -70,9 +70,20 @@ from app.core.engines.zmx_import_prep import decode_zmx_text
 from app.core.zmx_ingest import load_normalized_zmx, regularize_fields_to_angle
 
 path = sys.argv[2]
+# Arm selection. "recipe" honours what the shipped measurement recipe states about the
+# CODE V side -- "outlier_rejection: none" -- by disabling our MAD clip. "reported"
+# leaves the clip in, i.e. reproduces the number as our own pipeline reports it.
+# Running both is the point: the gap between the two arms *is* the part of P4's
+# irreproducibility that publishing the recipe removes.
+arm = sys.argv[3] if len(sys.argv) > 3 else "reported"
+if arm == "recipe":
+    import app.core.aberration as _ab
+
+    _ab._robust_clip_spot_data = lambda geometric_mtf: None
+
 half = max_field_angle_deg(decode_zmx_text(open(path, "rb").read())[0])
 optic = load_normalized_zmx(path)
-out = {"half_field_angle_deg": half}
+out = {"half_field_angle_deg": half, "arm": arm}
 out["efl_mm"] = float(optic.paraxial.f2())
 try:
     out["f_number"] = float(optic.paraxial.FNO())
@@ -94,10 +105,12 @@ print(json.dumps(out))
 """
 
 
-def _recompute(worker: Path, zmx: Path, timeout_s: float) -> dict[str, object] | str:
+def _recompute(
+    worker: Path, zmx: Path, timeout_s: float, arm: str = "reported"
+) -> dict[str, object] | str:
     try:
         proc = subprocess.run(
-            [sys.executable, str(worker), str(ROOT), str(zmx)],
+            [sys.executable, str(worker), str(ROOT), str(zmx), arm],
             capture_output=True,
             text=True,
             timeout=timeout_s,
@@ -121,7 +134,17 @@ def _ratio(ours: object, theirs: object) -> float | None:
     return float(theirs) / float(ours)
 
 
-def recheck(*, run_dir: Path, worker: Path, timeout_s: float) -> dict[str, object]:
+#: The two arms. "reported" recomputes the number the way our own pipeline reports it
+#: (MAD clip on); "recipe" recomputes it the way the shipped measurement recipe says the
+#: CODE V side was measured ("outlier_rejection: none"). The delta between the arms is
+#: the share of P4's per-lens irreproducibility that publishing the recipe removes --
+#: which is the whole question, and it cannot be answered by running one arm.
+ARMS = ("reported", "recipe")
+
+
+def recheck(
+    *, run_dir: Path, worker: Path, timeout_s: float, arms: tuple[str, ...] = ARMS
+) -> dict[str, object]:
     rows: list[dict[str, object]] = []
     for trial_path in sorted(run_dir.glob("trial_*.json")):
         record = json.loads(trial_path.read_text(encoding="utf-8"))
@@ -136,35 +159,36 @@ def recheck(*, run_dir: Path, worker: Path, timeout_s: float) -> dict[str, objec
         for side, (zmx_path, reported) in sides.items():
             if not zmx_path or not Path(str(zmx_path)).is_file() or not reported:
                 continue
-            other = _recompute(worker, Path(str(zmx_path)), timeout_s)
-            row: dict[str, object] = {
-                "control_case_id": plan.get("control_case_id"),
-                "side": side,
-                "zmx": Path(str(zmx_path)).name,
-                "codev": {
-                    "efl_mm": reported.get("efl_y_mm"),
-                    "f_number": reported.get("f_number"),
-                    "max_rms_spot_um": reported.get("rms_spot_um"),
-                },
-            }
-            if isinstance(other, str):
-                row["optiland"] = other
-            else:
-                row["optiland"] = other
-                row["ratios"] = {
-                    "efl_mm": _ratio(reported.get("efl_y_mm"), other.get("efl_mm")),
-                    "f_number": _ratio(reported.get("f_number"), other.get("f_number")),
-                    "max_rms_spot_um": _ratio(
-                        reported.get("rms_spot_um"), other.get("max_rms_spot_um")
-                    ),
+            for arm in arms:
+                other = _recompute(worker, Path(str(zmx_path)), timeout_s, arm)
+                row: dict[str, object] = {
+                    "control_case_id": plan.get("control_case_id"),
+                    "side": side,
+                    "arm": arm,
+                    "zmx": Path(str(zmx_path)).name,
+                    "codev": {
+                        "efl_mm": reported.get("efl_y_mm"),
+                        "f_number": reported.get("f_number"),
+                        "max_rms_spot_um": reported.get("rms_spot_um"),
+                    },
                 }
-            rows.append(row)
+                row["optiland"] = other
+                if not isinstance(other, str):
+                    row["ratios"] = {
+                        "efl_mm": _ratio(reported.get("efl_y_mm"), other.get("efl_mm")),
+                        "f_number": _ratio(reported.get("f_number"), other.get("f_number")),
+                        "max_rms_spot_um": _ratio(
+                            reported.get("rms_spot_um"), other.get("max_rms_spot_um")
+                        ),
+                    }
+                rows.append(row)
 
-    def spread(metric: str) -> dict[str, object]:
+    def spread(metric: str, arm: str) -> dict[str, object]:
         values = [
             r["ratios"][metric]  # type: ignore[index]
             for r in rows
-            if isinstance(r.get("ratios"), dict)
+            if r.get("arm") == arm
+            and isinstance(r.get("ratios"), dict)
             and isinstance(r["ratios"].get(metric), float)  # type: ignore[union-attr]
         ]
         return {
@@ -176,12 +200,18 @@ def recheck(*, run_dir: Path, worker: Path, timeout_s: float) -> dict[str, objec
 
     return {
         "run_dir": str(run_dir),
-        "sides_checked": len(rows),
-        "engine_failed": sum(
-            1 for r in rows if isinstance(r.get("optiland"), str)
-        ),
+        "arms": list(arms),
+        "sides_checked": len({(r["zmx"], r["side"]) for r in rows}),
+        "recomputes": len(rows),
+        "engine_failed": sum(1 for r in rows if isinstance(r.get("optiland"), str)),
+        # Keyed by arm, never merged: pooling the arms would average away the very
+        # comparison this exists to make.
         "reproduction_ratio_optiland_over_codev": {
-            metric: spread(metric) for metric in ("efl_mm", "f_number", "max_rms_spot_um")
+            arm: {
+                metric: spread(metric, arm)
+                for metric in ("efl_mm", "f_number", "max_rms_spot_um")
+            }
+            for arm in arms
         },
         "caveat": (
             "Optiland is a second engine, not a third party. Agreement here means a "
@@ -197,17 +227,34 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--run", type=Path, required=True, help="a p2 trial run directory")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--timeout", type=float, default=180.0)
+    parser.add_argument(
+        "--arms",
+        default=",".join(ARMS),
+        help=(
+            "comma-separated subset of "
+            + "/".join(ARMS)
+            + ". Default runs both: 'reported' reproduces the number as our pipeline "
+            "reports it (MAD clip on), 'recipe' reproduces it as the shipped measurement "
+            "recipe says the CODE V side was measured (no outlier rejection). The delta "
+            "is what publishing the recipe buys."
+        ),
+    )
     args = parser.parse_args(argv)
 
     worker = args.out.parent / "_p4_worker.py"
     worker.parent.mkdir(parents=True, exist_ok=True)
     worker.write_text(_WORKER, encoding="utf-8")
-    result = recheck(run_dir=args.run, worker=worker, timeout_s=args.timeout)
+    result = recheck(run_dir=args.run, worker=worker, timeout_s=args.timeout,
+        arms=tuple(a.strip() for a in args.arms.split(",") if a.strip()),
+    )
     args.out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"sides checked        {result['sides_checked']}")
+    print(f"recomputes           {result['recomputes']} over arms {result['arms']}")
     print(f"optiland failed      {result['engine_failed']}")
-    for metric, spread in result["reproduction_ratio_optiland_over_codev"].items():  # type: ignore[union-attr]
-        print(f"{metric:<20} {spread}")
+    for arm, metrics in result["reproduction_ratio_optiland_over_codev"].items():  # type: ignore[union-attr]
+        print(f"-- arm: {arm}")
+        for metric, spread in metrics.items():
+            print(f"   {metric:<18} {spread}")
     return 0
 
 
