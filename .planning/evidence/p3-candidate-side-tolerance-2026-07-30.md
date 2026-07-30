@@ -151,8 +151,16 @@ Warnings"）：
 - **`zmx_writer._append_object_surface` 无条件写 `DISZ INFINITY`** 的缺陷是真的，
   但只影响 10 颗原始真实设计（`3P_*`/`4P_*`/`5P_*`，物距 350–1200 mm），P2 全部
   seed 都是无穷共轭专利，与本故障无关。**另案。**
-- **本 worktree 跑不了 4 个既有测试**：路径含 `.claude` 触发
-  `ensure_codev_safe_input_path` 的点号分量闸。主仓库 `D:/atelier` 下同文件 55 全绿。
+- **本 worktree 有 40 个既有失败（与本铲无关，已实测证明）**：⚠️ 我最初说「4 个」，
+  实测是 **40 个**。在同一 worktree 里把涉及的 9 个测试文件在 HEAD 与基线 commit
+  `4a9f6be7` 各跑一遍，**失败集合逐条相同**（40 vs 40，差集两侧皆空），
+  HEAD 多 5 个 passed = 本铲新增的测试 ⇒ **零回归**。成因分解：
+  **33** 条 = `ensure_codev_safe_input_path` 的点号分量闸（路径含 `.claude`；
+  31 `source_zmx` + 1 `staged_zmx` + 1 `demo_cache_work_root`）；
+  **5** 条 = `BatchRunnerLockHeldError`（另一 worktree 的真机跑批正持锁，瞬态）；
+  **2** 条 = `test_orchestration_export.py` 的 `reproduction.seq` 断言（上述两者的下游）。
+  已开独立任务；**生产侧那道闸是对的，不能放宽**（它防的是 ZEMAXOS_TO_CV 静默导入
+  dummy system，本项目吃过这个亏），该改的是测试把仓库相对路径直接喂进 CODE V 入口。
 
 ## 机器空出来之后该跑什么：**不是 P3**
 
@@ -181,3 +189,12 @@ uv run pytest tests/test_tor_sensitivity.py tests/test_p2_crosssource_trial.py -
 `real_sample_lis_p2gated_e7_candidate_ca_trace_terminated.txt`）。
 五处变异注入（符号不翻 / informative 恒真 / 不剔越域样本 / 去掉前置闸 /
 去掉波前判断）**全部被测试抓住**。
+
+**机器闸实测记录**：全量套件 `4425 passed / 40 failed / 2 skipped`（1h08m）；
+那 40 条在基线 commit 上**逐条相同**（见上节，零回归）。
+`ruff` 全过；`mypy` 在本铲改动的两个模块上**零错误**（余 11 条全落在既有的
+`batch_run_lock`(fcntl) / `codev_batch`(Popen 重载) / `registry` 上）。
+
+⚠️ **过程自陈**：我第一次统计失败数时用了 `... | tail -40`，**自己把摘要截断了**，
+于是只抓到 39 条并据此报「4 个既有失败」。教训与
+[[feedback-measurement-traps]] 第 3 条同源——**别让管道决定你看到多少证据**。
