@@ -56,7 +56,7 @@ def test_the_probe_list_covers_the_known_offenders() -> None:
 def test_bounded_probe_gives_up_when_the_probe_hangs(monkeypatch: pytest.MonkeyPatch) -> None:
     """A probe that never returns must not become a request that never returns."""
 
-    monkeypatch.setattr(case_library, "FULL_FIELD_PROBE_TIMEOUT_SEC", 0.3)
+    monkeypatch.setattr(case_library, "_DEFAULT_PROBE_DEADLINE_SEC", 0.3)
     released = threading.Event()
 
     def hangs():
@@ -108,7 +108,7 @@ def test_bounded_probe_builds_the_degraded_value_only_when_the_deadline_fires(
     assert case_library._bounded_probe(lambda: "real", fallback=fallback) == "real"
     assert built == []
 
-    monkeypatch.setattr(case_library, "FULL_FIELD_PROBE_TIMEOUT_SEC", 0.3)
+    monkeypatch.setattr(case_library, "_DEFAULT_PROBE_DEADLINE_SEC", 0.3)
     released = threading.Event()
     try:
         result = case_library._bounded_probe(lambda: released.wait(timeout=120), fallback=fallback)
@@ -194,7 +194,41 @@ def test_the_source_guard_can_actually_fail(probe_name: str) -> None:
     assert _unbounded_call_lines(wrapped, probe_name) == []
 
 
-def test_the_deadline_reuses_the_already_calibrated_scan_timeout() -> None:
-    """No new magic number: one of the bounded probes *is* the calibrated scan."""
+def test_the_edge_scan_deadline_agrees_with_its_existing_calibration() -> None:
+    """The one entry that is not new: the diagnostic-path edge scan gets exactly the
+    deadline `EDGE_SCAN_TIMEOUT_S` was already calibrated to, and the fresh measurement
+    (n=2, max 2.3s, 10x -> 23s) independently lands on the same 30s."""
 
-    assert case_library.FULL_FIELD_PROBE_TIMEOUT_SEC == case_library.EDGE_SCAN_TIMEOUT_S
+    assert (
+        case_library.probe_deadline_seconds("protected_edge_field_stability_scan")
+        == case_library.EDGE_SCAN_TIMEOUT_S
+    )
+
+
+@pytest.mark.parametrize("probe_name", _REQUEST_PATH_PROBES)
+def test_every_probe_has_its_own_measured_deadline(probe_name: str) -> None:
+    """One shared deadline was the actual regression: 30s, calibrated on a 5-point edge
+    scan, fired on healthy runs of two probes that run whole optimisations, and three CI
+    tests failed because their diagnostics went missing. So every probe must carry its
+    own entry rather than inherit someone else's calibration."""
+
+    assert probe_name in case_library._PROBE_DEADLINE_SEC
+
+
+def test_an_unmeasured_probe_fails_toward_completing() -> None:
+    """Asymmetric on purpose: too tight silently deletes a diagnostic, too loose only
+    makes a hang slower to contain -- and the per-test timeout still names it."""
+
+    generous = case_library.probe_deadline_seconds("some_probe_added_later")
+    assert generous == max(case_library._PROBE_DEADLINE_SEC.values())
+    assert generous >= max(
+        case_library.probe_deadline_seconds(name) for name in _REQUEST_PATH_PROBES
+    )
+
+
+def test_the_slow_optimisation_probes_are_not_bounded_by_the_edge_scan_number() -> None:
+    """Regression pin on the exact mistake: the merit probe measured 59.3s healthy, so
+    any deadline at or below the 30s edge-scan figure fires on healthy work."""
+
+    for probe_name in ("protected_rms_merit_probe", "protected_full_field_recovery_probe"):
+        assert case_library.probe_deadline_seconds(probe_name) > case_library.EDGE_SCAN_TIMEOUT_S

@@ -1005,53 +1005,80 @@ def cases_for_scenario(scenario: Scenario) -> list[OpticalSampleData]:
     ]
 
 
-#: Deadline for the optional diagnostic probes `match_case` runs (full-field
-#: recovery, edge-field stability). Both go through Optiland MTF, which is known to
-#: hang on a minority of this corpus, and both are reached from the
-#: `/api/optical/match` request handler -- so an unbounded probe is an unbounded
-#: request. A healthy `compute_mtf` is sub-second (see `aberration.compute_mtf`) and
-#: each probe runs a handful of them, so this is roughly an order of magnitude of
-#: headroom: it can only fire on a hang, never on a slow-but-working probe.
+#: Deadlines for the optional diagnostic probes `match_case` runs. All four go through
+#: Optiland MTF, which is known to hang on a minority of this corpus, and all four are
+#: reached from the `/api/optical/match` request handler -- so an unbounded probe is an
+#: unbounded request.
 #:
-#: This is a containment bound, not a quality threshold: nothing about the routing
-#: result depends on its value, only whether an *optional* diagnostic is present.
+#: ⚠️ The first version of this used ONE deadline, reusing `EDGE_SCAN_TIMEOUT_S`. That
+#: was wrong and CI proved it: three tests failed, not by hanging but because the bound
+#: fired on *healthy* probes and the diagnostics they feed went missing. 30s was
+#: calibrated on a 5-point edge scan that finishes in 1.5-3.3s; two of these probes run
+#: whole optimisations and are an order of magnitude slower. Reusing a constant is only
+#: "no new number" when it is the same quantity.
 #:
-#: Value reuses `EDGE_SCAN_TIMEOUT_S`'s measured calibration (2026-07-10, 8-seed
-#: sample: healthy 5-point scans finish in 1.5-3.3s) rather than inventing a second
-#: number -- one of the two probes bounded here *is* that scan.
-FULL_FIELD_PROBE_TIMEOUT_SEC = EDGE_SCAN_TIMEOUT_S
+#: So: per-probe, each entry = 10x its own measured healthy maximum -- the same margin
+#: rule `EDGE_SCAN_TIMEOUT_S` was set by, applied to each probe's own measurement.
+#: Measured 2026-07-30 on the demo machine over `tests/test_optical_match.py`, while a
+#: CODE V batch was saturating the box, so the readings are pessimistic (which is the
+#: safe direction for a bound that must never fire on healthy work):
+#:
+#:     protected_rms_merit_probe            n=11  max 59.3s  -> 600
+#:     protected_full_field_recovery_probe  n=2   max 11.4s  -> 120
+#:     protected_efl_refinement             n=5   max  2.5s  ->  30
+#:     protected_edge_field_stability_scan  n=2   max  2.3s  ->  30  (== EDGE_SCAN_TIMEOUT_S,
+#:                                                     independent confirmation of it)
+#:
+#: These are containment bounds, not quality thresholds: nothing about the routing
+#: result depends on their values, only whether an *optional* diagnostic is present.
+_PROBE_DEADLINE_SEC: dict[str, float] = {
+    "protected_rms_merit_probe": 600.0,
+    "protected_full_field_recovery_probe": 120.0,
+    "protected_efl_refinement": 30.0,
+    "protected_edge_field_stability_scan": EDGE_SCAN_TIMEOUT_S,
+}
+
+#: An unlabelled or not-yet-measured probe gets the most generous entry. Failing toward
+#: *completing* is deliberate and asymmetric: too tight silently deletes a diagnostic
+#: (the CI regression above), too loose only makes a hang slower to contain -- and the
+#: per-test timeout still names it.
+_DEFAULT_PROBE_DEADLINE_SEC = max(_PROBE_DEADLINE_SEC.values())
+
+
+def probe_deadline_seconds(label: str) -> float:
+    return _PROBE_DEADLINE_SEC.get(label, _DEFAULT_PROBE_DEADLINE_SEC)
 
 
 def _bounded_probe(thunk, *, fallback=tuple, label=""):
     """Run one diagnostic probe with a deadline; on expiry return ``fallback()``.
 
     `thunk` is a zero-argument callable so a probe keeps its own (often keyword-only)
-    signature at the call site. `fallback` is a *factory*, not a value, so the
-    degraded result is built only when the deadline actually fires -- `tuple` for the
+    signature at the call site. `fallback` is a *factory*, not a value, so the degraded
+    result is built only when the deadline actually fires -- `tuple` for the
     sequence-shaped probes, a `not_attempted` model for the structured ones. Every
     degraded value must be a state the caller already handles; a deadline must never
     invent a shape nobody reads.
 
     Containment contract, same shape as `batch_runner._run_engine_once` documents:
-    Python cannot forcibly kill the worker thread, so a timed-out probe keeps
-    running in the background. That is harmless here because the probe is pure
-    computation over a private in-memory `Optic` clone -- it writes nothing, and its
-    eventual result is simply never observed. `shutdown(wait=False)` is deliberate;
-    the context-manager form would block on the un-killable thread and defeat the
-    deadline.
+    Python cannot forcibly kill the worker thread, so a timed-out probe keeps running
+    in the background. That is harmless here because the probe is pure computation over
+    a private in-memory `Optic` clone -- it writes nothing, and its eventual result is
+    simply never observed. `shutdown(wait=False)` is deliberate; the context-manager
+    form would block on the un-killable thread and defeat the deadline.
 
-    Probe exceptions are propagated untouched: swallowing them would make "the probe
-    is broken" indistinguishable from "the probe ran out of time", and the callers
-    already treat the degraded value as normal.
+    Probe exceptions are propagated untouched: swallowing them would make "the probe is
+    broken" indistinguishable from "the probe ran out of time", and the callers already
+    treat the degraded value as normal.
     """
 
+    deadline = probe_deadline_seconds(label)
     pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
     try:
-        return pool.submit(thunk).result(timeout=FULL_FIELD_PROBE_TIMEOUT_SEC)
+        return pool.submit(thunk).result(timeout=deadline)
     except concurrent.futures.TimeoutError:
         logger.warning(
             "diagnostic_probe_timeout",
-            extra={"probe": label or repr(thunk), "timeout_sec": FULL_FIELD_PROBE_TIMEOUT_SEC},
+            extra={"probe": label or repr(thunk), "timeout_sec": deadline},
         )
         return fallback()
     finally:
@@ -4258,10 +4285,13 @@ def match_case(
             engine="optiland.least_squares",
             summary=(
                 "local optimization probe exceeded its "
-                f"{FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s deadline"
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s deadline"
             ),
             target_efl_mm=efl_mm,
-            diagnostics=[f"probe deadline {FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s exceeded"],
+            diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
         ),
         label="protected_efl_refinement",
     )
@@ -4325,11 +4355,14 @@ def match_case(
             engine="optiland.least_squares",
             summary=(
                 "RMS merit probe exceeded its "
-                f"{FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s deadline"
+                f"{probe_deadline_seconds('protected_rms_merit_probe'):.0f}s deadline"
             ),
             operand="rms_spot_size",
             target_efl_mm=efl_mm,
-            diagnostics=[f"probe deadline {FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s exceeded"],
+            diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
         ),
         label="protected_rms_merit_probe",
     )
@@ -8497,11 +8530,14 @@ def match_case(
                 engine="optiland.least_squares",
                 summary=(
                     "RMS merit probe exceeded its "
-                    f"{FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s deadline"
+                    f"{probe_deadline_seconds('protected_rms_merit_probe'):.0f}s deadline"
                 ),
                 operand="rms_spot_size",
                 target_efl_mm=efl_mm,
-                diagnostics=[f"probe deadline {FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s exceeded"],
+                diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
             ),
             label="protected_rms_merit_probe",
         )
@@ -8672,11 +8708,14 @@ def match_case(
                 engine="optiland.least_squares",
                 summary=(
                     "RMS merit probe exceeded its "
-                    f"{FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s deadline"
+                    f"{probe_deadline_seconds('protected_rms_merit_probe'):.0f}s deadline"
                 ),
                 operand="rms_spot_size",
                 target_efl_mm=efl_mm,
-                diagnostics=[f"probe deadline {FULL_FIELD_PROBE_TIMEOUT_SEC:.0f}s exceeded"],
+                diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
             ),
             label="protected_rms_merit_probe",
         )
