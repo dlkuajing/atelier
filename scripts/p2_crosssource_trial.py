@@ -1206,6 +1206,73 @@ def _edge_used(record: Mapping[str, Any]) -> float | None:
         return None
 
 
+def run_provenance(
+    *,
+    census_path: Path,
+    rebuild_seed_field: bool,
+    skip_tolerance: bool,
+    trial_budget_seconds: float | None,
+    timeout_seconds: float,
+) -> dict[str, Any]:
+    """What produced this run. Without it an A/B between two run directories is not
+    interpretable: two sets of verdicts and nothing saying which code made them.
+
+    Records the *parsed* flags rather than raw argv -- structured, and it cannot
+    accidentally carry something from the command line that does not belong in an
+    artifact.
+
+    Every git lookup is defensive. A 12-hour real-machine run must never die because
+    provenance collection failed; a missing field says so by name instead.
+    """
+
+    import subprocess
+
+    def _git(*args: str) -> str | None:
+        try:
+            out = subprocess.run(
+                ["git", *args],
+                cwd=str(ROOT),
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+        except (OSError, subprocess.SubprocessError):
+            return None
+        if out.returncode != 0:
+            return None
+        return (out.stdout or "").strip() or None
+
+    dirty = _git("status", "--porcelain")
+    census_digest = None
+    if census_path.is_file():
+        import hashlib
+
+        census_digest = hashlib.sha256(census_path.read_bytes()).hexdigest()
+
+    return {
+        "git_sha": _git("rev-parse", "HEAD"),
+        "git_branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+        # A dirty tree means the sha does NOT describe the code that ran. Say so rather
+        # than letting the sha imply reproducibility it does not have.
+        "git_dirty": None if dirty is None else bool(dirty),
+        # `git status --porcelain` is "XY PATH" with XY exactly two status characters,
+        # but a fixed [3:] slice loses the first path character on some line shapes
+        # (observed: "cripts/..."). Strip from index 2 instead of assuming the gap.
+        "git_dirty_paths": None if not dirty else sorted(
+            stripped for line in dirty.splitlines() if (stripped := line[2:].strip())
+        ),
+        "census_path": str(census_path),
+        "census_sha256": census_digest,
+        "flags": {
+            "rebuild_seed_field": rebuild_seed_field,
+            "skip_tolerance": skip_tolerance,
+            "trial_budget_seconds": trial_budget_seconds,
+            "timeout_seconds": timeout_seconds,
+        },
+        "trial_schema": TRIAL_RESULT_SCHEMA,
+    }
+
+
 def _witness_shortfall(records: list[dict[str, Any]]) -> dict[str, Any]:
     """How often each side produced a reading on fewer fields than it declared.
 
@@ -1610,11 +1677,19 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     plans, census_result = plan_trials(args.census, limit=args.limit)
+    provenance = run_provenance(
+        census_path=args.census,
+        rebuild_seed_field=not args.no_field_rebuild,
+        skip_tolerance=args.skip_tolerance,
+        trial_budget_seconds=args.trial_budget_seconds,
+        timeout_seconds=args.timeout,
+    )
     (out_dir / "plan.json").write_text(
         json.dumps(
             {
                 "trials_available": census_result["trials"],
                 "distinct_seeds_available": census_result["distinct_seeds_used"],
+                "run_provenance": provenance,
                 "planned": [asdict(p) for p in plans],
             },
             ensure_ascii=False,
@@ -1650,6 +1725,7 @@ def main(argv: list[str] | None = None) -> int:
         after = codev_sessions()
         print(f"红线① post-run CODE V sessions: {len(after)} {after}", flush=True)
         summary = summarise(records)
+        summary["run_provenance"] = provenance
         summary["red_line_sessions_before"] = len(before)
         summary["red_line_sessions_after"] = len(after)
         (out_dir / "summary.json").write_text(

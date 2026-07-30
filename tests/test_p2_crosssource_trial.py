@@ -1277,3 +1277,94 @@ def test_the_tally_reaches_the_rendered_report() -> None:
     assert summary["field_witness"]["candidate_partial"] == 1
     assert summary["field_witness"]["both_full"] == 1
     assert "field witness shortfall" in trial.render(summary)
+
+
+# ---------------------------------------------------------------------------
+# Run provenance: an A/B between two run directories has to be interpretable
+# ---------------------------------------------------------------------------
+
+
+def test_provenance_records_the_flags_that_change_behaviour(tmp_path) -> None:
+    """These four flags each change what the trial does, so a run directory that does
+    not name them cannot be compared against another one."""
+
+    p = trial.run_provenance(
+        census_path=tmp_path / "absent.jsonl",
+        rebuild_seed_field=False,
+        skip_tolerance=True,
+        trial_budget_seconds=1500.0,
+        timeout_seconds=180.0,
+    )
+    assert p["flags"] == {
+        "rebuild_seed_field": False,
+        "skip_tolerance": True,
+        "trial_budget_seconds": 1500.0,
+        "timeout_seconds": 180.0,
+    }
+
+
+def test_provenance_digests_the_census_and_reports_absence_honestly(tmp_path) -> None:
+    """The census is a runtime product outside the worktree, so "which census" cannot be
+    answered by a path alone."""
+
+    census = tmp_path / "c.jsonl"
+    census.write_text('{"seed": "a"}\n', encoding="utf-8")
+    with_file = trial.run_provenance(
+        census_path=census,
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert len(with_file["census_sha256"]) == 64
+
+    without = trial.run_provenance(
+        census_path=tmp_path / "absent.jsonl",
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert without["census_sha256"] is None
+
+
+def test_provenance_flags_a_dirty_tree_rather_than_letting_the_sha_imply_more() -> None:
+    """A dirty tree means the sha does not describe the code that ran. The field must
+    exist and be a bool (or None if git is unavailable) -- never silently absent, which
+    would read as clean."""
+
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert "git_dirty" in p
+    assert p["git_dirty"] is None or isinstance(p["git_dirty"], bool)
+    if p["git_dirty"]:
+        # Paths must survive intact; a fixed [3:] slice on porcelain output was observed
+        # to eat the first character ("cripts/...").
+        assert all(not name.startswith("cripts") for name in p["git_dirty_paths"])
+        assert all(not name.startswith(" ") for name in p["git_dirty_paths"])
+
+
+def test_provenance_never_raises_when_git_is_unavailable(monkeypatch) -> None:
+    """A 12-hour real-machine run must not die because provenance collection failed."""
+
+    import subprocess as _sp
+
+    def _boom(*args, **kwargs):
+        raise OSError("no git here")
+
+    monkeypatch.setattr(_sp, "run", _boom)
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert p["git_sha"] is None
+    assert p["git_dirty"] is None
+    assert p["flags"]["rebuild_seed_field"] is True
