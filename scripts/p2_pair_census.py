@@ -311,7 +311,48 @@ def spec_is_in_product_domain(record: Mapping[str, object]) -> bool:
     return True
 
 
-def census(census_path: Path) -> dict:
+def codev_rms_by_zmx(census_path: Path) -> dict[str, float]:
+    """CODE V max-over-fields RMS spot diameter per ZMX, from the perfield census.
+
+    Same source and same ruler the P2 trial judges with: the census's per-field value is
+    ``SPOTDATA(...) -> ^spot(1)`` in mm, which is exactly ``@rmssum``'s per-field operand
+    before its ``*1000``. Using it here is the whole point -- the routing gate this
+    replaces read an *Optiland radius* measured over *half* the field, and passed a seed
+    that CODE V calls a 101 um lens.
+    """
+
+    out: dict[str, float] = {}
+    for line in census_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        declared = row.get("num_fields")
+        if row.get("error") is not None or not declared or row.get("n_positive") != declared:
+            continue
+        spots = [field[1] * 1000.0 for field in row.get("fields", []) if field[0] == 0]
+        if spots:
+            out[row["seed"]] = max(spots)
+    return out
+
+
+def default_seed_quality_limit_um() -> float:
+    """The corpus median, not a number anyone chose.
+
+    Measured 2026-07-30: gating the seed pool at the corpus median (10.23 um over the
+    n=218 traceable pool) costs **zero** trials -- all 59 eligible controls still have a
+    qualifying cross-source seed -- while the previous 100 um gate admitted seeds at
+    corpus p85 and p91 to compete against controls at 2-11 um. At p25 the sample does
+    collapse (5/59), so the median is where the free win ends.
+    """
+
+    from app.core.corpus_quality import load_distribution
+
+    return float(load_distribution()["percentiles"]["p50"])
+
+
+def census(
+    census_path: Path, *, seed_quality_limit_um: float | None = None
+) -> dict:
     # Imported lazily: the optical stack costs ~2s and the pure-provenance
     # helpers above are useful (and unit-tested) without it.
     warnings.simplefilter("ignore")
@@ -321,6 +362,23 @@ def census(census_path: Path) -> dict:
     provenance = load_provenance()
     usable_ids, all_ids = load_usable_case_ids(census_path)
     usable_set = set(usable_ids)
+
+    # Seed-side quality gate, on the same ruler the trial judges with. `None` means
+    # "use the corpus median"; pass math.inf to disable it and reproduce the old pool.
+    limit = default_seed_quality_limit_um() if seed_quality_limit_um is None else float(
+        seed_quality_limit_um
+    )
+    codev_rms = codev_rms_by_zmx(census_path)
+    index_by_case = {r["case_id"]: r for r in json.loads(CASE_INDEX.read_text(encoding="utf-8"))}
+
+    def seed_quality_ok(case_id: str) -> bool:
+        record = index_by_case.get(case_id)
+        if record is None:
+            return False
+        value = codev_rms.get(str(record.get("source_zmx")))
+        # Fail closed: a seed whose CODE V quality is unknown cannot be shown to be
+        # competitive, and admitting it is how a 101 um lens got in.
+        return value is not None and value <= limit
 
     by_id: dict[str, object] = {}
     for scenario in Scenario:
@@ -344,6 +402,7 @@ def census(census_path: Path) -> dict:
             if case_id != control_id
             and case_id in usable_set
             and provenance.brand_of_case(case_id) not in (None, control_brand)
+            and seed_quality_ok(case_id)
         ]
         if not pool:
             excluded["no_cross_brand_seed_available"] += 1
@@ -371,6 +430,7 @@ def census(census_path: Path) -> dict:
         "cases_usable": len(usable_ids),
         "trials": len(trials),
         "excluded": dict(excluded),
+        "seed_quality_limit_um": limit,
         "distinct_seeds_used": len(seed_use),
         "top5_seed_share": sum(n for _, n in seed_use.most_common(5)),
         "seed_reuse": seed_use.most_common(10),

@@ -26,10 +26,12 @@ CI gate, and is labelled as such rather than quietly passing.
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import pytest
 
+import scripts.p2_pair_census as census_mod
 from scripts.p2_pair_census import (
     Provenance,
     assignee_tokens,
@@ -298,3 +300,84 @@ def test_the_domain_screen_is_on_by_default() -> None:
     from scripts.p2_pair_census import load_usable_case_ids
 
     assert inspect.signature(load_usable_case_ids).parameters["require_in_domain"].default is True
+
+
+# ---------------------------------------------------------------------------
+# Seed-side quality gate: on the ruler the trial actually judges with
+# ---------------------------------------------------------------------------
+
+_PERFIELD = Path("D:/atelier-stagec-runs/trace-census-20260728/perfield-census.jsonl")
+
+
+def test_codev_rms_uses_the_same_operand_as_the_judging_macro(tmp_path) -> None:
+    """The census per-field value is `SPOTDATA(...) -> ^spot(1)` in mm, which is exactly
+    `@rmssum`'s per-field operand before its `*1000`. Max over fields, x1000."""
+
+    census = tmp_path / "pf.jsonl"
+    census.write_text(
+        "\n".join(
+            json.dumps(row)
+            for row in [
+                {"seed": "a.zmx", "error": None, "num_fields": 2, "n_positive": 2,
+                 "fields": [[0, 0.001], [0, 0.004]]},
+                # partial coverage -> excluded: @rmssum skips failed fields and takes the
+                # max over survivors, so a partial reading is optimistic.
+                {"seed": "b.zmx", "error": None, "num_fields": 2, "n_positive": 1,
+                 "fields": [[0, 0.001], [1, 0.0]]},
+                {"seed": "c.zmx", "error": "boom", "num_fields": 1, "n_positive": 1,
+                 "fields": [[0, 0.002]]},
+            ]
+        ),
+        encoding="utf-8",
+    )
+    assert census_mod.codev_rms_by_zmx(census) == {"a.zmx": 4.0}
+
+
+def test_the_default_limit_is_the_corpus_median_not_a_chosen_number() -> None:
+    from app.core.corpus_quality import load_distribution
+
+    assert census_mod.default_seed_quality_limit_um() == load_distribution()["percentiles"]["p50"]
+
+
+@pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
+def test_gating_at_the_corpus_median_costs_no_trials() -> None:
+    """The measurement that justifies turning this on: the previous 100 um routing gate
+    admitted seeds at corpus p85 and p91 to compete against controls at 2-11 um, and
+    tightening to the median drops them without losing a single control."""
+
+    loose = census_mod.census(_PERFIELD, seed_quality_limit_um=math.inf)
+    gated = census_mod.census(_PERFIELD)
+    assert gated["trials"] == loose["trials"]
+    # Strictly fewer seed designs, i.e. the bad ones really were dropped.
+    assert gated["distinct_seeds_used"] < loose["distinct_seeds_used"]
+
+
+@pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
+def test_every_gated_seed_is_under_the_limit() -> None:
+    rms = census_mod.codev_rms_by_zmx(_PERFIELD)
+    index = {r["case_id"]: r for r in json.loads(census_mod.CASE_INDEX.read_text("utf-8"))}
+    result = census_mod.census(_PERFIELD)
+    limit = result["seed_quality_limit_um"]
+    for pair in result["trial_pairs"]:
+        value = rms.get(str(index[pair["seed"]]["source_zmx"]))
+        assert value is not None and value <= limit, f"{pair['seed']} at {value} > {limit}"
+
+
+def test_a_seed_with_unknown_codev_quality_is_excluded_not_admitted(tmp_path) -> None:
+    """Fail closed. Admitting the unknown is exactly how a lens CODE V calls 101 um got
+    into 41 of 49 trials -- its stored Optiland radius, measured over half the field,
+    sailed under a 100 um gate."""
+
+    rms: dict[str, float] = {"known.zmx": 5.0}
+    index = {"KNOWN": {"source_zmx": "known.zmx"}, "UNKNOWN": {"source_zmx": "absent.zmx"}}
+
+    def seed_quality_ok(case_id: str, limit: float = 10.0) -> bool:
+        record = index.get(case_id)
+        if record is None:
+            return False
+        value = rms.get(str(record.get("source_zmx")))
+        return value is not None and value <= limit
+
+    assert seed_quality_ok("KNOWN") is True
+    assert seed_quality_ok("UNKNOWN") is False
+    assert seed_quality_ok("MISSING") is False
