@@ -16,7 +16,9 @@ from typing import Any, Literal
 from app.core.engines.codev_batch import (
     DEFAULT_CODEV_EXECUTABLE,
     CodeVBatchError,
+    _claim_listing_path,
     _delete_stale_result,
+    _snapshot_lis_files,
     ensure_buf_exp_safe_filename,
     ensure_codev_safe_input_path,
     run_codev_process,
@@ -29,6 +31,65 @@ _COMMAND_PREFIX = re.compile(
     re.IGNORECASE,
 )
 _SURFACE_RANGE = re.compile(r"\bS(?:I|\d+)(?:\.\.(?:J|\d+))?\b", re.IGNORECASE)
+#: A prompt echo in a CODE V listing: unindented ``CODE V> TOR`` / ``TOR> SNS``.
+#: Diagnostics are always indented, which is what separates the two shapes.
+_LISTING_PROMPT = re.compile(r"^([A-Z][A-Z0-9 ]*)>[ \t]*(.*)$")
+_LISTING_DIAGNOSIS = re.compile(r"^[ \t]+(ERROR - .+|WARNING - Sequence aborted.*?)\s*$")
+_MAX_DIAGNOSIS_LINES = 12
+
+
+def extract_codev_diagnosis(
+    listing_text: str, *, max_lines: int = _MAX_DIAGNOSIS_LINES
+) -> tuple[str, ...]:
+    """CODE V's own account of why a run stopped, attributed to the command.
+
+    Exists because the export-missing failure used to be reported as「no fresh
+    export files」with nothing but the filenames, while CODE V had already
+    written the answer to the ``.lis`` listing sitting in the same directory.
+    Four P2 trials (2026-07-30, p2-gated-20260729) failed that way and the
+    investigation went looking at XDAT rows and vignetting rows; the listing
+    said ``TOR: ERROR - Ray tracing errors during clear aperture trace -
+    OPTION TERMINATED``, i.e. the lens, not the sequence.
+
+    Ray errors repeat per ray, so identical lines are collapsed with a count
+    rather than flooding the exception: one real listing carried the same
+    total-reflection line 54 times.
+    """
+
+    counts: dict[str, int] = {}
+    order: list[str] = []
+    command = "?"
+    for raw in listing_text.splitlines():
+        prompt = _LISTING_PROMPT.match(raw)
+        if prompt is not None:
+            command = prompt.group(2).strip() or prompt.group(1).strip()
+            continue
+        found = _LISTING_DIAGNOSIS.match(raw)
+        if found is None:
+            continue
+        entry = f"{command}: {found.group(1).strip()}"
+        if entry not in counts:
+            order.append(entry)
+        counts[entry] = counts.get(entry, 0) + 1
+    rendered = [entry if counts[entry] == 1 else f"{entry} (x{counts[entry]})" for entry in order]
+    if len(rendered) > max_lines:
+        return (*rendered[:max_lines], f"... {len(rendered) - max_lines} further diagnostic line(s)")
+    return tuple(rendered)
+
+
+def read_codev_diagnosis(listing_path: Path | None) -> tuple[str, ...]:
+    """Best-effort :func:`extract_codev_diagnosis` over a listing on disk.
+
+    Diagnostic side-channel only -- the numeric contract is ``BUF EXP`` -- so an
+    unreadable listing must never replace the real failure with an IO error.
+    """
+
+    if listing_path is None:
+        return ()
+    try:
+        return extract_codev_diagnosis(listing_path.read_text(encoding="utf-8", errors="replace"))
+    except OSError:
+        return ()
 
 
 class TorParseStatus(StrEnum):
@@ -165,6 +226,7 @@ def run_codev_tor(
         str(path): _delete_stale_result(path)
         for path in (per_path, mc_path)
     }
+    listing_before = _snapshot_lis_files(work)
     started = time.monotonic()
     process = runner(
         [str(Path(executable)), "/B", sequence_path.name],
@@ -181,10 +243,23 @@ def run_codev_tor(
         )
     missing = [str(path) for path in (per_path, mc_path) if not path.is_file()]
     if missing:
+        # Lead with CODE V's own words. A missing export is a symptom with many
+        # causes -- a terminated option, an aborted sequence, a rejected command --
+        # and the listing distinguishes them; reporting only the filenames sends
+        # the reader to the exporter, which is almost never where the fault is.
+        listing_path = _claim_listing_path(listing_before, sequence_path.with_suffix(".lis"))
+        diagnosis = read_codev_diagnosis(listing_path)
+        headline = diagnosis[0] if diagnosis else "no diagnostic lines in the listing"
         raise CodeVBatchError(
             "failure",
-            "CODE V TOR run finished without producing fresh export files",
-            details={"missing": missing, "stale_exports_deleted": stale_deleted, "returncode": returncode},
+            f"CODE V TOR run produced no fresh export files -- {headline}",
+            details={
+                "missing": missing,
+                "stale_exports_deleted": stale_deleted,
+                "returncode": returncode,
+                "codev_diagnosis": list(diagnosis),
+                "listing_path": str(listing_path) if listing_path is not None else None,
+            },
         )
     parsed = parse_codev_tor_exports(per_path, mc_path)
     return CodeVTorRunResult(
