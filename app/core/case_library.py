@@ -16,8 +16,10 @@ Two real-design quirks are handled here (verified during ingest):
 
 from __future__ import annotations
 
+import concurrent.futures
 import contextlib
 import json
+import logging
 import math
 import re
 import threading
@@ -110,6 +112,7 @@ from app.core.optical_sample import (
     ManufacturingSensitivityFactor,
     OpticalSampleData,
     OptimizationAction,
+    OptimizationAttempt,
     OptimizationMeritProbe,
     OptimizationMetricSnapshot,
     OptimizationMetricUpdate,
@@ -140,6 +143,8 @@ from app.core.optical_sample import (
 )
 from app.core.zmx_ingest import ZMX_AMMO_DIR, regularize_fields_to_angle
 from app.core.zmx_materials import _canon
+
+logger = logging.getLogger(__name__)
 
 # Generated case JSON lives under the backend root: core -> app -> <root>/data.
 CASES_DIR = Path(__file__).resolve().parents[1] / "data" / "optical_cases"
@@ -998,6 +1003,92 @@ def cases_for_scenario(scenario: Scenario) -> list[OpticalSampleData]:
     return [
         c for c in load_case_library() if c.metadata is not None and c.metadata.scenario in allowed
     ]
+
+
+#: Deadlines for the optional diagnostic probes `match_case` runs. All four go through
+#: Optiland MTF, which is known to hang on a minority of this corpus, and all four are
+#: reached from the `/api/optical/match` request handler -- so an unbounded probe is an
+#: unbounded request.
+#:
+#: ⚠️ The first version of this used ONE deadline, reusing `EDGE_SCAN_TIMEOUT_S`. That
+#: was wrong and CI proved it: three tests failed, not by hanging but because the bound
+#: fired on *healthy* probes and the diagnostics they feed went missing. 30s was
+#: calibrated on a 5-point edge scan that finishes in 1.5-3.3s; two of these probes run
+#: whole optimisations and are an order of magnitude slower. Reusing a constant is only
+#: "no new number" when it is the same quantity.
+#:
+#: So: per-probe, each entry = 10x its own measured healthy maximum -- the same margin
+#: rule `EDGE_SCAN_TIMEOUT_S` was set by, applied to each probe's own measurement.
+#: Measured 2026-07-30 on the demo machine over `tests/test_optical_match.py`, while a
+#: CODE V batch was saturating the box, so the readings are pessimistic (which is the
+#: safe direction for a bound that must never fire on healthy work):
+#:
+#:     protected_rms_merit_probe            n=39  max 59.3s  -> 600
+#:     protected_efl_refinement             n=20  max 10.2s  -> 120
+#:     protected_full_field_recovery_probe  n=5   max 11.4s  -> 120
+#:     protected_edge_field_stability_scan  n=5   max  2.3s  ->  30  (== EDGE_SCAN_TIMEOUT_S,
+#:                                                     independent confirmation of it)
+#:
+#: ⚠️ `protected_efl_refinement` was first set to 30 from an n=5 sample whose max was
+#: 2.5s. Widening to the whole module (n=20) moved the max to 10.2s, which makes 30 a
+#: 2.9x margin while this comment claims 10x. Corrected before it could ship a false
+#: justification -- and CI runs on 2 cores, where the same probe is slower still.
+#: The small-sample artifact is a standing hazard in this project, not a one-off.
+#:
+#: These are containment bounds, not quality thresholds: nothing about the routing
+#: result depends on their values, only whether an *optional* diagnostic is present.
+_PROBE_DEADLINE_SEC: dict[str, float] = {
+    "protected_rms_merit_probe": 600.0,
+    "protected_efl_refinement": 120.0,
+    "protected_full_field_recovery_probe": 120.0,
+    "protected_edge_field_stability_scan": EDGE_SCAN_TIMEOUT_S,
+}
+
+#: An unlabelled or not-yet-measured probe gets the most generous entry. Failing toward
+#: *completing* is deliberate and asymmetric: too tight silently deletes a diagnostic
+#: (the CI regression above), too loose only makes a hang slower to contain -- and the
+#: per-test timeout still names it.
+_DEFAULT_PROBE_DEADLINE_SEC = max(_PROBE_DEADLINE_SEC.values())
+
+
+def probe_deadline_seconds(label: str) -> float:
+    return _PROBE_DEADLINE_SEC.get(label, _DEFAULT_PROBE_DEADLINE_SEC)
+
+
+def _bounded_probe(thunk, *, fallback=tuple, label=""):
+    """Run one diagnostic probe with a deadline; on expiry return ``fallback()``.
+
+    `thunk` is a zero-argument callable so a probe keeps its own (often keyword-only)
+    signature at the call site. `fallback` is a *factory*, not a value, so the degraded
+    result is built only when the deadline actually fires -- `tuple` for the
+    sequence-shaped probes, a `not_attempted` model for the structured ones. Every
+    degraded value must be a state the caller already handles; a deadline must never
+    invent a shape nobody reads.
+
+    Containment contract, same shape as `batch_runner._run_engine_once` documents:
+    Python cannot forcibly kill the worker thread, so a timed-out probe keeps running
+    in the background. That is harmless here because the probe is pure computation over
+    a private in-memory `Optic` clone -- it writes nothing, and its eventual result is
+    simply never observed. `shutdown(wait=False)` is deliberate; the context-manager
+    form would block on the un-killable thread and defeat the deadline.
+
+    Probe exceptions are propagated untouched: swallowing them would make "the probe is
+    broken" indistinguishable from "the probe ran out of time", and the callers already
+    treat the degraded value as normal.
+    """
+
+    deadline = probe_deadline_seconds(label)
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    try:
+        return pool.submit(thunk).result(timeout=deadline)
+    except concurrent.futures.TimeoutError:
+        logger.warning(
+            "diagnostic_probe_timeout",
+            extra={"probe": label or repr(thunk), "timeout_sec": deadline},
+        )
+        return fallback()
+    finally:
+        pool.shutdown(wait=False)
 
 
 def _norm_delta(target: float, value: float, lo: float, hi: float) -> float:
@@ -4185,14 +4276,30 @@ def match_case(
         mtf_field_weighted_score=before_mtf_bands.field_weighted_score,
         max_rms_spot_radius_um=max(before_rms_values) if before_rms_values else None,
     )
-    optimization_attempt = protected_efl_refinement(
-        best.metadata.source_zmx,
-        best.metadata.fov_deg,
-        efl_mm,
-        max_total_track_mm,
-        before_mtf_max_field_frac=best.metadata.mtf_max_field_frac,
-        before_mtf_bands=before_mtf_bands,
-        before_max_rms_spot_radius_um=max(before_rms_values) if before_rms_values else None,
+    optimization_attempt = _bounded_probe(
+        lambda: protected_efl_refinement(
+            best.metadata.source_zmx,
+            best.metadata.fov_deg,
+            efl_mm,
+            max_total_track_mm,
+            before_mtf_max_field_frac=best.metadata.mtf_max_field_frac,
+            before_mtf_bands=before_mtf_bands,
+            before_max_rms_spot_radius_um=max(before_rms_values) if before_rms_values else None,
+        ),
+        fallback=lambda: OptimizationAttempt(
+            status="not_attempted",
+            engine="optiland.least_squares",
+            summary=(
+                "local optimization probe exceeded its "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s deadline"
+            ),
+            target_efl_mm=efl_mm,
+            diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
+        ),
+        label="protected_efl_refinement",
     )
     rationale.append(f"ran protected local optimizer probe: {optimization_attempt.status}")
     if optimization_attempt.verification is not None:
@@ -4225,28 +4332,45 @@ def match_case(
         and merit_probe_recovery_objective.normalized_gap > 0.0
         else ()
     )
-    merit_optimization_probe = protected_rms_merit_probe(
-        source_zmx=best.metadata.source_zmx,
-        nominal_fov_deg=best.metadata.fov_deg,
-        target_efl_mm=efl_mm,
-        max_total_track_mm=max_total_track_mm,
-        radius_changes=merit_probe_radius_changes,
-        before_effective_focal_length_mm=(
-            merit_probe_before.effective_focal_length_mm if merit_probe_before else None
+    merit_optimization_probe = _bounded_probe(
+        lambda: protected_rms_merit_probe(
+            source_zmx=best.metadata.source_zmx,
+            nominal_fov_deg=best.metadata.fov_deg,
+            target_efl_mm=efl_mm,
+            max_total_track_mm=max_total_track_mm,
+            radius_changes=merit_probe_radius_changes,
+            before_effective_focal_length_mm=(
+                merit_probe_before.effective_focal_length_mm if merit_probe_before else None
+            ),
+            before_f_number=merit_probe_before.f_number if merit_probe_before else None,
+            before_total_track_mm=merit_probe_before.total_track_mm if merit_probe_before else None,
+            before_mtf_max_field_frac=(
+                merit_probe_before.mtf_max_field_frac if merit_probe_before else None
+            ),
+            before_mtf_bands=mtf_bands_from_snapshot(merit_probe_before),
+            before_max_rms_spot_radius_um=(
+                merit_probe_before.max_rms_spot_radius_um if merit_probe_before else None
+            ),
+            variable_priority=merit_probe_variable_priority,
+            probe_purpose=(
+                "image_quality_floor_recovery" if merit_probe_variable_priority else "rms_merit"
+            ),
         ),
-        before_f_number=merit_probe_before.f_number if merit_probe_before else None,
-        before_total_track_mm=merit_probe_before.total_track_mm if merit_probe_before else None,
-        before_mtf_max_field_frac=(
-            merit_probe_before.mtf_max_field_frac if merit_probe_before else None
+        fallback=lambda: OptimizationMeritProbe(
+            status="not_attempted",
+            engine="optiland.least_squares",
+            summary=(
+                "RMS merit probe exceeded its "
+                f"{probe_deadline_seconds('protected_rms_merit_probe'):.0f}s deadline"
+            ),
+            operand="rms_spot_size",
+            target_efl_mm=efl_mm,
+            diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
         ),
-        before_mtf_bands=mtf_bands_from_snapshot(merit_probe_before),
-        before_max_rms_spot_radius_um=(
-            merit_probe_before.max_rms_spot_radius_um if merit_probe_before else None
-        ),
-        variable_priority=merit_probe_variable_priority,
-        probe_purpose=(
-            "image_quality_floor_recovery" if merit_probe_variable_priority else "rms_merit"
-        ),
+        label="protected_rms_merit_probe",
     )
     rationale.append(f"ran protected RMS merit probe: {merit_optimization_probe.status}")
     floor_gap_recovery_trial = (
@@ -4325,21 +4449,39 @@ def match_case(
         best_partial_rms_delta = merit_optimization_probe.rms_improvement_um
         if best_partial_rms_delta is None:
             best_partial_rms_delta = max(rms_deltas) if rms_deltas else None
+        # Both probes below compute Optiland MTF, and Optiland is known to hang
+        # on a minority of this corpus (the trace census had to run each case in
+        # its own subprocess for exactly this reason). `match_case` is reached from
+        # the `/api/optical/match` request handler, so an unbounded probe here is
+        # an unbounded HTTP request.
+        #
+        # Measured 2026-07-29: CI shard 2 sat at the job timeout with the stack
+        # `optical.py::match -> _match_case_for_request -> match_case ->
+        # _build_full_field_recovery_diagnostic -> protected_full_field_recovery_probe
+        # -> _full_field_recovery_trial -> _verify_probe_optic -> _mtf_with_fallback
+        # -> compute_mtf`. Nothing on that path had a time bound; "protected" in the
+        # probe's name refers to restoring the perturbed optic, not to a deadline.
         recovery_trials = list(
-            protected_full_field_recovery_probe(
-                best.metadata.source_zmx,
-                best.metadata.fov_deg,
-                max_total_track_mm,
-                best.metadata.computed_efl_mm,
-                best.paraxial.total_track_mm,
-                seed_field,
-                max(before_rms_values) if before_rms_values else None,
+            _bounded_probe(
+                lambda: protected_full_field_recovery_probe(
+                    best.metadata.source_zmx,
+                    best.metadata.fov_deg,
+                    max_total_track_mm,
+                    best.metadata.computed_efl_mm,
+                    best.paraxial.total_track_mm,
+                    seed_field,
+                    max(before_rms_values) if before_rms_values else None,
+                ),
+                label="protected_full_field_recovery_probe",
             )
         )
         edge_field_scan = list(
-            protected_edge_field_stability_scan(
-                best.metadata.source_zmx,
-                best.metadata.fov_deg,
+            _bounded_probe(
+                lambda: protected_edge_field_stability_scan(
+                    best.metadata.source_zmx,
+                    best.metadata.fov_deg,
+                ),
+                label="protected_edge_field_stability_scan",
             )
         )
         highest_scanned_stable_field: float | None = None
@@ -4527,9 +4669,15 @@ def match_case(
                 full_field_recovery_diagnostic.highest_scanned_stable_field_frac,
                 full_field_recovery_diagnostic.edge_field_cliff_frac,
             )
-        scan = protected_edge_field_stability_scan(
-            case.metadata.source_zmx,
-            case.metadata.fov_deg,
+        # Same deadline as the two probes above, and for a stronger reason: this one
+        # runs inside a loop over sibling cases, so an unbounded scan here is an
+        # unbounded request multiplied by the sibling count.
+        scan = _bounded_probe(
+            lambda: protected_edge_field_stability_scan(
+                case.metadata.source_zmx,
+                case.metadata.fov_deg,
+            ),
+            label="protected_edge_field_stability_scan",
         )
         highest_stable: float | None = None
         first_cliff: float | None = None
@@ -8352,35 +8500,52 @@ def match_case(
         else merit_probe_before
     )
     remediation_optimization_probe = (
-        protected_rms_merit_probe(
-            source_zmx=best.metadata.source_zmx,
-            nominal_fov_deg=best.metadata.fov_deg,
-            target_efl_mm=efl_mm,
-            max_total_track_mm=max_total_track_mm,
-            radius_changes=merit_probe_radius_changes,
-            before_effective_focal_length_mm=(
-                remediation_probe_before.effective_focal_length_mm
-                if remediation_probe_before
-                else None
+        _bounded_probe(
+            lambda: protected_rms_merit_probe(
+                source_zmx=best.metadata.source_zmx,
+                nominal_fov_deg=best.metadata.fov_deg,
+                target_efl_mm=efl_mm,
+                max_total_track_mm=max_total_track_mm,
+                radius_changes=merit_probe_radius_changes,
+                before_effective_focal_length_mm=(
+                    remediation_probe_before.effective_focal_length_mm
+                    if remediation_probe_before
+                    else None
+                ),
+                before_f_number=(
+                    remediation_probe_before.f_number if remediation_probe_before else None
+                ),
+                before_total_track_mm=(
+                    remediation_probe_before.total_track_mm if remediation_probe_before else None
+                ),
+                before_mtf_max_field_frac=(
+                    remediation_probe_before.mtf_max_field_frac if remediation_probe_before else None
+                ),
+                before_mtf_bands=mtf_bands_from_snapshot(remediation_probe_before),
+                before_max_rms_spot_radius_um=(
+                    remediation_probe_before.max_rms_spot_radius_um
+                    if remediation_probe_before
+                    else None
+                ),
+                baseline_variable_changes=remediation_baseline_variable_changes,
+                variable_priority=remediation_base_variables,
+                probe_purpose="replay_gate_remediation",
             ),
-            before_f_number=(
-                remediation_probe_before.f_number if remediation_probe_before else None
+        fallback=lambda: OptimizationMeritProbe(
+                status="not_attempted",
+                engine="optiland.least_squares",
+                summary=(
+                    "RMS merit probe exceeded its "
+                    f"{probe_deadline_seconds('protected_rms_merit_probe'):.0f}s deadline"
+                ),
+                operand="rms_spot_size",
+                target_efl_mm=efl_mm,
+                diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
             ),
-            before_total_track_mm=(
-                remediation_probe_before.total_track_mm if remediation_probe_before else None
-            ),
-            before_mtf_max_field_frac=(
-                remediation_probe_before.mtf_max_field_frac if remediation_probe_before else None
-            ),
-            before_mtf_bands=mtf_bands_from_snapshot(remediation_probe_before),
-            before_max_rms_spot_radius_um=(
-                remediation_probe_before.max_rms_spot_radius_um
-                if remediation_probe_before
-                else None
-            ),
-            baseline_variable_changes=remediation_baseline_variable_changes,
-            variable_priority=remediation_base_variables,
-            probe_purpose="replay_gate_remediation",
+            label="protected_rms_merit_probe",
         )
         if replay_gate_requires_remediation
         and remediation_baseline_variable_changes
@@ -8513,35 +8678,52 @@ def match_case(
             remediation_downstream_policy = "hold_no_alternative_variable_family"
 
     switched_remediation_optimization_probe = (
-        protected_rms_merit_probe(
-            source_zmx=best.metadata.source_zmx,
-            nominal_fov_deg=best.metadata.fov_deg,
-            target_efl_mm=efl_mm,
-            max_total_track_mm=max_total_track_mm,
-            radius_changes=merit_probe_radius_changes,
-            before_effective_focal_length_mm=(
-                remediation_probe_before.effective_focal_length_mm
-                if remediation_probe_before
-                else None
+        _bounded_probe(
+            lambda: protected_rms_merit_probe(
+                source_zmx=best.metadata.source_zmx,
+                nominal_fov_deg=best.metadata.fov_deg,
+                target_efl_mm=efl_mm,
+                max_total_track_mm=max_total_track_mm,
+                radius_changes=merit_probe_radius_changes,
+                before_effective_focal_length_mm=(
+                    remediation_probe_before.effective_focal_length_mm
+                    if remediation_probe_before
+                    else None
+                ),
+                before_f_number=(
+                    remediation_probe_before.f_number if remediation_probe_before else None
+                ),
+                before_total_track_mm=(
+                    remediation_probe_before.total_track_mm if remediation_probe_before else None
+                ),
+                before_mtf_max_field_frac=(
+                    remediation_probe_before.mtf_max_field_frac if remediation_probe_before else None
+                ),
+                before_mtf_bands=mtf_bands_from_snapshot(remediation_probe_before),
+                before_max_rms_spot_radius_um=(
+                    remediation_probe_before.max_rms_spot_radius_um
+                    if remediation_probe_before
+                    else None
+                ),
+                baseline_variable_changes=remediation_baseline_variable_changes,
+                variable_priority=remediation_downstream_variables,
+                probe_purpose="replay_gate_remediation",
             ),
-            before_f_number=(
-                remediation_probe_before.f_number if remediation_probe_before else None
+        fallback=lambda: OptimizationMeritProbe(
+                status="not_attempted",
+                engine="optiland.least_squares",
+                summary=(
+                    "RMS merit probe exceeded its "
+                    f"{probe_deadline_seconds('protected_rms_merit_probe'):.0f}s deadline"
+                ),
+                operand="rms_spot_size",
+                target_efl_mm=efl_mm,
+                diagnostics=[
+                "probe deadline "
+                f"{probe_deadline_seconds('protected_efl_refinement'):.0f}s exceeded"
+            ],
             ),
-            before_total_track_mm=(
-                remediation_probe_before.total_track_mm if remediation_probe_before else None
-            ),
-            before_mtf_max_field_frac=(
-                remediation_probe_before.mtf_max_field_frac if remediation_probe_before else None
-            ),
-            before_mtf_bands=mtf_bands_from_snapshot(remediation_probe_before),
-            before_max_rms_spot_radius_um=(
-                remediation_probe_before.max_rms_spot_radius_um
-                if remediation_probe_before
-                else None
-            ),
-            baseline_variable_changes=remediation_baseline_variable_changes,
-            variable_priority=remediation_downstream_variables,
-            probe_purpose="replay_gate_remediation",
+            label="protected_rms_merit_probe",
         )
         if replay_gate_requires_remediation
         and remediation_policy == "switch_variable_family"

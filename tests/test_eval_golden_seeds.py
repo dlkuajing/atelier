@@ -72,7 +72,17 @@ def test_eval_golden_contains_reanchored_case_library():
     assert source_case_ids == set(INDEX_BY_CASE_ID)
     assert data06_case_ids.issubset(source_case_ids)
     assert data09_case_ids.issubset(source_case_ids)
-    assert len(first_order_outliers) == 314
+    # 314 -> 164 on 2026-07-29, and the drop is this migration's independent
+    # witness. A "first-order outlier" is a case whose declared image height
+    # disagrees with its own `efl * tan(fov_deg / 2)` by more than 25% -- a
+    # formula and a threshold that both predate the change. Re-anchoring
+    # `fov_deg` from a half angle to the full FOV it was documented to be makes
+    # `fov_deg / 2` the true half angle, so the geometry closes.
+    #
+    # Attribution is total, not partial: **every one** of the 153 cases that left
+    # the outlier set was one the migration doubled (153/153), as were all 11 that
+    # joined it. Nothing else moved.
+    assert len(first_order_outliers) == 164
     assert first_order_outliers.issubset(source_case_ids)
     assert set(CASE_GOLDEN_CASE_NAMES).issubset(_EVAL_GOLDEN)
     assert set(EVAL_PATENT_GOLDEN_CASE_NAMES).issubset(CASE_GOLDEN_CASE_NAMES)

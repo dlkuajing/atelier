@@ -189,8 +189,8 @@
     },
     "audit": {
       "path": "data/patent-ledger/audit.json",
-      "bytes": 45122,
-      "sha256": "110ad2f15019982154851950c5a4ea0f23b4a734ffe8aeb144a5ffa45d290143"
+      "bytes": 83583,
+      "sha256": "dbf16c95a42428c4b0d1acb90d546a13d565c80a895c7a941e7a9294ec1a8ba0"
     }
   },
   "semantic_replay_sha256": "1f21d93fec12dcddd1cf7b865fbd6972be6fafa60822cd7859eed8bdf96f5a19",

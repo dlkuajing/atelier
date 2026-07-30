@@ -64,7 +64,9 @@ _WORKER = """
 import json, math, sys, warnings
 warnings.simplefilter("ignore")
 sys.path.insert(0, sys.argv[1])
-from app.core.aberration import compute_mtf
+import numpy as np
+from optiland.analysis import Distortion
+from app.core.aberration import compute_mtf, nearest_mtf_freq_index
 from app.core.engines.seed_field_rebuild import max_field_angle_deg, read_field_profile
 from app.core.engines.zmx_import_prep import decode_zmx_text
 from app.core.zmx_ingest import load_normalized_zmx, regularize_fields_to_angle
@@ -124,7 +126,8 @@ if half is not None:
     if not used_declared:
         regularize_fields_to_angle(optic, 2.0 * half)
     out['field_set'] = 'declared' if used_declared else 'canonical_fractions'
-    rms = [float(v) for v in compute_mtf(optic).rms_spot_radius_um_by_field]
+    mtf = compute_mtf(optic)
+    rms = [float(v) for v in mtf.rms_spot_radius_um_by_field]
     # Optiland's rms_spot_radius() is an RMS **radius**; CODE V's SPOTDATA
     # output(1) -- what @rmssum reports -- is an RMS **diameter**: the CODE V
     # Geometrical Analysis manual states it outright ("The RMS spot diameter ...
@@ -132,8 +135,29 @@ if half is not None:
     # Comparing them raw was a factor-of-two apples-to-oranges, and it showed:
     # the first run's median ratio came out at 0.4925.
     out["max_rms_spot_um"] = (2.0 * max(rms)) if rms else None
+    # Same frequency the trial's CODE V probe uses, and the same "worst over every
+    # field and both azimuths" reduction as @mtfmin.
+    idx = nearest_mtf_freq_index(mtf, 100.0)
+    if idx is None:
+        out["mtf_min"] = None
+    else:
+        vals = []
+        for field in mtf.fields:
+            vals.extend([float(field.sagittal[idx]), float(field.tangential[idx])])
+        out["mtf_min"] = min(vals) if vals else None
+        out["mtf_freq_lp_per_mm"] = float(mtf.freq_lp_per_mm[idx])
+    # f-tan(theta) reference, which is what a distortion percentage means and what
+    # CODE V's @dstpct reports. Worst magnitude over fields and wavelengths.
+    try:
+        data = np.asarray(Distortion(optic, distortion_type="f-tan").data, dtype=float)
+        finite = data[np.isfinite(data)]
+        out["distortion_pct"] = float(np.max(np.abs(finite))) if finite.size else None
+    except Exception:
+        out["distortion_pct"] = None
 else:
     out["max_rms_spot_um"] = None
+    out["mtf_min"] = None
+    out["distortion_pct"] = None
 print(json.dumps(out))
 """
 
@@ -203,6 +227,8 @@ def recheck(
                         "efl_mm": reported.get("efl_y_mm"),
                         "f_number": reported.get("f_number"),
                         "max_rms_spot_um": reported.get("rms_spot_um"),
+                        "mtf_min": reported.get("mtf_min"),
+                        "distortion_pct": reported.get("distortion_pct"),
                     },
                 }
                 row["optiland"] = other
@@ -212,6 +238,10 @@ def recheck(
                         "f_number": _ratio(reported.get("f_number"), other.get("f_number")),
                         "max_rms_spot_um": _ratio(
                             reported.get("rms_spot_um"), other.get("max_rms_spot_um")
+                        ),
+                        "mtf_min": _ratio(reported.get("mtf_min"), other.get("mtf_min")),
+                        "distortion_pct": _ratio(
+                            reported.get("distortion_pct"), other.get("distortion_pct")
                         ),
                     }
                 rows.append(row)
@@ -242,7 +272,7 @@ def recheck(
         "reproduction_ratio_optiland_over_codev": {
             arm: {
                 metric: spread(metric, arm)
-                for metric in ("efl_mm", "f_number", "max_rms_spot_um")
+                for metric in ("efl_mm", "f_number", "max_rms_spot_um", "mtf_min", "distortion_pct")
             }
             for arm in arms
         },

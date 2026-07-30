@@ -60,9 +60,16 @@ jobs:
       fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
-    # 单片预算。全量串行实测 53 分钟（run 30443200160），4 片本地实测均衡到
-    # 每片约 1/4，折算 CI 约 14 分钟 + setup。留足余量但不至于把挂死藏一小时。
-    timeout-minutes: 40
+    # 单片预算。原为 40 分钟，依据是"全量串行 53 分钟 / 4 片 ≈ 14 分钟 + setup"。
+    # 2026-07-29 的 `fov_deg` 重锚把 wide/ultrawide 的可路由池从 224/78 抬到
+    # 332/332（`cases_for_scenario` 的合并池变大），路由密集的测试因此变慢：
+    # 同一次 run 里 1 片 27 分、4 片 20 分，而 **2 片与 3 片双双在 40 分整被砍**
+    # ——不是测试挂了，是撞到了这个上限。
+    #
+    # 抬到 60：仍远低于分片前单 job 的 75 分钟，仍然能在一小时内暴露挂死。
+    # ⚠️ `tests/ci-shard-durations.json` 是重锚**之前**测的，分片均衡已经过期；
+    # 刷新它才是根治，抬上限只是让 #136 能落地。
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
         with:
@@ -140,4 +147,9 @@ jobs:
           # 实测 1083 行 -> 默认 xargs 产出 1358 个参数，-d 换行 产出 1083 个。
           # -x: 参数超长时宁可报错也不静默分批（分批会把一片拆成多次 pytest 调用、
           # 各出一份 summary）。单片实测 112KB，远低于 2MB ARG_MAX。
-          xargs -x -d '\n' -a /tmp/shard.txt uv run pytest -q --durations=25 -m "not real_machine"
+          #
+          # --timeout: 单条测试上限，把"某片挂满一小时、日志里什么都没有"变成
+          # "某条测试超时 + 一份栈"。1800s 高于已知最慢的单条（1027s），
+          # 所以正常的慢测试不受影响；--timeout-method=thread 跨平台可用。
+          xargs -x -d '\n' -a /tmp/shard.txt uv run pytest -q --durations=25 \
+            --timeout=1800 --timeout-method=thread -m "not real_machine"
