@@ -31,7 +31,14 @@ from typing import ClassVar
 import pytest
 
 from app.core.batch_run_lock import BatchRunnerLockHeldError, batch_runner_lock
-from app.core.case_library import _candidate_scenarios, load_case_library, match_case, rank_seeds
+from app.core.case_library import (
+    _candidate_scenarios,
+    _seed_routing_max_rms_um,
+    load_case_library,
+    match_case,
+    rank_seeds,
+)
+from app.core.corpus_quality import case_rms_spot_um
 from app.core.engines.codev_batch import DEFAULT_CODEV_EXECUTABLE, CodeVBatchError
 from app.core.engines.seed_target_score import SeedTargetScore
 from app.core.lens_system import Scenario
@@ -879,59 +886,56 @@ def test_telephoto_anchor_target_is_in_domain_but_the_stale_one_is_not():
     )
 
 
-def test_rank_seeds_by_target_match_does_not_force_in_genuinely_far_fov_ultrawide_anchor():
-    """诚实留痕（非缺陷）：PR#60 存在性扫描给出的第三个反例
-    `US-12210213-B2-e3`（ultrawide target EFL=3.2mm，原生 FOV≈103.6°）逐点
-    核验（`.planning/loop/mode3-funnel-tuning-report.md` §ultrawide 反例
-    核验）显示这**不是**一个 stage-1-宽度排除案例：目标 FOV 与其原生 FOV
-    足够接近时（fov>=98.5°）它本来就在 stage 1 top-10 里、稳居第一；目标
-    FOV 明显偏远时（fov<=98.0°，失配 >5.6°）它的 |FOV 失配| 超出该 target
-    下 primary 池自身的自适应上限，`_fov_bounded_efl_close_extras`
-    正确地不把它拉进候选池——两者之间不存在"排除但可召回"的中间地带（细
-    粒度扫描确认过渡宽度为 0）。本测试锁定这个边界行为：target_fov=98.0
-    （刚好在自适应上限外）时它必须不出现在候选池里，target_fov=98.5
-    （刚好在自适应上限内/已在 primary）时它必须是第一名——防止未来有人
-    "修复"成强行拉近它反而破坏了自适应上限本身的不变量。"""
+def test_rank_seeds_by_target_match_does_not_win_on_a_quality_rejected_ultrawide_anchor():
+    """诚实留痕（非缺陷）：PR#60 存在性扫描的第三个反例
+    `US-12210213-B2-e3`（ultrawide target EFL=3.2mm，原生 FOV≈103.6°）。
+
+    **2026-07-30 重锚**：本测试原先钉的是两个具体 case_id 边界——
+    target_fov=98.0 时 anchor 不在候选池、98.5 时它是第一名。路由像质闸换成
+    CODE V 全场读数后（`app/core/case_library.py` 的
+    `_SEED_ROUTING_RMS_PERCENTILE`），ultrawide primary 池的组成变了，
+    自适应 FOV 上限的**锚点**随之移动，实测：
+
+    | | 旧闸 | p75 闸 |
+    |---|---|---|
+    | fov=98.0 候选池 | 11 颗，anchor 不在 | 18 颗，anchor 第 3 |
+    | 池内最大 \\|FOV 失配\\| | 4.45° | 8.5° |
+    | fov=98.5 第一名 | anchor | `US-11668898-B2-e5` |
+
+    上限是 `max |FOV 失配|` over primary top-10 席位，这个**结构**没变，变的
+    是席位本身：像质更干净的 seed 往往 FOV 更远（全局实测 FOV 偏差中位
+    2.20° → 3.55°），所以席位一换、上限就宽。原断言钉的是旧池组成，不是
+    不变量；`_fov_bounded_efl_close_extras` 的反强拉不变量由 525-640 行那六条
+    **合成池**测试独立锁定（含
+    `test_fov_bounded_efl_close_extras_cap_anchored_to_old_codev_seats_not_primary_max`），
+    不依赖真库快照，改闸后全绿。
+
+    因此本测试改锁一条不随池组成漂移的性质：anchor 自身 CODE V 全场读
+    58.57 µm，超出路由闸阈值 = 被拒档，**在两个 target FOV 下都不能拿第一
+    名**——这正是原测试"防止有人强行把它拉近"想守住的东西，只是换成用像质
+    表达，而像质是钉得住的量（case_id 会随每个 ingest 批次漂移）。
+
+    上限本身不在这里重算：第一版重锚我在测试里复刻了 cap 的算法，用错了池
+    （全库而非场景池）得出 8.0 与真实的 8.5 冲突——**在测试里复刻实现就是
+    在测自己的复刻件**。该不变量归 525-640 行的合成池测试。"""
     target_efl, target_fnum = 3.2, 2.1
     anchor_id = "US-12210213-B2-e3"
 
-    # 2026-07-30: the boundary moved by about one degree when `fov_deg` was re-anchored
-    # from half to full angle. It is a *recalibration*, not a regression -- rescanned and
-    # the structure this test exists to protect is intact and still sharp:
-    #
-    #     target fov 98.0 -> anchor EXCLUDED     98.5 -> anchor EXCLUDED
-    #     target fov 99.5 -> anchor RANK 1      100.5..104.5 -> anchor RANK 1
-    #
-    # Still no "excluded but recoverable" middle ground, and the anchor is still never
-    # forced in below the adaptive cap. The cap tightened because 253 of 442 cases had
-    # stored a half angle: with the pool's angles corrected, the primary pool near this
-    # target is tighter, so the adaptive cap derived from its spread is tighter too, and a
-    # 5.1-degree mismatch now falls outside it.
-    spec_far = TargetSpec(
-        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.5, fnum=target_fnum
-    )
-    scored_far = TargetConvergedGenerator._rank_seeds_by_target_match(spec_far)
-    far_ids = {c.metadata.case_id for c, _ in scored_far if c.metadata is not None}
-    assert anchor_id not in far_ids  # 自适应上限正确拒绝了它——不是漏斗缺陷
+    anchor_rms_um = case_rms_spot_um(anchor_id)
+    assert anchor_rms_um is not None
+    assert anchor_rms_um > _seed_routing_max_rms_um()  # 被拒档，前提成立
 
-    # One degree lower must still reject it: the invariant is "never forced in", so the
-    # rejection has to hold on the whole far side, not only at the boundary.
-    spec_farther = TargetSpec(
-        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.0, fnum=target_fnum
-    )
-    farther_ids = {
-        c.metadata.case_id
-        for c, _ in TargetConvergedGenerator._rank_seeds_by_target_match(spec_farther)
-        if c.metadata is not None
-    }
-    assert anchor_id not in farther_ids
-
-    spec_near = TargetSpec(
-        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=99.5, fnum=target_fnum
-    )
-    scored_near = TargetConvergedGenerator._rank_seeds_by_target_match(spec_near)
-    assert scored_near[0][0].metadata is not None
-    assert scored_near[0][0].metadata.case_id == anchor_id
+    for target_fov in (98.0, 98.5):
+        spec = TargetSpec(
+            scenario=Scenario.SMARTPHONE_ULTRAWIDE,
+            efl_mm=target_efl,
+            fov_deg=target_fov,
+            fnum=target_fnum,
+        )
+        scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
+        assert scored
+        assert scored[0][0].metadata is not None
+        assert scored[0][0].metadata.case_id != anchor_id
 
 
 def test_candidate_for_seed_notes_flag_fov_unfiltered_selection_when_fov_unconstrained(
