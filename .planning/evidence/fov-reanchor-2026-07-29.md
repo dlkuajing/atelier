@@ -188,9 +188,48 @@ metadata 声明 2θ、artifact 却按 θ/2 追——**语料内部本来就自�
 - `tests/data/eval_golden.json`：`scripts/e2_golden.py` 重跑。
   445 条里 **47 条（10.6%）选中的 seed 变了**，196 条质量证据（`quality_floor_gap` /
   `quality_min250`）变了，58 条 `first_order_image_height_mm` 跟着精度动。
-- `data/patent-ledger/`：**未触发**。上一铲那条四级链是因为 index 内容进了 snapshot；
-  这次 case 集合、`case_id`、`intake_batch`、计数全未变，`patent_saturation.py audit`
-  的 `snapshot_sha256` 不变。
+- `data/patent-ledger/`：**触发了，但只到第二级**。⚠️ 我先前写「未触发」是**错的**——
+  当时只跑了 `patent_saturation.py audit`（它读的是已提交的 snapshot，当然不动），
+  没有跑 replay 侧。`tests/test_patent_replay.py` 6 条挂在
+  `PatentReplayError: frozen case index hash drift`：snapshot 冻结了
+  `app/data/optical_cases/index.json` 的 sha256，而 index 变了。
+  正确处置是 **只跑 `patent_saturation.py build`**——重算后 6 条全过，
+  移动面精确到两处：`inputs/case_index/sha256` 与 `formal_artifacts`（254 个 per-case JSON 的哈希），
+  计数、embodiments、`pool_concat_sha256` 一位没动。
+
+  ⛔ **不要跑 `patent_pool_replay.py freeze`**（我跑了一次，已回滚）。
+  它会重算 `cohort_sha256`，而 619 条已完成的 replay 结果是按旧 cohort 校验的：
+  `roots_with_results 619 → 0`、`corrupt_results 0 → 619`、
+  `cohort_replay_complete true → false`。**一条命令把 619 条真机结果全判成损坏。**
+  refreeze 只在 cohort 成员本身要变时才做；index 内容变了但 619 个 root 一个没变，
+  不需要 refreeze。
+
+## 测试归因（54 条挂了，其中我造成的是 6 条）
+
+全量 `pytest -n 8 -m "not real_machine"`：**54 failed / 4528 passed**（1:42:37）。
+把这 54 条**逐条**在本铲的父提交上重跑（同一 worktree、detach 到父提交、`-n 4`）：
+**45 failed / 9 passed**——即 45 条与本铲无关。剩下 9 条里：
+
+- **3 条是 xdist worker 崩溃**，不是断言失败（`worker 'gw10' crashed while running ...`）。
+  串行重跑全过。这是 `-n 8` 在这台机器上的产物（Optiland 峰值 ~1.2GB × 8）。
+- **6 条是真的、是我造成的**：上面那条 `frozen case index hash drift`，已按
+  `patent_saturation.py build` 修好，25 条全过。
+
+⚠️ **更正我自己的一条中途判断**：我一度认为
+`test_p2_pair_census::test_gating_at_the_corpus_median_costs_no_trials`
+（`assert 4 == 49`）是本铲造成的——理由听起来很顺：种子质量闸按语料中位数设，
+而我改了语料的离轴 RMS。**父提交上同样挂**，所以它是本branch既有的，不是本铲的。
+`load_distribution()` 读的是已提交的 `app/data/corpus_quality_distribution.json`，
+源头是 worktree 外的 CODE V 真机 census（`D:/atelier-stagec-runs/…`），
+**本来就不从 `index.json` 派生**——机制上也不可能被我改到。
+教训还是那条：**先比基线，再归因**。
+
+📌 那 45 条里约 35 条是同一个环境原因，与代码无关：
+`ValueError: CODE V-unsafe source_zmx '…\.claude\worktrees\…': dot-prefixed path
+component '.claude'`。仓库有一条守卫拒绝含点前缀目录的路径（`ZEMAXOS_TO_CV` 会静默
+导入 dummy system），而 worktree 自己就住在 `D:\atelier\.claude\worktrees\` 底下。
+**在 `.claude/worktrees/` 里跑不了 CODE V 路径相关的测试**——这条对以后每一个
+worktree 都成立，不是本铲的问题，但值得记下来。
 
 ## 没做，及为什么
 
