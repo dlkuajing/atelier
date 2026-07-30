@@ -471,6 +471,26 @@ class TrialPlan:
     spec_n_pieces: int
 
 
+def _first_order_imh_disclosure(plan: TrialPlan) -> dict[str, Any]:
+    """How far the control's declared image height sits from `efl * tan(fov/2)`.
+
+    `fov_deg` is the full field angle (re-anchored 2026-07-29), hence the halving.
+    """
+
+    reference = plan.spec_efl_mm * math.tan(math.radians(plan.spec_fov_deg / 2.0))
+    return {
+        "spec_imh_mm": plan.spec_imh_mm,
+        "first_order_imh_mm": reference,
+        "deviation_frac": (
+            (plan.spec_imh_mm - reference) / reference if reference > 0.0 else None
+        ),
+        "note": (
+            "declared image height is the max over the exit pupil, not the chief ray "
+            "(corpus-truth audit 2026-07-30); reported for disclosure, not screened"
+        ),
+    }
+
+
 def plan_trials(census_path: Path, *, limit: int | None = None) -> tuple[list[TrialPlan], dict]:
     """Pair every eligible control with its nearest cross-brand seed.
 
@@ -713,6 +733,7 @@ def run_trial(
     timeout_seconds: float = 180.0,
     rebuild_seed_field: bool = True,
     wall_clock_budget_s: float | None = None,
+    skip_tolerance: bool = False,
 ) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_optimize import run_codev_target_standard
@@ -778,6 +799,15 @@ def run_trial(
     # attempt per config. The 2026-07-28 pre-fix pilot lost 3/24 trials exactly
     # that way (elapsed pinned at 2 x the 180s hard timeout, to 0.1s). Reading
     # the declared count off the seed costs no CODE V call.
+    # Disclosure, not a screen: the corpus-truth audit (2026-07-30) confirmed that
+    # `image_height_mm` for the 403 ATELIER_REAL_IMH_MM cases is the **maximum over the
+    # exit pupil**, not the chief-ray intercept -- 198/403 deviate by more than 10% from
+    # their own efl*tan(fov/2), 31 by more than 100%. The spec handed to the optimiser
+    # is that number (`spec_imh_mm`), so a reader has to be able to see how far this
+    # trial's spec sits from first order. No threshold: a real lens with deliberate
+    # distortion legitimately deviates, so the honest move is to report the figure.
+    record["spec_imh_vs_first_order"] = _first_order_imh_disclosure(plan)
+
     seed_zmx = ZMX_DIR / plan.seed_zmx
     num_fields = declared_field_count(decode_zmx_text(seed_zmx.read_bytes())[0])
     record["seed_declared_num_fields"] = num_fields
@@ -992,7 +1022,12 @@ def run_trial(
     # on. Skipping it does **not** make the trial `budget_exhausted`: the three
     # P2 metrics were measured and their verdict stands. What is lost is a piece
     # of the P3 四件套, and the record says so by name rather than by absence.
-    if over_budget():
+    if skip_tolerance:
+        # Explicit two-phase batching: P2 sample size first (the main indicator), P3
+        # on a subset afterwards. Named `cli_request` so a phase-1 run can never be
+        # mistaken for a run whose tolerance stage failed or timed out.
+        record["tolerance"] = {"skipped": "cli_request"}
+    elif over_budget():
         record["tolerance"] = {"skipped": "wall_clock_budget", "budget_s": wall_clock_budget_s}
     else:
         record["tolerance"] = _tolerance_pair(
@@ -1171,6 +1206,39 @@ def _edge_used(record: Mapping[str, Any]) -> float | None:
         return None
 
 
+def _distinct_design_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Distinct *designs* behind the trials, by prescription fingerprint.
+
+    A file that cannot be fingerprinted is counted in `unfingerprinted` and left out of
+    both counts -- never folded in as "one more design", which would inflate the
+    denominator with something unread.
+    """
+
+    from app.core.engines.prescription_identity import fingerprint_zmx
+
+    fingerprints: dict[str, set[str]] = {"controls": set(), "seeds": set()}
+    unfingerprinted: list[str] = []
+    for record in records:
+        plan = record.get("plan")
+        if not isinstance(plan, dict):
+            continue
+        for bucket, key in (("controls", "control_zmx"), ("seeds", "seed_zmx")):
+            name = plan.get(key)
+            if not name:
+                continue
+            path = ZMX_DIR / str(name)
+            fingerprint = fingerprint_zmx(path) if path.is_file() else None
+            if fingerprint is None:
+                unfingerprinted.append(str(name))
+                continue
+            fingerprints[bucket].add(fingerprint)
+    return {
+        "controls": len(fingerprints["controls"]),
+        "seeds": len(fingerprints["seeds"]),
+        "unfingerprinted": sorted(set(unfingerprinted)),
+    }
+
+
 def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
     verdicts: dict[str, int] = {}
     for record in records:
@@ -1183,6 +1251,7 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
     # outside `judged`, so neither can flatter the headline.
     budget_exhausted = verdicts.get("budget_exhausted", 0)
     seeds = {r["plan"]["seed_case_id"] for r in records if "plan" in r}
+    designs = _distinct_design_counts(records)
     summary: dict[str, Any] = {
         "trials": len(records),
         "verdicts": verdicts,
@@ -1193,7 +1262,20 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
         "par_rate_over_all_trials": (verdicts.get("par", 0) / len(records)) if records else None,
         "par_rate_over_judged": (verdicts.get("par", 0) / judged) if judged else None,
         "distinct_seeds_used": len(seeds),
+        # `case_id` counts *publications*, and the corpus is 442 files carrying 354
+        # distinct prescriptions -- continuations republish the same embodiment under a
+        # new number, so counting case_ids counts one design up to four times. These
+        # two are the honest denominators for "样本量成立": report them next to any rate.
+        "distinct_control_designs": designs["controls"],
+        "distinct_seed_designs": designs["seeds"],
+        "designs_unfingerprinted": designs["unfingerprinted"],
         "budget_exhausted": budget_exhausted,
+        "tolerance_skipped_by_request": sum(
+            1
+            for r in records
+            if isinstance(r.get("tolerance"), dict)
+            and r["tolerance"].get("skipped") == "cli_request"
+        ),
         "tolerance_skipped_for_budget": sum(
             1
             for r in records
@@ -1258,7 +1340,11 @@ def render(summary: dict[str, Any]) -> str:
         f"  unmeasurable            {summary['verdicts'].get('unmeasurable', 0)}",
         f"  budget_exhausted        {summary['verdicts'].get('budget_exhausted', 0)}"
         "   <- ran out of clock, not of quality",
-        f"distinct seeds used       {summary['distinct_seeds_used']}",
+        f"distinct seeds used       {summary['distinct_seeds_used']} (publications)",
+        # The line a reader must not miss: 442 corpus files are 354 distinct
+        # prescriptions, so publication counts overstate independence.
+        f"distinct CONTROL designs  {summary['distinct_control_designs']}",
+        f"distinct SEED designs     {summary['distinct_seed_designs']}",
     ]
     rate_all = summary["par_rate_over_all_trials"]
     rate_judged = summary["par_rate_over_judged"]
@@ -1317,6 +1403,17 @@ def main(argv: list[str] | None = None) -> int:
             "per-trial wall-clock allowance. Checked between stages, so a trial "
             "can overrun by at most one stage; a trial that runs out is filed as "
             "its own `budget_exhausted` verdict, never as worse or unmeasurable."
+        ),
+    )
+    parser.add_argument(
+        "--skip-tolerance",
+        action="store_true",
+        help=(
+            "phase 1 of a two-phase batch: measure the three P2 metrics only. The "
+            "tolerance pair is by far the most expensive stage (51 minutes for one "
+            "trial, measured), so skipping it is what makes a whole-plan P2 reading "
+            "affordable. Filed as `skipped: cli_request` -- the verdict is unaffected, "
+            "what is lost is one piece of the P3 四件套, recorded by name not by absence."
         ),
     )
     parser.add_argument(
@@ -1387,6 +1484,7 @@ def main(argv: list[str] | None = None) -> int:
                 timeout_seconds=args.timeout,
                 rebuild_seed_field=not args.no_field_rebuild,
                 wall_clock_budget_s=args.trial_budget_seconds,
+                skip_tolerance=args.skip_tolerance,
             )
             (out_dir / f"trial_{plan.control_case_id}.json").write_text(
                 json.dumps(record, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
