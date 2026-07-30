@@ -801,11 +801,17 @@ def test_rank_seeds_by_target_match_recovers_real_telephoto_anchor_excluded_from
     的结果，不是被写进去的前提。原始 docstring 的意图（"贴近场景 FOV 下界，
     仍是合法客户请求"）在重锚后的表达就是这条边界。
 
-    实测（2026-07-30）：该 target 下 rank 1 = 本锚点、band=lt5、score=4.260，
-    且 24.53–27° 区间内结论不变；旧的 15.3° target 下 rank 1 是
-    `US-12571987-B2-e5`（band=**gt30**、score=35.13，EFL 差 54%）——不是权重
-    回归，是 target 自己过期了，详见
-    `.planning/evidence/seed-routing-weight-sensitivity-2026-07-30.md`。
+    实测（2026-07-30，0.25° 步长扫描）：锚点在 **24.00–27.25°** 整段都是 rank 1
+    （band=lt5、score=4.260），本 target 24.530° 落在这个 3.25° 平台内侧，不是
+    踩在悬崖边上。旧的 15.3° target 下 rank 1 是 `US-12571987-B2-e5`
+    （band=**gt30**、score=35.13，EFL 差 54%）——不是权重回归，是 target 过期。
+
+    另一种读法（"作者写的 15.3 就是半视场，翻倍成 30.6° 即可"）**实测不成立**：
+    30.6° 下 rank 1 是 `US-12372756-B2-e6`（band=5to15）。取 24.530° 的理由是原
+    docstring 把 15.3 的来历写死了——"贴近场景 FOV 下界 15.0°"，即照着 bound 挑
+    的，不是照着某颗镜头的半视场挑的。
+
+    详见 `.planning/evidence/seed-routing-weight-sensitivity-2026-07-30.md`。
     """
     pool = [
         c
