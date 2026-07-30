@@ -252,8 +252,10 @@ def load_usable_case_ids(
     Screen 3 was added 2026-07-29 after the pilot exposed the gap. A control
     defines the spec a customer would ask for; if the product's own guard would
     reject that request with HTTP 400, measuring against it says nothing about
-    the product. Measured on `data/zmx`: of the 192 that pass screens 1+2, only
-    **55 (28.6%)** pass this one -- the corpus's own `scenario` labels are far
+    the product. Re-measured 2026-07-30 on `data/zmx`: of the 192 that pass
+    screens 1+2, **74 (38.54%)** pass this one -- the 55 (28.6%) this docstring
+    used to claim predates the `fov_deg` re-anchor, which moved the scenario
+    labels and therefore which bounds each case is judged against -- the corpus's own `scenario` labels are far
     looser than ``SCENARIO_BOUNDS`` (violations: FOV 88, EFL 60, image height
     44, f/# 32, n_elements 31).
 
