@@ -1,22 +1,26 @@
-"""The re-anchor is one `generate_cases.py` run away from being undone.
+"""The re-anchor used to be one `generate_cases.py` run away from being undone.
 
 `index.json`'s `fov_deg` is not computed from the ZMX -- it is written straight from the
-intake manifest. Traced: `scripts/generate_cases.py:126` passes
-`a["nominal_fov_deg"]` into `build_sample_from_optic`, and
-`app/core/case_library.py` sets `fov_deg=nominal_fov_deg` on the metadata it returns.
-The same value also drives `regularize_fields_to_angle(optic, nominal_fov_deg)` and
+intake manifest. Traced: `scripts/generate_cases.py` passes `a["nominal_fov_deg"]` into
+`build_sample_from_optic`, and `app/core/case_library.py` sets `fov_deg=nominal_fov_deg`
+on the metadata it returns. The same value also drives
+`regularize_fields_to_angle(optic, nominal_fov_deg)` and
 `_classify_scenario(nominal_fov_deg, ...)`, and the parameter it is assigned from
 elsewhere in that function is named `full_fov_deg` -- so the contract is *full* angle.
 
-Measured 2026-07-30 on this branch: **253 of 442** manifest rows still hold the half
-angle, i.e. exactly half the re-anchored `index.json` value. Regenerating the corpus
-today would write half angles back over the re-anchor for those 253 cases.
+Measured 2026-07-30, before the fix: **253 of 442** manifest rows held the half angle,
+i.e. exactly half the re-anchored `index.json` value, so regenerating the corpus would
+have written half angles back over the re-anchor for those 253 cases. All 253 came from
+two intake waves whose converters wrote the ZMX's outermost ``YFLN`` verbatim
+(`data06c_manifest.json` 67, `data09d1_manifest.json` 186); a Zemax ``FTYP 0`` field
+angle is by definition measured from the axis, so that value is the half angle and the
+full FOV is twice it. One further row, `US10330891B2.zmx`, held a third convention --
+the patent text's rounded 100.0 against the ZMX's 101.6 -- and was read off the ZMX
+rather than doubled.
 
-This file does not fix that -- re-anchoring the manifest changes what
-`build_sample_from_optic` traces, which changes the committed per-case artifacts, and
-that is its own shovel. What this file does is make the debt **counted and loud**: the
-count is pinned, so it cannot drift in either direction unnoticed, and the day the
-manifest is re-anchored this test fails and says what the new number should be.
+The debt is now zero, so this file asserts zero rather than pinning a count. An
+assertion of zero is only worth anything if the classifier behind it can still come back
+non-zero, so both non-empty buckets keep a control that feeds them a row on purpose.
 """
 
 from __future__ import annotations
@@ -28,18 +32,31 @@ import pytest
 
 INDEX_PATH = Path("app") / "data" / "optical_cases" / "index.json"
 
-#: Measured on this branch. `agrees` + `half` + `neither` == every matched row.
-#:
-#: `neither` is one case, `US10330891B2.zmx`: manifest 100.0 vs index 101.6. That is a
-#: third convention -- a rounded nominal from the patent text rather than either the
-#: half or the full traced angle -- and it is pinned separately so it cannot hide inside
-#: a bucket it does not belong to.
-EXPECTED_AGREES = 188
-EXPECTED_STILL_HALF = 253
-EXPECTED_NEITHER = 1
+#: The one row that was neither the full angle nor half of it. Kept named, because an
+#: unnamed third convention is how a defect survives a bucket count.
+_THIRD_CONVENTION_CASE = "US10330891B2.zmx"
+
+#: What that row must now hold: 2 x the ZMX's outermost YFLN (50.8), not the patent
+#: text's rounded 100.0. Pinned as a literal so a regeneration that re-reads the rounded
+#: value fails here instead of quietly shrinking the traced field by 1.6%.
+_THIRD_CONVENTION_FOV_DEG = 101.6
 
 
-def _manifest_vs_index() -> dict[str, list[str]]:
+def _bucket(manifest_fov: float, index_fov: float) -> str:
+    if abs(manifest_fov - index_fov) < 1e-6:
+        return "agrees"
+    if abs(manifest_fov * 2.0 - index_fov) < 1e-3:
+        return "half"
+    return "neither"
+
+
+def _manifest_vs_index(overrides: dict[str, float] | None = None) -> dict[str, list[str]]:
+    """Bucket every manifest row against its index row.
+
+    ``overrides`` replaces a row's manifest value in memory only; it exists so the
+    zero-assertions below can be shown to be falsifiable.
+    """
+
     from tests.data.zmx_manifest import ZMX_AMMO
 
     index = {
@@ -52,14 +69,8 @@ def _manifest_vs_index() -> dict[str, list[str]]:
         if row is None:
             buckets["unmatched"].append(entry["filename"])
             continue
-        manifest_fov = float(entry["nominal_fov_deg"])
-        index_fov = float(row["fov_deg"])
-        if abs(manifest_fov - index_fov) < 1e-6:
-            buckets["agrees"].append(entry["filename"])
-        elif abs(manifest_fov * 2.0 - index_fov) < 1e-3:
-            buckets["half"].append(entry["filename"])
-        else:
-            buckets["neither"].append(entry["filename"])
+        manifest_fov = float((overrides or {}).get(entry["filename"], entry["nominal_fov_deg"]))
+        buckets[_bucket(manifest_fov, float(row["fov_deg"]))].append(entry["filename"])
     return buckets
 
 
@@ -71,38 +82,47 @@ def test_every_manifest_row_matches_an_index_row() -> None:
 
 
 @pytest.mark.skipif(not INDEX_PATH.is_file(), reason="case index not present")
-def test_the_manifest_half_angle_debt_is_exactly_as_measured() -> None:
-    """Pinned, not asserted-away.
+def test_no_manifest_row_still_holds_a_half_angle() -> None:
+    """Regenerating the corpus must reproduce the re-anchor, not undo it.
 
-    A pin rather than `== 0` because the fix is a corpus regeneration, not an edit. But
-    a pin still does the job a silent debt cannot: if someone re-anchors the manifest
-    this fails and tells them the new number, and if a future intake wave adds more
-    half-angle rows this fails too instead of quietly enlarging the hole.
+    A row in ``half`` means `index.json` currently states twice what the manifest holds,
+    so the next `generate_cases.py` run would halve it -- and would trace that case at
+    half its true field angle on the way. A new intake wave that repeats the DATA-06c /
+    DATA-09d1 converter convention lands here.
     """
-
-    buckets = _manifest_vs_index()
-    assert len(buckets["half"]) == EXPECTED_STILL_HALF
-    assert len(buckets["agrees"]) == EXPECTED_AGREES
-    assert len(buckets["neither"]) == EXPECTED_NEITHER
-
-
-@pytest.mark.skipif(not INDEX_PATH.is_file(), reason="case index not present")
-def test_the_odd_case_is_the_one_we_know_about() -> None:
-    """`neither` must stay identified. An unnamed third convention is how a defect
-    survives a bucket count."""
-
-    assert _manifest_vs_index()["neither"] == ["US10330891B2.zmx"]
-
-
-@pytest.mark.skipif(not INDEX_PATH.is_file(), reason="case index not present")
-def test_the_half_angle_rows_really_are_half_and_not_a_coincidence() -> None:
-    """Positive control on the classifier: a doubling relation on hundreds of rows is
-    strong evidence of a convention mismatch, but only if the rows are spread across the
-    fov range rather than clustered at one value where 2x could be arithmetic luck."""
 
     from tests.data.zmx_manifest import ZMX_AMMO
 
-    by_name = {entry["filename"]: float(entry["nominal_fov_deg"]) for entry in ZMX_AMMO}
-    half_values = sorted(by_name[name] for name in _manifest_vs_index()["half"])
-    assert len(set(half_values)) > 20, "half-angle rows cluster too tightly to be a convention"
-    assert min(half_values) < 20.0 < max(half_values)
+    buckets = _manifest_vs_index()
+    assert buckets["half"] == []
+    assert buckets["neither"] == []
+    assert len(buckets["agrees"]) == len(ZMX_AMMO)
+
+
+@pytest.mark.skipif(not INDEX_PATH.is_file(), reason="case index not present")
+def test_a_reintroduced_half_angle_row_is_actually_caught() -> None:
+    """Control for the assertion above: an empty bucket has to be an empty bucket, not a
+    classifier that stopped classifying."""
+
+    from tests.data.zmx_manifest import ZMX_AMMO
+
+    victim = ZMX_AMMO[0]["filename"]
+    buckets = _manifest_vs_index({victim: float(ZMX_AMMO[0]["nominal_fov_deg"]) / 2.0})
+    assert buckets["half"] == [victim]
+
+
+@pytest.mark.skipif(not INDEX_PATH.is_file(), reason="case index not present")
+def test_a_third_convention_row_is_actually_caught() -> None:
+    """Same control for ``neither``. A value that is neither equal nor half must not be
+    absorbed by the tolerance of the ``agrees`` test."""
+
+    buckets = _manifest_vs_index({_THIRD_CONVENTION_CASE: 100.0})
+    assert buckets["neither"] == [_THIRD_CONVENTION_CASE]
+
+
+@pytest.mark.skipif(not INDEX_PATH.is_file(), reason="case index not present")
+def test_the_row_that_had_a_third_convention_is_anchored_to_its_zmx() -> None:
+    from tests.data.zmx_manifest import ZMX_AMMO
+
+    stored = {a["filename"]: a["nominal_fov_deg"] for a in ZMX_AMMO}[_THIRD_CONVENTION_CASE]
+    assert stored == pytest.approx(_THIRD_CONVENTION_FOV_DEG)

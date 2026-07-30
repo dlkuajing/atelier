@@ -111,7 +111,97 @@ trial 数涨了，**独立设计数没涨反降**。按既有纪律，P2 报数�
 ```
 uv run python scripts/reanchor_fov_deg.py --check   # 退出码 0 = 语料已锚定
 uv run python scripts/fov_unit_census.py
+uv run pytest tests/test_fov_manifest_convention.py # 上游 manifest 未回退
 ```
+
+---
+
+# 补完：上游 manifest（2026-07-30）
+
+**上面那一铲改的是产物，没改产生产物的那份原料。** `index.json` 的 `fov_deg`
+不是算出来的，是从 intake manifest **抄**过来的：`generate_cases.py` 把
+`a["nominal_fov_deg"]` 传进 `build_sample_from_optic`，`case_library.py` 直接
+`fov_deg=nominal_fov_deg`。所以上一铲之后，**跑一次 `generate_cases.py` 就会把
+253 颗改回半角**。
+
+同一个值还喂给 `regularize_fields_to_angle(optic, nominal_fov_deg)`——那个形参
+在别处就叫 `full_fov_deg`。也就是说这 253 颗**一直是在真视场的一半上被追迹的**：
+`half = fov/2`，喂进去半角就等于按 θ/2 建场，而 θ 才是 ZMX 自己的外场角。
+metadata 声明 2θ、artifact 却按 θ/2 追——**语料内部本来就自相矛盾**，
+上一铲只把矛盾的一半改对了。
+
+## 改了什么
+
+| | |
+|---|---|
+| 翻倍的 manifest 行 | **253**（`data06c_manifest.json` 67 + `data09d1_manifest.json` 186，两批**整批**都是半角） |
+| 按 ZMX 读数改写 | **1**（`US10330891B2` 100.0 → **101.6**，语料里唯一的第三种口径：专利正文的圆整值） |
+| 重生成的 case | **254**（全部走 lightweight artifact 路径 + 那一颗 full 路径），`generate_cases.py --only` |
+| 未动 | 其余 **188** 行 manifest、188 颗 case 的 JSON **逐字节未变** |
+
+`--only` 是这次给 `generate_cases.py` 加的：全库重跑要把 442 颗都过一遍 Optiland，
+还要面对 `BUILD_TIMEOUT_S` 那条注释记的挂死风险；已知子集的改动没有理由去搅动整个语料。
+**先跑了一次空 `--only` 作阳性对照**：442 颗全部走 reuse 分支，`index.json`
+**零 diff**——所以真跑之后的 diff 全部可归因于重建本身。
+
+## 验证：重生成的 `fov_deg` 确实等于重锚值（实测，不是假定）
+
+| | |
+|---|---|
+| 与重锚值**逐位相同** | 384 / 442 |
+| 有差的 | 58 行，**最大相对偏差 4.4e-9** |
+| 按重锚脚本自己的渲染口径（`.9g`）相同 | **442 / 442** |
+| `index.fov_deg == manifest.nominal_fov_deg` 精确相等 | **442 / 442** |
+
+那 58 行的差**方向是精度回来了不是丢了**：上一铲的文本改写器按 `.9g` 落盘
+（它当时在给一个已存值翻倍，怕二进制噪声），而 manifest 本来就带 11 位有效数字；
+重生成写的是 manifest 的原值，所以 9 位之后的数字回来了。
+`reanchor_fov_deg.py --check` 仍报 `would change 0`。
+
+## 后果：三条不动的、两条动的
+
+**不动的**（都是阳性对照，任何一条动了都说明我改错了）：
+
+- `efl_mm` **442/442 未变**——视场规整不影响近轴量，本来就该一位不动。
+- `scenario` **442/442 未变**——上一铲重算的 104 个标签，与
+  `_classify_scenario(2θ, efl)` 现在从 manifest 算出来的结果**完全一致**。
+  这是「翻倍是对的」的独立见证：两条互不相干的路径落到同一批标签上。
+- 轴上视场 RMS 比值 **208/208 恰好 1.000**——轴上不依赖视场角。
+
+**动的**：
+
+- **离轴像质**（这才是这一铲真正买到/付出的东西）。采样视场角翻倍
+  （lightweight 的第二个视场从 `0.5×θ/2` 变成 `0.5×θ`），
+  离轴 RMS 新/旧 **中位 1.095，四分位 0.783 / 1.514**，36.5% 反而变好。
+  旧值不是可比基线——它是在设计视场一半上量出来的。
+- **14 颗丢掉离轴 MTF**：`mtf_max_field_frac` 0.5 → **0.0**，
+  语料整体 58 → **72**。
+  ⚠️ 这里的 `0.0` 是 `_lightweight_mtf` 的 **fail-closed 返回**
+  （`compute_mtf` 抛异常或出 NaN → `_conservative_zero_mtf`），
+  **不是「轴上完美」**——按本仓「退化值等于理想读数」的既有教训，这一条要写明：
+  它是悲观值，会让这些 case 在需要全场证据的路径上被挡下，不会被误读成好数。
+  14 颗全在 DATA-06c / DATA-09d1，全是被翻倍的：
+  它们在**自己的设计视场**上追不出 MTF，此前之所以有数，是因为只被追了一半视场。
+
+## 连带重算
+
+- `tests/data/eval_golden.json`：`scripts/e2_golden.py` 重跑。
+  445 条里 **47 条（10.6%）选中的 seed 变了**，196 条质量证据（`quality_floor_gap` /
+  `quality_min250`）变了，58 条 `first_order_image_height_mm` 跟着精度动。
+- `data/patent-ledger/`：**未触发**。上一铲那条四级链是因为 index 内容进了 snapshot；
+  这次 case 集合、`case_id`、`intake_batch`、计数全未变，`patent_saturation.py audit`
+  的 `snapshot_sha256` 不变。
+
+## 没做，及为什么
+
+- **`SCENARIO_BOUNDS` 没有重新标定。** `US10330891B2` 从 100.0 挪到 101.6 之后，
+  按 `compute_bounds_stats.py` 的口径重推，超广 FOV 上限会从 105.0 变成 106.7。
+  **没改**：放宽 bounds = 改产品接单范围，是主公的待裁定项，不能作为一次语料修复的副作用。
+  105.0 仍然覆盖 101.6，测试里把这层依赖写明了。
+- **`PATENT_PROVENANCE["US10330891B2"]` 仍是 100.0**。那是 E2-01 对专利正文声明值的
+  交叉验证记录（`fov_declared_deg = 2 × declared HFOV`），与 ZMX 追迹角是两个量，不该同步。
+- 上一铲「未做」里那三条（17 颗 `FTYP 3`、抽样回查专利原文、`rank_seeds` 权重）
+  **一条都没动**。
 
 ## 未做
 

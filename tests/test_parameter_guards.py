@@ -139,12 +139,20 @@ def test_real_designs_pass_calibrated_bounds():
 
 def test_smartphone_bounds_calibrated_from_real_data():
     """Calibration markers: wide allows 3-element designs and small image heights;
-    ultrawide is backed by the real 100 deg US10330891B2 design (E2-01 batch 1)."""
+    ultrawide is backed by the real ~100 deg US10330891B2 design (E2-01 batch 1)."""
     wide = SCENARIO_BOUNDS[Scenario.SMARTPHONE_WIDE]
     assert wide.n_elements_min == 3  # real ammo has 3P designs (was 5)
     assert wide.image_height_mm_min < 3.5  # real IMH down to 1.8 (was floored at 3.5)
     uw = SCENARIO_BOUNDS[Scenario.SMARTPHONE_ULTRAWIDE]
-    # E2-01 batch 1: US10330891B2 is a real 100 deg 6P design (cross-validation
-    # PASS), so the ultrawide FOV ceiling is now backed to 105 deg (100 x 1.05) --
-    # no longer the unbacked 100-130 guess, nor capped at the old ~89.5 deg ammo.
+    # E2-01 batch 1: US10330891B2 is a real 6P design (cross-validation PASS), so the
+    # ultrawide FOV ceiling is backed by real ammo -- no longer the unbacked 100-130
+    # guess, nor capped at the old ~89.5 deg ammo.
+    #
+    # The design's manifest nominal moved 100.0 -> 101.6 on 2026-07-30 (the ZMX's own
+    # 2 x YFLN, replacing the patent text's rounded value; PATENT_PROVENANCE keeps the
+    # declared 100.0, which is a different quantity). Re-deriving this ceiling the way
+    # compute_bounds_stats.py suggests would now read 106.7 rather than 105.0, but the
+    # bound is left alone: widening SCENARIO_BOUNDS changes which specs the product
+    # accepts and is a standing owner decision, not a side effect of a corpus fix.
     assert uw.fov_deg_max == 105.0
+    assert uw.fov_deg_max > 101.6  # still covers the design it is calibrated from

@@ -6,10 +6,18 @@ case_library.build_sample_from_optic, and writes one JSON per design to
 app/data/optical_cases/ plus a compact index.json for the retrieval layer.
 
 Run:  cd lumira-backend && uv run python scripts/generate_cases.py
+
+``--only FILE`` restricts the rebuild to the case ids listed in FILE (one per
+line); every other design keeps its committed JSON and contributes a
+last-known-good index row. A full-library run traces 442 designs through
+Optiland and is exposed to the build hazard documented at ``BUILD_TIMEOUT_S``,
+so a manifest edit that moves a known subset should rebuild that subset rather
+than churn the whole corpus to reach it.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import threading
@@ -106,16 +114,56 @@ def _reused_index_entry(case_id: str, fn: str, a: dict, seed_imh_overrides: dict
     return entry
 
 
-def main() -> None:
+def _read_only_list(path: Path) -> set[str]:
+    """Case ids to rebuild. Accepts either bare ids or ``.zmx`` filenames."""
+    wanted: set[str] = set()
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        wanted.add(line.rsplit(".", 1)[0] if line.lower().endswith(".zmx") else line)
+    unknown = wanted - {a["filename"].rsplit(".", 1)[0] for a in ZMX_AMMO}
+    if unknown:
+        raise SystemExit(
+            f"--only lists {len(unknown)} case ids not in the manifest: {sorted(unknown)[:5]}"
+        )
+    return wanted
+
+
+def main(argv: list[str] | None = None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--only",
+        type=Path,
+        default=None,
+        metavar="FILE",
+        help="rebuild only the case ids listed in FILE; reuse every other case's committed JSON",
+    )
+    args = parser.parse_args(argv)
+    rebuild_only = _read_only_list(args.only) if args.only is not None else None
+    if rebuild_only is not None:
+        print(f"--only: rebuilding {len(rebuild_only)} of {len(ZMX_AMMO)} designs", flush=True)
+
     CASES_DIR.mkdir(parents=True, exist_ok=True)
     index: list[dict] = []
     errors: list[tuple[str, str]] = []
     reused: list[str] = []
+    skipped = 0
     seed_imh_overrides = _load_seed_imh_overrides()
 
     for a in ZMX_AMMO:
         fn = a["filename"]
         case_id = fn.rsplit(".", 1)[0]
+        if rebuild_only is not None and case_id not in rebuild_only:
+            held = _reused_index_entry(case_id, fn, a, seed_imh_overrides)
+            if held is None:
+                raise SystemExit(
+                    f"--only skipped {case_id} but it has no committed JSON to hold on to; "
+                    f"a partial run must not drop a case from index.json"
+                )
+            index.append(held)
+            skipped += 1
+            continue
         try:
             optic = load_normalized_zmx(ZMX_AMMO_DIR / fn)
             sample, build_error = _build_with_timeout(
@@ -169,6 +217,8 @@ def main() -> None:
                 print(f"  REUSED last-known-good JSON for {case_id[:42]:42}", flush=True)
 
     (CASES_DIR / "index.json").write_text(json.dumps(index, indent=2, ensure_ascii=False))
+    if skipped:
+        print(f"held {skipped} designs at their committed JSON (--only)", flush=True)
     print(f"\n=== generated {len(index)} cases + index.json; failed {len(errors)} ===", flush=True)
     for fn, err in errors:
         print(f"  FAIL {fn}: {err}", flush=True)
