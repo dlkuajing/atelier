@@ -1,0 +1,55 @@
+30-Jul-2026	04:58:34	US-12436366-B2                                                                  	Polychromatic RMS Wavefront Error                 
+
+	Lens file name:	 
+	Independent compensation:	No
+	Linear-quadratic ratio:	1
+	Maximum number of compensators:	1
+	SVD threshold:	1.000000e-10
+	Force symmetry:	No
+	Fringe wavelength:	546.1
+	Scalar   probability density function:	1-D Uniform  
+	Decenter probability density function:	2-D Gaussian 	0.135335
+	Cylinder probability density function:	2-D Uniform  
+	Number of Monte-Carlo samples:	20
+
+Sample	Zoom	Field	Criterion	Value
+1	1	1	RMS	1.11372
+1	1	2	RMS	1.92963
+2	1	1	RMS	1.06938
+2	1	2	RMS	1.91144
+3	1	1	RMS	1.06048
+3	1	2	RMS	1.94091
+4	1	1	RMS	0.993348
+4	1	2	RMS	1.9439
+5	1	1	RMS	0.982128
+5	1	2	RMS	1.96079
+6	1	1	RMS	1.12003
+6	1	2	RMS	1.92246
+7	1	1	RMS	1.00222
+7	1	2	RMS	1.94347
+8	1	1	RMS	1.07901
+8	1	2	RMS	1.91089
+9	1	1	RMS	1.0502
+9	1	2	RMS	1.96317
+10	1	1	RMS	1.04205
+10	1	2	RMS	1.92418
+11	1	1	RMS	0.948436
+11	1	2	RMS	1.98886
+12	1	1	RMS	1.04056
+12	1	2	RMS	1.93259
+13	1	1	RMS	1.06456
+13	1	2	RMS	1.9145
+14	1	1	RMS	1.02449
+14	1	2	RMS	1.94706
+15	1	1	RMS	1.11911
+15	1	2	RMS	1.90591
+16	1	1	RMS	1.09595
+16	1	2	RMS	1.95534
+17	1	1	RMS	1.06515
+17	1	2	RMS	1.91922
+18	1	1	RMS	1.02844
+18	1	2	RMS	1.95067
+19	1	1	RMS	1.01335
+19	1	2	RMS	1.96536
+20	1	1	RMS	0.979212
+20	1	2	RMS	1.95096
