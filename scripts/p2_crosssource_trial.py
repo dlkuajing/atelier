@@ -716,6 +716,7 @@ def run_trial(
 ) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_optimize import run_codev_target_standard
+    from app.core.engines.measurement_recipe import build_measurement_recipe
     from app.core.engines.seed_field_rebuild import (
         max_field_angle_deg,
         rebuild_seed_field_angles,
@@ -762,6 +763,14 @@ def run_trial(
         "plan": asdict(plan),
         "mtf_frequency_lpmm": MTF_FREQUENCY_LPMM,
         "mtf_nrd": MTF_NRD,
+        # P4 gate: a number nobody can recompute is not a deliverable. The ZMX carries
+        # the lens; this carries the instrument (which fields/wavelengths enter the
+        # extremum, MTF frequency and ray density, radius-vs-diameter, no clipping),
+        # plus the metric macro source verbatim so "recompute" means "run this code".
+        "measurement_recipe": build_measurement_recipe(
+            mtf_frequency_lpmm=MTF_FREQUENCY_LPMM,
+            mtf_nrd=MTF_NRD,
+        ),
     }
 
     # autovig learns num_fields from its rung-0 run, so a rung-0 timeout leaves
