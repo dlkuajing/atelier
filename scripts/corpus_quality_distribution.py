@@ -29,8 +29,11 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.core.corpus_quality import (  # noqa: E402
+    CRITERION,
     DISTRIBUTION_PATH,
     DISTRIBUTION_SCHEMA,
+    INSTRUMENT,
+    QUANTITY,
     reference_population,
     rms_percentile,
 )
@@ -87,13 +90,10 @@ def build(census_path: Path) -> dict[str, Any]:
         "schema": DISTRIBUTION_SCHEMA,
         "n": len(values),
         "pool": "data/zmx (442 committed case ZMX)",
-        "criterion": (
-            "no CODE V error and every declared field produced a positive per-field "
-            "SPOTDATA reading (n_positive == num_fields)"
-        ),
-        "quantity": (
-            "max over fields of CODE V's RMS spot size, in um -- a diameter, not a radius"
-        ),
+        # Shared with the per-case artifact `corpus_routing_quality.py` builds, so the
+        # two cannot drift into describing different measurements of the same census.
+        "criterion": CRITERION,
+        "quantity": QUANTITY,
         "percentiles": {f"p{int(q * 100)}": _quantile(values, q) for q in _QUANTILES},
         "sorted_rms_spot_um": values,
         "provenance": {
@@ -102,10 +102,7 @@ def build(census_path: Path) -> dict[str, Any]:
             "census_sha256": digest,
             "census_rows": stats["census_rows"],
             "excluded": stats["excluded"],
-            "instrument": (
-                "SPOTDATA(1,f,1,0.01,'CEN',0,0,^spot) -> ^spot(1) in mm, x1000 -- "
-                "identical to @rmssum's per-field operand"
-            ),
+            "instrument": INSTRUMENT,
         },
         "caveats": [
             # Every one of these was measured while building the artifact, and each
