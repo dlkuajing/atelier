@@ -188,7 +188,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(
-        json.dumps(dict(sorted(merged.items())), indent=1) + "\n", encoding="utf-8"
+        # indent=0 with no trailing newline reproduces the committed file byte for
+        # byte, so a refresh diff shows only the durations that actually moved instead
+        # of reformatting all ~1560 lines and burying the change.
+        json.dumps(dict(sorted(merged.items())), indent=0),
+        encoding="utf-8",
     )
     print(f"wrote {args.out}")
     return 0
