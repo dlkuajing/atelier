@@ -1605,6 +1605,99 @@ def test_write_patent_zmx_persists_real_imh_and_real_ray_surface_diameters(
     assert f"DIAM {prescription.image_height_mm * 1.1:.15g}" not in zmx_text
 
 
+def _image_height_prescription(
+    focal_length_mm: float = 4.0,
+    hfov_deg: float = 30.0,
+) -> patent_to_zmx.PatentPrescription:
+    return patent_to_zmx.PatentPrescription(
+        patent_id="US-EXAMPLE-A1",
+        embodiment="1",
+        focal_length_mm=focal_length_mm,
+        f_number=2.0,
+        hfov_deg=hfov_deg,
+        surfaces=[],
+    )
+
+
+def _rays_with_final_y(values: list[float]) -> SimpleNamespace:
+    return SimpleNamespace(y=np.array(values, dtype=float))
+
+
+def test_edge_field_image_height_reads_the_chief_ray_not_the_pupil_maximum() -> None:
+    samples = patent_to_zmx._trace_aperture_samples()
+    prescription = _image_height_prescription()
+    chief, upper_rim, lower_rim = 2.30, 2.94, -2.81
+    rays = _rays_with_final_y([0.0, 0.0, chief, upper_rim, lower_rim])
+
+    height = patent_to_zmx._edge_field_image_height(rays, samples, prescription=prescription)
+
+    assert height == pytest.approx(chief)
+    assert height != pytest.approx(max(abs(upper_rim), abs(lower_rim)))
+
+
+def test_edge_field_image_height_refuses_to_substitute_a_rim_ray() -> None:
+    """A missing chief ray is an error, not an invitation to answer with a rim ray."""
+
+    samples = patent_to_zmx._trace_aperture_samples()
+    rays = _rays_with_final_y([0.0, 0.0, math.nan, 2.94, -2.81])
+
+    with pytest.raises(PatentParseError, match="chief ray did not reach image surface"):
+        patent_to_zmx._edge_field_image_height(
+            rays,
+            samples,
+            prescription=_image_height_prescription(),
+        )
+
+
+def test_edge_field_image_height_rejects_a_finite_but_diverging_chief_ray() -> None:
+    """`isfinite` is not a validity test -- the corpus carries 6e17 mm to prove it."""
+
+    samples = patent_to_zmx._trace_aperture_samples()
+    rays = _rays_with_final_y([0.0, 0.0, 6.15709e17, 2.94, -2.81])
+
+    with pytest.raises(PatentParseError, match="outside the plausible band"):
+        patent_to_zmx._edge_field_image_height(
+            rays,
+            samples,
+            prescription=_image_height_prescription(),
+        )
+
+
+def test_edge_field_image_height_fails_closed_when_it_cannot_be_screened() -> None:
+    samples = patent_to_zmx._trace_aperture_samples()
+    rays = _rays_with_final_y([0.0, 0.0, 2.30, 2.94, -2.81])
+
+    with pytest.raises(PatentParseError, match="reference is unusable"):
+        patent_to_zmx._edge_field_image_height(
+            rays,
+            samples,
+            prescription=_image_height_prescription(hfov_deg=90.0),
+        )
+
+
+def test_write_patent_zmx_records_the_chief_ray_image_height(tmp_path: Path) -> None:
+    prescription = parse_patent_prescription(PRESCRIPTION_TEXT, patent_id="US-EXAMPLE-A1")
+    output_path = tmp_path / "patent.zmx"
+
+    trace_audit = write_patent_zmx(prescription, output_path)
+    optic = load_normalized_zmx(output_path)
+    samples = patent_to_zmx._trace_aperture_samples()
+    rays = optic.trace_generic(
+        np.array([sample[0] for sample in samples], dtype=float),
+        np.array([sample[1] for sample in samples], dtype=float),
+        np.array([sample[2] for sample in samples], dtype=float),
+        np.array([sample[3] for sample in samples], dtype=float),
+        prescription.reference_wavelength_um,
+    )
+    y = np.asarray(rays.y, dtype=float).reshape(-1)
+
+    # index 2 is (Hy=1, Py=0) -- the full-field chief ray.
+    assert trace_audit.real_image_height_mm == pytest.approx(abs(float(y[2])), rel=1e-6)
+    assert f"! ATELIER_REAL_IMH_MM {abs(float(y[2])):.10g}" in output_path.read_text(
+        encoding="ascii"
+    )
+
+
 def test_write_patent_zmx_emits_xasphere_xdat_for_a18_a20(tmp_path: Path) -> None:
     prescription = parse_patent_prescription(XASPHERE_TEXT, patent_id="US-XASPHERE-A1")
 

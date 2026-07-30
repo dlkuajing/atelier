@@ -26,13 +26,81 @@ warnings.simplefilter("ignore")
 
 from app.core.case_library import _classify_scenario, match_case  # noqa: E402
 from app.core.lens_system import Scenario  # noqa: E402
+from scripts.image_height_gate import (  # noqa: E402
+    ImageHeightVerdict,
+    describe_failure,
+    first_order_image_height_mm,
+    screen_image_height,
+)
 
 GOLDEN_PATH = Path(__file__).resolve().parents[1] / "tests" / "data" / "eval_golden.json"
 INDEX_PATH = Path(__file__).resolve().parents[1] / "app" / "data" / "optical_cases" / "index.json"
 ZMX_DIR = Path(__file__).resolve().parents[1] / "data" / "zmx"
+
+# Index vs ZMX-tail agreement. This is a *desync* check and nothing more: both
+# numbers are the same real-ray reading, one copied into index.json and one
+# written into the ZMX tail by the same call. It can catch a corpus half
+# regenerated -- it can never catch a wrong reading, because a wrong reading is
+# identical on both sides. The screen that can is `_screen_corpus_image_heights`.
 ZMX_REAL_IMH_MAX_DEVIATION = 0.02
 _REAL_IMH_RE = re.compile(r"^!\s*ATELIER_REAL_IMH_MM\s+([-+0-9.eE]+)", re.MULTILINE)
 _FTAN_IMH_RE = re.compile(r"^!\s*ATELIER_FTAN_IMH_SANITY_MM\s+([-+0-9.eE]+)", re.MULTILINE)
+
+# Corpus rows whose declared image height cannot be a real chief-ray intercept,
+# pinned by case_id so the debt is counted and rings instead of being carried
+# silently. All 34 were produced by the max-over-pupil derivation that
+# `scripts/patent_to_zmx.py::_edge_field_image_height` used to use -- eight of
+# them near 6e17 mm and five between 40 and 52 mm. They are pinned rather than
+# asserted to zero because clearing them means regenerating 403 corpus rows,
+# which moves routing, `rank_seeds` ordering and the sweet-zone floors; that is
+# a separate shovel. Both directions fail closed: a new implausible row raises
+# because it is not on the list, and a listed row that starts screening
+# plausible raises because the pin has gone stale.
+# Evidence: `.planning/evidence/corpus-truth-audit-triage-2026-07-30.md` (2).
+_PINNED_IMPLAUSIBLE_IMAGE_HEIGHT_CASES = frozenset(
+    {
+        "US-10921568-B2-e2",
+        "US-11719917-B2-e2",
+        "US-11719917-B2-e3",
+        "US-11719917-B2-e4",
+        "US-11719917-B2-e5",
+        "US-11719917-B2-e6",
+        "US-11815662-B2-e3",
+        "US-11933948-B2-e12",
+        "US-11966029-B2-e5",
+        "US-11966029-B2-e6",
+        "US-12032139-B2-e2",
+        "US-12032139-B2-e4",
+        "US-12032139-B2-e6",
+        "US-12044826-B2-e3",
+        "US-12105260-B2-e1",
+        "US-12140735-B2-e8",
+        "US-12210142-B2-e3",
+        "US-12210142-B2-e6",
+        "US-12228698-B2-e2",
+        "US-12228698-B2-e3",
+        "US-12228698-B2-e5",
+        "US-12259531-B2-e12",
+        "US-12282142-B2-e9",
+        "US-12345855-B2-e2",
+        "US-12345855-B2-e3",
+        "US-12345855-B2-e4",
+        "US-12436366-B2-e3",
+        "US-12436366-B2-e6",
+        "US-12607827-B2-e3",
+        "US-20240168263-A1-e12",
+        "US-20250035890-A1-e2",
+        "US-20250189767-A1-e12",
+        "US-20250216655-A1-e9",
+        "US-20260126622-A1-e2",
+    }
+)
+
+# No corpus row currently has an unscreenable first-order reference. Pinned at
+# empty so one appearing is a failure rather than a shrug -- a row whose
+# reference blows up (half field at 90 deg, or a negative `tan`) has no screen
+# at all, which is worse than failing one.
+_PINNED_UNSCREENABLE_IMAGE_HEIGHT_CASES: frozenset[str] = frozenset()
 
 # Briefs whose routing winner + quality evidence are golden-ised. Kept in sync
 # with the eval's EvalCase requests (same source briefs).
@@ -80,10 +148,61 @@ def _first_order_image_height_mm(record: dict) -> float | None:
         fov_deg = _finite_float(record["fov_deg"])
     except (KeyError, TypeError, ValueError):
         return None
-    first_order_imh = efl_mm * math.tan(math.radians(fov_deg / 2.0))
-    if not math.isfinite(first_order_imh) or first_order_imh == 0.0:
-        return None
-    return first_order_imh
+    # index `fov_deg` is the full field, so the half field is half of it.
+    return first_order_image_height_mm(efl_mm, fov_deg / 2.0)
+
+
+def _screen_corpus_image_heights(records: list) -> dict[str, dict]:
+    """Screen every corpus row's image height against its first-order reference.
+
+    This is the check `ZMX_REAL_IMH_MAX_DEVIATION` cannot be: it compares the
+    real-ray reading against a number derived from a different quantity (the
+    design's own focal length and field), so a wrong reading has nowhere to
+    hide. Raises when the set of failures differs from what is pinned above --
+    in either direction.
+    """
+
+    verdicts: dict[str, dict] = {}
+    implausible: dict[str, str] = {}
+    unscreenable: dict[str, str] = {}
+    for record in records:
+        if not isinstance(record, dict) or not isinstance(record.get("case_id"), str):
+            continue
+        case_id = str(record["case_id"])
+        try:
+            image_height_mm = _finite_float(record["image_height_mm"])
+        except (KeyError, TypeError, ValueError):
+            image_height_mm = math.nan
+        reference_mm = _first_order_image_height_mm(record)
+        verdict, ratio = screen_image_height(image_height_mm, reference_mm)
+        verdicts[case_id] = {
+            "image_height_plausibility": str(verdict),
+            "first_order_image_height_ratio": ratio,
+        }
+        if verdict is ImageHeightVerdict.IMPLAUSIBLE:
+            implausible[case_id] = describe_failure(image_height_mm, reference_mm, verdict, ratio)
+        elif verdict is ImageHeightVerdict.REFERENCE_UNUSABLE:
+            unscreenable[case_id] = describe_failure(image_height_mm, reference_mm, verdict, ratio)
+
+    _assert_pinned(implausible, _PINNED_IMPLAUSIBLE_IMAGE_HEIGHT_CASES, "implausible")
+    _assert_pinned(unscreenable, _PINNED_UNSCREENABLE_IMAGE_HEIGHT_CASES, "unscreenable")
+    return verdicts
+
+
+def _assert_pinned(found: dict[str, str], pinned: frozenset[str], label: str) -> None:
+    unpinned = sorted(set(found) - pinned)
+    if unpinned:
+        detail = "\n".join(f"  {case_id}: {found[case_id]}" for case_id in unpinned)
+        raise ValueError(
+            f"{len(unpinned)} corpus row(s) newly {label} on image height and not pinned in "
+            f"scripts/e2_golden.py:\n{detail}"
+        )
+    stale = sorted(pinned - set(found))
+    if stale:
+        raise ValueError(
+            f"{len(stale)} case(s) pinned as {label} on image height now screen clean; "
+            f"drop them from the pinned set in scripts/e2_golden.py: {', '.join(stale)}"
+        )
 
 
 def _zmx_tail_number(source_zmx: str, pattern: re.Pattern[str]) -> float | None:
@@ -96,7 +215,7 @@ def _zmx_tail_number(source_zmx: str, pattern: re.Pattern[str]) -> float | None:
     return _finite_float(match.group(1))
 
 
-def _case_anchor_metadata(record: dict) -> dict:
+def _case_anchor_metadata(record: dict, verdict: dict) -> dict:
     case_id = str(record["case_id"])
     source_zmx = str(record["source_zmx"])
     image_height_mm = _finite_float(record["image_height_mm"])
@@ -114,10 +233,13 @@ def _case_anchor_metadata(record: dict) -> dict:
             raise ValueError(f"{case_id} has non-positive ATELIER_REAL_IMH_MM: {zmx_real_imh}")
         zmx_real_deviation = abs(image_height_mm - zmx_real_imh) / zmx_real_imh
         if zmx_real_deviation > ZMX_REAL_IMH_MAX_DEVIATION:
+            # Two copies of one reading disagreeing: the corpus is half
+            # regenerated, not mismeasured. Says so, so the next reader does not
+            # mistake this for evidence that the reading itself was checked.
             raise ValueError(
-                f"{case_id} index image_height_mm={image_height_mm:.9g} diverges from "
-                f"ATELIER_REAL_IMH_MM={zmx_real_imh:.9g} by "
-                f"{zmx_real_deviation:.3%}"
+                f"{case_id} index image_height_mm={image_height_mm:.9g} is out of sync with its "
+                f"own ZMX tail ATELIER_REAL_IMH_MM={zmx_real_imh:.9g} by "
+                f"{zmx_real_deviation:.3%}; regenerate index.json and data/zmx together"
             )
         anchor_source = "zmx_tail:ATELIER_REAL_IMH_MM"
     return {
@@ -128,6 +250,7 @@ def _case_anchor_metadata(record: dict) -> dict:
         "first_order_image_height_mm": first_order_imh,
         "first_order_image_height_deviation_frac": first_order_deviation,
         "zmx_ftan_image_height_sanity_mm": _zmx_tail_number(source_zmx, _FTAN_IMH_RE),
+        **verdict,
     }
 
 
@@ -135,6 +258,8 @@ def _case_golden_briefs() -> tuple[dict[str, dict], dict[str, dict]]:
     records = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
     if not isinstance(records, list):
         raise ValueError(f"case index must be a list: {INDEX_PATH}")
+
+    verdicts = _screen_corpus_image_heights(records)
 
     briefs: dict[str, dict] = {}
     metadata_by_name: dict[str, dict] = {}
@@ -151,7 +276,7 @@ def _case_golden_briefs() -> tuple[dict[str, dict], dict[str, dict]]:
         # runtime routing pool in lockstep (index.efl_mm == computed_efl_mm).
         scenario = _classify_scenario(float(record["fov_deg"]), float(record["efl_mm"]))
         name = _golden_name_for_case(case_id)
-        metadata_by_name[name] = _case_anchor_metadata(record)
+        metadata_by_name[name] = _case_anchor_metadata(record, verdicts[case_id])
         briefs[name] = {
             "source_case_id": case_id,
             "scenario": scenario.name,
