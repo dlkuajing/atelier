@@ -363,8 +363,73 @@ def test_both_sides_get_the_same_tolerance_table() -> None:
     assert 'for side, zmx in (("candidate", candidate_zmx), ("control", control_zmx))' in src
     assert src.count("TorToleranceTable(TOLERANCE_COMMANDS") == 1
     assert inspect.signature(trial._tolerance_pair).parameters.keys() == {
-        "candidate_zmx", "control_zmx", "work_dir", "timeout_seconds"
+        "candidate_zmx", "control_zmx", "work_dir", "timeout_seconds", "quality"
     }
+    # `quality` is a measured precondition, not a per-side tolerance knob: it can
+    # only decide whether TOR is attempted, never what table it is given.
+    assert "TOLERANCE_COMMANDS" not in inspect.getsource(trial._tor_criterion_block)
+
+
+# ---------------------------------------------------------------------------
+# TOR precondition: don't pay CODE V to rediscover what the probe just measured
+# ---------------------------------------------------------------------------
+
+
+def test_a_lens_with_a_wavefront_reading_is_cleared_for_tor() -> None:
+    """The gate must let real data through, or it is just a coverage cut."""
+    from scripts.p2_crosssource_trial import _tor_criterion_block
+
+    assert _tor_criterion_block(q()) is None
+
+
+def test_a_withheld_wavefront_reading_blocks_tor_with_the_reason() -> None:
+    """Real vector: all four p2-gated-20260729 candidates that terminated TOR had
+    their wavefront withheld as ``rms_wavefront_seed_value`` -- the metric macro
+    returned its ideal seed value because no field evaluated. TOR needs the same
+    quantity and fails the same way, with ``ERROR - Ray tracing errors during
+    clear aperture trace - OPTION TERMINATED`` and no exports."""
+    from scripts.p2_crosssource_trial import _tor_criterion_block
+
+    blocked = _tor_criterion_block(q(rms_wavefront_waves="0"))
+    assert blocked is not None
+    assert "RMS wavefront" in blocked
+    assert "rms_wavefront_seed_value" in blocked
+
+
+def test_a_missing_probe_blocks_tor_rather_than_gambling_on_it() -> None:
+    from scripts.p2_crosssource_trial import _tor_criterion_block
+
+    blocked = _tor_criterion_block(None)
+    assert blocked is not None
+    assert "did not return" in blocked
+
+
+def test_a_blocked_side_reports_unavailable_without_starting_codev(monkeypatch) -> None:
+    """The failure this replaces burned real-machine time and then reported an
+    ERROR that read like a tolerance-chain defect. Now: no run, honest status."""
+    import app.core.engines.codev_tolerance as tolerance_module
+    import scripts.p2_crosssource_trial as trial
+
+    def refuse(**kwargs: object):
+        raise AssertionError("CODE V must not be started for a blocked side")
+
+    monkeypatch.setattr(tolerance_module, "run_codev_tor", refuse)
+
+    out = trial._tolerance_pair(
+        Path("candidate.zmx"),
+        Path("control.zmx"),
+        Path("work"),
+        60.0,
+        {"candidate": q(rms_wavefront_waves="0"), "control": None},
+    )
+
+    for side in ("candidate", "control"):
+        assert out[side]["status"] == "unavailable"
+        assert out[side]["codev_run_skipped"] is True
+        assert "yield_fraction" not in out[side]
+    # The uncalibrated table still travels with the record even when nothing ran.
+    assert out["calibrated"] is False
+    assert out["yield_threshold_waves"] == trial.YIELD_THRESHOLD_WAVES
 
 
 def test_the_tolerance_table_is_declared_uncalibrated() -> None:
