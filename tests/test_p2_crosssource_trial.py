@@ -1486,3 +1486,36 @@ def test_the_audit_reaches_the_rendered_report() -> None:
     rendered = trial.render(summary)
     assert "config choice decided by" in rendered
     assert "RMS gain when RMS chose" in rendered
+
+
+def test_a_clean_tree_reports_dirty_false_not_none() -> None:
+    """`_git` collapses empty output into None, so a clean tree was reporting
+    `git_dirty: null` -- indistinguishable from "git unavailable". That is the mirror
+    image of the flaw the field exists to prevent (absent reading as clean), and it
+    showed up in the first real run's plan.json.
+    """
+
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert p["git_available"] is True, "this repo is a git worktree; git must be available"
+    assert isinstance(p["git_dirty"], bool), "with git available, dirty must be a bool"
+
+
+def test_git_unavailable_is_distinguishable_from_clean(monkeypatch) -> None:
+    import subprocess as _sp
+
+    monkeypatch.setattr(_sp, "run", lambda *a, **k: (_ for _ in ()).throw(OSError("no git")))
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert p["git_available"] is False
+    assert p["git_dirty"] is None

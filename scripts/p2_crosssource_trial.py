@@ -1310,7 +1310,14 @@ def run_provenance(
             return None
         return (out.stdout or "").strip() or None
 
+    # `_git` collapses "empty output" into None, so a CLEAN tree and an unavailable
+    # git are indistinguishable through it. That is the mirror image of the flaw this
+    # field exists to avoid -- absent reads as clean -- so probe availability
+    # separately and let an empty porcelain mean clean.
+    git_available = _git("rev-parse", "HEAD") is not None
     dirty = _git("status", "--porcelain")
+    if git_available and dirty is None:
+        dirty = ""  # git worked and reported nothing: the tree is clean
     census_digest = None
     if census_path.is_file():
         import hashlib
@@ -1323,6 +1330,7 @@ def run_provenance(
         # A dirty tree means the sha does NOT describe the code that ran. Say so rather
         # than letting the sha imply reproducibility it does not have.
         "git_dirty": None if dirty is None else bool(dirty),
+        "git_available": git_available,
         # `git status --porcelain` is "XY PATH" with XY exactly two status characters,
         # but a fixed [3:] slice loses the first path character on some line shapes
         # (observed: "cripts/..."). Strip from index 2 instead of assuming the gap.
