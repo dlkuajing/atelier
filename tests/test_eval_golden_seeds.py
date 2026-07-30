@@ -139,14 +139,8 @@ def test_each_reanchored_case_real_imh_anchor_matches_zmx_tail(case_name: str) -
 
 
 def test_patent_golden_fail_on_regression_case_runs(capsys):
-    exit_code = main(
-        [
-            "--case",
-            "patent_ultrawide_6p_extreme_fov_reanchor",
-            "--json",
-            "--fail-on-regression",
-        ]
-    )
+    case_name = "patent_ultrawide_6p_extreme_fov_reanchor"
+    exit_code = main(["--case", case_name, "--json", "--fail-on-regression"])
 
     captured = capsys.readouterr()
     report = json.loads(captured.out)
@@ -158,4 +152,10 @@ def test_patent_golden_fail_on_regression_case_runs(capsys):
         "failed_count": 0,
         "all_passed": True,
     }
-    assert report["cases"][0]["matched_case_id"] == "US10330891B2"
+    # Read the winner from the golden instead of repeating it here. This literal used
+    # to be `US10330891B2`, duplicating a value `scripts/e2_golden.py` already owns --
+    # so a routing re-anchor left the two out of step and this test failed for the one
+    # reason it is not meant to police. (2026-07-30: the CODE V full-field routing gate
+    # moved the winner to a measured 8.75 um seed because `US10330891B2` has no
+    # full-field reading at all and the gate fails closed on that.)
+    assert report["cases"][0]["matched_case_id"] == _EVAL_GOLDEN[case_name]["selected_case_id"]

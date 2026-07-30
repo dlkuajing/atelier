@@ -174,12 +174,30 @@ _PLANE_RADIUS_SENTINEL = 1e9
 #    a lens that looks like one of the corpus's best walked through a 100 um bound.
 # 2. **The bound was sized against the wrong question.** The old 100.0 was set to
 #    block the two genuinely-broken ingest seeds (RMS ~1200/4700 um), not against
-#    what a seed has to compete with. The threshold is now the corpus median rank,
-#    read from the committed distribution, so no absolute number is invented here.
+#    anything a seed has to clear. The threshold is now a rank in the committed
+#    distribution, so no absolute number is invented here.
 #
 # The gate now reads the same quantity as the judgement, offline, via
 # `app.core.corpus_quality`; a seed with no full-field reading fails closed.
-_SEED_ROUTING_RMS_PERCENTILE = 50.0
+#
+# Why p75 and not the corpus median: admission and competitiveness are different
+# questions, and only one of them a gate can answer. A seed has to *compete* with
+# controls reading 2-11 um, but routing must still return the best seed that exists
+# -- refusing cannot manufacture a better one. Measured on the 39 original real
+# designs (the demo backbone): 29 carry a full-field reading, of which 27 clear p75
+# and only ~8 clear p50. At p50 the flagship `5P_F1.8_FOV74.1` seed is rejected --
+# it reads 19.33 um in CODE V while the pinned test that calls it "image-quality
+# healthy (max RMS ~8.1um)" was quoting the half-field radius this gate stopped
+# trusting -- and 13 pinned routing behaviours in `test_optical_match.py` break. At
+# p75, zero break (A/B against 4a9f6be7 in a non-dot worktree: 25 passed both arms)
+# while the decisive `US-12436366-B2-e10` is still rejected by 10.8x and every
+# absurd (>1e6 um) reading with it. Tightening past p75 changes which lenses a live
+# demo can route to, which is a product-scope decision, not a calibration.
+_SEED_ROUTING_RMS_PERCENTILE = 75.0
+#: Where an unmeasured seed sits *inside the rejected band* -- the median, i.e. the one
+#: rank that asserts nothing about a lens nobody has measured. It never lets an
+#: unmeasured seed beat an admitted one.
+_SEED_ROUTING_UNMEASURED_RANK = 50.0
 _SEED_ROUTING_MIN_MTF_50 = 0.08
 _SEED_ROUTING_FLOOR_GAP_LIMIT = 3.0
 _SEED_ROUTING_FIELD_TIEBREAK = 0.15
@@ -1625,10 +1643,17 @@ def rank_seeds(
             # own rank keeps a seed rejected on MTF from re-entering on a good RMS,
             # and an unmeasured seed stays the worst thing in the pool.
             rms_um = case_rms_spot_um(c.metadata.case_id)
-            rank = rms_percentile(rms_um) if rms_um is not None else None
-            if rank is None:
-                return 1.0
-            return max(_SEED_ROUTING_RMS_PERCENTILE / 100.0, rank / 100.0)
+            if rms_um is None:
+                # Unknown is not known-bad. Ranking an unmeasured seed *below* one
+                # measured at 447 um would say we would rather route to a lens we know
+                # is terrible than to one we simply have not measured. It still loses
+                # to every admitted seed -- that is what failing closed means here --
+                # but inside the rejected band it sits at the median rank, the one
+                # rank that asserts nothing about it.
+                return _SEED_ROUTING_UNMEASURED_RANK / 100.0
+            return max(
+                _SEED_ROUTING_RMS_PERCENTILE / 100.0, rms_percentile(rms_um) / 100.0
+            )
         return _SEED_ROUTING_FIELD_TIEBREAK * field_penalty
 
     def _seed_spec_guard_penalty(c: OpticalSampleData) -> float:

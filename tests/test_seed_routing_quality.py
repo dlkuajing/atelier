@@ -122,7 +122,9 @@ def test_the_gate_threshold_is_a_corpus_rank_not_an_invented_number() -> None:
 
     threshold = _seed_routing_max_rms_um()
     assert threshold == rms_at_percentile(_SEED_ROUTING_RMS_PERCENTILE)
-    assert threshold == load_distribution()["percentiles"]["p50"]
+    key = f"p{int(_SEED_ROUTING_RMS_PERCENTILE)}"
+    assert threshold == load_distribution()["percentiles"][key]
+    # Tighter than the bound it replaces, and not a number written down here.
     assert threshold < 100.0
 
 
