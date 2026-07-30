@@ -145,6 +145,17 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="report what would change without writing",
     )
+    parser.add_argument(
+        "--base",
+        type=Path,
+        default=DURATIONS,
+        help=(
+            "durations to overlay onto. Separate from --out on purpose: when they were "
+            "the same argument, writing to a different --out silently read that "
+            "(nonexistent) file as the base and discarded every existing entry -- "
+            "defeating the never-drop property this tool exists to preserve."
+        ),
+    )
     parser.add_argument("--out", type=Path, default=DURATIONS)
     args = parser.parse_args(argv)
 
@@ -156,7 +167,15 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
 
-    existing = json.loads(args.out.read_text(encoding="utf-8")) if args.out.is_file() else {}
+    existing = json.loads(args.base.read_text(encoding="utf-8")) if args.base.is_file() else {}
+    if not existing:
+        print(
+            f"base {args.base} is missing or empty -- refusing to write a durations file "
+            "built from one harvest alone; that would reset every unmeasured test to "
+            "DEFAULT_WEIGHT and make the balance worse than the stale file.",
+            file=sys.stderr,
+        )
+        return 1
     merged, report = merge(existing, measured)
 
     print(f"measured {report['measured']}  existing {report['existing']}  merged {report['merged']}")
@@ -167,6 +186,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.check:
         return 0
+    args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(
         json.dumps(dict(sorted(merged.items())), indent=1) + "\n", encoding="utf-8"
     )

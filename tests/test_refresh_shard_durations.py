@@ -86,3 +86,40 @@ def test_the_committed_durations_file_is_a_flat_node_id_to_seconds_map() -> None
     assert isinstance(data, dict) and data
     assert all(isinstance(k, str) and k.startswith("tests/") for k in data)
     assert all(isinstance(v, (int, float)) and v >= 0 for v in data.values())
+
+
+def test_writing_elsewhere_still_reads_the_committed_base(tmp_path, monkeypatch, capsys) -> None:
+    """The CLI-level version of the never-drop property.
+
+    `--out` and the base used to be the same argument, so `--out /somewhere/else.json`
+    read that nonexistent file as the base and produced a durations file containing only
+    the 50 freshly-harvested entries -- resetting ~1500 tests to DEFAULT_WEIGHT. The
+    unit test on `merge()` did not cover this because the loss happened in the wiring.
+    """
+
+    from scripts import refresh_shard_durations as mod
+
+    base = tmp_path / "base.json"
+    base.write_text(json.dumps({"tests/a.py::test_a": 12.0, "tests/b.py::test_b": 3.0}), "utf-8")
+    out = tmp_path / "nested" / "out.json"
+
+    monkeypatch.setattr(mod, "fetch_run_logs", lambda run_id: _LOG)
+    assert mod.main(["--run", "1", "--base", str(base), "--out", str(out)]) == 0
+
+    written = json.loads(out.read_text(encoding="utf-8"))
+    # Both pre-existing entries survive alongside the harvested ones.
+    assert written["tests/a.py::test_a"] == 12.0
+    assert written["tests/b.py::test_b"] == 3.0
+    assert written["tests/test_acceptance_task_export.py::test_slow_one"] == 640.83
+
+
+def test_an_empty_base_is_refused_rather_than_written(tmp_path, monkeypatch) -> None:
+    """Building a durations file from one harvest alone is worse than the stale file it
+    would replace, so it must fail loudly instead of succeeding quietly."""
+
+    from scripts import refresh_shard_durations as mod
+
+    monkeypatch.setattr(mod, "fetch_run_logs", lambda run_id: _LOG)
+    out = tmp_path / "out.json"
+    assert mod.main(["--run", "1", "--base", str(tmp_path / "absent.json"), "--out", str(out)]) == 1
+    assert not out.exists()
