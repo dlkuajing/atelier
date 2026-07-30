@@ -226,9 +226,45 @@ def test_an_unmeasured_probe_fails_toward_completing() -> None:
     )
 
 
-def test_the_slow_optimisation_probes_are_not_bounded_by_the_edge_scan_number() -> None:
-    """Regression pin on the exact mistake: the merit probe measured 59.3s healthy, so
-    any deadline at or below the 30s edge-scan figure fires on healthy work."""
+#: Measured healthy maxima, n in parentheses. Every deadline must clear its own maximum
+#: by the 10x margin `EDGE_SCAN_TIMEOUT_S` was itself set by -- see the module comment on
+#: `_PROBE_DEADLINE_SEC`.
+_MEASURED_HEALTHY_MAX_SEC = {
+    "protected_rms_merit_probe": 59.27,  # n=39
+    "protected_efl_refinement": 10.23,  # n=20
+    "protected_full_field_recovery_probe": 11.38,  # n=5
+    "protected_edge_field_stability_scan": 2.30,  # n=5
+}
 
-    for probe_name in ("protected_rms_merit_probe", "protected_full_field_recovery_probe"):
+
+@pytest.mark.parametrize("probe_name", sorted(_MEASURED_HEALTHY_MAX_SEC))
+def test_each_deadline_clears_its_own_measured_maximum_by_the_stated_margin(
+    probe_name: str,
+) -> None:
+    """The regression pin on the exact mistake, twice over.
+
+    First mistake: one 30s deadline for everything, calibrated on a 5-point edge scan,
+    fired on healthy runs of probes that run whole optimisations -- three CI tests
+    failed because their diagnostics went missing.
+
+    Second mistake, caught before it shipped: `protected_efl_refinement` was set to 30
+    from an n=5 sample (max 2.5s); widening to n=20 moved the max to 10.2s, making 30 a
+    2.9x margin while the comment claimed 10x. This test is what makes the claimed
+    margin checkable instead of a comment nobody re-derives.
+    """
+
+    assert case_library.probe_deadline_seconds(probe_name) >= (
+        10.0 * _MEASURED_HEALTHY_MAX_SEC[probe_name]
+    )
+
+
+def test_the_slow_probes_are_not_bounded_by_the_edge_scan_number() -> None:
+    """The three probes that are not the edge scan must all clear the edge-scan figure:
+    every one of them measured healthy above it or within 3x of it."""
+
+    for probe_name in (
+        "protected_rms_merit_probe",
+        "protected_efl_refinement",
+        "protected_full_field_recovery_probe",
+    ):
         assert case_library.probe_deadline_seconds(probe_name) > case_library.EDGE_SCAN_TIMEOUT_S

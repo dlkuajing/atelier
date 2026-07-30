@@ -1023,18 +1023,24 @@ def cases_for_scenario(scenario: Scenario) -> list[OpticalSampleData]:
 #: CODE V batch was saturating the box, so the readings are pessimistic (which is the
 #: safe direction for a bound that must never fire on healthy work):
 #:
-#:     protected_rms_merit_probe            n=11  max 59.3s  -> 600
-#:     protected_full_field_recovery_probe  n=2   max 11.4s  -> 120
-#:     protected_efl_refinement             n=5   max  2.5s  ->  30
-#:     protected_edge_field_stability_scan  n=2   max  2.3s  ->  30  (== EDGE_SCAN_TIMEOUT_S,
+#:     protected_rms_merit_probe            n=39  max 59.3s  -> 600
+#:     protected_efl_refinement             n=20  max 10.2s  -> 120
+#:     protected_full_field_recovery_probe  n=5   max 11.4s  -> 120
+#:     protected_edge_field_stability_scan  n=5   max  2.3s  ->  30  (== EDGE_SCAN_TIMEOUT_S,
 #:                                                     independent confirmation of it)
+#:
+#: ⚠️ `protected_efl_refinement` was first set to 30 from an n=5 sample whose max was
+#: 2.5s. Widening to the whole module (n=20) moved the max to 10.2s, which makes 30 a
+#: 2.9x margin while this comment claims 10x. Corrected before it could ship a false
+#: justification -- and CI runs on 2 cores, where the same probe is slower still.
+#: The small-sample artifact is a standing hazard in this project, not a one-off.
 #:
 #: These are containment bounds, not quality thresholds: nothing about the routing
 #: result depends on their values, only whether an *optional* diagnostic is present.
 _PROBE_DEADLINE_SEC: dict[str, float] = {
     "protected_rms_merit_probe": 600.0,
+    "protected_efl_refinement": 120.0,
     "protected_full_field_recovery_probe": 120.0,
-    "protected_efl_refinement": 30.0,
     "protected_edge_field_stability_scan": EDGE_SCAN_TIMEOUT_S,
 }
 
