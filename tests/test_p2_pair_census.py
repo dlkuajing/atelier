@@ -26,7 +26,6 @@ CI gate, and is labelled as such rather than quietly passing.
 from __future__ import annotations
 
 import json
-import math
 from pathlib import Path
 
 import pytest
@@ -339,28 +338,73 @@ def test_the_default_limit_is_the_corpus_median_not_a_chosen_number() -> None:
     assert census_mod.default_seed_quality_limit_um() == load_distribution()["percentiles"]["p50"]
 
 
+def test_the_stretch_limit_comes_from_a_measurement_not_a_choice() -> None:
+    """+25% is where the optimiser was measured to stop converging, both previously and
+    again on 2026-07-30: a seed needing +17.7% converged to 5e-10 EFL deviation, while
+    +46% / +59% / +75% all came back `aut_not_converged` at 14.0% / 17.0% / 22.6%."""
+
+    assert census_mod.MAX_SEED_EFL_STRETCH == 0.25
+    # Shrinking is deliberately unbounded: it was measured to converge across the board.
+    assert census_mod.seed_efl_is_reachable(seed_efl_mm=20.0, target_efl_mm=2.0)
+    assert census_mod.seed_efl_is_reachable(seed_efl_mm=4.0, target_efl_mm=5.0)  # +25%
+    assert not census_mod.seed_efl_is_reachable(seed_efl_mm=4.0, target_efl_mm=5.1)
+    # Degenerate inputs are unreachable, never silently allowed.
+    assert not census_mod.seed_efl_is_reachable(seed_efl_mm=0.0, target_efl_mm=4.0)
+    assert not census_mod.seed_efl_is_reachable(seed_efl_mm=4.0, target_efl_mm=0.0)
+
+
 @pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
-def test_gating_at_the_corpus_median_costs_no_trials() -> None:
-    """The measurement that justifies turning this on: the previous 100 um routing gate
-    admitted seeds at corpus p85 and p91 to compete against controls at 2-11 um, and
-    tightening to the median drops them without losing a single control."""
+def test_reachability_is_never_traded_away_for_quality() -> None:
+    """THE regression this file exists to prevent, and it is not hypothetical.
 
-    loose = census_mod.census(_PERFIELD, seed_quality_limit_um=math.inf)
-    gated = census_mod.census(_PERFIELD)
-    assert gated["trials"] == loose["trials"]
-    # Strictly fewer seed designs, i.e. the bad ones really were dropped.
-    assert gated["distinct_seeds_used"] < loose["distinct_seeds_used"]
+    Gating the pool on quality ALONE pushed 53 of 59 trials past the stretch limit, and
+    the first four real-machine trials came back `aut_not_converged`. An unreachable seed
+    produces no candidate at all; a merely mediocre one still produces a judgeable trial.
+    So reachability is filtered first and quality only chooses among what is left.
+    """
+
+    index = {r["case_id"]: r for r in json.loads(census_mod.CASE_INDEX.read_text("utf-8"))}
+    result = census_mod.census(_PERFIELD)
+    over = []
+    for pair in result["trial_pairs"]:
+        seed_efl = float(index[pair["seed"]]["efl_mm"])
+        target_efl = float(index[pair["control"]]["efl_mm"])
+        if (target_efl / seed_efl) - 1.0 > census_mod.MAX_SEED_EFL_STRETCH + 1e-9:
+            over.append((pair["control"], pair["seed"], target_efl / seed_efl))
+    assert not over, f"{len(over)} pairs exceed the measured stretch limit: {over[:3]}"
 
 
 @pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
-def test_every_gated_seed_is_under_the_limit() -> None:
+def test_the_fallback_is_recorded_rather_than_silent() -> None:
+    """Measured: only 6 of 59 controls have a seed that is BOTH reachable and at or
+    below the corpus median. For the other 53 the two constraints genuinely conflict,
+    and that conflict is the finding -- so it has to appear in the output, not be
+    quietly absorbed by a fallback.
+    """
+
+    result = census_mod.census(_PERFIELD)
+    basis = result["seed_pool_basis"]
+    assert set(basis) <= {"reachable_and_quality", "reachable_only", "neither"}
+    assert sum(basis.values()) == result["trials"]
+    # Both states must actually occur, or this run is not exercising the conflict.
+    assert basis.get("reachable_and_quality", 0) > 0
+    assert basis.get("reachable_only", 0) > 0
+
+
+@pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
+def test_quality_still_wins_where_it_is_available() -> None:
+    """The fallback must not swallow the quality preference where it *can* be honoured."""
+
     rms = census_mod.codev_rms_by_zmx(_PERFIELD)
     index = {r["case_id"]: r for r in json.loads(census_mod.CASE_INDEX.read_text("utf-8"))}
     result = census_mod.census(_PERFIELD)
     limit = result["seed_quality_limit_um"]
-    for pair in result["trial_pairs"]:
-        value = rms.get(str(index[pair["seed"]]["source_zmx"]))
-        assert value is not None and value <= limit, f"{pair['seed']} at {value} > {limit}"
+    good = [
+        pair
+        for pair in result["trial_pairs"]
+        if (rms.get(str(index[pair["seed"]]["source_zmx"])) or 1e9) <= limit
+    ]
+    assert len(good) == result["seed_pool_basis"].get("reachable_and_quality", 0)
 
 
 def test_a_seed_with_unknown_codev_quality_is_excluded_not_admitted(tmp_path) -> None:

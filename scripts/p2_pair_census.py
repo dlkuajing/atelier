@@ -336,18 +336,36 @@ def codev_rms_by_zmx(census_path: Path) -> dict[str, float]:
 
 
 def default_seed_quality_limit_um() -> float:
-    """The corpus median, not a number anyone chose.
-
-    Measured 2026-07-30: gating the seed pool at the corpus median (10.23 um over the
-    n=218 traceable pool) costs **zero** trials -- all 59 eligible controls still have a
-    qualifying cross-source seed -- while the previous 100 um gate admitted seeds at
-    corpus p85 and p91 to compete against controls at 2-11 um. At p25 the sample does
-    collapse (5/59), so the median is where the free win ends.
-    """
+    """The corpus median, not a number anyone chose."""
 
     from app.core.corpus_quality import load_distribution
 
     return float(load_distribution()["percentiles"]["p50"])
+
+
+#: How far the optimiser can stretch a seed's focal length and still converge.
+#: Measured previously on the real machine and recorded in
+#: `project-optimize-spike-setup-not-fundamental`: shrinking the focal length converges
+#: across the board, stretching starts failing at about +25%. Shrinking is left
+#: unbounded here because it was measured to converge, not because it is untested.
+MAX_SEED_EFL_STRETCH = 0.25
+
+
+def seed_efl_is_reachable(seed_efl_mm: float, target_efl_mm: float) -> bool:
+    """Can the optimiser get this seed to that focal length at all?
+
+    This is the constraint the quality gate must not override. Measured 2026-07-30 the
+    hard way: gating the pool on quality ALONE pushed 53 of 59 trials past the +25%
+    stretch limit (median seed/target EFL 1.209 -> 0.608), and the first four real-machine
+    trials came back `aut_not_converged` at 14.0% / 17.0% / 22.6% EFL deviation. The
+    "zero trial cost" that justified the quality gate had been measured on *planned*
+    trials, which is the wrong quantity -- a planned trial that cannot converge is not a
+    trial.
+    """
+
+    if not (seed_efl_mm > 0.0) or not (target_efl_mm > 0.0):
+        return False
+    return (target_efl_mm / seed_efl_mm) - 1.0 <= MAX_SEED_EFL_STRETCH
 
 
 def census(
@@ -380,6 +398,15 @@ def census(
         # competitive, and admitting it is how a 101 um lens got in.
         return value is not None and value <= limit
 
+    def seed_reachable(case_id: str, target_efl_mm: float) -> bool:
+        record = index_by_case.get(case_id)
+        if record is None:
+            return False
+        try:
+            return seed_efl_is_reachable(float(record["efl_mm"]), target_efl_mm)
+        except (KeyError, TypeError, ValueError):
+            return False
+
     by_id: dict[str, object] = {}
     for scenario in Scenario:
         for case in cases_for_scenario(scenario):
@@ -387,6 +414,7 @@ def census(
 
     trials: list[dict] = []
     excluded: collections.Counter[str] = collections.Counter()
+    seed_pool_basis: collections.Counter[str] = collections.Counter()
     for control_id in usable_ids:
         control = by_id.get(control_id)
         if control is None:
@@ -396,14 +424,38 @@ def census(
         if control_brand is None:
             excluded["control_provenance_unknown"] += 1
             continue
-        pool = [
+        target_efl = control.metadata.computed_efl_mm
+        cross_source = [
             case
             for case_id, case in by_id.items()
             if case_id != control_id
             and case_id in usable_set
             and provenance.brand_of_case(case_id) not in (None, control_brand)
-            and seed_quality_ok(case_id)
         ]
+        # Reachability first, quality second. The two constraints are NOT
+        # interchangeable: an unreachable seed yields no candidate at all, while a
+        # merely mediocre one still yields a judgeable trial. Filtering on quality alone
+        # was measured to push 53 of 59 trials past the stretch limit.
+        reachable = [
+            case
+            for case in cross_source
+            if seed_reachable(case.metadata.case_id, target_efl)  # type: ignore[union-attr]
+        ]
+        preferred = [
+            case
+            for case in reachable
+            if seed_quality_ok(case.metadata.case_id)  # type: ignore[union-attr]
+        ]
+        # Fall back rather than drop the control: "no seed both reachable and good"
+        # is a real state worth measuring, and recording it beats silently shrinking
+        # the sample.
+        pool = preferred or reachable or cross_source
+        if preferred:
+            seed_pool_basis["reachable_and_quality"] += 1
+        elif reachable:
+            seed_pool_basis["reachable_only"] += 1
+        elif cross_source:
+            seed_pool_basis["neither"] += 1
         if not pool:
             excluded["no_cross_brand_seed_available"] += 1
             continue
@@ -431,6 +483,8 @@ def census(
         "trials": len(trials),
         "excluded": dict(excluded),
         "seed_quality_limit_um": limit,
+        "seed_efl_max_stretch": MAX_SEED_EFL_STRETCH,
+        "seed_pool_basis": dict(seed_pool_basis),
         "distinct_seeds_used": len(seed_use),
         "top5_seed_share": sum(n for _, n in seed_use.most_common(5)),
         "seed_reuse": seed_use.most_common(10),
