@@ -72,7 +72,18 @@ def test_high_fov_seed_intake_audit_reports_current_gap():
     assert any("element count 4-6P" in item for item in report["missing_evidence"])
     assert any("1.0" in item for item in report["missing_evidence"])
     nearest = {item["role"]: item for item in report["nearest_candidates"]}
-    assert nearest["nearest_high_fov"]["case_id"] == "US-20230288669-A1-e4"
+    # 2026-07-30: the fov_deg re-anchor (half angle -> full angle) moved this pin, and the
+    # new answer is obviously the right one for a role named "nearest high FOV" against a
+    # target of 88 deg:
+    #
+    #     US-20230288669-A1-e4  fov 176.2  <- the old pin
+    #     US-12105260-B2-e3     fov  87.8  <- 0.2 deg from the target
+    #
+    # The old pin only looked nearest because its stored value was a HALF angle (~88.1),
+    # so a genuinely hemispherical lens read as a perfect 88-degree match. That family is
+    # confirmed ultra-wide elsewhere in the evidence, so 176.2 is the correct full angle
+    # and the old expectation was a mixed-unit artifact, not a better answer.
+    assert nearest["nearest_high_fov"]["case_id"] == "US-12105260-B2-e3"
     assert nearest["nearest_high_fov"]["mtf_max_field_frac"] < 1.0
     # Bounded intake seeds keep 0.5-field payload MTF, but the
     # protected edge scan can still probe the loaded ZMX independently.

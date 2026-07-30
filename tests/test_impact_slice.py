@@ -72,7 +72,16 @@ def test_a_leaf_script_yields_a_small_slice_not_the_whole_suite() -> None:
     tests = select_test_files(modules)
     all_tests = list((ROOT / "tests").rglob("test_*.py"))
     assert len(tests) < len(all_tests) / 4
-    assert {path.name for path in tests} == {"test_p2_crosssource_trial.py"}
+    # test_measurement_recipe.py joined this slice on 2026-07-30 and belongs in it: it
+    # imports `build_probe_sequence` from scripts/p2_crosssource_trial.py (to assert the
+    # shipped measurement recipe defines every `@` function the probe actually calls), so
+    # a change to that script genuinely can break it. The exact-set form is kept rather
+    # than loosened -- it is what catches the slice going over-broad, and the property
+    # assertion above ("small, not the whole suite") does not.
+    assert {path.name for path in tests} == {
+        "test_p2_crosssource_trial.py",
+        "test_measurement_recipe.py",
+    }
 
 
 def test_matching_is_by_import_not_substring() -> None:

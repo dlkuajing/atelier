@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "family_id": "94801574",
+  "reason": "The fov_deg re-anchor rebuilt data/patent-ledger/audit.json (45122 -> 83583 bytes), and this frozen 2026-07-19 evidence record pointed at that live artifact by hash. Commit 1a1f49a5 updated the pointer in place, which left the recorded transition chain unable to reach the workspace file. This record closes that chain: the convention is that a live pointer refresh is RECORDED, never silently rewritten.",
+  "records": [
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94801574/family-94801574-source-evidence.json",
+      "before_bytes": 10261,
+      "before_sha256": "9e8f1b46f5b889eef71340ef6dcddb8e2f2bd9136f73d3116e3b460f8e034e0f",
+      "after_bytes": 10261,
+      "after_sha256": "131a0834948886e4e306299a9f8f57596e5106d42b6b9db203eeb2c264851764",
+      "changed_leaf_paths": [
+        "ledger.audit.bytes",
+        "ledger.audit.sha256"
+      ]
+    }
+  ]
+}
