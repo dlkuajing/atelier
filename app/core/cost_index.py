@@ -55,6 +55,31 @@ _MATERIAL_COST_UNITS: tuple[tuple[str, float], ...] = (
 )
 _DEFAULT_MATERIAL_COST_UNITS = 1.5
 
+#: Model-glass fallback, used when the ZMX names no real material. CODE V writes
+#: a **model** glass (``___BLANK`` with an nd/vd pair, or ``<name>_BLANK`` from
+#: `repair_legacy_zmx_glass`) whenever glass is a degree of freedom, so the
+#: optimiser's ``extra_dof="both"`` arm lands on an nd/vd point with **no name at
+#: all**. Pricing those by name gave every one of them the same default weight --
+#: i.e. the glass DOF was free, and NORTH-STAR §1.1's 「材料牌号」 cost driver
+#: never fired on the arm that actually moves glass.
+#:
+#: So price them by the only material fact the file carries: refractive index.
+#: Higher index costs more -- that ordering is the whole content here, and it is
+#: the same ordering the named table above encodes (plastics ~1.53 at 1.0,
+#: crown ~1.52 at 2.2 is the one crossing, high-index lanthanum ~1.8+ at 4.0).
+#: Anchored at the two ends of the named table so a model glass never prices
+#: outside the range a named one can.
+_MODEL_GLASS_ND_ANCHORS: tuple[tuple[float, float], ...] = (
+    (1.45, 1.0),
+    (1.55, 1.1),
+    (1.65, 1.6),
+    (1.75, 2.6),
+    (1.90, 4.0),
+)
+
+#: A ZMX ``GLAS`` line is ``GLAS <name> <model_flag> <?> <nd> <vd> ...``.
+_ZMX_GLAS_ND_FIELD = 4
+
 #: An aspheric surface needs a diamond-turned mould insert and its own
 #: metrology; a spherical one does not. Charged per aspheric surface.
 _ASPHERE_SURCHARGE = 0.8
@@ -90,30 +115,63 @@ class CostIndex:
     elements: tuple[ElementCost, ...]
 
 
-def material_cost_units(name: str) -> float:
-    """Cost weight for a glass/plastic name.
+def model_glass_cost_units(nd: float) -> float:
+    """Cost weight for a model glass, from its refractive index alone.
 
-    Unknown names get a mid-range weight rather than 0: an unrecognised glass is
-    still an element that must be made, and charging 0 would make an unparsable
-    prescription look free.
+    Piecewise-linear through `_MODEL_GLASS_ND_ANCHORS` and clamped at both ends,
+    so a model glass can never price outside the range a *named* material can.
+    """
+
+    if not math.isfinite(nd) or nd <= 0.0:
+        return _DEFAULT_MATERIAL_COST_UNITS
+    anchors = _MODEL_GLASS_ND_ANCHORS
+    if nd <= anchors[0][0]:
+        return anchors[0][1]
+    if nd >= anchors[-1][0]:
+        return anchors[-1][1]
+    for (lo_nd, lo_u), (hi_nd, hi_u) in zip(anchors, anchors[1:], strict=False):
+        if lo_nd <= nd <= hi_nd:
+            span = hi_nd - lo_nd
+            return lo_u + (hi_u - lo_u) * ((nd - lo_nd) / span)
+    return _DEFAULT_MATERIAL_COST_UNITS
+
+
+def material_cost_units(name: str, *, nd: float | None = None) -> float:
+    """Cost weight for a glass/plastic name, or for its index when unnamed.
+
+    A named material is priced from the table. A **model** glass -- what CODE V
+    writes whenever glass is a degree of freedom -- carries no usable name, so it
+    is priced from ``nd`` instead. Without that, every glass the optimiser
+    invented cost the same default and the glass DOF was free.
+
+    Unknown names with no ``nd`` still get a mid-range weight rather than 0: an
+    unrecognised glass is still an element that must be made, and charging 0
+    would make an unparsable prescription look free.
     """
 
     canon = re.sub(r"[^A-Z0-9-]", "", (name or "").upper())
     for prefix, units in _MATERIAL_COST_UNITS:
         if canon.startswith(prefix):
             return units
+    if nd is not None:
+        return model_glass_cost_units(nd)
     return _DEFAULT_MATERIAL_COST_UNITS
 
 
 def element_cost_units(
-    *, material: str, aspheric_surfaces: int, semi_diameter_mm: float, thickness_mm: float
+    *,
+    material: str,
+    aspheric_surfaces: int,
+    semi_diameter_mm: float,
+    thickness_mm: float,
+    nd: float | None = None,
 ) -> float:
     """Cost of one element, in the same arbitrary units for every caller."""
 
     size = (max(semi_diameter_mm, 1e-6) / _REFERENCE_SEMI_DIAMETER_MM) ** _SIZE_EXPONENT
     bulk = (max(thickness_mm, 1e-6) / _REFERENCE_THICKNESS_MM) ** _SIZE_EXPONENT
     shape = 1.0 + _ASPHERE_SURCHARGE * max(0, aspheric_surfaces)
-    return material_cost_units(material) * shape * size * bulk
+    return material_cost_units(material, nd=nd) * shape * size * bulk
 
 
 def cost_ratio(candidate: CostIndex | None, control: CostIndex | None) -> float | None:
@@ -157,7 +215,7 @@ def cost_index_from_zmx(text: str) -> CostIndex | None:
         if line.startswith("SURF "):
             if current is not None:
                 surfaces.append(current)
-            current = {"type": "STANDARD", "glass": "", "diam": 0.0, "disz": 0.0}
+            current = {"type": "STANDARD", "glass": "", "diam": 0.0, "disz": 0.0, "nd": None}
             continue
         if current is None:
             continue
@@ -169,8 +227,12 @@ def cost_index_from_zmx(text: str) -> CostIndex | None:
             current["type"] = parts[1].upper()
         elif key == "GLAS" and len(parts) >= 2:
             current["glass"] = parts[1]
-            # A model glass ("___BLANK") still names a real material by index;
-            # keep it as an element and let material_cost_units default it.
+            # A model glass ("___BLANK", or "<name>_BLANK" from the legacy repair)
+            # names no material -- but the same line carries its refractive index,
+            # which is the fact `material_cost_units` prices it from. Without this
+            # every glass the optimiser invented cost the same default.
+            if len(parts) > _ZMX_GLAS_ND_FIELD:
+                current["nd"] = _float_or_zero(parts[_ZMX_GLAS_ND_FIELD]) or None
         elif key == "DIAM" and len(parts) >= 2:
             current["diam"] = _float_or_zero(parts[1])
         elif key == "DISZ" and len(parts) >= 2:
@@ -194,10 +256,12 @@ def cost_index_from_zmx(text: str) -> CostIndex | None:
         aspheric_total += aspheric
         semi = float(surface["diam"])  # type: ignore[arg-type]
         thick = abs(float(surface["disz"]))  # type: ignore[arg-type]
+        nd_value = surface.get("nd")
         units = element_cost_units(
             material=glass,
             aspheric_surfaces=aspheric,
             semi_diameter_mm=semi,
+            nd=float(nd_value) if isinstance(nd_value, (int, float)) else None,
             thickness_mm=thick,
         )
         elements.append(
