@@ -1206,6 +1206,54 @@ def _edge_used(record: Mapping[str, Any]) -> float | None:
         return None
 
 
+def _witness_shortfall(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """How often each side produced a reading on fewer fields than it declared.
+
+    This is the P1 root cause as a headline number rather than something a reader has
+    to grep the records for. Measured 2026-07-30: the dominant `unmeasurable` shape is a
+    candidate at 1-of-2 fields against a control at 2-of-2, with the conformance screen
+    passing and `aut_converged=1` -- the optimiser hits the spec and stops imaging
+    off-axis, because `@rmssum` skips a field whose trace fails and so pays for dropping
+    it.
+
+    Reported for BOTH sides on purpose. A control that also drops a field is a different
+    problem (the corpus lens is not traceable at its own declared field), and folding
+    the two together would hide it.
+    """
+
+    counts = {
+        "candidate_partial": 0,
+        "candidate_zero": 0,
+        "control_partial": 0,
+        "control_zero": 0,
+        "both_full": 0,
+        "no_witness": 0,
+    }
+    for record in records:
+        seen_any = False
+        full = True
+        for side in ("candidate", "control"):
+            quality = record.get(f"{side}_quality")
+            if not isinstance(quality, Mapping):
+                continue
+            declared = quality.get("num_fields")
+            ok = quality.get("rms_fields_ok")
+            if not isinstance(declared, (int, float)) or not isinstance(ok, (int, float)):
+                continue
+            seen_any = True
+            if ok <= 0:
+                counts[f"{side}_zero"] += 1
+                full = False
+            elif ok < declared:
+                counts[f"{side}_partial"] += 1
+                full = False
+        if not seen_any:
+            counts["no_witness"] += 1
+        elif full:
+            counts["both_full"] += 1
+    return counts
+
+
 def _deliverable_pieces(record: Mapping[str, Any]) -> dict[str, bool]:
     """Which of NORTH-STAR §1.1's four 交付物 pieces this trial actually produced.
 
@@ -1337,6 +1385,7 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
     seeds = {r["plan"]["seed_case_id"] for r in records if "plan" in r}
     designs = _distinct_design_counts(records)
     deliverables = _deliverable_completeness(records)
+    witness = _witness_shortfall(records)
     summary: dict[str, Any] = {
         "trials": len(records),
         "verdicts": verdicts,
@@ -1356,6 +1405,8 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
         "designs_unfingerprinted": designs["unfingerprinted"],
         # NORTH-STAR criterion ③: 交付物四件套完整度（缺一不算交付）.
         "deliverables": deliverables,
+        # Why the unmeasurable trials are unmeasurable, as a number.
+        "field_witness": witness,
         "budget_exhausted": budget_exhausted,
         "tolerance_skipped_by_request": sum(
             1
@@ -1443,6 +1494,11 @@ def render(summary: dict[str, Any]) -> str:
         "  per piece              "
         + ", ".join(
             f"{name}={count}" for name, count in sorted(summary["deliverables"]["per_piece"].items())
+        ),
+        # The line that explains the unmeasurable count instead of leaving it a mystery.
+        "field witness shortfall   "
+        + ", ".join(
+            f"{name}={count}" for name, count in sorted(summary["field_witness"].items()) if count
         ),
     ]
     rate_all = summary["par_rate_over_all_trials"]

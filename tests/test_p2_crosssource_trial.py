@@ -1197,3 +1197,83 @@ def test_the_summary_carries_the_deliverable_block(tmp_path) -> None:
     summary = trial.summarise([_four_piece_record(tmp_path)])
     assert set(summary["deliverables"]) == {"trials", "per_piece", "all_four", "status", "reason"}
     assert "四件套" in trial.render(summary)
+
+
+# ---------------------------------------------------------------------------
+# The field-witness shortfall tally: P1's root cause as a headline number
+# ---------------------------------------------------------------------------
+
+
+def _witness_record(*, candidate: tuple[int, int] | None, control: tuple[int, int] | None) -> dict:
+    record: dict = {
+        "plan": {
+            "control_zmx": "c.zmx",
+            "seed_zmx": "s.zmx",
+            "control_case_id": "CTRL-1",
+            "seed_case_id": "SEED-1",
+        }
+    }
+    for side, pair in (("candidate", candidate), ("control", control)):
+        if pair is not None:
+            ok, declared = pair
+            record[f"{side}_quality"] = {"rms_fields_ok": ok, "num_fields": declared}
+    return record
+
+
+def test_a_candidate_short_of_its_declared_fields_is_counted() -> None:
+    counts = trial._witness_shortfall([_witness_record(candidate=(1, 2), control=(2, 2))])
+    assert counts["candidate_partial"] == 1
+    assert counts["control_partial"] == 0
+    assert counts["both_full"] == 0
+
+
+def test_a_candidate_that_traces_nothing_is_counted_separately_from_partial() -> None:
+    """Zero fields and one-of-two are different failures: the first means the candidate
+    does not image at all, the second that it lost the outer field."""
+    counts = trial._witness_shortfall([_witness_record(candidate=(0, 2), control=(2, 2))])
+    assert counts["candidate_zero"] == 1
+    assert counts["candidate_partial"] == 0
+
+
+def test_a_short_control_is_never_folded_into_the_candidate_count() -> None:
+    """A control that drops a field is a different problem — the corpus lens is not
+    traceable at its own declared field — and merging the two would hide it."""
+    counts = trial._witness_shortfall([_witness_record(candidate=(2, 2), control=(1, 2))])
+    assert counts["control_partial"] == 1
+    assert counts["candidate_partial"] == 0
+    assert counts["both_full"] == 0
+
+
+def test_both_sides_full_is_its_own_count() -> None:
+    counts = trial._witness_shortfall([_witness_record(candidate=(2, 2), control=(2, 2))])
+    assert counts["both_full"] == 1
+
+
+def test_a_trial_with_no_witness_is_not_counted_as_full() -> None:
+    """Absence of a witness must never read as "all fields imaged" — that is the
+    fail-open shape the witness gates exist to prevent."""
+    counts = trial._witness_shortfall([_witness_record(candidate=None, control=None)])
+    assert counts["no_witness"] == 1
+    assert counts["both_full"] == 0
+
+
+@pytest.mark.parametrize(
+    "bad", [{"rms_fields_ok": "2", "num_fields": 2}, {"rms_fields_ok": 2}, {"num_fields": 2}]
+)
+def test_a_malformed_witness_is_not_counted_as_full(bad: dict) -> None:
+    record = {"plan": {}, "candidate_quality": bad, "control_quality": bad}
+    counts = trial._witness_shortfall([record])
+    assert counts["both_full"] == 0
+    assert counts["no_witness"] == 1
+
+
+def test_the_tally_reaches_the_rendered_report() -> None:
+    summary = trial.summarise(
+        [
+            _witness_record(candidate=(1, 2), control=(2, 2)),
+            _witness_record(candidate=(2, 2), control=(2, 2)),
+        ]
+    )
+    assert summary["field_witness"]["candidate_partial"] == 1
+    assert summary["field_witness"]["both_full"] == 1
+    assert "field witness shortfall" in trial.render(summary)
