@@ -154,6 +154,23 @@ Warnings"）：
 - **本 worktree 跑不了 4 个既有测试**：路径含 `.claude` 触发
   `ensure_codev_safe_input_path` 的点号分量闸。主仓库 `D:/atelier` 下同文件 55 全绿。
 
+## 机器空出来之后该跑什么：**不是 P3**
+
+一条带公差的 trial 约 51 分钟。P3 这条线现在已经修到「失败时说真话、不烧机器、
+有区分度的读数已就位」，再排真机时间只会重复读到「候选不成像」——**候选侧的堵点
+是 P1 候选质量，不在公差链路里，公差侧修不掉**。
+
+真机时间该给 P1。最具体的入口已在 memory
+`project-p1-bottleneck-is-now-candidate-quality` 里定位到行：路由质量闸
+`_SEED_ROUTING_MAX_RMS_UM = 100.0` 比要打平的对照（2–11 µm）**松 10–45 倍**，
+且它读 Optiland **半径**、只测**半场**，而判决读 CODE V **全场直径**；
+承担 41/49 条 trial 的那颗 seed 原生就是 **101 µm**。
+
+P3 侧真正值得的一次真机验证只有一个，且**可以搭便车**：下一次任何原因跑到
+`US-12436366-B2-e11` 时，确认新记录里 `sensitivity` / `relative_yield_curve` /
+`yield_is_informative` 三个字段的形状。它已被本铲的离线测试用**同一份真机导出**
+覆盖，所以不值得单独排 51 分钟。
+
 ## 复算方式
 
 ```bash
