@@ -1783,6 +1783,14 @@ def main(argv: list[str] | None = None) -> int:
             {
                 "trials_available": census_result["trials"],
                 "distinct_seeds_available": census_result["distinct_seeds_used"],
+                # The reachability-vs-quality conflict, per control. Measured 2026-07-30:
+                # only 6 of 59 controls have a cross-source seed that is BOTH inside the
+                # +25% focal-stretch limit and at or below the corpus median image
+                # quality. That split is the finding, so it belongs in the run artifact
+                # rather than only in a census return value nobody keeps.
+                "seed_pool_basis": census_result.get("seed_pool_basis"),
+                "seed_quality_limit_um": census_result.get("seed_quality_limit_um"),
+                "seed_efl_max_stretch": census_result.get("seed_efl_max_stretch"),
                 "run_provenance": provenance,
                 "planned": [asdict(p) for p in plans],
             },

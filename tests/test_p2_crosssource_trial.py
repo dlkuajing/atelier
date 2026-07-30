@@ -1519,3 +1519,18 @@ def test_git_unavailable_is_distinguishable_from_clean(monkeypatch) -> None:
     )
     assert p["git_available"] is False
     assert p["git_dirty"] is None
+
+
+def test_the_plan_records_the_reachability_quality_split() -> None:
+    """`seed_pool_basis` is the record of a real conflict, not a debug field.
+
+    Measured 2026-07-30: only 6 of 59 controls have a cross-source seed that is both
+    inside the +25% focal-stretch limit and at or below the corpus median quality. A run
+    artifact that omits this cannot be read later to tell "we chose a mediocre seed" from
+    "no good seed was reachable".
+    """
+
+    source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
+    assert '"seed_pool_basis": census_result.get("seed_pool_basis")' in source
+    assert '"seed_quality_limit_um": census_result.get("seed_quality_limit_um")' in source
+    assert '"seed_efl_max_stretch": census_result.get("seed_efl_max_stretch")' in source
