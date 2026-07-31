@@ -86,3 +86,32 @@
 
 ⚠️ **仍是预测**。它没有说 par 会是多少，只说明此前的 0 有多大成分是「起点就没戏」。
 真机验证要等本栈合入后重跑一批（当前批跑用的是旧池，其 par=0 是**基线**）。
+
+## ⚠️ 更正（2026-07-30，同日复算）：上面这张 59 对的表复算不出来
+
+拿它当判据去调 `rank_seeds` 权重时复算，`p2_pair_census.census` **给不出 59 对**。
+在闸被改成可达优先之后（base `ff635ebe`）重测，两种配置下对照数都是 **49**：
+
+| 配置 | trials | `seed_pool_basis` |
+|---|---|---|
+| 生产（可达优先 + p50 偏好 + 回退） | **49** | `reachable_only 46 / reachable_and_quality 3` |
+| `--gate off` | **49** | `reachable_and_quality 49` |
+
+算术也对得上：`usable 74 − provenance 未知 25 = 49`，`excluded` 里只剩
+`control_provenance_unknown: 25`。三份 P2 run plan（`D:/atelier-stagec-runs/p2-*/plan.json`）
+记的也都是 `trials_available = 49`。
+
+⇒ 上表的 `9/59` 与 `28/59` 两个读数**不作为依据使用**，直到有人能指出它们的复算路径。
+
+⇒ 「闸 = 语料 p50 costs zero trials」这条同样为假 —— 这一条**已被并行的一铲独立发现并
+修掉**（`c8ac289c`：真机 4 条 `aut_not_converged` 打脸，根因是"零代价"测的是**规划出的**
+trial 数而非**能收敛的** trial 数；闸已换成可达优先、质量其次、带回退）。详见
+`reachability-quality-conflict-2026-07-30.md`。
+
+⚠️ 但那页里的 **`53/59`** 与 `seed_pool_basis` = **`reachable_only 53 / reachable_and_quality 6`**
+**同样带着这个对不上的 59** —— 我在 base 上实测同一字段是 **46 / 3**。那页的结论（可达性
+必须优先）由**真机 4 条**独立支撑、与分母无关，所以结论不受影响；但**分母需要有人复核**。
+
+同日在 49 对上重测的起点读数：**起点领先 7/49、中位 seed/对照 13.93**，且该读数对
+`rank_seeds` 的整张权重网格不敏感（没有任何变体能把它抬高）。全部细节与复算命令见
+`seed-routing-weight-sensitivity-2026-07-30.md`。
