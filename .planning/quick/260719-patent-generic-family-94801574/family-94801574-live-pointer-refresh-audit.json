@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "family_id": "94801574",
-  "reason": "The fov_deg re-anchor rebuilt data/patent-ledger/audit.json (45122 -> 83583 bytes), and this frozen 2026-07-19 evidence record pointed at that live artifact by hash. Commit 1a1f49a5 updated the pointer in place, which left the recorded transition chain unable to reach the workspace file. This record closes that chain: the convention is that a live pointer refresh is RECORDED, never silently rewritten.",
+  "reason": "The fov_deg re-anchor rebuilt data/patent-ledger/audit.json (45122 -> 83583 bytes), and this frozen 2026-07-19 evidence record pointed at that live artifact by hash. Commit 1a1f49a5 updated the pointer in place, which left the recorded transition chain unable to reach the workspace file. This record closes that chain: the convention is that a live pointer refresh is RECORDED, never silently rewritten. 2026-07-31: commit 85ddb965 rebuilt data/patent-ledger/audit.json a second time (same 83583 bytes, new content) after the fov manifest upstream fix; the pointer was refreshed in place again (train commit, 1-line sha swap) and this second record closes that chain the same way.",
   "records": [
     {
       "path": ".planning/quick/260719-patent-generic-family-94801574/family-94801574-source-evidence.json",
@@ -11,6 +11,16 @@
       "after_sha256": "131a0834948886e4e306299a9f8f57596e5106d42b6b9db203eeb2c264851764",
       "changed_leaf_paths": [
         "ledger.audit.bytes",
+        "ledger.audit.sha256"
+      ]
+    },
+    {
+      "path": ".planning/quick/260719-patent-generic-family-94801574/family-94801574-source-evidence.json",
+      "before_bytes": 10261,
+      "before_sha256": "131a0834948886e4e306299a9f8f57596e5106d42b6b9db203eeb2c264851764",
+      "after_bytes": 10261,
+      "after_sha256": "e1fc4fa3925ffad2151f0161b59abb9b70abc8c4e929a31901e5c11ceed8814d",
+      "changed_leaf_paths": [
         "ledger.audit.sha256"
       ]
     }
