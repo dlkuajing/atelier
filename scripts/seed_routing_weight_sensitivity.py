@@ -19,19 +19,21 @@ weights. This script measures the function.
 What it measured (2026-07-30, `perfield-census.jsonl` of `trace-census-20260728`)
 --------------------------------------------------------------------------------
 **Nothing moves.** Across the whole grid -- including `fov -> 0`, EFL-only and FOV-only --
-the count stays at **6/49** and the median seed/control ratio at **13.93**. The most
-extreme variants re-route 2-4 of the 49 pairings; none of them changes the criterion.
+the criterion does not budge. The most extreme variants re-route a handful of the 49
+pairings; none of them changes how many pairs start ahead.
 
 The reason is structural and is visible in the pool-size histogram this script prints:
-**45 of the 49 controls have a cross-source seed pool of exactly 4 seeds.** A scoring
-function choosing 1 of 4 has almost no leverage. The corpus, the brand rule and the domain
-screen decide the pairing before the weights are consulted -- the same conclusion
-`.planning/evidence/domain-bounds-vs-market-2026-07-29.md` reached from the other side
-("打分不是瓶颈，可选项的数量才是").
+almost every control chooses from a **single-digit** seed pool. A scoring function choosing
+1 of 4 has almost no leverage. The corpus, the brand rule, the domain screen and the
+reachability screen decide the pairing before the weights are consulted -- the same
+conclusion `.planning/evidence/domain-bounds-vs-market-2026-07-29.md` reached from the
+other side ("打分不是瓶颈，可选项的数量才是").
 
 So this script's output is a *negative* result, and that is its point: it is the evidence
-that re-tuning these weights is not defensible work, and the record that can be re-run
-when the corpus grows enough for the pool sizes to change.
+that re-tuning these weights is not defensible work, and the record that can be re-run when
+the corpus grows enough for the pool sizes to change. Exact figures are not repeated in
+this docstring on purpose -- they move with the corpus and the pairing rules, and a stale
+number in a docstring is how the "zero trial cost" claim survived as long as it did. Run it.
 
 Method note
 -----------
@@ -41,14 +43,21 @@ production. This is sound because the parts do not depend on the weight *values*
 which keys are active; `_seed_spec_guard_penalty` is an additive, weight-independent term,
 recomputed here from the same inputs. Ties are broken the way `rank_seeds` breaks them
 (stable sort over pool order, strict `<`), so `moved` counts real re-routings and not
-tiebreak noise. `--verify` asserts the reconstruction reproduces production's argmin on
-every pair before any variant is reported.
+tiebreak noise.
+
+The pool each control chooses from is **not** rebuilt here from a copy of the rules --
+`--verify` runs the real `p2_pair_census.census()` and asserts that this script's
+production-weight argmin equals the seed that census actually paired, for every control.
+That is an end-to-end parity check: if the pairing rules change underneath (as they did on
+2026-07-30, when the quality gate became reachability-first-quality-second with fallback),
+`--verify` fails instead of silently reporting a sensitivity for a pool nobody ships.
+**Always run with `--verify`.**
 
 Usage::
 
-    uv run python scripts/seed_routing_weight_sensitivity.py
-    uv run python scripts/seed_routing_weight_sensitivity.py --gate p50
-    uv run python scripts/seed_routing_weight_sensitivity.py --json out.json
+    uv run python scripts/seed_routing_weight_sensitivity.py --verify
+    uv run python scripts/seed_routing_weight_sensitivity.py --verify --gate off
+    uv run python scripts/seed_routing_weight_sensitivity.py --verify --json out.json
 """
 
 from __future__ import annotations
@@ -106,8 +115,11 @@ def _spec_guard_penalty(case: Any, *, fov_deg: float) -> float:
 def build_population(census_path: Path, *, gate: float | None) -> list[dict[str, Any]]:
     """Rebuild the P2 pairing population, keeping each pool's distance parts.
 
-    Pairing screens are imported from `p2_pair_census` rather than restated, so this
-    script and the trial planner cannot drift.
+    Every screen is imported from `p2_pair_census` rather than restated, and the pool
+    precedence below mirrors `census()`: reachability first, quality preferred, fall back
+    rather than drop the control. `verify()` then checks the whole thing end to end against
+    the real `census()` output, so a future change to those rules surfaces as a failure
+    here instead of as a quietly wrong sensitivity.
     """
     warnings.simplefilter("ignore")
     from app.core.case_library import cases_for_scenario, rank_seeds
@@ -118,6 +130,7 @@ def build_population(census_path: Path, *, gate: float | None) -> list[dict[str,
         default_seed_quality_limit_um,
         load_provenance,
         load_usable_case_ids,
+        seed_efl_is_reachable,
     )
 
     provenance = load_provenance()
@@ -130,6 +143,19 @@ def build_population(census_path: Path, *, gate: float | None) -> list[dict[str,
     def rms_of(case_id: str) -> float | None:
         record = index_by_case.get(case_id)
         return None if record is None else codev_rms.get(str(record.get("source_zmx")))
+
+    def quality_ok(case_id: str) -> bool:
+        value = rms_of(case_id)
+        return value is not None and value <= limit
+
+    def reachable(case_id: str, target_efl_mm: float) -> bool:
+        record = index_by_case.get(case_id)
+        if record is None:
+            return False
+        try:
+            return seed_efl_is_reachable(float(record["efl_mm"]), target_efl_mm)
+        except (KeyError, TypeError, ValueError):
+            return False
 
     by_id: dict[str, Any] = {}
     for scenario in Scenario:
@@ -144,14 +170,23 @@ def build_population(census_path: Path, *, gate: float | None) -> list[dict[str,
         control_brand = provenance.brand_of_case(control_id)
         if control_brand is None:
             continue
-        pool = [
+        target_efl = control.metadata.computed_efl_mm
+        cross_source = [
             case
             for case_id, case in by_id.items()
             if case_id != control_id
             and case_id in usable_set
             and provenance.brand_of_case(case_id) not in (None, control_brand)
-            and (lambda v: v is not None and v <= limit)(rms_of(case_id))
         ]
+        reachable_pool = [c for c in cross_source if reachable(c.metadata.case_id, target_efl)]
+        preferred = [c for c in reachable_pool if quality_ok(c.metadata.case_id)]
+        pool = preferred or reachable_pool or cross_source
+        if preferred:
+            basis = "reachable_and_quality"
+        elif reachable_pool:
+            basis = "reachable_only"
+        else:
+            basis = "neither"
         if not pool:
             continue
         target_fov = control.metadata.fov_deg
@@ -172,6 +207,7 @@ def build_population(census_path: Path, *, gate: float | None) -> list[dict[str,
                 "control": control_id,
                 "control_rms_um": rms_of(control_id),
                 "pool_size": len(pool),
+                "pool_basis": basis,
                 "order": order,
                 "parts": parts_by_id,
                 "guards": {
@@ -236,8 +272,14 @@ def evaluate(
     }
 
 
-def verify(population: list[dict[str, Any]]) -> None:
-    """The reconstruction must reproduce production's argmin on every pair."""
+def verify(population: list[dict[str, Any]], census_path: Path, *, gate: float | None) -> None:
+    """End-to-end parity with the real pairing, in two steps.
+
+    1. The re-weighting reconstruction must reproduce `rank_seeds`' argmin on every pool.
+    2. Those pools and their winners must match what `p2_pair_census.census()` actually
+       paired -- the check that catches a change in the pairing *rules*, which step 1 is
+       blind to because it only ever sees the pool this script built.
+    """
     for entry in population:
         rebuilt = _argmin_seed(entry, entry["production_weights"])
         if rebuilt != entry["production_seed"]:
@@ -245,6 +287,28 @@ def verify(population: list[dict[str, Any]]) -> None:
                 f"reconstruction disagrees with rank_seeds for control {entry['control']}: "
                 f"{rebuilt!r} != {entry['production_seed']!r}"
             )
+
+    from scripts.p2_pair_census import census
+
+    shipped = census(census_path, seed_quality_limit_um=gate)
+    shipped_pairs = {pair["control"]: pair["seed"] for pair in shipped["trial_pairs"]}
+    mine = {entry["control"]: entry["production_seed"] for entry in population}
+    if mine != shipped_pairs:
+        only_mine = set(mine) - set(shipped_pairs)
+        only_shipped = set(shipped_pairs) - set(mine)
+        differing = {
+            control: (mine[control], shipped_pairs[control])
+            for control in set(mine) & set(shipped_pairs)
+            if mine[control] != shipped_pairs[control]
+        }
+        raise AssertionError(
+            "this script's pairing no longer matches p2_pair_census.census() -- the pairing "
+            "rules changed underneath it and the sensitivity below would be measured on a "
+            "pool nobody ships. Re-read `census()` and update `build_population`.\n"
+            f"  controls only here:   {sorted(only_mine)}\n"
+            f"  controls only shipped:{sorted(only_shipped)}\n"
+            f"  differing seeds:      {differing}"
+        )
 
 
 def render(result: dict[str, Any]) -> str:
@@ -255,6 +319,7 @@ def render(result: dict[str, Any]) -> str:
         f"  seed quality gate {result['gate']}",
         f"  pairs             {result['trials']}",
         f"  pool sizes        {result['pool_sizes']}",
+        f"  pool basis        {result['pool_basis']}",
         "",
         "  criterion = pairs whose routed seed already images better than its control",
         "              (CODE V RMS spot diameter, both sides, same census)",
@@ -285,19 +350,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--census", type=Path, default=DEFAULT_CENSUS)
     parser.add_argument(
         "--gate",
-        default="off",
-        help="seed quality gate: 'off' (the pool the real P2 runs use), 'p50' (the corpus "
-        "median default), or a number in um",
+        default="production",
+        help="seed quality preference: 'production' (the shipped default, corpus median), "
+        "'off' to disable it, or a number in um. Since 2026-07-30 this is a *preference* "
+        "inside a reachability-first pool with fallback, not a hard gate",
     )
     parser.add_argument("--json", type=Path, default=None)
-    parser.add_argument("--verify", action="store_true", help="assert parity with rank_seeds")
+    parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="assert end-to-end parity with p2_pair_census.census(); always use this",
+    )
     args = parser.parse_args(argv)
 
     if not args.census.is_file():
         parser.error(f"census not found: {args.census}")
     if args.gate == "off":
         gate: float | None = math.inf
-    elif args.gate == "p50":
+    elif args.gate in ("production", "p50"):
         gate = None
     else:
         gate = float(args.gate)
@@ -306,7 +376,7 @@ def main(argv: list[str] | None = None) -> int:
     if not population:
         parser.error("no pairs formed -- check the census path and the gate")
     if args.verify:
-        verify(population)
+        verify(population, args.census, gate=gate)
 
     rows = [{"variant": "production", **evaluate(population)}]
     rows += [{"variant": name, **evaluate(population, override)} for name, override in WEIGHT_GRID]
@@ -315,6 +385,9 @@ def main(argv: list[str] | None = None) -> int:
         "gate": "off" if gate == math.inf else ("corpus p50" if gate is None else f"{gate} um"),
         "trials": len(population),
         "pool_sizes": dict(sorted(collections.Counter(e["pool_size"] for e in population).items())),
+        "pool_basis": dict(
+            sorted(collections.Counter(e["pool_basis"] for e in population).items())
+        ),
         "rows": rows,
     }
     print(render(result))

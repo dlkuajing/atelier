@@ -1,18 +1,23 @@
 # `rank_seeds` 的权重不是那条回归的根因——过期的是 target，不是权重（2026-07-30）
 
+> **本页已按 base `ff635ebe` 重测一次。** 首版写在 `e33bc7bc` 上，其后并行的另一铲
+> （`c8ac289c`）把 seed 池换成了**可达优先、质量其次、带回退**，池子构成变了。所有数字下面
+> 都是重测后的；旧数字不保留，以免有人引用。**重测没有改变结论，机制反而更锋利。**
+
 ## 结论先行
 
 1. **权重不该重调**：对北极星主指标的可测代理，整张权重网格（含 `fov→0`、EFL-only、
-   FOV-only）读数**恒为 6/49、中位比 13.93 不动**。原因是结构性的：**49 个对照里有 45 个
-   的异源种子池只有 4 颗**。四选一，打分函数没有杠杆。
+   FOV-only）**没有一个变体能把读数抬上去**（生产 7/49，最好也是 7，`fov→0` 与 EFL-only
+   反而掉到 6），中位比 13.93 全程不动。原因是结构性的：**可达性筛完之后，49 个对照里
+   有 36 个的候选 seed ≤2 颗，其中 4 个只剩 1 颗（根本没得选）**。
 2. **那条 xfail 的归因是错的**：锚点 `US-20210364737-A1-e8` **从来没有**进过
    `rank_seeds` 的 top-10（重锚前 rank 66、重锚后 rank 53），它的第一名一直由
    stage 1b 召回给的。**把 fov 权重调到 0，锚点从 53 掉到 63——更差。**
 3. **真正过期的是测试的 target**：`fov_deg` 重锚了（半→全），这条测试的 `fov=15.3`
    没跟着重锚。按全视场读，它蕴含的像高是 **1.5446mm**，被产品自己的
    `image_height_mm_min=2.5` 拒收。修 target 不修权重，xfail 已摘。
-4. **顺带查实一条不成立的既有读数**：`28/59` 复算不出来；语料中位数闸不是"零 trial
-   代价"，而是 **49 → 4**。
+4. **那条 `28/59`**：并行的另一铲已独立发现「零 trial 代价」为假并修掉了闸；本页只补一条
+   它没覆盖的——**`59` 这个数在任一版本下都复算不出来，census 给的是 49**。
 
 ## 一、权重对主指标没有杠杆（实测）
 
@@ -24,31 +29,39 @@
 复算：
 
 ```bash
-uv run python scripts/seed_routing_weight_sensitivity.py --gate off --verify
+uv run python scripts/seed_routing_weight_sensitivity.py --verify
 ```
 
-`--verify` 先断言"重算的 argmin 在全部 49 对上与生产 `rank_seeds` 一致"，再报变体——
-不然比的就不是同一个东西。
+**`--verify` 是两级的，第二级是这次重测能被抓住的原因**：① 重算的 argmin 必须在每个池上
+与 `rank_seeds` 一致；② **这些池与它们的赢家必须与真正的 `p2_pair_census.census()` 逐条
+对得上**。只有 ① 的话，配对**规则**改了脚本也察觉不到——它只看得见自己造的那个池。
+
+生产配置（可达优先 + 语料中位数偏好 + 回退）：
 
 | 变体 | 起点领先 | 中位 seed/对照 | 用到的 seed | 改变的配对 |
 |---|---|---|---|---|
-| **生产（fov 0.46）** | **6 / 49** | **13.926** | 5 | 0 |
-| fov 0.46 → 0.30 / 0.20 / 0.10 | 6 | 13.926 | 5 | 0 |
-| **fov → 0** | 6 | 13.926 | 5 | **0** |
-| efl 0.20 → 0.46 / 0.60 | 6 | 13.926 | 5 | 0 |
-| efl 0.46 / fov 0.20（对调） | 6 | 13.926 | 5 | 0 |
-| quality → 0 | 6 | 13.926 | 6 | 2 |
-| efl only | 6 | 13.926 | 6 | 3 |
-| fov only | 7 | 13.926 | 6 | 4 |
+| **生产（fov 0.46）** | **7 / 49** | **13.926** | 5 | 0 |
+| fov 0.46 → 0.30 / 0.20 / 0.10 | 7 | 13.926 | 5 | 1 |
+| **fov → 0** | **6（更差）** | 13.926 | 5 | 2 |
+| efl 0.20 → 0.46 / 0.60 | 7 | 13.926 | 5 | 1 |
+| efl 0.46 / fov 0.20（对调） | 7 | 13.926 | 5 | 1 |
+| quality → 0 | 7 | 13.926 | 6 | 2 |
+| **efl only** | **6（更差）** | 13.926 | 6 | 6 |
+| fov only | 7 | 13.926 | 6 | 2 |
 
-**池子大小分布：`{4: 45, 47: 2, 48: 2}`。** 92% 的对照是在 4 颗里挑 1 颗。
+**没有一个变体比生产更好。** 两个极端变体（`fov→0`、EFL-only）**更差**。
 
-`fov only` 那个 7（+1/49）不作数：它是丢掉 EFL 维的退化权重，且 n=49 上 +1 就是
-`feedback-measurement-traps` 第 ② 条点名的小样本假象。
+**池子大小分布：`{1: 4, 2: 32, 3: 2, 4: 8, 13: 1, 33: 2}`**
+——**36/49 的对照候选 ≤2 颗，4 个只剩 1 颗（连"挑"这个动作都不存在）**。
+`pool basis` = `reachable_only 46 / reachable_and_quality 3`。
+
+闸关那一臂（`--gate off`）池子略大（`{1: 4, 2: 32, 3: 2, 4: 8, 19: 1, 47: 2}`）但形状相同，
+结论一致。
 
 ⇒ 这与 `domain-bounds-vs-market-2026-07-29.md` 从另一侧得到的结论一致
 （"打分不是瓶颈，可选项的数量才是"）。**本铲把它从"顺手证伪一条 backlog"升级为
-"对主指标本身实测无杠杆"。**
+"对主指标本身实测无杠杆"，并且在可达性筛加上之后这个结论更强了**——筛子越紧，
+打分能动的余地越小。
 
 ### 顺带回答任务书里另外两问
 
@@ -61,7 +74,8 @@ uv run python scripts/seed_routing_weight_sensitivity.py --gate off --verify
   跨对照比。
 - **给 `rank_seeds` 加像质距离维**：它**已经有**一维（`quality`，权重 0.24–0.45）。
   把它归零只改动 2/49 条配对，判据纹丝不动。再加一维像质距离在当前池子大小下同样没有
-  杠杆——**这条不做**，理由是实测而非偏好。
+  杠杆——**这条不做**，理由是实测而非偏好。（并行那铲的结论从另一侧支持它：像质**必须**
+  让位于可达性，所以把像质塞进排序权重是把两个不可互换的约束混成一个标量。）
 
 ## 二、锚点丢掉第一名的真实机制（重锚前后同代码 A/B）
 
@@ -178,54 +192,68 @@ rank 1 是 `US-12372756-B2-e6`（band `5to15`、score 5.715），不是锚点。
 合法客户请求"这句话本身变成机器判据——旧 target 连同它蕴含的像高必须被
 `ParameterGuardError` 拒收，新 target 必须整轴通过。
 
-## 四、`28/59` 复算不出来，语料中位数闸也不是零代价
+## 四、`28/59` 的下落：闸已被并行那铲修掉，但 `59` 这个数仍然复算不出来
 
-任务书要我拿 `28/59`（闸打开后起点领先的配对数）当判据。**它复算不出来**：
+任务书要我拿 `28/59`（闸打开后起点领先的配对数）当判据。查它的过程中发现两件事，
+**第一件已经被别人修掉了，第二件还没有人说过**。
 
-| 闸 | trials |
-|---|---|
-| 关 / 100 µm | **49** |
-| **语料 p50（当前默认）** | **4** |
-| 语料 p25 | 4 |
+### 已经被修掉的那件（不重复计功）
 
-`scripts/p2_pair_census.py::default_seed_quality_limit_um` 的 docstring 声称中位数闸
-"costs **zero** trials -- all 59 eligible controls still have a qualifying cross-source
-seed"。实测**代价是 49 → 4**，且"59"在树里找不到出处：三份 P2 run plan
-（`D:/atelier-stagec-runs/p2-*/plan.json`）记的都是 `trials_available = 49`。
+「语料中位数闸零 trial 代价」为假。**并行的一铲（`c8ac289c`）独立发现了同一件事，
+而且比我走得远**：它是被真机打脸发现的（4 条 `aut_not_converged`，EFL 偏差
+14.0 / 17.0 / 22.6%），根因指得也更准——**「零代价」测的是"规划出的 trial 数"，
+而消费者要的是"能收敛的 trial 数"**；修法是把闸换成 **可达优先、质量其次、带回退**
+（`seed_efl_is_reachable`，`MAX_SEED_EFL_STRETCH = 0.25`）。
+证据见 `reachability-quality-conflict-2026-07-30.md`。
 
-引入该闸的提交与本栈 HEAD 之间只动过一份证据文档和一份测试文件，**语料 / provenance /
-census 脚本一律未动**，所以那个提交当时也是 4，不是 59。
+我这边是从静态复算发现的（闸开 4 / 闸关 49），**结论同向**。该铲落地后本页原先提的
+"更正 docstring / 改测试 / 待主公裁定默认值"**全部作废**，已从本 PR 撤掉——那两个文件
+现在以并行那铲的版本为准。
 
-机制：74 颗 usable 里 45 颗 Largan、25 颗 provenance 未知，非 Largan 只剩 4 颗；Largan
-对照的异源池至多就是这 4 颗，中位数闸下一颗都不合格 ⇒ **45 个 Largan 对照全部掉出**。
+### 还没有人说过的那件：`59` 复算不出来
 
-**这条假声明不只在 docstring 里，它被钉成了一条测试，而且那条测试本来就是红的**：
-`tests/test_p2_pair_census.py::test_gating_at_the_corpus_median_costs_no_trials` 断言
-`gated["trials"] == loose["trials"]`，在本栈 HEAD（未动任何代码时）实测
-`assert 4 == 49` 失败。**CI 看不见它**——它带 `skipif(not _PERFIELD.is_file())`，而那份
-runtime census 在 worktree 之外，只有装了 CODE V 的 Windows 机器上才有，Ubuntu runner 上
-恒跳过。本铲把它改成钉**实测代价**（`gated < loose/2`、且掉出的确实是
-`no_cross_brand_seed_available`），并保留它唯一为真的那半（闸确实丢掉了坏 seed 设计）。
+**两个版本的代码下，`census()` 给出的对照数都是 49，不是 59。** 在 base `ff635ebe` 实测：
 
-**后果是活的**：`plan_trials` 走的是 `census()` 的默认值，所以本栈上再跑一批 P2，计划的是
-**4 条**而不是 49 条——依据是一句实测为假的"零代价"。
+| | trials | `seed_pool_basis` |
+|---|---|---|
+| 生产（可达优先 + p50 偏好 + 回退） | **49** | `reachable_only 46 / reachable_and_quality 3` |
+| `--gate off` | **49** | `reachable_and_quality 49` |
 
-**本铲只更正 docstring，不动默认值**：改它等于在"主指标样本量掉一个数量级"和"主指标
-可信度"之间二选一，属主公裁定项，已记入待裁定队列。
+算术也对得上：`usable 74 − provenance 未知 25 = 49`，`excluded` 里只剩
+`control_provenance_unknown: 25`。三份 P2 run plan
+（`D:/atelier-stagec-runs/p2-*/plan.json`）记的也都是 `trials_available = 49`。
+
+⇒ 因此下列几个带 `59` 的读数**都缺一条复算路径**，引用前需要有人先把它补上：
+
+- 旧 docstring 的「all **59** eligible controls」（已随 `c8ac289c` 删除）；
+- `p1-root-cause-routing-gate-2026-07-30.md` 的 `9/59` 与 `28/59`（已在该页加更正）；
+- `reachability-quality-conflict-2026-07-30.md` 的「**53/59** 越过拉焦上限」与
+  `seed_pool_basis` = **`reachable_only 53 / reachable_and_quality 6`**
+  ——同一字段我在 base 上实测是 **46 / 3**。
+
+⚠️ **这不是说那铲的结论错了。** 它的结论（质量闸把 seed 推出可达范围、必须可达优先）
+由**真机 4 条**独立支撑，与分母无关。这里只说**分母对不上**：可能是它在某个未推的本地
+状态上测的，也可能是我漏了什么。**报比例先确认分母**（`feedback-measurement-traps` ⑥），
+所以我把两个读数并排放着，不替它下结论。
 
 ## 复算
 
 ```bash
-uv run python scripts/seed_routing_weight_sensitivity.py --gate off --verify
-uv run python scripts/seed_routing_weight_sensitivity.py --gate p50
+uv run python scripts/seed_routing_weight_sensitivity.py --verify
+uv run python scripts/seed_routing_weight_sensitivity.py --verify --gate off
 uv run pytest tests/test_orchestration_generators.py -k "telephoto_anchor or recovers_real or genuinely_far_fov"
 ```
 
+**永远带 `--verify`。** 它的第二级会拿真正的 `p2_pair_census.census()` 逐条对账；
+本页第一版就是靠它在配对规则被并行改掉之后立刻失败、而不是安静地报一组错数。
+
 ## 诚实边界
 
-- 判据本身**只在当前池子大小下**无杠杆。底库长到异源池不再是 4 颗时，本结论必须重测——
+- 判据本身**只在当前池子大小下**无杠杆。底库长到候选不再是 1–2 颗时，本结论必须重测——
   脚本留着就是为了那一天。
-- 6/49 与 4/49 都是**起点**读数，不是打平率；它只说明"起点有没有戏"，不预测 par。
+- 7/49 是**起点**读数，不是打平率；它只说明"起点有没有戏"，不预测 par。
+- 本页数字随配对规则变。首版（`e33bc7bc`）与重测版（`ff635ebe`）之间，配对规则被并行的
+  一铲改了，池子构成随之改变——**结论没变，数字变了**。任何引用请连 base 一起引。
 - 长焦锚点那段 A/B 用的是重锚前后两份语料 + 同一份代码，隔离的是语料变量；stage 1b 的
   cap 收紧（3.7 → 2.592）与锚点自身 `|Δfov|` 翻倍**两条都足以单独淘汰它**，本页没有把
   两者的相对贡献拆开——因为任一条都是充分的，拆开不改变结论。
