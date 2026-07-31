@@ -37,6 +37,37 @@ Fail-closed, and honest about which side of a mismatch is which:
 
 Each recompute runs in its own subprocess with a timeout: Optiland is known to
 hang on a minority of this corpus, and a hang inside a loop reads as slowness.
+
+Degrades per field, not per side
+-------------------------------
+Optiland's MTF entry point builds one ``GeometricMTF`` over every field on the
+optic and dies whole when any single field's real rays come back all-NaN --
+matplotlib, reached through the spot-diagram path, raises ``autodetected range of
+[nan, nan] is not finite``. Measured 2026-07-30 on the 6-trial run
+``p2-gated-20260729``: **18 of 22 recomputes returned ``engine_failed``, 9 of 11
+sides, identically in both arms** -- so the failure has nothing to do with the
+measurement recipe. On control ``US-11933948-B2-e10``, which CODE V measures at 2
+of 2 fields, the paraxial trace is fine (``efl = 4.3073``, ``fno = 2.35``) and only
+the field loop dies: the fields that *did* compute were discarded along with the
+one that did not.
+
+So the recompute walks the fields one at a time and records which of them produced
+a finite reading, mirroring the ``rms_fields_ok`` / ``mtf_fields_ok`` witnesses the
+trial already carries on the CODE V side. A reduction over a subset of the fields is
+not the reduction we claim to report, so a partial reading is never pooled with a
+complete one: ``reproduction_ratio_optiland_over_codev`` holds full-coverage
+readings only, and partial ones are reported beside it, labelled, with the coverage
+fraction that makes them partial. A reading that arrives with no witness at all is
+excluded from both rather than assumed complete.
+
+EFL and F/# are exempt from that gate by construction -- they come from the paraxial
+trace, which succeeds on sides where every real-ray field dies, and there is no
+field reduction in them to be partial about. Gating them would throw away readings
+that are complete.
+
+Why Optiland's rays go NaN where CODE V's do not is not chased here. That CODE V
+traces what Optiland cannot is already established in this corpus; the point of
+this pass is to stop losing the fields that do trace.
 """
 
 from __future__ import annotations
@@ -83,6 +114,24 @@ if arm == "recipe":
 
     _ab._robust_clip_spot_data = lambda geometric_mtf: None
 
+
+def emit(out):
+    # A cumulative snapshot after every field. If a later field hangs until the parent's
+    # timeout, or dies somewhere this file does not catch, the newest snapshot still
+    # carries the fields that traced -- and its own coverage counters (ok < of) make it
+    # report itself as partial, so a truncated run can never pass for a full-field one.
+    print(json.dumps(out), flush=True)
+
+
+def finite(value):
+    # Optiland returns NaN for a field whose rays died, and NaN is not a reading.
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return None
+    return value if math.isfinite(value) else None
+
+
 text = decode_zmx_text(open(path, "rb").read())[0]
 half = max_field_angle_deg(text)
 optic = load_normalized_zmx(path)
@@ -126,40 +175,141 @@ if half is not None:
     if not used_declared:
         regularize_fields_to_angle(optic, 2.0 * half)
     out['field_set'] = 'declared' if used_declared else 'canonical_fractions'
-    mtf = compute_mtf(optic)
-    rms = [float(v) for v in mtf.rms_spot_radius_um_by_field]
-    # Optiland's rms_spot_radius() is an RMS **radius**; CODE V's SPOTDATA
-    # output(1) -- what @rmssum reports -- is an RMS **diameter**: the CODE V
-    # Geometrical Analysis manual states it outright ("The RMS spot diameter ...
-    # is computed as twice the square root of the mean squared spot radius").
-    # Comparing them raw was a factor-of-two apples-to-oranges, and it showed:
-    # the first run's median ratio came out at 0.4925.
-    out["max_rms_spot_um"] = (2.0 * max(rms)) if rms else None
-    # Same frequency the trial's CODE V probe uses, and the same "worst over every
-    # field and both azimuths" reduction as @mtfmin.
-    idx = nearest_mtf_freq_index(mtf, 100.0)
-    if idx is None:
-        out["mtf_min"] = None
-    else:
-        vals = []
-        for field in mtf.fields:
-            vals.extend([float(field.sagittal[idx]), float(field.tangential[idx])])
-        out["mtf_min"] = min(vals) if vals else None
-        out["mtf_freq_lp_per_mm"] = float(mtf.freq_lp_per_mm[idx])
+    # Whatever set the fields, read the resulting angles back off the optic rather than
+    # recomputing them, so the per-field loop measures exactly the set this arm chose.
+    declared = list(optic.fields.fields)
+    out['num_fields'] = len(declared)
+    out['fields'] = []
+    # ok/of per metric, so a reader of one row can tell whether that number is a
+    # reduction over every field or over the survivors. 'of' is the declared count and
+    # never shrinks: a max over a subset is not the max we claim to report.
+    coverage = {
+        'max_rms_spot_um': {'ok': 0, 'of': len(declared), 'unit': 'fields'},
+        'mtf_min': {'ok': 0, 'of': len(declared), 'unit': 'fields'},
+    }
+    out['coverage'] = coverage
+    out['max_rms_spot_um'] = None
+    out['mtf_min'] = None
+    diameters = []
+    modulations = []
+    emit(out)
+    # One field per compute_mtf call. Optiland builds a single GeometricMTF over every
+    # field on the optic and dies whole if any one of them yields all-NaN spot data
+    # (matplotlib: "autodetected range of [nan, nan] is not finite"), which threw the
+    # fields that traced away with the one that did not -- 9 of 11 sides on the
+    # p2-gated-20260729 run, including a control CODE V reads at 2 of 2 fields.
+    # Restricting the field list is safe for the angle traced: Optiland normalises field
+    # coords by fields.max_field, so a lone field keeps its own angle (and its own
+    # vignetting factors, which travel on the Field object).
+    for index, field in enumerate(declared):
+        record = {'index': index, 'angle_deg': float(field.y)}
+        optic.fields.fields[:] = [field]
+        try:
+            mtf = compute_mtf(optic)
+        except Exception as exc:
+            record['error'] = type(exc).__name__ + ': ' + str(exc)[:200]
+            out['fields'].append(record)
+            emit(out)
+            continue
+        per_field = list(mtf.rms_spot_radius_um_by_field)
+        radius_um = finite(per_field[0]) if per_field else None
+        if radius_um is None:
+            record['rms_spot_diameter_um'] = None
+        else:
+            # Optiland's rms_spot_radius() is an RMS **radius**; CODE V's SPOTDATA
+            # output(1) -- what @rmssum reports -- is an RMS **diameter**: the CODE V
+            # Geometrical Analysis manual states it outright ("The RMS spot diameter ...
+            # is computed as twice the square root of the mean squared spot radius").
+            # Comparing them raw was a factor-of-two apples-to-oranges, and it showed:
+            # the first run's median ratio came out at 0.4925.
+            record['rms_spot_diameter_um'] = 2.0 * radius_um
+            diameters.append(2.0 * radius_um)
+            coverage['max_rms_spot_um']['ok'] += 1
+        # Same frequency the trial's CODE V probe uses, and the same "worst over every
+        # field and both azimuths" reduction as @mtfmin. Both azimuths must be finite or
+        # the field does not count: a min over one azimuth is the flattering direction.
+        idx = nearest_mtf_freq_index(mtf, 100.0)
+        azimuths = []
+        if idx is not None and mtf.fields:
+            azimuths = [
+                finite(mtf.fields[0].sagittal[idx]),
+                finite(mtf.fields[0].tangential[idx]),
+            ]
+        if azimuths and all(value is not None for value in azimuths):
+            record['mtf_min'] = min(azimuths)
+            modulations.append(min(azimuths))
+            coverage['mtf_min']['ok'] += 1
+            out['mtf_freq_lp_per_mm'] = float(mtf.freq_lp_per_mm[idx])
+        else:
+            record['mtf_min'] = None
+        out['fields'].append(record)
+        out['max_rms_spot_um'] = max(diameters) if diameters else None
+        out['mtf_min'] = min(modulations) if modulations else None
+        emit(out)
+    optic.fields.fields[:] = declared
     # f-tan(theta) reference, which is what a distortion percentage means and what
     # CODE V's @dstpct reports. Worst magnitude over fields and wavelengths.
     try:
+        # Optiland's Distortion sweeps num_points normalised field positions from the
+        # axis out to fields.max_field -- it is not a reduction over the declared fields,
+        # so its witness counts sweep points. It needs the full field list restored above:
+        # max_field of a lone axial field is 0 and the reference height divides by it.
         data = np.asarray(Distortion(optic, distortion_type="f-tan").data, dtype=float)
-        finite = data[np.isfinite(data)]
-        out["distortion_pct"] = float(np.max(np.abs(finite))) if finite.size else None
-    except Exception:
+        good = np.isfinite(data)
+        out["distortion_pct"] = float(np.max(np.abs(data[good]))) if good.any() else None
+        coverage["distortion_pct"] = {
+            "ok": int(good.sum()),
+            "of": int(data.size),
+            "unit": "sweep_points",
+        }
+    except Exception as exc:
         out["distortion_pct"] = None
+        out["distortion_error"] = type(exc).__name__ + ': ' + str(exc)[:200]
 else:
     out["max_rms_spot_um"] = None
     out["mtf_min"] = None
     out["distortion_pct"] = None
-print(json.dumps(out))
+emit(out)
 """
+
+#: Everything compared. EFL and F/# are deliberately absent from
+#: ``FIELD_REDUCED_METRICS``: they come from the paraxial trace, which reproduces even
+#: on the sides where every real-ray field dies, and they carry no field reduction that
+#: could be partial. Gating them on field coverage would discard complete readings.
+METRICS = ("efl_mm", "f_number", "max_rms_spot_um", "mtf_min", "distortion_pct")
+FIELD_REDUCED_METRICS = ("max_rms_spot_um", "mtf_min", "distortion_pct")
+
+#: Coverage states eligible for the headline ratio. ``partial`` is reported separately
+#: and ``unwitnessed`` is reported nowhere: a reading that arrives without an ok/of pair
+#: cannot be shown to be complete, and P4 must not assume it is.
+_HEADLINE_STATES = frozenset({"complete", "field_independent"})
+
+
+def _as_text(stream: object) -> str:
+    if isinstance(stream, bytes):
+        return stream.decode("utf-8", "replace")
+    return stream if isinstance(stream, str) else ""
+
+
+def _newest_snapshot(stdout: object) -> dict[str, object] | None:
+    """The furthest the worker got, from its cumulative per-field snapshots.
+
+    Walking backwards is what salvages a run that hung or died after some fields
+    traced -- the whole point of degrading per field rather than per side. The
+    snapshot's own coverage counters keep it honest: a truncated one has ok < of and
+    is classified partial, so it never reaches the full-coverage headline.
+    """
+    for line in reversed(_as_text(stdout).splitlines()):
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            parsed = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict):
+            return parsed
+    return None
 
 
 def _recompute(
@@ -173,14 +323,29 @@ def _recompute(
             timeout=timeout_s,
             encoding="utf-8",
         )
-    except subprocess.TimeoutExpired:
-        return "timeout"
+    except subprocess.TimeoutExpired as exc:
+        salvaged = _newest_snapshot(exc.stdout)
+        if salvaged is None:
+            return "timeout"
+        salvaged["truncated_by"] = "timeout"
+        return salvaged
     if proc.returncode != 0 or not (proc.stdout or "").strip():
-        return "engine_failed"
+        salvaged = _newest_snapshot(proc.stdout)
+        if salvaged is None:
+            return "engine_failed"
+        salvaged["truncated_by"] = "crash"
+        salvaged["exit_code"] = proc.returncode
+        return salvaged
+    lines = [line for line in proc.stdout.splitlines() if line.strip()]
     try:
-        return json.loads(proc.stdout.strip().splitlines()[-1])
+        final = json.loads(lines[-1])
     except json.JSONDecodeError:
-        return "unparsed"
+        salvaged = _newest_snapshot(proc.stdout)
+        if salvaged is None:
+            return "unparsed"
+        salvaged["truncated_by"] = "unparsed_tail"
+        return salvaged
+    return final if isinstance(final, dict) else "unparsed"
 
 
 def _ratio(ours: object, theirs: object) -> float | None:
@@ -189,6 +354,46 @@ def _ratio(ours: object, theirs: object) -> float | None:
     if not math.isfinite(ours) or not math.isfinite(theirs) or ours == 0:
         return None
     return float(theirs) / float(ours)
+
+
+def _coverage_entry(payload: object, metric: str) -> tuple[int, int] | None:
+    """The worker's ok/of witness for one metric, or None when it did not report one."""
+    if not isinstance(payload, dict):
+        return None
+    coverage = payload.get("coverage")
+    entry = coverage.get(metric) if isinstance(coverage, dict) else None
+    if not isinstance(entry, dict):
+        return None
+    ok, of = entry.get("ok"), entry.get("of")
+    if not isinstance(ok, int) or not isinstance(of, int) or of <= 0 or ok < 0:
+        return None
+    return ok, of
+
+
+def _coverage_state(payload: object, metric: str) -> str:
+    """Classify one metric's reading: is it a reduction over *every* field or not?
+
+    ``unwitnessed`` is a distinct state, not a synonym for complete. A number whose
+    field coverage we cannot see is a number we cannot claim reproduces ours.
+    """
+    if metric not in FIELD_REDUCED_METRICS:
+        return "field_independent"
+    entry = _coverage_entry(payload, metric)
+    if entry is None:
+        return "unwitnessed"
+    ok, of = entry
+    if ok == 0:
+        return "none"
+    return "complete" if ok >= of else "partial"
+
+
+def _spread(values: list[float]) -> dict[str, object]:
+    return {
+        "n": len(values),
+        "median": round(statistics.median(values), 4) if values else None,
+        "min": round(min(values), 4) if values else None,
+        "max": round(max(values), 4) if values else None,
+    }
 
 
 #: The two arms. "reported" recomputes the number the way our own pipeline reports it
@@ -244,22 +449,53 @@ def recheck(
                             reported.get("distortion_pct"), other.get("distortion_pct")
                         ),
                     }
+                    # Beside every ratio, whether that ratio came from a full field set.
+                    # Without this the two are indistinguishable in the row, and a
+                    # partial reading reads as agreement.
+                    row["coverage_state"] = {
+                        metric: _coverage_state(other, metric) for metric in METRICS
+                    }
                 rows.append(row)
 
-    def spread(metric: str, arm: str) -> dict[str, object]:
-        values = [
-            r["ratios"][metric]  # type: ignore[index]
-            for r in rows
-            if r.get("arm") == arm
-            and isinstance(r.get("ratios"), dict)
-            and isinstance(r["ratios"].get(metric), float)  # type: ignore[union-attr]
-        ]
-        return {
-            "n": len(values),
-            "median": round(statistics.median(values), 4) if values else None,
-            "min": round(min(values), 4) if values else None,
-            "max": round(max(values), 4) if values else None,
-        }
+    def selected(metric: str, arm: str, states: frozenset[str]) -> list[tuple[dict, float]]:
+        picked: list[tuple[dict, float]] = []
+        for row in rows:
+            if row.get("arm") != arm:
+                continue
+            ratios, state = row.get("ratios"), row.get("coverage_state")
+            if not isinstance(ratios, dict) or not isinstance(state, dict):
+                continue
+            value = ratios.get(metric)
+            if not isinstance(value, float) or state.get(metric) not in states:
+                continue
+            picked.append((row, value))
+        return picked
+
+    def partial(metric: str, arm: str) -> dict[str, object]:
+        picked = selected(metric, arm, frozenset({"partial"}))
+        out = _spread([value for _, value in picked])
+        fractions = []
+        for row, _value in picked:
+            entry = _coverage_entry(row.get("optiland"), metric)
+            if entry is not None:
+                fractions.append(entry[0] / entry[1])
+        # How partial. A ratio drawn from 1 field of 4 is not the same claim as one
+        # drawn from 3 of 4, and the spread alone cannot tell them apart.
+        out["coverage_fraction_median"] = (
+            round(statistics.median(fractions), 4) if fractions else None
+        )
+        out["coverage_fraction_min"] = round(min(fractions), 4) if fractions else None
+        return out
+
+    def census(metric: str, arm: str) -> dict[str, int]:
+        counts = {"complete": 0, "partial": 0, "none": 0, "unwitnessed": 0}
+        for row in rows:
+            if row.get("arm") != arm:
+                continue
+            state = row.get("coverage_state")
+            if isinstance(state, dict) and state.get(metric) in counts:
+                counts[str(state.get(metric))] += 1
+        return counts
 
     return {
         "run_dir": str(run_dir),
@@ -267,19 +503,38 @@ def recheck(
         "sides_checked": len({(r["zmx"], r["side"]) for r in rows}),
         "recomputes": len(rows),
         "engine_failed": sum(1 for r in rows if isinstance(r.get("optiland"), str)),
+        # Salvaged from a hang or a crash after some fields traced. Counted out loud so
+        # the failure is not hidden by the partial reading it produced.
+        "truncated": sum(
+            1
+            for r in rows
+            if isinstance(r.get("optiland"), dict) and r["optiland"].get("truncated_by")
+        ),
         # Keyed by arm, never merged: pooling the arms would average away the very
-        # comparison this exists to make.
+        # comparison this exists to make. Full field coverage only -- a reduction over
+        # the fields that happened to trace is not the number we report.
         "reproduction_ratio_optiland_over_codev": {
-            arm: {
-                metric: spread(metric, arm)
-                for metric in ("efl_mm", "f_number", "max_rms_spot_um", "mtf_min", "distortion_pct")
-            }
+            arm: {metric: _spread([v for _, v in selected(metric, arm, _HEADLINE_STATES)])
+                  for metric in METRICS}
+            for arm in arms
+        },
+        # The partial readings the per-field degradation buys, kept apart from the
+        # headline so they can be read without being averaged into it.
+        "partial_field_coverage_ratio_optiland_over_codev": {
+            arm: {metric: partial(metric, arm) for metric in FIELD_REDUCED_METRICS}
+            for arm in arms
+        },
+        # Where every side landed, so "82% unmeasurable" can be replaced by a count of
+        # what was measured and of which fields failed.
+        "field_coverage_census": {
+            arm: {metric: census(metric, arm) for metric in FIELD_REDUCED_METRICS}
             for arm in arms
         },
         "caveat": (
             "Optiland is a second engine, not a third party. Agreement here means a "
             "number survives being recomputed from the exported ZMX alone; it does not "
-            "close P4."
+            "close P4. A partial-field reading is not agreement either: it is reported "
+            "separately with its coverage fraction, never pooled into the headline."
         ),
         "rows": rows,
     }
@@ -314,10 +569,18 @@ def main(argv: list[str] | None = None) -> int:
     print(f"sides checked        {result['sides_checked']}")
     print(f"recomputes           {result['recomputes']} over arms {result['arms']}")
     print(f"optiland failed      {result['engine_failed']}")
-    for arm, metrics in result["reproduction_ratio_optiland_over_codev"].items():  # type: ignore[union-attr]
-        print(f"-- arm: {arm}")
-        for metric, spread in metrics.items():
-            print(f"   {metric:<18} {spread}")
+    print(f"truncated (salvaged) {result['truncated']}")
+    for arm in result["arms"]:  # type: ignore[union-attr]
+        headline = result["reproduction_ratio_optiland_over_codev"][arm]  # type: ignore[index]
+        print(f"-- arm {arm}: full field coverage only")
+        for metric, values in headline.items():
+            print(f"   {metric:<18} {values}")
+        print(f"-- arm {arm}: partial field coverage, reported separately")
+        for metric, values in result["partial_field_coverage_ratio_optiland_over_codev"][arm].items():  # type: ignore[index]
+            print(f"   {metric:<18} {values}")
+        print(f"-- arm {arm}: field coverage census")
+        for metric, counts in result["field_coverage_census"][arm].items():  # type: ignore[index]
+            print(f"   {metric:<18} {counts}")
     return 0
 
 
