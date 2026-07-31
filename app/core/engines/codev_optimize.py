@@ -1300,6 +1300,9 @@ def run_codev_target(
                 "preflight": "unresolved-glass",
             },
         )
+    # 看门狗标定证据（加法式）：这一 rung 完整跑完时最长的一次静默。完成的 rung
+    # 是唯一能回答「健康的静默有多长」的样本——被 kill 的 rung 只会报出闸值本身。
+    data["max_idle_gap_seconds"] = batch.max_idle_gap_seconds
     data["aut_error_trace"] = _safe_aut_error_trace(batch.listing_path)
     # 加法式诊断键（BLOCKER-1）：同一 .lis 的光栅健康度分类，供 FNO ladder /
     # scorecard 把「参数达值」与「光线可追迹」两维分开上报。fail-open，缺清单

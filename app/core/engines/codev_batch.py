@@ -18,8 +18,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
+import structlog
+
 from app.core.batch_run_lock import BatchRunnerLockOwner, batch_runner_lock
 from app.core.engines.codev import probe_code_v_installation
+
+logger = structlog.get_logger(__name__)
 
 _FALLBACK_CODEV_EXECUTABLE = Path("D:/CODEV115/codev.exe")
 CODEV_BATCH_RESULT_SCHEMA = "atelier-codev-batch-v1"
@@ -123,6 +127,7 @@ class CodeVBatchResult:
         duration_seconds: float,
         data: Mapping[str, str],
         listing_path: Path | None = None,
+        max_idle_gap_seconds: float | None = None,
     ) -> None:
         self.executable = executable
         self.sequence_path = sequence_path
@@ -131,6 +136,7 @@ class CodeVBatchResult:
         self.duration_seconds = duration_seconds
         self.data = dict(data)
         self.listing_path = listing_path
+        self.max_idle_gap_seconds = max_idle_gap_seconds
 
     def describe(self) -> dict[str, object]:
         return {
@@ -141,6 +147,7 @@ class CodeVBatchResult:
             "duration_seconds": self.duration_seconds,
             "data": self.data,
             "listing_path": str(self.listing_path) if self.listing_path is not None else None,
+            "max_idle_gap_seconds": self.max_idle_gap_seconds,
         }
 
 
@@ -153,6 +160,21 @@ class CodeVRawProcessCapture:
     stderr_bytes: bytes
     duration_seconds: float
     lock_owner: dict[str, object]
+    #: Every observed interval between two consecutive changes to ``work_dir``,
+    #: plus the trailing silence before exit. Quantised to the poll interval.
+    idle_gaps: tuple[float, ...] = ()
+
+    @property
+    def max_idle_gap_seconds(self) -> float | None:
+        """Longest silence this run needed -- the number a watchdog must clear.
+
+        A watchdog bound is only calibrated against *this* quantity. Total run
+        duration is an upper bound on it, never a substitute: a 700s run that
+        writes every 3s and a 700s run that writes twice have the same duration
+        and opposite verdicts.
+        """
+
+        return max(self.idle_gaps) if self.idle_gaps else None
 
 
 class CodeVIdleTimeout(subprocess.TimeoutExpired):
@@ -187,6 +209,7 @@ def _communicate_with_idle_watch(
     idle_timeout_seconds: float | None,
     work_dir: Path,
     poll_seconds: float = 5.0,
+    gaps_out: list[float] | None = None,
 ) -> tuple[bytes, bytes]:
     """``communicate`` plus a "stopped making progress" deadline.
 
@@ -204,27 +227,45 @@ def _communicate_with_idle_watch(
 
     Re-entering ``communicate`` after ``TimeoutExpired`` is the documented
     pattern and loses no output.
+
+    Enforcement and observation are separate. ``idle_timeout_seconds=None``
+    watches without killing, and ``gaps_out`` collects every observed silence so
+    a *successful* run reports what a healthy gap actually is. Without that,
+    completed runs are censored evidence -- every one of them had a gap under
+    the bound by construction, so they can never say whether the bound is tight.
     """
 
-    if idle_timeout_seconds is None:
+    if idle_timeout_seconds is None and gaps_out is None:
         return process.communicate(timeout=timeout_seconds)
 
     deadline = time.monotonic() + timeout_seconds
     fingerprint = _output_fingerprint(work_dir)
     last_progress = time.monotonic()
+
+    def _close_gap() -> None:
+        if gaps_out is not None:
+            gaps_out.append(time.monotonic() - last_progress)
+
     while True:
         remaining = deadline - time.monotonic()
         if remaining <= 0:
+            _close_gap()
             raise subprocess.TimeoutExpired(process.args, timeout_seconds)
         try:
-            return process.communicate(timeout=min(poll_seconds, remaining))
+            captured = process.communicate(timeout=min(poll_seconds, remaining))
         except subprocess.TimeoutExpired:
             now = time.monotonic()
             current = _output_fingerprint(work_dir)
             if current != fingerprint:
+                if gaps_out is not None:
+                    gaps_out.append(now - last_progress)
                 fingerprint, last_progress = current, now
-            elif now - last_progress >= idle_timeout_seconds:
+            elif idle_timeout_seconds is not None and now - last_progress >= idle_timeout_seconds:
+                _close_gap()
                 raise CodeVIdleTimeout(process.args, idle_timeout_seconds) from None
+        else:
+            _close_gap()
+            return captured
 
 
 def run_codev_process_bytes(
@@ -233,12 +274,23 @@ def run_codev_process_bytes(
     work_dir: Path,
     timeout_seconds: float,
     idle_timeout_seconds: float | None = None,
+    idle_poll_seconds: float = 5.0,
+    observe_idle_gaps: bool = False,
     env: Mapping[str, str] | None = None,
     platform_name: str = os.name,
     lock_root: Path | None = None,
     recover_stale_lock: bool = False,
 ) -> CodeVRawProcessCapture:
-    """Run one CODE V process under the cross-worktree lock and retain raw bytes."""
+    """Run one CODE V process under the cross-worktree lock and retain raw bytes.
+
+    Whenever the idle watchdog is armed the inter-output gaps it sees are also
+    recorded (see ``CodeVRawProcessCapture``), so each watched run contributes
+    to the calibration record for ``idle_timeout_seconds`` instead of the bound
+    resting on one anecdote. ``observe_idle_gaps=True`` with
+    ``idle_timeout_seconds=None`` watches without killing -- the only way to
+    measure a gap *longer* than the current bound, which is otherwise censored
+    out of every surviving run.
+    """
 
     resolved_lock_root = (
         Path(lock_root).resolve() if lock_root is not None else _DEFAULT_CODEV_LOCK_ROOT.resolve()
@@ -254,6 +306,8 @@ def run_codev_process_bytes(
         details=details,
     ) as owner:
         owner_metadata = dict(owner)
+        watching = idle_timeout_seconds is not None or observe_idle_gaps
+        idle_gaps: list[float] = []
         started_at = time.monotonic()
         try:
             process = _popen_codev(
@@ -280,6 +334,8 @@ def run_codev_process_bytes(
                 timeout_seconds=timeout_seconds,
                 idle_timeout_seconds=idle_timeout_seconds,
                 work_dir=Path(work_dir),
+                poll_seconds=idle_poll_seconds,
+                gaps_out=idle_gaps if watching else None,
             )
             if process.returncode is None:
                 raise RuntimeError("communicate returned before CODE V exit was proven")
@@ -325,6 +381,8 @@ def run_codev_process_bytes(
                     "command": command,
                     "pid": process.pid,
                     "timeout_seconds": timeout_seconds,
+                    "idle_timeout_seconds": idle_timeout_seconds,
+                    "idle_gaps_seconds": [round(gap, 2) for gap in idle_gaps],
                     "exception_type": type(exc).__name__,
                     "error": str(exc),
                     "stdout_tail": _tail(_coerce_output(getattr(exc, "stdout", None))),
@@ -335,14 +393,42 @@ def run_codev_process_bytes(
                     "lock_owner": owner_metadata,
                 },
             )
+            if watching:
+                logger.warning(
+                    "codev_idle_profile",
+                    outcome=type(exc).__name__,
+                    work_dir=str(work_dir),
+                    duration_s=round(time.monotonic() - started_at, 2),
+                    idle_timeout_s=idle_timeout_seconds,
+                    max_gap_s=round(max(idle_gaps), 2) if idle_gaps else None,
+                    gaps_s=[round(gap, 2) for gap in idle_gaps],
+                )
             raise error from (quarantine_error or exc)
-        return CodeVRawProcessCapture(
+        capture = CodeVRawProcessCapture(
             process=process,
             stdout_bytes=_coerce_bytes(stdout),
             stderr_bytes=_coerce_bytes(stderr),
             duration_seconds=time.monotonic() - started_at,
             lock_owner=owner_metadata,
+            idle_gaps=tuple(idle_gaps),
         )
+        # The calibration record. A completed run is the only kind that can say
+        # what a *healthy* gap is; killed runs only ever report the bound.
+        if watching:
+            logger.info(
+                "codev_idle_profile",
+                outcome="completed",
+                work_dir=str(work_dir),
+                duration_s=round(capture.duration_seconds, 2),
+                idle_timeout_s=idle_timeout_seconds,
+                max_gap_s=(
+                    round(capture.max_idle_gap_seconds, 2)
+                    if capture.max_idle_gap_seconds is not None
+                    else None
+                ),
+                gaps_s=[round(gap, 2) for gap in idle_gaps],
+            )
+        return capture
 
 
 def _write_codev_quarantine_owner(
@@ -617,7 +703,7 @@ def run_codev_batch(
     )
     command = [str(executable), "/B", sequence_arg]
     try:
-        process, stdout_text, stderr_text, duration_seconds = run_codev_process(
+        capture = run_codev_process_bytes(
             command,
             work_dir=work_dir,
             timeout_seconds=timeout_seconds,
@@ -625,6 +711,10 @@ def run_codev_batch(
             env=env,
             platform_name=platform_name,
         )
+        process = capture.process
+        stdout_text = _coerce_output(capture.stdout_bytes)
+        stderr_text = _coerce_output(capture.stderr_bytes)
+        duration_seconds = capture.duration_seconds
     except CodeVBatchError as exc:
         timeout_listing_path = _claim_listing_path(listing_snapshot_before, bare_listing_guess)
         exc.details.update(
@@ -682,6 +772,7 @@ def run_codev_batch(
             duration_seconds=duration_seconds,
             data=data,
             listing_path=listing_path,
+            max_idle_gap_seconds=capture.max_idle_gap_seconds,
         )
 
     raise CodeVBatchError(

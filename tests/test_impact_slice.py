@@ -81,6 +81,9 @@ def test_a_leaf_script_yields_a_small_slice_not_the_whole_suite() -> None:
     assert {path.name for path in tests} == {
         "test_p2_crosssource_trial.py",
         "test_measurement_recipe.py",
+        # Reads IDLE_TIMEOUT_SECONDS and the calibration constants out of that
+        # script, so a change to it must re-run this too.
+        "test_p2_idle_timeout_calibration.py",
     }
 
 
