@@ -3,9 +3,9 @@
 ## Result
 
 - saturation_complete: `false`
-- snapshot_sha256: `5dcebb2008cc8f1430c66bf85b5c068800b35212195de128315b3f3ea4feed1d`
+- snapshot_sha256: `912b1ac7c48131d0ccb39340cc974bf81a4feb95d98fd67c25535fa28c6800f9`
 - pool_concat_sha256: `bba21147e576ee4674105884a95eb31b466b0f1aa6e8166e627dd9ba8867309e`
-- case_index_sha256: `1f7f8f73b92a99a0de53e5462203dc9ff8fe2d518016981b7fa6515cc164b735`
+- case_index_sha256: `a9a37e994d0fafb92b1d441c3f84667fc4beec5a04428104fcb14305474d0212`
 
 The snapshot is intentionally fail-closed. Existing formal patent ZMX/case files are recorded
 as artifacts, but are not promoted to `intaken` until retained source/full-text and exact
