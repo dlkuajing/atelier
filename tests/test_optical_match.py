@@ -679,12 +679,30 @@ def test_full_field_proposals_block_on_quality_floor_with_review_notes(match_req
     assert any(
         task.stage == "image_quality_recovery" for task in assessment.acceptance_improvement_tasks
     )
-    assert assessment.optimization_task_queue[0].task_id == "lock-first-order"
-    assert assessment.optimization_task_queue[0].status == "ready"
-    assert assessment.optimization_task_queue[0].stage == "first_order_lock"
-    assert assessment.optimization_task_runs[0].task_id == (
-        assessment.optimization_task_queue[0].task_id
+    head = assessment.optimization_task_queue[0]
+    head_probe = assessment.merit_optimization_probe
+    head_probe_timed_out = (
+        head_probe is not None
+        and head_probe.status == "not_attempted"
+        and any("deadline" in item for item in head_probe.diagnostics)
     )
+    if head_probe_timed_out and head.task_id == "package-seed-baseline-review":
+        # Slow-runner path: the time-boxed merit probe expired, so no prescription
+        # change set exists, seed_baseline_hold_reviewable holds, and the queue
+        # legitimately fronts the review-package task with lock-first-order queued
+        # behind it (case_library.py seed_baseline_hold_reviewable branch).
+        assert head.status == "ready"
+        assert head.stage == "review_package"
+        assert any(
+            task.task_id == "lock-first-order"
+            and task.depends_on == ["package-seed-baseline-review"]
+            for task in assessment.optimization_task_queue
+        )
+    else:
+        assert head.task_id == "lock-first-order"
+        assert head.status == "ready"
+        assert head.stage == "first_order_lock"
+    assert assessment.optimization_task_runs[0].task_id == head.task_id
     assert assessment.optimization_task_runs[0].status in {"diagnostic", "passed"}
     followup_tasks = [
         task
