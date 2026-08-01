@@ -99,10 +99,13 @@ def test_band_admits_every_projection_law_a_real_lens_uses() -> None:
 
 
 def test_corpus_screen_pins_the_known_bad_rows() -> None:
-    """The 34 rows the max-over-pupil derivation left behind, counted not hidden.
+    """The bad rows are counted, not hidden -- and the count is two-sided.
 
-    They stay in the corpus until it is regenerated; pinning them means the
-    debt rings when it changes instead of accumulating silently.
+    34 implausible rows (22 pupil-envelope legacies + 12 the fov re-anchor
+    exposed) plus 10 reference-unusable rows (hemispherical designs whose
+    re-anchored full field crosses 90 deg half-field, so `tan` cannot screen
+    them). They stay in the corpus until it is regenerated; pinning them means
+    the debt rings when it changes instead of accumulating silently.
     """
 
     verdicts = _screen_corpus_image_heights(INDEX_RECORDS)
@@ -111,12 +114,18 @@ def test_corpus_screen_pins_the_known_bad_rows() -> None:
         for case_id, entry in verdicts.items()
         if entry["image_height_plausibility"] == ImageHeightVerdict.IMPLAUSIBLE
     }
+    unscreenable = {
+        case_id
+        for case_id, entry in verdicts.items()
+        if entry["image_height_plausibility"] == ImageHeightVerdict.REFERENCE_UNUSABLE
+    }
 
     assert len(INDEX_RECORDS) == 442
     assert len(verdicts) == 442
     assert implausible == set(_PINNED_IMPLAUSIBLE_IMAGE_HEIGHT_CASES)
     assert len(implausible) == 34
-    assert not _PINNED_UNSCREENABLE_IMAGE_HEIGHT_CASES
+    assert unscreenable == set(_PINNED_UNSCREENABLE_IMAGE_HEIGHT_CASES)
+    assert len(unscreenable) == 10
 
 
 def test_shipped_golden_carries_the_verdict_for_every_case() -> None:
