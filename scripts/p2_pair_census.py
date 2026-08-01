@@ -252,8 +252,10 @@ def load_usable_case_ids(
     Screen 3 was added 2026-07-29 after the pilot exposed the gap. A control
     defines the spec a customer would ask for; if the product's own guard would
     reject that request with HTTP 400, measuring against it says nothing about
-    the product. Measured on `data/zmx`: of the 192 that pass screens 1+2, only
-    **55 (28.6%)** pass this one -- the corpus's own `scenario` labels are far
+    the product. Re-measured 2026-07-30 on `data/zmx`: of the 192 that pass
+    screens 1+2, **74 (38.54%)** pass this one -- the 55 (28.6%) this docstring
+    used to claim predates the `fov_deg` re-anchor, which moved the scenario
+    labels and therefore which bounds each case is judged against -- the corpus's own `scenario` labels are far
     looser than ``SCENARIO_BOUNDS`` (violations: FOV 88, EFL 60, image height
     44, f/# 32, n_elements 31).
 
@@ -309,7 +311,66 @@ def spec_is_in_product_domain(record: Mapping[str, object]) -> bool:
     return True
 
 
-def census(census_path: Path) -> dict:
+def codev_rms_by_zmx(census_path: Path) -> dict[str, float]:
+    """CODE V max-over-fields RMS spot diameter per ZMX, from the perfield census.
+
+    Same source and same ruler the P2 trial judges with: the census's per-field value is
+    ``SPOTDATA(...) -> ^spot(1)`` in mm, which is exactly ``@rmssum``'s per-field operand
+    before its ``*1000``. Using it here is the whole point -- the routing gate this
+    replaces read an *Optiland radius* measured over *half* the field, and passed a seed
+    that CODE V calls a 101 um lens.
+    """
+
+    out: dict[str, float] = {}
+    for line in census_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        row = json.loads(line)
+        declared = row.get("num_fields")
+        if row.get("error") is not None or not declared or row.get("n_positive") != declared:
+            continue
+        spots = [field[1] * 1000.0 for field in row.get("fields", []) if field[0] == 0]
+        if spots:
+            out[row["seed"]] = max(spots)
+    return out
+
+
+def default_seed_quality_limit_um() -> float:
+    """The corpus median, not a number anyone chose."""
+
+    from app.core.corpus_quality import load_distribution
+
+    return float(load_distribution()["percentiles"]["p50"])
+
+
+#: How far the optimiser can stretch a seed's focal length and still converge.
+#: Measured previously on the real machine and recorded in
+#: `project-optimize-spike-setup-not-fundamental`: shrinking the focal length converges
+#: across the board, stretching starts failing at about +25%. Shrinking is left
+#: unbounded here because it was measured to converge, not because it is untested.
+MAX_SEED_EFL_STRETCH = 0.25
+
+
+def seed_efl_is_reachable(seed_efl_mm: float, target_efl_mm: float) -> bool:
+    """Can the optimiser get this seed to that focal length at all?
+
+    This is the constraint the quality gate must not override. Measured 2026-07-30 the
+    hard way: gating the pool on quality ALONE pushed 53 of 59 trials past the +25%
+    stretch limit (median seed/target EFL 1.209 -> 0.608), and the first four real-machine
+    trials came back `aut_not_converged` at 14.0% / 17.0% / 22.6% EFL deviation. The
+    "zero trial cost" that justified the quality gate had been measured on *planned*
+    trials, which is the wrong quantity -- a planned trial that cannot converge is not a
+    trial.
+    """
+
+    if not (seed_efl_mm > 0.0) or not (target_efl_mm > 0.0):
+        return False
+    return (target_efl_mm / seed_efl_mm) - 1.0 <= MAX_SEED_EFL_STRETCH
+
+
+def census(
+    census_path: Path, *, seed_quality_limit_um: float | None = None
+) -> dict:
     # Imported lazily: the optical stack costs ~2s and the pure-provenance
     # helpers above are useful (and unit-tested) without it.
     warnings.simplefilter("ignore")
@@ -320,6 +381,32 @@ def census(census_path: Path) -> dict:
     usable_ids, all_ids = load_usable_case_ids(census_path)
     usable_set = set(usable_ids)
 
+    # Seed-side quality gate, on the same ruler the trial judges with. `None` means
+    # "use the corpus median"; pass math.inf to disable it and reproduce the old pool.
+    limit = default_seed_quality_limit_um() if seed_quality_limit_um is None else float(
+        seed_quality_limit_um
+    )
+    codev_rms = codev_rms_by_zmx(census_path)
+    index_by_case = {r["case_id"]: r for r in json.loads(CASE_INDEX.read_text(encoding="utf-8"))}
+
+    def seed_quality_ok(case_id: str) -> bool:
+        record = index_by_case.get(case_id)
+        if record is None:
+            return False
+        value = codev_rms.get(str(record.get("source_zmx")))
+        # Fail closed: a seed whose CODE V quality is unknown cannot be shown to be
+        # competitive, and admitting it is how a 101 um lens got in.
+        return value is not None and value <= limit
+
+    def seed_reachable(case_id: str, target_efl_mm: float) -> bool:
+        record = index_by_case.get(case_id)
+        if record is None:
+            return False
+        try:
+            return seed_efl_is_reachable(float(record["efl_mm"]), target_efl_mm)
+        except (KeyError, TypeError, ValueError):
+            return False
+
     by_id: dict[str, object] = {}
     for scenario in Scenario:
         for case in cases_for_scenario(scenario):
@@ -327,6 +414,7 @@ def census(census_path: Path) -> dict:
 
     trials: list[dict] = []
     excluded: collections.Counter[str] = collections.Counter()
+    seed_pool_basis: collections.Counter[str] = collections.Counter()
     for control_id in usable_ids:
         control = by_id.get(control_id)
         if control is None:
@@ -336,13 +424,38 @@ def census(census_path: Path) -> dict:
         if control_brand is None:
             excluded["control_provenance_unknown"] += 1
             continue
-        pool = [
+        target_efl = control.metadata.computed_efl_mm
+        cross_source = [
             case
             for case_id, case in by_id.items()
             if case_id != control_id
             and case_id in usable_set
             and provenance.brand_of_case(case_id) not in (None, control_brand)
         ]
+        # Reachability first, quality second. The two constraints are NOT
+        # interchangeable: an unreachable seed yields no candidate at all, while a
+        # merely mediocre one still yields a judgeable trial. Filtering on quality alone
+        # was measured to push 53 of 59 trials past the stretch limit.
+        reachable = [
+            case
+            for case in cross_source
+            if seed_reachable(case.metadata.case_id, target_efl)  # type: ignore[union-attr]
+        ]
+        preferred = [
+            case
+            for case in reachable
+            if seed_quality_ok(case.metadata.case_id)  # type: ignore[union-attr]
+        ]
+        # Fall back rather than drop the control: "no seed both reachable and good"
+        # is a real state worth measuring, and recording it beats silently shrinking
+        # the sample.
+        pool = preferred or reachable or cross_source
+        if preferred:
+            seed_pool_basis["reachable_and_quality"] += 1
+        elif reachable:
+            seed_pool_basis["reachable_only"] += 1
+        elif cross_source:
+            seed_pool_basis["neither"] += 1
         if not pool:
             excluded["no_cross_brand_seed_available"] += 1
             continue
@@ -369,6 +482,9 @@ def census(census_path: Path) -> dict:
         "cases_usable": len(usable_ids),
         "trials": len(trials),
         "excluded": dict(excluded),
+        "seed_quality_limit_um": limit,
+        "seed_efl_max_stretch": MAX_SEED_EFL_STRETCH,
+        "seed_pool_basis": dict(seed_pool_basis),
         "distinct_seeds_used": len(seed_use),
         "top5_seed_share": sum(n for _, n in seed_use.most_common(5)),
         "seed_reuse": seed_use.most_common(10),

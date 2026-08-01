@@ -138,6 +138,8 @@ _PROBE_REQUIRED_KEYS = (
     "distortion_pct",
     "lateral_color_um",
     "mtf_min",
+    "rms_fields_ok",
+    "mtf_fields_ok",
 )
 
 
@@ -199,11 +201,21 @@ class ImageQuality:
     num_wavelengths: int | None
     num_fields: int | None
     image_height_mm: float | None
+    #: CODE V's RMS spot **diameter** in microns -- SPOTDATA output(1), which the
+    #: Geometrical Analysis manual defines as "twice the square root of the mean
+    #: squared spot radius". `codev_optimize` names the same macro's output
+    #: `max_rms_spot_diameter_um`; this shorter name is kept for schema stability,
+    #: but anything comparing it against a *radius* (Optiland's
+    #: `rms_spot_radius()`, `_SEED_ROUTING_MAX_RMS_UM`) is out by a factor of two.
     rms_spot_um: float | None
     rms_wavefront_waves: float | None
     distortion_pct: float | None
     lateral_color_um: float | None
     mtf_min: float | None
+    #: How many fields actually produced a reading, against the declared count.
+    #: ``None`` means the probe did not report it.
+    rms_fields_ok: int | None = None
+    mtf_fields_ok: int | None = None
     withheld: tuple[str, ...] = ()
 
     @property
@@ -278,6 +290,28 @@ class ImageQuality:
             mtf = None
             withheld.append("mtf_seed_value")
 
+        # Partial-field extrema (2026-07-29 adversarial audit). ``@rmssum`` skips
+        # a field whose SPOTDATA errors and ``@mtfmin`` skips one whose MTF_1FLD
+        # returns negative, then each returns its extremum over the survivors. A
+        # candidate whose outer field died therefore reports its **axial** spot as
+        # an all-field maximum and its axial MTF as an all-field minimum -- both
+        # in the flattering direction, and invisible because ``num_fields`` is the
+        # declared count. A max over a subset is not the max we claim to report.
+        raw_rms_ok = num("rms_fields_ok")
+        raw_mtf_ok = num("mtf_fields_ok")
+        rms_fields_ok = int(raw_rms_ok) if raw_rms_ok is not None else None
+        mtf_fields_ok = int(raw_mtf_ok) if raw_mtf_ok is not None else None
+        if rms_spot is not None and (
+            fields is None or rms_fields_ok is None or rms_fields_ok < fields
+        ):
+            rms_spot = None
+            withheld.append("rms_spot_partial_field_coverage")
+        if mtf is not None and (
+            fields is None or mtf_fields_ok is None or mtf_fields_ok < fields
+        ):
+            mtf = None
+            withheld.append("mtf_partial_field_coverage")
+
         # Joint criterion: 0.0 distortion and 0.0 lateral colour are physically
         # legitimate, so they cannot be judged by value. They are only trustworthy
         # when at least one positive-definite metric survived to vouch that
@@ -309,6 +343,8 @@ class ImageQuality:
             distortion_pct=distortion,
             lateral_color_um=lateral,
             mtf_min=mtf,
+            rms_fields_ok=rms_fields_ok,
+            mtf_fields_ok=mtf_fields_ok,
             withheld=tuple(withheld),
         )
 
@@ -362,6 +398,13 @@ def build_probe_sequence(
         "^dst == @dstpct(1)",
         "^lat == @lcum(1)",
         f"^mtf == @mtfmin({_fmt(mtf_frequency_lpmm)},{int(mtf_nrd)})",
+        # Witnesses for the two extremum metrics: how many fields actually
+        # produced a reading. `(NUM F)` is the **declared** count, so without
+        # these a lens that images on axis only is indistinguishable from one
+        # that images everywhere -- and every dropped field moves RMS down and
+        # MTF up, both of which read as "better".
+        "^rmsnf == @rmsnf(1)",
+        f"^mtfnf == @mtfnf({_fmt(mtf_frequency_lpmm)},{int(mtf_nrd)})",
     ]
 
     def put(key: str, value: str) -> None:
@@ -382,6 +425,8 @@ def build_probe_sequence(
     put('"distortion_pct"', "^dst")
     put('"lateral_color_um"', "^lat")
     put('"mtf_min"', "^mtf")
+    put('"rms_fields_ok"', "^rmsnf")
+    put('"mtf_fields_ok"', "^mtfnf")
     put('"mtf_frequency_lpmm"', _fmt(mtf_frequency_lpmm))
     put('"mtf_nrd"', str(int(mtf_nrd)))
 
@@ -407,6 +452,7 @@ def measure_image_quality(
     work_dir: Path | str,
     tag: str,
     timeout_seconds: float = 180.0,
+    idle_timeout_seconds: float | None = IDLE_TIMEOUT_SECONDS,
 ) -> ImageQuality:
     """Import one ZMX and read the three P2 metrics back out of CODE V."""
 
@@ -431,6 +477,11 @@ def measure_image_quality(
         result_path=result_path,
         work_dir=work_dir,
         timeout_seconds=timeout_seconds,
+        # Same zombie mode as the optimiser: CODE V can stop computing after a
+        # ray error and never exit. The probe was left without the watchdog when
+        # it landed for the optimiser, so a stalled probe still burned its whole
+        # hard timeout -- twice per trial, once per side.
+        idle_timeout_seconds=idle_timeout_seconds,
         expected_schema=PROBE_RESULT_SCHEMA,
         required_keys=_PROBE_REQUIRED_KEYS,
         allow_nonzero_ok_result=True,
@@ -456,6 +507,26 @@ class TrialPlan:
     spec_imh_mm: float
     spec_fov_deg: float
     spec_n_pieces: int
+
+
+def _first_order_imh_disclosure(plan: TrialPlan) -> dict[str, Any]:
+    """How far the control's declared image height sits from `efl * tan(fov/2)`.
+
+    `fov_deg` is the full field angle (re-anchored 2026-07-29), hence the halving.
+    """
+
+    reference = plan.spec_efl_mm * math.tan(math.radians(plan.spec_fov_deg / 2.0))
+    return {
+        "spec_imh_mm": plan.spec_imh_mm,
+        "first_order_imh_mm": reference,
+        "deviation_frac": (
+            (plan.spec_imh_mm - reference) / reference if reference > 0.0 else None
+        ),
+        "note": (
+            "declared image height is the max over the exit pupil, not the chief ray "
+            "(corpus-truth audit 2026-07-30); reported for disclosure, not screened"
+        ),
+    }
 
 
 def plan_trials(census_path: Path, *, limit: int | None = None) -> tuple[list[TrialPlan], dict]:
@@ -525,6 +596,15 @@ P2_METRICS: dict[str, bool] = {
 #: handed an easier job than the control".
 CONFORMANCE_RELATIVE_SLACK = 1e-3
 
+#: How far the candidate's measured EFL may sit from the control's. This is the
+#: engine's **own** definition of "the EFL target was achieved"
+#: (``codev_optimize.EFL_TARGET_TOLERANCE_PCT`` = 2%), reused rather than
+#: reinvented -- a trial whose candidate the optimiser itself calls converged must
+#: not then be rejected here for the same number, and 红线③ forbids inventing a
+#: fresh threshold. It is a *conformance* tolerance, not a quality one: nothing
+#: about how good the candidate is depends on it.
+EFL_PARITY_TOLERANCE = 0.02
+
 
 def field_tangent(quality: ImageQuality) -> float | None:
     """``tan(max field angle)`` = paraxial image height / EFL, or ``None``.
@@ -568,8 +648,12 @@ def conformance_screen(
     two lenses simply cover different fields.
 
     So a trial is only judged when the candidate was given **at least** the
-    control's job on both counts it can be handed for free:
+    control's job on the three counts it can be handed for free:
 
+    * absolute scale -- candidate EFL within the engine's own achieved-target
+      tolerance of the control's EFL. Checked **first**, because the other two
+      legs are blind to it: both are ratios and survive a uniform scaling of the
+      whole lens untouched.
     * field coverage -- candidate ``tan(theta)`` >= control ``tan(theta)``
     * aperture -- candidate F/# <= control F/# (a slower lens has smaller
       aberrations for nothing)
@@ -590,7 +674,27 @@ def conformance_screen(
         ),
         "candidate_f_number": candidate.f_number,
         "control_f_number": control.f_number,
+        "candidate_efl_mm": candidate.efl_y_mm,
+        "control_efl_mm": control.efl_y_mm,
+        "efl_ratio": (
+            (candidate.efl_y_mm / control.efl_y_mm)
+            if candidate.efl_y_mm is not None and control.efl_y_mm
+            else None
+        ),
     }
+
+    # Absolute scale, checked first because the other two legs cannot see it.
+    # ``tan(theta) = imh/efl`` and F/# are both invariant under a uniform scale of
+    # the whole lens, so a candidate built at 0.65x the control's focal length --
+    # measured, `US-20220011544-A1-e5`, 2.84 mm against 4.40 mm -- passes both and
+    # collects a linearly smaller spot for nothing. That trial scored **par on RMS
+    # spot** at a ratio of 0.036. Optimising against a probe-derived spec (see
+    # ``run_trial``) is the root fix; this is the screen that makes a regression
+    # of it impossible to miss.
+    if candidate.efl_y_mm is None or control.efl_y_mm is None or control.efl_y_mm <= 0:
+        return "efl_not_comparable", details
+    if abs(candidate.efl_y_mm - control.efl_y_mm) > control.efl_y_mm * EFL_PARITY_TOLERANCE:
+        return "efl_not_matched", details
 
     if cand_tan is None or ctrl_tan is None:
         return "field_not_comparable", details
@@ -667,9 +771,12 @@ def run_trial(
     timeout_seconds: float = 180.0,
     idle_timeout_seconds: float | None = IDLE_TIMEOUT_SECONDS,
     rebuild_seed_field: bool = True,
+    wall_clock_budget_s: float | None = None,
+    skip_tolerance: bool = False,
 ) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_optimize import run_codev_target_standard
+    from app.core.engines.measurement_recipe import build_measurement_recipe
     from app.core.engines.seed_field_rebuild import (
         max_field_angle_deg,
         rebuild_seed_field_angles,
@@ -678,6 +785,37 @@ def run_trial(
     from app.core.engines.zmx_import_prep import declared_field_count, decode_zmx_text
 
     started = time.time()
+
+    def over_budget() -> bool:
+        """True once this trial has already spent its wall-clock allowance.
+
+        Checked **between** stages, never inside one: a CODE V call in flight is
+        bounded by ``timeout_seconds`` and the idle watchdog, not by this. So the
+        budget caps what a trial *starts*, and a trial can overrun by at most one
+        stage. Saying that plainly matters more than pretending to preempt.
+        """
+
+        return (
+            wall_clock_budget_s is not None
+            and (time.time() - started) >= wall_clock_budget_s
+        )
+
+    def exhausted(stage: str) -> dict[str, Any]:
+        """`budget_exhausted` is its own verdict and is never folded elsewhere.
+
+        Filing it as ``worse`` would invent a loss we never measured; filing it as
+        ``unmeasurable`` would blame the optics for a stopwatch. It sits outside
+        ``judged`` either way, so it can never flatter the headline -- but it must
+        stay separable, because a run full of it means "buy more time", while a
+        run full of ``unmeasurable`` means "the chain is broken".
+        """
+
+        record["verdict"] = "budget_exhausted"
+        record["blocked_at"] = stage
+        record["wall_clock_budget_s"] = wall_clock_budget_s
+        record["elapsed_s"] = round(time.time() - started, 1)
+        return record
+
     work = out_dir / f"trial_{plan.control_case_id}"
     work.mkdir(parents=True, exist_ok=True)
     record: dict[str, Any] = {
@@ -685,6 +823,14 @@ def run_trial(
         "plan": asdict(plan),
         "mtf_frequency_lpmm": MTF_FREQUENCY_LPMM,
         "mtf_nrd": MTF_NRD,
+        # P4 gate: a number nobody can recompute is not a deliverable. The ZMX carries
+        # the lens; this carries the instrument (which fields/wavelengths enter the
+        # extremum, MTF frequency and ray density, radius-vs-diameter, no clipping),
+        # plus the metric macro source verbatim so "recompute" means "run this code".
+        "measurement_recipe": build_measurement_recipe(
+            mtf_frequency_lpmm=MTF_FREQUENCY_LPMM,
+            mtf_nrd=MTF_NRD,
+        ),
     }
 
     # autovig learns num_fields from its rung-0 run, so a rung-0 timeout leaves
@@ -692,9 +838,85 @@ def run_trial(
     # attempt per config. The 2026-07-28 pre-fix pilot lost 3/24 trials exactly
     # that way (elapsed pinned at 2 x the 180s hard timeout, to 0.1s). Reading
     # the declared count off the seed costs no CODE V call.
+    # Disclosure, not a screen: the corpus-truth audit (2026-07-30) confirmed that
+    # `image_height_mm` for the 403 ATELIER_REAL_IMH_MM cases is the **maximum over the
+    # exit pupil**, not the chief-ray intercept -- 198/403 deviate by more than 10% from
+    # their own efl*tan(fov/2), 31 by more than 100%. The spec handed to the optimiser
+    # is that number (`spec_imh_mm`), so a reader has to be able to see how far this
+    # trial's spec sits from first order. No threshold: a real lens with deliberate
+    # distortion legitimately deviates, so the honest move is to report the figure.
+    record["spec_imh_vs_first_order"] = _first_order_imh_disclosure(plan)
+
     seed_zmx = ZMX_DIR / plan.seed_zmx
     num_fields = declared_field_count(decode_zmx_text(seed_zmx.read_bytes())[0])
     record["seed_declared_num_fields"] = num_fields
+
+    if over_budget():
+        return exhausted("before_control_probe")
+
+    # --- measure the control BEFORE optimising, and refuse a control the two
+    # --- engines disagree about ---
+    # The spec used to come from `index.json`, whose `efl_mm` is **Optiland's**
+    # paraxial EFL, while the control is scored by the **CODE V** probe. Measured
+    # 2026-07-29 across the corpus: **41 of 440** controls disagree by more than
+    # 2%, and **37 of those sit at a ratio of 1.5177** -- which is the last
+    # element's own index (`GLAS ___BLANK 1 0 1.517 64.2`, the cover glass), so it
+    # is a systematic import artefact, not scatter.
+    #
+    # Which engine is right is decidable from the design's own geometry, and it is
+    # not CODE V: for `US-20210364737-A1-e1` (half field 14.205 deg, real image
+    # height 2.6112 mm) Optiland's 10.3487 mm gives f*tan(theta) = 2.6197 -- 0.3%
+    # off the declared height -- while CODE V's 15.7063 mm gives 3.9759, off by 52%.
+    #
+    # So this does **not** silently adopt either number. A control the two engines
+    # read differently is a control we cannot claim to have measured, and the
+    # candidate would be built to whichever scale we picked: at the same F/# and
+    # the same field angle a uniformly smaller lens collects a linearly smaller
+    # spot for free. `US-20220011544-A1-e5` measured 1.848 um against its
+    # control's 51.45 um and scored **par on RMS spot**, ratio 0.036.
+    #
+    # Probing the control first costs no extra CODE V time -- the trial already
+    # probes it once -- and now a control we cannot trust ends the trial *before*
+    # the expensive stage instead of after it.
+    control_quality = None
+    try:
+        control_quality = measure_image_quality(
+            source_zmx=ZMX_DIR / plan.control_zmx,
+            work_dir=work / "measure_control",
+            tag="control",
+            timeout_seconds=timeout_seconds,
+            idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
+        )
+    except CodeVBatchError as exc:
+        record["control_probe_error"] = {"kind": exc.kind, "detail": exc.message}
+    record["control_quality"] = asdict(control_quality) if control_quality else None
+    if control_quality is None or control_quality.efl_y_mm is None:
+        record["verdict"] = "unmeasurable"
+        record["blocked_at"] = "control_probe"
+        record["elapsed_s"] = round(time.time() - started, 1)
+        return record
+
+    engine_ratio = control_quality.efl_y_mm / plan.spec_efl_mm if plan.spec_efl_mm else None
+    record["control_engine_agreement"] = {
+        "manifest_efl_mm": plan.spec_efl_mm,
+        "probe_efl_mm": control_quality.efl_y_mm,
+        "probe_over_manifest": engine_ratio,
+        "tolerance": EFL_PARITY_TOLERANCE,
+    }
+    if engine_ratio is None or abs(engine_ratio - 1.0) > EFL_PARITY_TOLERANCE:
+        record["verdict"] = "unmeasurable"
+        record["blocked_at"] = "control_engine_disagreement"
+        record["elapsed_s"] = round(time.time() - started, 1)
+        return record
+
+    # Agreed, so there is no choice left to make -- the two readings are the same
+    # number. Taking it from the probe keeps the spec and the score on one engine.
+    spec_efl_mm = float(control_quality.efl_y_mm)
+    spec_f_number = (
+        float(control_quality.f_number)
+        if control_quality.f_number is not None
+        else plan.spec_f_number
+    )
 
     # --- re-aim the seed at the requested field before optimising ---
     # Without this the candidate answers a different question: the optimiser
@@ -731,17 +953,26 @@ def run_trial(
             )
             record["elapsed_s"] = round(time.time() - started, 1)
             return record
-        optimise_from = work / f"{seed_zmx.stem}_field{target_angle:g}.zmx"
+        # Deci-degrees, zero-padded and **dot-free**, mirroring the existing
+        # `_vig0700` convention. `f"{angle:g}"` produced `_field45.1`, and a
+        # `.<digits>` infix followed by non-extension content makes CODE V abort
+        # the macro with "ERROR - Unable to open file" -- which
+        # `ensure_buf_exp_safe_filename` exists to catch, and did, on the first
+        # real-machine run of the field rebuild (2026-07-29).
+        optimise_from = work / f"{seed_zmx.stem}_field{round(target_angle * 10):04d}.zmx"
         optimise_from.write_bytes(rebuilt_bytes(rebuild))
         record["seed_field_rebuild"]["output_zmx"] = str(optimise_from)
+
+    if over_budget():
+        return exhausted("before_optimize")
 
     # --- candidate: optimise the cross-brand seed toward the control's spec ---
     try:
         standard = run_codev_target_standard(
             source_zmx=optimise_from,
             work_dir=work / "optimize",
-            target_efl_mm=plan.spec_efl_mm,
-            target_f_number=plan.spec_f_number,
+            target_efl_mm=spec_efl_mm,
+            target_f_number=spec_f_number,
             target_imh_mm=plan.spec_imh_mm,
             num_fields=num_fields,
             timeout_seconds=timeout_seconds,
@@ -763,10 +994,19 @@ def run_trial(
     preferred = standard.get("preferred")
     record["preferred_config"] = preferred
     record["preferred_reason"] = standard.get("preferred_reason")
+    # Both configs, always -- not only when neither could be preferred.
+    #
+    # `_select_preferred` picks best-of-2 on `post_aut.max_rms_spot_diameter_um`,
+    # and RMS spot is **one of the three metrics P2 judges**: choosing on the
+    # judged quantity is selection bias, and the comparison also ignores that the
+    # two arms may have been optimised at different `autovig.edge_used` (a harder
+    # clip is a narrower pupil, which lowers RMS for free). Changing the selection
+    # rule alters what the headline means and wants a real-machine A/B, so this
+    # records what was chosen over what -- disclosure now, rule change later.
+    record["configs"] = {k: _config_summary(v) for k, v in standard.get("configs", {}).items()}
     if preferred is None:
         record["verdict"] = "unmeasurable"
         record["blocked_at"] = "optimize_no_preferred"
-        record["configs"] = {k: _config_summary(v) for k, v in standard.get("configs", {}).items()}
         record["elapsed_s"] = round(time.time() - started, 1)
         return record
 
@@ -784,27 +1024,26 @@ def run_trial(
         return record
     record["candidate_zmx"] = str(candidate_zmx)
 
-    # --- measure both sides with the same probe ---
-    measurements: dict[str, ImageQuality | None] = {}
-    for side, zmx in (
-        ("candidate", Path(str(candidate_zmx))),
-        ("control", ZMX_DIR / plan.control_zmx),
-    ):
-        try:
-            measurements[side] = measure_image_quality(
-                source_zmx=zmx,
-                work_dir=work / f"measure_{side}",
-                tag=side,
-                timeout_seconds=timeout_seconds,
-            )
-        except CodeVBatchError as exc:
-            record[f"{side}_probe_error"] = {"kind": exc.kind, "detail": exc.message}
-            measurements[side] = None
+    if over_budget():
+        return exhausted("before_probe")
+
+    # --- measure the candidate with the same probe the control already went through ---
+    measurements: dict[str, ImageQuality | None] = {"control": control_quality}
+    try:
+        measurements["candidate"] = measure_image_quality(
+            source_zmx=Path(str(candidate_zmx)),
+            work_dir=work / "measure_candidate",
+            tag="candidate",
+            timeout_seconds=timeout_seconds,
+            idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
+        )
+    except CodeVBatchError as exc:
+        record["candidate_probe_error"] = {"kind": exc.kind, "detail": exc.message}
+        measurements["candidate"] = None
 
     record["candidate_quality"] = (
         asdict(measurements["candidate"]) if measurements["candidate"] else None
     )
-    record["control_quality"] = asdict(measurements["control"]) if measurements["control"] else None
 
     # Fourth 交付物 piece (NORTH-STAR §1.1). Read straight off both ZMX files, so
     # it costs no CODE V time and is available even when a trial is unjudgeable
@@ -818,10 +1057,23 @@ def run_trial(
     # sides -- that equal treatment is what §3's 「表错了两边一起错，排序不变」
     # rests on, and it is why the sequence has to run SNS rather than TOR's
     # default inverse mode, which would derive a *different* table per lens.
-    record["tolerance"] = _tolerance_pair(
-        Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx,
-        work / "tolerance", timeout_seconds,
-    )
+    # The tolerance pair is the most expensive stage by far (51 minutes for one
+    # trial, measured 2026-07-29), so it is the one the budget most often lands
+    # on. Skipping it does **not** make the trial `budget_exhausted`: the three
+    # P2 metrics were measured and their verdict stands. What is lost is a piece
+    # of the P3 四件套, and the record says so by name rather than by absence.
+    if skip_tolerance:
+        # Explicit two-phase batching: P2 sample size first (the main indicator), P3
+        # on a subset afterwards. Named `cli_request` so a phase-1 run can never be
+        # mistaken for a run whose tolerance stage failed or timed out.
+        record["tolerance"] = {"skipped": "cli_request"}
+    elif over_budget():
+        record["tolerance"] = {"skipped": "wall_clock_budget", "budget_s": wall_clock_budget_s}
+    else:
+        record["tolerance"] = _tolerance_pair(
+            Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx,
+            work / "tolerance", timeout_seconds,
+        )
 
     if measurements["candidate"] is None or measurements["control"] is None:
         record["verdict"] = "unmeasurable"
@@ -910,6 +1162,11 @@ def _tolerance_pair(
                 monte_carlo=TorMonteCarlo(TOLERANCE_TRIALS),
                 metric="rms",
                 timeout_seconds=timeout_seconds,
+                # The most expensive stage in a trial (51 minutes measured on one
+                # trial, 2026-07-29), so a zombie here costs more than anywhere
+                # else in the chain -- and it was the one stage still running
+                # without the watchdog.
+                idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
             )
         except (CodeVBatchError, OSError, ValueError) as exc:
             out[side] = {"error": f"{type(exc).__name__}: {exc}"[:400]}
@@ -954,9 +1211,26 @@ def _relative_cost(candidate_zmx: Path, control_zmx: Path) -> dict[str, object] 
 
 
 def _config_summary(config: object) -> dict[str, object]:
+    """What each optimiser arm produced, enough to audit which one was picked.
+
+    ``autovig.edge_used`` and ``post_aut.max_rms_spot_diameter_um`` are the two
+    that make the choice auditable: the selection is made on the RMS figure --
+    itself one of the three judged metrics -- without regard to the pupil clip the
+    arm needed to get there.
+    """
+
     if not isinstance(config, dict):
         return {"unexpected": repr(config)[:200]}
-    keep = ("error", "skipped", "aut_converged", "autovig.converged", "autovig.trace")
+    keep = (
+        "error",
+        "skipped",
+        "aut_converged",
+        "autovig.converged",
+        "autovig.trace",
+        "autovig.edge_used",
+        "efl_target_deviation_pct",
+        "post_aut.max_rms_spot_diameter_um",
+    )
     return {k: config[k] for k in keep if k in config}
 
 
@@ -972,6 +1246,314 @@ def _edge_used(record: Mapping[str, Any]) -> float | None:
         return None
 
 
+def _config_selection_audit(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """What actually decided the two-config choice, and how much it was worth.
+
+    The open audit item says the chooser ranks on `post_aut.max_rms_spot_diameter_um`,
+    which is one of the three judged metrics -- best-of-2 on the quantity being judged
+    is selection bias. Measured 2026-07-30 over 11 trials with two usable configs, the
+    claim is true less often than it sounds: 6 of 11 were decided by `aut_converged`
+    (which is not a judged metric), and only 5 of 11 by RMS. Where RMS did decide, the
+    chosen arm was better by a median of 30%.
+
+    So this reports the split rather than asserting the bias. `rms_gain` is the number a
+    reader needs to judge how much the bias could be worth on a given run.
+
+    The decider is derived from `_standard_config_rank` itself, not re-implemented and
+    not parsed out of the reason string: a second copy of that ordering would eventually
+    disagree with the real one, and then this audit would describe a selection that did
+    not happen.
+    """
+
+    from app.core.engines.codev_optimize import _standard_config_rank
+
+    deciders: dict[str, int] = {}
+    gains: list[float] = []
+    for record in records:
+        configs = record.get("configs")
+        if not isinstance(configs, Mapping) or len(configs) < 2:
+            continue
+        usable = {
+            name: cfg
+            for name, cfg in configs.items()
+            if isinstance(cfg, Mapping) and "error" not in cfg
+        }
+        if len(usable) < 2:
+            continue
+        ranks = {name: _standard_config_rank(cfg) for name, cfg in usable.items()}
+        ordered = sorted(ranks, key=ranks.__getitem__)
+        best, second = ranks[ordered[0]], ranks[ordered[1]]
+        # rank tuple = (errored, not_converged, [fields_dropped,] rms). Walk it and name
+        # the first position that differs -- that is what decided the choice.
+        names = (
+            ("errored", "aut_not_converged", "fields_dropped", "rms_spot")
+            if len(best) == 4
+            else ("errored", "aut_not_converged", "rms_spot")
+        )
+        decider = "tie_fixed_priority"
+        for index, name in enumerate(names):
+            if best[index] != second[index]:
+                decider = name
+                break
+        deciders[decider] = deciders.get(decider, 0) + 1
+        if decider == "rms_spot" and best[-1] > 0:
+            gains.append((second[-1] - best[-1]) / best[-1])
+
+    gains.sort()
+    return {
+        "trials_with_two_usable_configs": sum(deciders.values()),
+        "decided_by": deciders,
+        # Only meaningful for the subset RMS decided; reported with its own n so it can
+        # never be read as applying to every trial.
+        "rms_gain": {
+            "n": len(gains),
+            "median": round(statistics.median(gains), 4) if gains else None,
+            "min": round(min(gains), 4) if gains else None,
+            "max": round(max(gains), 4) if gains else None,
+        },
+    }
+
+
+def run_provenance(
+    *,
+    census_path: Path,
+    rebuild_seed_field: bool,
+    skip_tolerance: bool,
+    trial_budget_seconds: float | None,
+    timeout_seconds: float,
+) -> dict[str, Any]:
+    """What produced this run. Without it an A/B between two run directories is not
+    interpretable: two sets of verdicts and nothing saying which code made them.
+
+    Records the *parsed* flags rather than raw argv -- structured, and it cannot
+    accidentally carry something from the command line that does not belong in an
+    artifact.
+
+    Every git lookup is defensive. A 12-hour real-machine run must never die because
+    provenance collection failed; a missing field says so by name instead.
+    """
+
+    import subprocess
+
+    def _git(*args: str) -> str | None:
+        try:
+            out = subprocess.run(
+                ["git", *args],
+                cwd=str(ROOT),
+                capture_output=True,
+                text=True,
+                timeout=15,
+            )
+        except (OSError, subprocess.SubprocessError):
+            return None
+        if out.returncode != 0:
+            return None
+        return (out.stdout or "").strip() or None
+
+    # `_git` collapses "empty output" into None, so a CLEAN tree and an unavailable
+    # git are indistinguishable through it. That is the mirror image of the flaw this
+    # field exists to avoid -- absent reads as clean -- so probe availability
+    # separately and let an empty porcelain mean clean.
+    git_available = _git("rev-parse", "HEAD") is not None
+    dirty = _git("status", "--porcelain")
+    if git_available and dirty is None:
+        dirty = ""  # git worked and reported nothing: the tree is clean
+    census_digest = None
+    if census_path.is_file():
+        import hashlib
+
+        census_digest = hashlib.sha256(census_path.read_bytes()).hexdigest()
+
+    return {
+        "git_sha": _git("rev-parse", "HEAD"),
+        "git_branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
+        # A dirty tree means the sha does NOT describe the code that ran. Say so rather
+        # than letting the sha imply reproducibility it does not have.
+        "git_dirty": None if dirty is None else bool(dirty),
+        "git_available": git_available,
+        # `git status --porcelain` is "XY PATH" with XY exactly two status characters,
+        # but a fixed [3:] slice loses the first path character on some line shapes
+        # (observed: "cripts/..."). Strip from index 2 instead of assuming the gap.
+        "git_dirty_paths": None if not dirty else sorted(
+            stripped for line in dirty.splitlines() if (stripped := line[2:].strip())
+        ),
+        "census_path": str(census_path),
+        "census_sha256": census_digest,
+        "flags": {
+            "rebuild_seed_field": rebuild_seed_field,
+            "skip_tolerance": skip_tolerance,
+            "trial_budget_seconds": trial_budget_seconds,
+            "timeout_seconds": timeout_seconds,
+        },
+        "trial_schema": TRIAL_RESULT_SCHEMA,
+    }
+
+
+def _witness_shortfall(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """How often each side produced a reading on fewer fields than it declared.
+
+    This is the P1 root cause as a headline number rather than something a reader has
+    to grep the records for. Measured 2026-07-30: the dominant `unmeasurable` shape is a
+    candidate at 1-of-2 fields against a control at 2-of-2, with the conformance screen
+    passing and `aut_converged=1` -- the optimiser hits the spec and stops imaging
+    off-axis, because `@rmssum` skips a field whose trace fails and so pays for dropping
+    it.
+
+    Reported for BOTH sides on purpose. A control that also drops a field is a different
+    problem (the corpus lens is not traceable at its own declared field), and folding
+    the two together would hide it.
+    """
+
+    counts = {
+        "candidate_partial": 0,
+        "candidate_zero": 0,
+        "control_partial": 0,
+        "control_zero": 0,
+        "both_full": 0,
+        "no_witness": 0,
+    }
+    for record in records:
+        seen_any = False
+        full = True
+        for side in ("candidate", "control"):
+            quality = record.get(f"{side}_quality")
+            if not isinstance(quality, Mapping):
+                continue
+            declared = quality.get("num_fields")
+            ok = quality.get("rms_fields_ok")
+            if not isinstance(declared, (int, float)) or not isinstance(ok, (int, float)):
+                continue
+            seen_any = True
+            if ok <= 0:
+                counts[f"{side}_zero"] += 1
+                full = False
+            elif ok < declared:
+                counts[f"{side}_partial"] += 1
+                full = False
+        if not seen_any:
+            counts["no_witness"] += 1
+        elif full:
+            counts["both_full"] += 1
+    return counts
+
+
+def _deliverable_pieces(record: Mapping[str, Any]) -> dict[str, bool]:
+    """Which of NORTH-STAR §1.1's four 交付物 pieces this trial actually produced.
+
+    「缺一不算交付」 is the criterion's own wording, so the headline is the all-four
+    count and the per-piece counts exist to say *which* piece is missing. Each test is
+    for the thing being present and usable, never merely for a key existing:
+
+    - 处方 ZMX: a path AND the file on disk. A recorded path to a file that is not
+      there is not a deliverable.
+    - 像质: all three judged metrics have a candidate reading. A withheld metric is
+      absent by design (the witness gates), and counting a partial set would report
+      exactly the flattering number those gates exist to refuse.
+    - 公差良率: a candidate-side yield fraction. An error or a skip is not a yield.
+    - 相对成本: a finite ratio.
+    """
+
+    candidate_zmx = record.get("candidate_zmx")
+    prescription = bool(candidate_zmx) and Path(str(candidate_zmx)).is_file()
+
+    metrics = record.get("metrics")
+    image_quality = isinstance(metrics, Mapping) and all(
+        isinstance(metrics.get(metric), Mapping)
+        and metrics[metric].get("candidate") is not None
+        for metric in P2_METRICS
+    )
+
+    tolerance = record.get("tolerance")
+    candidate_tolerance = tolerance.get("candidate") if isinstance(tolerance, Mapping) else None
+    yield_ok = isinstance(candidate_tolerance, Mapping) and isinstance(
+        candidate_tolerance.get("yield_fraction"), (int, float)
+    )
+
+    cost = record.get("relative_cost_index")
+    ratio = cost.get("ratio") if isinstance(cost, Mapping) else None
+    cost_ok = isinstance(ratio, (int, float)) and math.isfinite(float(ratio))
+
+    return {
+        "prescription_zmx": prescription,
+        "image_quality": image_quality,
+        "tolerance_yield": yield_ok,
+        "relative_cost": cost_ok,
+    }
+
+
+def _deliverable_completeness(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Criterion ③ over a run: how many trials produced all four pieces.
+
+    A `--skip-tolerance` run can never reach four by construction, so the result says
+    `not_assessable` and names the reason rather than reporting a zero that reads as a
+    failure. That distinction is the whole point: "we did not measure it" and "it did
+    not work" must not share a number.
+    """
+
+    per_piece: dict[str, int] = {}
+    complete = 0
+    for record in records:
+        pieces = _deliverable_pieces(record)
+        for name, ok in pieces.items():
+            per_piece[name] = per_piece.get(name, 0) + int(ok)
+        complete += int(all(pieces.values()))
+
+    skipped_by_request = sum(
+        1
+        for r in records
+        if isinstance(r.get("tolerance"), Mapping)
+        and r["tolerance"].get("skipped") == "cli_request"
+    )
+    assessable = skipped_by_request == 0
+    return {
+        "trials": len(records),
+        "per_piece": per_piece,
+        "all_four": complete if assessable else None,
+        "status": "measured" if assessable else "not_assessable",
+        "reason": (
+            None
+            if assessable
+            else (
+                f"tolerance skipped by request on {skipped_by_request}/{len(records)} trials; "
+                "四件套完整度 needs a run that measures the tolerance pair"
+            )
+        ),
+    }
+
+
+def _distinct_design_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
+    """Distinct *designs* behind the trials, by prescription fingerprint.
+
+    A file that cannot be fingerprinted is counted in `unfingerprinted` and left out of
+    both counts -- never folded in as "one more design", which would inflate the
+    denominator with something unread.
+    """
+
+    from app.core.engines.prescription_identity import fingerprint_zmx
+
+    fingerprints: dict[str, set[str]] = {"controls": set(), "seeds": set()}
+    unfingerprinted: list[str] = []
+    for record in records:
+        plan = record.get("plan")
+        if not isinstance(plan, dict):
+            continue
+        for bucket, key in (("controls", "control_zmx"), ("seeds", "seed_zmx")):
+            name = plan.get(key)
+            if not name:
+                continue
+            path = ZMX_DIR / str(name)
+            fingerprint = fingerprint_zmx(path) if path.is_file() else None
+            if fingerprint is None:
+                unfingerprinted.append(str(name))
+                continue
+            fingerprints[bucket].add(fingerprint)
+    return {
+        "controls": len(fingerprints["controls"]),
+        "seeds": len(fingerprints["seeds"]),
+        "unfingerprinted": sorted(set(unfingerprinted)),
+    }
+
+
 def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
     verdicts: dict[str, int] = {}
     for record in records:
@@ -979,7 +1561,15 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
             verdicts.get(str(record.get("verdict", "missing")), 0) + 1
         )
     judged = verdicts.get("par", 0) + verdicts.get("worse", 0)
+    # Kept separable on purpose: a run full of budget_exhausted means "buy more
+    # time", a run full of unmeasurable means "the chain is broken". Both sit
+    # outside `judged`, so neither can flatter the headline.
+    budget_exhausted = verdicts.get("budget_exhausted", 0)
     seeds = {r["plan"]["seed_case_id"] for r in records if "plan" in r}
+    designs = _distinct_design_counts(records)
+    deliverables = _deliverable_completeness(records)
+    witness = _witness_shortfall(records)
+    selection = _config_selection_audit(records)
     summary: dict[str, Any] = {
         "trials": len(records),
         "verdicts": verdicts,
@@ -990,6 +1580,32 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
         "par_rate_over_all_trials": (verdicts.get("par", 0) / len(records)) if records else None,
         "par_rate_over_judged": (verdicts.get("par", 0) / judged) if judged else None,
         "distinct_seeds_used": len(seeds),
+        # `case_id` counts *publications*, and the corpus is 442 files carrying 354
+        # distinct prescriptions -- continuations republish the same embodiment under a
+        # new number, so counting case_ids counts one design up to four times. These
+        # two are the honest denominators for "样本量成立": report them next to any rate.
+        "distinct_control_designs": designs["controls"],
+        "distinct_seed_designs": designs["seeds"],
+        "designs_unfingerprinted": designs["unfingerprinted"],
+        # NORTH-STAR criterion ③: 交付物四件套完整度（缺一不算交付）.
+        "deliverables": deliverables,
+        # Why the unmeasurable trials are unmeasurable, as a number.
+        "field_witness": witness,
+        # How much of the headline could be best-of-2 on a judged metric.
+        "config_selection": selection,
+        "budget_exhausted": budget_exhausted,
+        "tolerance_skipped_by_request": sum(
+            1
+            for r in records
+            if isinstance(r.get("tolerance"), dict)
+            and r["tolerance"].get("skipped") == "cli_request"
+        ),
+        "tolerance_skipped_for_budget": sum(
+            1
+            for r in records
+            if isinstance(r.get("tolerance"), dict)
+            and r["tolerance"].get("skipped") == "wall_clock_budget"
+        ),
         "blocked_at": {},
     }
     for record in records:
@@ -1046,7 +1662,45 @@ def render(summary: dict[str, Any]) -> str:
         f"  worse                   {summary['verdicts'].get('worse', 0)}",
         f"  spec_not_met            {summary['verdicts'].get('spec_not_met', 0)}",
         f"  unmeasurable            {summary['verdicts'].get('unmeasurable', 0)}",
-        f"distinct seeds used       {summary['distinct_seeds_used']}",
+        f"  budget_exhausted        {summary['verdicts'].get('budget_exhausted', 0)}"
+        "   <- ran out of clock, not of quality",
+        f"distinct seeds used       {summary['distinct_seeds_used']} (publications)",
+        # The line a reader must not miss: 442 corpus files are 354 distinct
+        # prescriptions, so publication counts overstate independence.
+        f"distinct CONTROL designs  {summary['distinct_control_designs']}",
+        f"distinct SEED designs     {summary['distinct_seed_designs']}",
+        # Criterion ③. `all_four` is None on a run that skipped the tolerance pair --
+        # printed as the reason, never as a zero that would read as a failure.
+        "四件套 all four        "
+        + (
+            f"{summary['deliverables']['all_four']}/{summary['deliverables']['trials']}"
+            if summary["deliverables"]["all_four"] is not None
+            else f"not assessable ({summary['deliverables']['reason']})"
+        ),
+        "  per piece              "
+        + ", ".join(
+            f"{name}={count}" for name, count in sorted(summary["deliverables"]["per_piece"].items())
+        ),
+        # The line that explains the unmeasurable count instead of leaving it a mystery.
+        "field witness shortfall   "
+        + ", ".join(
+            f"{name}={count}" for name, count in sorted(summary["field_witness"].items()) if count
+        ),
+        "config choice decided by  "
+        + (
+            ", ".join(
+                f"{name}={count}"
+                for name, count in sorted(summary["config_selection"]["decided_by"].items())
+            )
+            or "n/a"
+        ),
+        "  RMS gain when RMS chose "
+        + (
+            f"median {summary['config_selection']['rms_gain']['median']:+.1%} "
+            f"(n={summary['config_selection']['rms_gain']['n']})"
+            if summary["config_selection"]["rms_gain"]["median"] is not None
+            else "n/a"
+        ),
     ]
     rate_all = summary["par_rate_over_all_trials"]
     rate_judged = summary["par_rate_over_judged"]
@@ -1098,6 +1752,27 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--timeout", type=float, default=180.0)
     parser.add_argument(
+        "--trial-budget-seconds",
+        type=float,
+        default=None,
+        help=(
+            "per-trial wall-clock allowance. Checked between stages, so a trial "
+            "can overrun by at most one stage; a trial that runs out is filed as "
+            "its own `budget_exhausted` verdict, never as worse or unmeasurable."
+        ),
+    )
+    parser.add_argument(
+        "--skip-tolerance",
+        action="store_true",
+        help=(
+            "phase 1 of a two-phase batch: measure the three P2 metrics only. The "
+            "tolerance pair is by far the most expensive stage (51 minutes for one "
+            "trial, measured), so skipping it is what makes a whole-plan P2 reading "
+            "affordable. Filed as `skipped: cli_request` -- the verdict is unaffected, "
+            "what is lost is one piece of the P3 四件套, recorded by name not by absence."
+        ),
+    )
+    parser.add_argument(
         "--idle-timeout",
         type=float,
         default=IDLE_TIMEOUT_SECONDS,
@@ -1146,11 +1821,27 @@ def main(argv: list[str] | None = None) -> int:
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     plans, census_result = plan_trials(args.census, limit=args.limit)
+    provenance = run_provenance(
+        census_path=args.census,
+        rebuild_seed_field=not args.no_field_rebuild,
+        skip_tolerance=args.skip_tolerance,
+        trial_budget_seconds=args.trial_budget_seconds,
+        timeout_seconds=args.timeout,
+    )
     (out_dir / "plan.json").write_text(
         json.dumps(
             {
                 "trials_available": census_result["trials"],
                 "distinct_seeds_available": census_result["distinct_seeds_used"],
+                # The reachability-vs-quality conflict, per control. Measured 2026-07-30:
+                # only 6 of 59 controls have a cross-source seed that is BOTH inside the
+                # +25% focal-stretch limit and at or below the corpus median image
+                # quality. That split is the finding, so it belongs in the run artifact
+                # rather than only in a census return value nobody keeps.
+                "seed_pool_basis": census_result.get("seed_pool_basis"),
+                "seed_quality_limit_um": census_result.get("seed_quality_limit_um"),
+                "seed_efl_max_stretch": census_result.get("seed_efl_max_stretch"),
+                "run_provenance": provenance,
                 "planned": [asdict(p) for p in plans],
             },
             ensure_ascii=False,
@@ -1175,6 +1866,8 @@ def main(argv: list[str] | None = None) -> int:
                 timeout_seconds=args.timeout,
                 idle_timeout_seconds=args.idle_timeout or None,
                 rebuild_seed_field=not args.no_field_rebuild,
+                wall_clock_budget_s=args.trial_budget_seconds,
+                skip_tolerance=args.skip_tolerance,
             )
             (out_dir / f"trial_{plan.control_case_id}.json").write_text(
                 json.dumps(record, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
@@ -1185,6 +1878,7 @@ def main(argv: list[str] | None = None) -> int:
         after = codev_sessions()
         print(f"红线① post-run CODE V sessions: {len(after)} {after}", flush=True)
         summary = summarise(records)
+        summary["run_provenance"] = provenance
         summary["red_line_sessions_before"] = len(before)
         summary["red_line_sessions_after"] = len(after)
         (out_dir / "summary.json").write_text(

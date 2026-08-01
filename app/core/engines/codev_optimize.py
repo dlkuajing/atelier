@@ -1552,12 +1552,58 @@ def _standard_config_rms(result: Mapping[str, object]) -> float:
     return value
 
 
-def _standard_config_rank(result: Mapping[str, object]) -> tuple[int, int, float]:
-    """越小越优：(是否报错, 是否未收敛, RMS)。报错的配置永远排最后；同为
-    未报错时按 aut_converged 分层，同层再比 RMS。"""
+def _standard_config_fields_dropped(result: Mapping[str, object]) -> int:
+    """越小越优：0 = post_aut 实测全场出数，1 = 丢了场**或无法证明没丢**。
+
+    为什么需要这一项：`_standard_config_rms` 只 fail-closed 掉**全部**场次追迹
+    失败的哨兵值（`@rmssum` 的初值 0）。**部分**失败没有哨兵——`@rmssum` 在
+    幸存场上取极大值，于是一个只在轴上成像的配置报出的是它的**轴上**点列径，
+    一个完全正常的正数。每丢一场都让被比较的 RMS **变小**，而更小在这里就是
+    "更优"，所以在 RMS 上做二选一等于**主动挑选外场已死的那个配置**。
+
+    fail-closed 的方向：见证量缺失时返回 1 而非 0。缺失有两种成因（旧 run 没有
+    这两行、或 CODE V 没跑到写出它们那一步），两者都不能给"全场出数"背书。
+    两配置同为缺失时该项打平、排序照旧落到 RMS —— 即接入前的行为、零回归；
+    只有"一边实测全场、另一边不可证"时才由这一项分层。"""
+
+    ok = result.get("post_aut.rms_fields_ok")
+    declared = result.get("post_aut.num_fields")
+    if ok is None or declared is None:
+        return 1
+    try:
+        ok_n = int(float(str(ok)))
+        declared_n = int(float(str(declared)))
+    except (TypeError, ValueError):
+        return 1
+    if declared_n <= 0:
+        return 1
+    return 0 if ok_n >= declared_n else 1
+
+
+def _fields_display(result: Mapping[str, object]) -> str:
+    """reason 文案用：把见证量如实转述成 "n/m" 或点名"不可证"。"""
+    ok = result.get("post_aut.rms_fields_ok")
+    declared = result.get("post_aut.num_fields")
+    if ok is None or declared is None:
+        return "不可证（见证量缺失，fail-closed 落后）"
+    return f"{ok}/{declared}"
+
+
+def _standard_config_rank(result: Mapping[str, object]) -> tuple[int, int, int, float]:
+    """越小越优：(是否报错, 是否未收敛, 是否丢场, RMS)。报错的配置永远排最后；
+    同为未报错时按 aut_converged 分层，同层再按**全场出数**分层，最后才比 RMS。
+
+    丢场项**插在 RMS 之前、aut_converged 之后**是刻意的最小改动：它只重排
+    此前"仅由 RMS 决定"的那些对比 —— 正是 RMS 比较有偏的那一格。放到
+    aut_converged 之前还会重排"收敛 vs 未收敛"，那是另一个未实测的决策。"""
     if "error" in result:
-        return (1, 1, float("inf"))
-    return (0, 0 if _standard_config_converged(result) else 1, _standard_config_rms(result))
+        return (1, 1, 1, float("inf"))
+    return (
+        0,
+        0 if _standard_config_converged(result) else 1,
+        _standard_config_fields_dropped(result),
+        _standard_config_rms(result),
+    )
 
 
 def _rms_display(rms: float) -> str:
@@ -1602,8 +1648,8 @@ def _select_preferred(
     }
     ranked = sorted(_STANDARD_EXTRA_DOF_CONFIGS, key=ranks.__getitem__)
     best, second = ranked[0], ranked[1]
-    best_errored, best_not_conv, best_rms = ranks[best]
-    second_errored, second_not_conv, second_rms = ranks[second]
+    best_errored, best_not_conv, best_dropped, best_rms = ranks[best]
+    second_errored, second_not_conv, second_dropped, second_rms = ranks[second]
     if best_errored:
         # 如实归因（W4）：从各配置真实 error dict 摘要 kind + detail，只在
         # 没有种子级预检缺陷标记时才称 tooling-blocked——数据缺陷（如
@@ -1629,13 +1675,23 @@ def _select_preferred(
         return best, (
             f'"{best}" aut_converged={best_conv} 优于 "{second}" aut_converged={second_conv}'
         )
+    if best_dropped != second_dropped:
+        return best, (
+            f'"{best}" post_aut 全场出数（rms_fields_ok='
+            f'{_fields_display(configs[best])}）优于 "{second}" 的 '
+            f"{_fields_display(configs[second])}——丢场会让被比较的 RMS 变小，"
+            "故先按覆盖分层再比 RMS"
+        )
     if best_rms != second_rms:
         return best, (
             f'"{best}" post_aut.max_rms_spot_diameter_um={_rms_display(best_rms)} 优于 '
             f'"{second}" 的 {_rms_display(second_rms)}'
+            f"（两者场覆盖同层：{_fields_display(configs[best])} vs "
+            f"{_fields_display(configs[second])}）"
         )
     return best, (
-        f"aut_converged 与 post_aut RMS spot 均打平（converged={best_conv}, "
+        f"aut_converged / post_aut 场覆盖 / post_aut RMS spot 均打平（"
+        f"converged={best_conv}, fields={_fields_display(configs[best])}, "
         f'rms={_rms_display(best_rms)}），按固定优先序取 "{best}"'
     )
 
@@ -2651,6 +2707,36 @@ def _metric_function_block() -> list[str]:
         "  END IF",
         "END FOR",
         "END FCT ^min",
+        # Witness counts for the two extremum metrics above. Both skip a field
+        # whose trace fails -- @rmssum on `^err = 0`, @mtfmin on `^xmtf/^ymtf >= 0`
+        # -- and return the extremum over the survivors, so a lens that images
+        # only on axis reports its axial spot as an all-field maximum and its
+        # axial MTF as an all-field minimum. Every drop moves RMS **down** and MTF
+        # **up**, and both of those directions are "better". `NUM F` reports the
+        # **declared** field count, so without these no consumer can tell 1-of-2
+        # from 2-of-2. Built from the same constructs as the functions they
+        # witness, so they succeed exactly where those succeed.
+        "FCT @rmsnf(NUM ^dummy)",
+        "LCL NUM ^dummy ^f ^spot(10) ^err ^n",
+        "^n == 0",
+        "FOR ^f 1 (NUM F)",
+        "  ^err == SPOTDATA(1,^f,1,0.01,'CEN',0,0,^spot)",
+        "  IF ^err = 0",
+        "    ^n == ^n + 1",
+        "  END IF",
+        "END FOR",
+        "END FCT ^n",
+        "FCT @mtfnf(NUM ^freq, NUM ^nrd)",
+        "LCL NUM ^freq ^nrd ^f ^xout(6) ^yout(6) ^xmtf ^ymtf ^n",
+        "^n == 0",
+        "FOR ^f 1 (NUM F)",
+        "  ^xmtf == MTF_1FLD(1,^f,^freq,0,^nrd,^xout,'DIF','SIN')",
+        "  ^ymtf == MTF_1FLD(1,^f,^freq,90,^nrd,^yout,'DIF','SIN')",
+        "  IF ^xmtf >= 0 and ^ymtf >= 0",
+        "    ^n == ^n + 1",
+        "  END IF",
+        "END FOR",
+        "END FCT ^n",
         "FCT @wfewav(NUM ^dummy)",
         "LCL NUM ^dummy ^f ^ok ^rwe(10,26) ^value ^max",
         "^max == 0",
@@ -2689,6 +2775,14 @@ def _capture_metric_variables(prefix: str) -> list[str]:
         # Emitted so the reader can tell "achromatic" from "never measured":
         # @lcum spans W1..W(NUM W) and degenerates to a constant 0 at NUM W < 3.
         f"^{prefix}_num_wavelengths == (NUM W)",
+        # Field-coverage witness for the RMS spot metric above. @rmssum skips any
+        # field whose trace fails and returns the maximum over the survivors, so
+        # **losing a field lowers the number being minimised**. Without this pair
+        # no consumer can tell 1-of-2 from 2-of-2. Captured per snapshot so each
+        # one is self-witnessing: seed_baseline 2/2 next to post_aut 1/2 is the
+        # signature of coverage destroyed *by* the optimisation.
+        f"^{prefix}_rms_fields_ok == @rmsnf(1)",
+        f"^{prefix}_num_fields == (NUM F)",
     ]
 
 
@@ -2711,6 +2805,8 @@ def _append_metric_rows(lines: list[str], prefix: str) -> None:
     )
     _append_put_row(lines, f'"{prefix}.max_distortion_pct"', f"^{prefix}_max_distortion_pct")
     _append_put_row(lines, f'"{prefix}.num_wavelengths"', f"^{prefix}_num_wavelengths")
+    _append_put_row(lines, f'"{prefix}.rms_fields_ok"', f"^{prefix}_rms_fields_ok")
+    _append_put_row(lines, f'"{prefix}.num_fields"', f"^{prefix}_num_fields")
 
 
 def _append_tolerance_sensitivity_rows(

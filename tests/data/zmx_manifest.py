@@ -25,6 +25,15 @@ case-difference suffixes make runtime regex fragile. These are the design
 
 Shared by tests (test_zmx_ingest, test_case_library, test_parameter_guards) and
 the offline scripts (generate_cases, compute_bounds_stats).
+
+``nominal_fov_deg`` is the **full** field angle -- twice the outermost ``YFLN``
+of the design's own ZMX, since a Zemax ``FTYP 0`` field angle is measured from
+the axis. It is not decorative: `generate_cases` copies it into `index.json`'s
+`fov_deg` *and* feeds it to `regularize_fields_to_angle(optic, full_fov_deg)`,
+so a row storing the half angle silently traces its case at half the design
+field. The DATA-06c and DATA-09d1 converters wrote the half angle; all 253 rows
+were doubled on 2026-07-30 (see `.planning/evidence/fov-reanchor-2026-07-29.md`).
+`tests/test_fov_manifest_convention.py` fails if a new wave reintroduces it.
 """
 
 from __future__ import annotations
@@ -249,7 +258,11 @@ ZMX_AMMO: list[dict] = [
         "filename": "US10330891B2.zmx",  # US10330891B2
         "n_pieces": 6,
         "nominal_fnum": 2.08,
-        "nominal_fov_deg": 100.0,
+        # 101.6, not the patent text's rounded 100.0: this row is the corpus'
+        # only third convention. Every other row is either the ZMX full angle
+        # already or exactly half of it, so 100.0 could not be re-anchored by
+        # doubling -- it had to be read off the ZMX (2 x YFLN 50.8) like the rest.
+        "nominal_fov_deg": 101.6,
         "nominal_efl_mm": 2.416,
         "nominal_imh_mm": 2.88,
         "nominal_ttl_mm": 4.5,

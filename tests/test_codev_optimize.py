@@ -1308,10 +1308,19 @@ def test_mock_run_codev_target_aut_error_trace_none_without_listing(
 # ===========================================================================
 
 
-def _standard_config_result(*, converged: str, rms: str | None) -> dict[str, str]:
+def _standard_config_result(
+    *,
+    converged: str,
+    rms: str | None,
+    fields: tuple[str, str] | None = None,
+) -> dict[str, str]:
+    """`fields` 默认 None = 不写见证量行，复刻接入前的 run（见证量缺失）。
+    传 ("1", "2") 表示 post_aut 只有 1 场出数、声明 2 场。"""
     data = {"aut_converged": converged, "autovig.edge_used": "0.3", "autovig.converged": converged}
     if rms is not None:
         data["post_aut.max_rms_spot_diameter_um"] = rms
+    if fields is not None:
+        data["post_aut.rms_fields_ok"], data["post_aut.num_fields"] = fields
     return data
 
 
@@ -3333,3 +3342,160 @@ def test_the_sentinel_is_not_mistaken_for_a_percentage() -> None:
     from app.core.engines.codev_optimize import SEED_BASELINE_DISTORTION
 
     assert SEED_BASELINE_DISTORTION < 0
+
+
+# ---------------------------------------------------------------------------
+# post_aut 场覆盖见证量：不让"丢场换来的低 RMS"赢下配置二选一
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("fields", "expected"),
+    [
+        (("2", "2"), 0),  # 实测全场出数
+        (("3", "3"), 0),
+        (("1", "2"), 1),  # 丢了一场
+        (("0", "2"), 1),  # 一场都没出数
+        (None, 1),  # 见证量缺失 → 不可证 → fail-closed 落后
+    ],
+)
+def test_fields_dropped_term_is_fail_closed(fields, expected) -> None:
+    result = _standard_config_result(converged="1", rms="10.0", fields=fields)
+    assert codev_optimize._standard_config_fields_dropped(result) == expected
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {"post_aut.rms_fields_ok": "abc", "post_aut.num_fields": "2"},
+        {"post_aut.rms_fields_ok": "2", "post_aut.num_fields": "nan-ish"},
+        {"post_aut.rms_fields_ok": "0", "post_aut.num_fields": "0"},  # 声明 0 场无意义
+        {"post_aut.rms_fields_ok": "2"},  # 只有一半见证量
+        {"post_aut.num_fields": "2"},
+    ],
+)
+def test_fields_dropped_term_refuses_to_vouch_for_malformed_witness(bad) -> None:
+    """畸形/半截见证量不得被当成"全场出数"——那正是 fail-open 的形状。"""
+    result = _standard_config_result(converged="1", rms="10.0")
+    result.update(bad)
+    assert codev_optimize._standard_config_fields_dropped(result) == 1
+
+
+def test_target_standard_prefers_full_field_coverage_over_lower_rms(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """本条钉住的正是 P1 一阶根因在**我们自己代码里**的那一半。
+
+    `@rmssum` 对追迹失败的视场静默跳过、在幸存者上取极大值，所以丢场让 RMS
+    **变小**。数字取真机实测（2026-07-29 `US-11933948-B2-e10`）：优化输出的候选
+    是 `1/2` 场覆盖，而它的 RMS 只因为丢了外场才低。若仍按 RMS 二选一，
+    优化器就被付钱去毁掉离轴成像。
+    """
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                # 全场出数，但 RMS 更高
+                "asphere": _standard_config_result(converged="1", rms="51.87", fields=("2", "2")),
+                # 只剩轴上一场，RMS 因此"更好"
+                "both": _standard_config_result(converged="1", rms="4.31", fields=("1", "2")),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "asphere"
+    assert "2/2" in result["preferred_reason"]
+    assert "1/2" in result["preferred_reason"]
+
+
+def test_target_standard_still_decides_on_rms_when_coverage_ties(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """负对照：两边都全场出数时，排序必须与接入前逐字一致（按 RMS）。"""
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="20.0", fields=("2", "2")),
+                "both": _standard_config_result(converged="1", rms="13.0", fields=("2", "2")),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "both"
+    assert "max_rms_spot_diameter_um" in result["preferred_reason"]
+    assert "2/2" in result["preferred_reason"]
+
+
+def test_target_standard_still_decides_on_rms_when_witness_absent_on_both_sides(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """零回归对照：见证量整体缺失（接入前的 run）时该项打平，排序照旧落到 RMS。
+
+    没有这一条，"fail-closed 到 1"就可能被误实现成"缺失即判丢场、于是两边都
+    排在最后"，把一个纯诊断改动变成行为回归。
+    """
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                "asphere": _standard_config_result(converged="1", rms="20.0"),
+                "both": _standard_config_result(converged="1", rms="13.0"),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "both"
+    assert "不可证" in result["preferred_reason"]
+
+
+def test_target_standard_coverage_does_not_outrank_aut_convergence(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """刻意的最小改动边界：丢场项排在 aut_converged **之后**。
+
+    把它提到 aut_converged 之前会额外重排"收敛 vs 未收敛"，那是另一个未实测的
+    决策——本改动只重排此前**仅由 RMS 决定**的那些对比。
+    """
+    monkeypatch.setattr(
+        codev_optimize,
+        "run_codev_target_autovig",
+        _fake_autovig(
+            {
+                # 未收敛但全场出数
+                "asphere": _standard_config_result(converged="0", rms="10.0", fields=("2", "2")),
+                # 已收敛但丢了场
+                "both": _standard_config_result(converged="1", rms="4.0", fields=("1", "2")),
+            }
+        ),
+    )
+    result = run_codev_target_standard(
+        source_zmx=default_optimize_seed(), work_dir=tmp_path, target_efl_mm=4.057
+    )
+    assert result["preferred"] == "both"
+    assert "aut_converged" in result["preferred_reason"]
+
+
+def test_target_sequence_emits_the_field_coverage_witness_for_every_snapshot() -> None:
+    """见证量必须真的进 .seq，且三个快照各自自证——seed_baseline 2/2 紧挨着
+    post_aut 1/2 才是"覆盖是被优化毁掉的"这个签名。"""
+    seq = build_codev_target_sequence(
+        source_zmx=default_optimize_seed(),
+        result_path=Path("r.txt"),
+        target_efl_mm=4.057,
+    )
+    for prefix in _TARGET_SNAPSHOTS:
+        assert f"^{prefix}_rms_fields_ok == @rmsnf(1)" in seq
+        assert f'"{prefix}.rms_fields_ok"' in seq
+        assert f'"{prefix}.num_fields"' in seq
+    # 被见证的函数必须与见证量同在一个 .seq 里，否则见证量根本跑不起来
+    assert "FCT @rmsnf(NUM ^dummy)" in seq

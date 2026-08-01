@@ -36,6 +36,9 @@ HEALTHY = {
     "distortion_pct": "1.72",
     "lateral_color_um": "0.68",
     "mtf_min": "0.312",
+    # Every declared field produced a reading -- the healthy case.
+    "rms_fields_ok": "2",
+    "mtf_fields_ok": "2",
 }
 
 
@@ -486,7 +489,9 @@ def test_an_unreadable_field_or_aperture_blocks_rather_than_passes() -> None:
     from scripts.p2_crosssource_trial import conformance_screen
 
     assert conformance_screen(_iq(image_height_mm=None), _iq())[0] == "field_not_comparable"
-    assert conformance_screen(_iq(), _iq(efl_y_mm=None))[0] == "field_not_comparable"
+    # A missing EFL is now caught one leg earlier, by the scale check that runs
+    # first -- still fail-closed, just named for the leg that actually saw it.
+    assert conformance_screen(_iq(), _iq(efl_y_mm=None))[0] == "efl_not_comparable"
     assert conformance_screen(_iq(f_number=None), _iq())[0] == "f_number_not_comparable"
 
 
@@ -575,6 +580,7 @@ def _stage(tmp_path: Path, monkeypatch: pytest.MonkeyPatch, *, control: str, see
     monkeypatch.setattr(
         "app.core.engines.codev_optimize.run_codev_target_standard", _never
     )
+    _stub_control_probe(monkeypatch)
     return zmx_dir
 
 
@@ -622,6 +628,7 @@ def test_the_re_aimed_seed_is_what_gets_optimised_not_the_original(
     (zmx_dir / "ctl.zmx").write_bytes(control.encode("latin-1"))
     (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
     monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch)
 
     seen: dict[str, Path] = {}
 
@@ -648,6 +655,7 @@ def test_the_old_behaviour_is_still_reachable_for_a_b_comparison(
     (zmx_dir / "ctl.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
     (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
     monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch)
     seen: dict[str, Path] = {}
 
     def _capture(**kwargs: object) -> dict[str, object]:
@@ -660,3 +668,869 @@ def test_the_old_behaviour_is_still_reachable_for_a_b_comparison(
     )
     assert seen["source"].name == "seed.zmx"
     assert "seed_field_rebuild" not in record
+
+
+# ---------------------------------------------------------------------------
+# Per-trial wall-clock budget (2026-07-29). 46 trials x 46 minutes is 35 hours;
+# a bounded run needs a stop that does not lie about why it stopped.
+# ---------------------------------------------------------------------------
+
+
+def _stub_control_probe(monkeypatch: pytest.MonkeyPatch, **overrides: object) -> object:
+    """The control probe runs first now -- the spec is taken from it."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    # EFL matches `_rebuild_plan().spec_efl_mm` so the engine-agreement gate is
+    # satisfied by default; tests that want the disagreement path override it.
+    base = {
+        "source": "ctl.zmx", "efl_y_mm": 3.0, "f_number": 2.0, "num_wavelengths": 3,
+        "num_fields": 2, "image_height_mm": 2.5, "rms_spot_um": 10.0,
+        "rms_wavefront_waves": 0.1, "distortion_pct": 1.0, "lateral_color_um": 1.0,
+        "mtf_min": 0.5,
+    }
+    base.update(overrides)
+    probed = trial_module.ImageQuality(**base)  # type: ignore[arg-type]
+    monkeypatch.setattr(trial_module, "measure_image_quality", lambda **k: probed)
+    return probed
+
+
+def _budget_corpus(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import scripts.p2_crosssource_trial as trial_module
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    for name in ("ctl.zmx", "seed.zmx"):
+        (zmx_dir / name).write_bytes(_REBUILD_ZMX.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch)
+
+
+def test_a_trial_out_of_clock_gets_its_own_verdict_not_worse_or_unmeasurable(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Filing it as `worse` would invent a loss; as `unmeasurable`, blame the optics."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+
+    def _never(**kwargs: object) -> None:
+        raise AssertionError("CODE V must not be started once the budget is spent")
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _never)
+    monkeypatch.setattr(
+        "scripts.p2_crosssource_trial.measure_image_quality",
+        lambda **k: (_ for _ in ()).throw(
+            AssertionError("no probe may run once the budget is spent")
+        ),
+    )
+    record = trial_module.run_trial(
+        _rebuild_plan(), out_dir=tmp_path / "out", wall_clock_budget_s=0.0
+    )
+    assert record["verdict"] == "budget_exhausted"
+    assert record["blocked_at"] == "before_control_probe"
+    assert record["wall_clock_budget_s"] == 0.0
+
+
+def test_no_budget_means_no_gate(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """The negative control: the default path must be untouched."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    called: list[str] = []
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        called.append(str(kwargs["source_zmx"]))
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert called
+    assert record["verdict"] == "unmeasurable"
+
+
+def test_budget_exhausted_is_outside_judged_and_reported_on_its_own() -> None:
+    records = [
+        {"verdict": "budget_exhausted", "plan": {"seed_case_id": "s1"}},
+        {"verdict": "worse", "plan": {"seed_case_id": "s2"}, "metrics": {}},
+        {"verdict": "par", "plan": {"seed_case_id": "s3"}, "metrics": {}},
+    ]
+    summary = summarise(records)
+    assert summary["judged"] == 2
+    assert summary["budget_exhausted"] == 1
+    assert summary["par_rate_over_judged"] == pytest.approx(0.5)
+    # Still in the honest denominator: a trial we ran out of time on is a trial
+    # we did not win.
+    assert summary["par_rate_over_all_trials"] == pytest.approx(1 / 3)
+
+
+def test_a_budget_skipped_tolerance_is_named_not_merely_absent() -> None:
+    from scripts.p2_crosssource_trial import render
+
+    records = [
+        {
+            "verdict": "worse",
+            "plan": {"seed_case_id": "s1"},
+            "metrics": {},
+            "tolerance": {"skipped": "wall_clock_budget", "budget_s": 60.0},
+        }
+    ]
+    summary = summarise(records)
+    assert summary["tolerance_skipped_for_budget"] == 1
+    # The trial keeps its P2 verdict: the three metrics were measured.
+    assert summary["judged"] == 1
+    assert "budget_exhausted" in render(summary)
+
+
+# ---------------------------------------------------------------------------
+# Idle watchdog coverage: it landed for the optimiser only (2026-07-29)
+# ---------------------------------------------------------------------------
+
+
+def test_the_probe_runs_under_the_idle_watchdog(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """Two probes per trial, one per side -- a stalled one burned its whole timeout."""
+    from scripts.p2_crosssource_trial import IDLE_TIMEOUT_SECONDS, measure_image_quality
+
+    seen: dict[str, object] = {}
+
+    class _Batch:
+        data = dict(HEALTHY)
+
+    def fake_batch(**kwargs: object) -> object:
+        seen.update(kwargs)
+        return _Batch()
+
+    monkeypatch.setattr("app.core.engines.codev_batch.run_codev_batch", fake_batch)
+    monkeypatch.setattr(
+        "app.core.engines.zmx_import_prep.stage_zmx_for_codev",
+        lambda *a, **k: tmp_path / "staged.zmx",
+    )
+    source = tmp_path / "src.zmx"
+    source.write_text("stub", encoding="utf-8")
+    measure_image_quality(source_zmx=source, work_dir=tmp_path / "w", tag="candidate")
+    assert seen["idle_timeout_seconds"] == IDLE_TIMEOUT_SECONDS
+
+
+def test_every_codev_stage_in_a_trial_names_the_watchdog() -> None:
+    """A stage added later without it is the failure this test exists to catch.
+
+    Source-level rather than behavioural on purpose: the tolerance and optimise
+    stages both need a real CODE V to exercise, and the thing worth pinning is
+    that no call site is left without the argument.
+    """
+    source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
+    assert source.count("idle_timeout_seconds=IDLE_TIMEOUT_SECONDS") >= 3
+
+
+# ---------------------------------------------------------------------------
+# Absolute scale (2026-07-29 adversarial audit): the spec came from Optiland
+# while the control was scored by CODE V, and both existing legs are ratios.
+# ---------------------------------------------------------------------------
+
+
+def test_a_smaller_candidate_at_the_same_field_and_aperture_is_not_judged() -> None:
+    """The measured case: 2.84 mm against 4.40 mm, F/# 2.0 both sides, scored par."""
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    # Uniform scale: same tan(theta), same F/#, 0.646x the focal length.
+    candidate = _iq(efl_y_mm=2.84062, image_height_mm=2.84062 * 1.131, rms_spot_um=1.848)
+    control = _iq(efl_y_mm=4.39859, image_height_mm=4.39859 * 1.131, rms_spot_um=51.4502)
+    blocked, details = conformance_screen(candidate, control)
+    assert blocked == "efl_not_matched"
+    assert details["efl_ratio"] == pytest.approx(0.646, abs=1e-3)
+    # The two older legs really are blind to it -- that is why this one exists.
+    assert details["field_coverage_ratio"] == pytest.approx(1.0)
+    assert details["candidate_f_number"] == details["control_f_number"]
+
+
+def test_scale_is_checked_before_field_so_the_reason_names_the_real_problem() -> None:
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    both_wrong = _iq(efl_y_mm=2.0, image_height_mm=1.0)
+    assert conformance_screen(both_wrong, _iq(efl_y_mm=4.0, image_height_mm=3.0))[0] == (
+        "efl_not_matched"
+    )
+
+
+def test_the_efl_leg_uses_the_engines_own_achieved_target_tolerance() -> None:
+    """A candidate the optimiser itself calls converged must not fail here."""
+    from scripts.p2_crosssource_trial import EFL_PARITY_TOLERANCE, conformance_screen
+
+    assert pytest.approx(0.02) == EFL_PARITY_TOLERANCE
+    inside = _iq(efl_y_mm=4.0 * 1.019, image_height_mm=3.0 * 1.019)
+    assert conformance_screen(inside, _iq(efl_y_mm=4.0, image_height_mm=3.0))[0] is None
+    outside = _iq(efl_y_mm=4.0 * 1.03, image_height_mm=3.0 * 1.03)
+    assert conformance_screen(outside, _iq(efl_y_mm=4.0, image_height_mm=3.0))[0] == (
+        "efl_not_matched"
+    )
+
+
+def test_an_unreadable_efl_blocks_rather_than_passes() -> None:
+    from scripts.p2_crosssource_trial import conformance_screen
+
+    assert conformance_screen(_iq(efl_y_mm=None), _iq())[0] == "efl_not_comparable"
+    assert conformance_screen(_iq(), _iq(efl_y_mm=None))[0] == "efl_not_comparable"
+    assert conformance_screen(_iq(), _iq(efl_y_mm=0.0))[0] == "efl_not_comparable"
+
+
+def test_a_control_the_two_engines_disagree_about_is_refused_before_the_expensive_stage(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """41/440 of the corpus disagrees, 37 of them at exactly the cover-glass index."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    # Manifest (Optiland) says 3.0; the CODE V probe reads 1.5177x that.
+    _stub_control_probe(monkeypatch, efl_y_mm=3.0 * 1.5177, image_height_mm=3.0 * 1.5177)
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard",
+        lambda **k: (_ for _ in ()).throw(
+            AssertionError("no CODE V time may be spent on a control we cannot trust")
+        ),
+    )
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert record["verdict"] == "unmeasurable"
+    assert record["blocked_at"] == "control_engine_disagreement"
+    assert record["control_engine_agreement"]["probe_over_manifest"] == pytest.approx(1.5177)
+
+
+def test_an_agreeing_control_supplies_the_spec_from_the_engine_that_scores(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """When both engines agree there is no choice to make -- and none is invented."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    _stub_control_probe(monkeypatch, efl_y_mm=3.0, image_height_mm=2.5)
+    seen: dict[str, object] = {}
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        seen.update(kwargs)
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert seen["target_efl_mm"] == pytest.approx(3.0)
+    assert record["control_engine_agreement"]["probe_over_manifest"] == pytest.approx(1.0)
+    assert record["blocked_at"] != "control_engine_disagreement"
+
+
+def test_an_unprobeable_control_ends_the_trial_before_the_expensive_stage(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import scripts.p2_crosssource_trial as trial_module
+    from app.core.engines.codev_batch import CodeVBatchError
+
+    _budget_corpus(tmp_path, monkeypatch)
+
+    def _boom(**kwargs: object) -> object:
+        raise CodeVBatchError("failure", "control will not import")
+
+    monkeypatch.setattr(trial_module, "measure_image_quality", _boom)
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard",
+        lambda **k: (_ for _ in ()).throw(
+            AssertionError("the optimiser must not run without a measured control")
+        ),
+    )
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+    assert record["verdict"] == "unmeasurable"
+    assert record["blocked_at"] == "control_probe"
+
+
+# ---------------------------------------------------------------------------
+# Partial-field extrema (2026-07-29 adversarial audit, 8 findings, one root)
+# ---------------------------------------------------------------------------
+
+
+def test_a_max_over_fewer_fields_than_declared_is_not_the_max_we_report() -> None:
+    """@rmssum skips a field whose SPOTDATA errors and returns the survivors' max."""
+    quality = q(num_fields="4", rms_fields_ok="3")
+    assert quality.rms_spot_um is None
+    assert "rms_spot_partial_field_coverage" in quality.withheld
+    # The other metrics are untouched: only the extremum over fields is affected.
+    assert quality.efl_y_mm == pytest.approx(5.68)
+
+
+def test_a_min_over_fewer_fields_than_declared_is_not_the_min_we_report() -> None:
+    """Every dropped field moves MTF UP, and higher is better."""
+    quality = q(num_fields="4", mtf_fields_ok="1")
+    assert quality.mtf_min is None
+    assert "mtf_partial_field_coverage" in quality.withheld
+
+
+def test_full_field_coverage_passes_so_the_screen_is_not_a_blanket() -> None:
+    """The negative control: a screen that withholds everything measures nothing."""
+    quality = q(num_fields="4", rms_fields_ok="4", mtf_fields_ok="4")
+    assert quality.rms_spot_um == pytest.approx(10.4)
+    assert quality.mtf_min == pytest.approx(0.312)
+    assert quality.withheld == ()
+
+
+def test_a_missing_witness_withholds_rather_than_assumes_full_coverage() -> None:
+    """Fail-closed: a probe that did not report the witness proves nothing."""
+    data = dict(HEALTHY)
+    data.pop("rms_fields_ok")
+    data.pop("mtf_fields_ok")
+    quality = ImageQuality.from_data(data, source="probe.zmx")
+    assert quality.rms_spot_um is None
+    assert quality.mtf_min is None
+
+
+def test_the_witness_counts_are_required_probe_keys() -> None:
+    """A probe build that forgets them must fail loudly, not silently pass."""
+    from scripts.p2_crosssource_trial import _PROBE_REQUIRED_KEYS
+
+    assert "rms_fields_ok" in _PROBE_REQUIRED_KEYS
+    assert "mtf_fields_ok" in _PROBE_REQUIRED_KEYS
+
+
+def test_the_probe_sequence_asks_code_v_for_the_witness_counts() -> None:
+    from scripts.p2_crosssource_trial import build_probe_sequence
+
+    seq = build_probe_sequence(source_zmx="D:/x/a.zmx", result_path="D:/x/r.tsv")
+    assert "@rmsnf(1)" in seq
+    assert "@mtfnf(" in seq
+    assert '"rms_fields_ok"' in seq
+    assert '"mtf_fields_ok"' in seq
+
+
+def test_the_counting_macros_mirror_the_functions_they_witness() -> None:
+    """A witness that succeeds where its metric fails would be worse than none."""
+    from app.core.engines.codev_optimize import _metric_function_block
+
+    block = "\n".join(_metric_function_block())
+    assert "FCT @rmsnf(NUM ^dummy)" in block
+    assert "FCT @mtfnf(NUM ^freq, NUM ^nrd)" in block
+    # Same guard expressions as @rmssum / @mtfmin.
+    assert block.count("^err == SPOTDATA(1,^f,1,0.01,'CEN',0,0,^spot)") == 2
+    assert block.count("IF ^xmtf >= 0 and ^ymtf >= 0") == 2
+
+
+def test_the_rebuilt_seed_filename_is_code_v_safe(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`f"{angle:g}"` gave `_field45.1`, and CODE V aborts the macro on a
+    `.<digits>` infix. The guard caught it on the first real-machine run; this
+    pins the fix so it cannot come back by way of a tidier-looking format."""
+    import scripts.p2_crosssource_trial as trial_module
+    from app.core.engines.codev_batch import ensure_buf_exp_safe_filename
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    # Control at 45.1 deg half field -- the exact value that broke.
+    control = _REBUILD_ZMX.replace("YFLN 0 12.5 25", "YFLN 0 22.55 45.1")
+    (zmx_dir / "ctl.zmx").write_bytes(control.encode("latin-1"))
+    (zmx_dir / "seed.zmx").write_bytes(_REBUILD_ZMX.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch, efl_y_mm=3.0, image_height_mm=2.5)
+
+    seen: dict[str, Path] = {}
+
+    def _capture(**kwargs: object) -> dict[str, object]:
+        seen["source"] = Path(str(kwargs["source_zmx"]))
+        return {"preferred": None, "configs": {}}
+
+    monkeypatch.setattr("app.core.engines.codev_optimize.run_codev_target_standard", _capture)
+    trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+
+    name = seen["source"].name
+    assert "_field0451" in name
+    assert "45.1" not in name
+    # The real contract: the guard that fired on the real machine must accept it,
+    # both for this file and for the optimiser's derived candidate name.
+    ensure_buf_exp_safe_filename(seen["source"], role="rebuilt_seed")
+    derived = seen["source"].with_name(
+        seen["source"].stem + "_target002837_vig0000_optimized.zmx"
+    )
+    ensure_buf_exp_safe_filename(derived, role="optimized_zmx_path")
+
+
+def test_both_optimiser_arms_are_always_recorded_not_only_on_failure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`_select_preferred` chooses on RMS spot -- a judged metric -- and ignores
+    the pupil clip each arm needed. Until the rule changes, the record must at
+    least show what was chosen over what."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    _budget_corpus(tmp_path, monkeypatch)
+    configs = {
+        "asphere": {
+            "aut_converged": "1",
+            "autovig.edge_used": "0",
+            "post_aut.max_rms_spot_diameter_um": "75.08",
+            "optimized_zmx_path": None,
+        },
+        "both": {
+            "aut_converged": "1",
+            "autovig.edge_used": "0.3",
+            "post_aut.max_rms_spot_diameter_um": "43.77",
+            "optimized_zmx_path": None,
+        },
+    }
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard",
+        lambda **k: {"preferred": "both", "preferred_reason": "both wins on RMS", "configs": configs},
+    )
+    record = trial_module.run_trial(_rebuild_plan(), out_dir=tmp_path / "out")
+
+    assert record["preferred_config"] == "both"
+    assert set(record["configs"]) == {"asphere", "both"}
+    # The two numbers that make the choice auditable.
+    assert record["configs"]["both"]["autovig.edge_used"] == "0.3"
+    assert record["configs"]["asphere"]["autovig.edge_used"] == "0"
+    assert record["configs"]["both"]["post_aut.max_rms_spot_diameter_um"] == "43.77"
+    # The winning arm was clipped harder than the loser -- exactly the confound
+    # the disclosure exists to make visible.
+    assert float(record["configs"]["both"]["autovig.edge_used"]) > float(
+        record["configs"]["asphere"]["autovig.edge_used"]
+    )
+
+
+# ---------------------------------------------------------------------------
+# Criterion ③: 交付物四件套完整度（缺一不算交付）
+# ---------------------------------------------------------------------------
+
+import scripts.p2_crosssource_trial as trial  # noqa: E402
+
+
+def _four_piece_record(tmp_path, **overrides):
+    zmx = tmp_path / "cand.zmx"
+    zmx.write_bytes(b"VERS 1\n")
+    record = {
+        "plan": {
+            "control_zmx": "c.zmx",
+            "seed_zmx": "s.zmx",
+            "control_case_id": "CTRL-1",
+            "seed_case_id": "SEED-1",
+        },
+        "candidate_zmx": str(zmx),
+        "metrics": {
+            "rms_spot_um": {"candidate": 4.0, "control": 5.0, "verdict": "par"},
+            "mtf_min": {"candidate": 0.5, "control": 0.4, "verdict": "par"},
+            "distortion_pct": {"candidate": 1.0, "control": 1.1, "verdict": "par"},
+        },
+        "tolerance": {"candidate": {"yield_fraction": 0.6}},
+        "relative_cost_index": {"ratio": 0.99},
+        "verdict": "par",
+    }
+    record.update(overrides)
+    return record
+
+
+def test_all_four_pieces_present_counts_as_delivered(tmp_path) -> None:
+    pieces = trial._deliverable_pieces(_four_piece_record(tmp_path))
+    assert pieces == {
+        "prescription_zmx": True,
+        "image_quality": True,
+        "tolerance_yield": True,
+        "relative_cost": True,
+    }
+
+
+def test_a_recorded_zmx_path_that_is_not_on_disk_is_not_a_deliverable(tmp_path) -> None:
+    """A path is a promise; the file is the deliverable."""
+    record = _four_piece_record(tmp_path, candidate_zmx=str(tmp_path / "absent.zmx"))
+    assert trial._deliverable_pieces(record)["prescription_zmx"] is False
+
+
+def test_one_withheld_metric_makes_image_quality_undelivered(tmp_path) -> None:
+    """Counting a partial metric set would report exactly the flattering number the
+    witness gates exist to refuse."""
+    record = _four_piece_record(tmp_path)
+    record["metrics"]["mtf_min"]["candidate"] = None
+    assert trial._deliverable_pieces(record)["image_quality"] is False
+
+
+@pytest.mark.parametrize(
+    "candidate_tolerance",
+    [
+        {"error": "CodeVBatchError: TOR produced no export"},
+        {},
+        None,
+        {"yield_fraction": None},
+        {"yield_fraction": "0.6"},  # a string is not a measurement
+    ],
+)
+def test_a_missing_or_unusable_yield_is_not_a_deliverable(tmp_path, candidate_tolerance) -> None:
+    record = _four_piece_record(tmp_path, tolerance={"candidate": candidate_tolerance})
+    assert trial._deliverable_pieces(record)["tolerance_yield"] is False
+
+
+@pytest.mark.parametrize("ratio", [None, float("inf"), float("nan"), "0.99"])
+def test_a_non_finite_cost_ratio_is_not_a_deliverable(tmp_path, ratio) -> None:
+    record = _four_piece_record(tmp_path, relative_cost_index={"ratio": ratio})
+    assert trial._deliverable_pieces(record)["relative_cost"] is False
+
+
+def test_a_skipped_tolerance_run_reports_not_assessable_not_zero(tmp_path) -> None:
+    """"We did not measure it" and "it did not work" must not share a number.
+
+    A `--skip-tolerance` phase-1 run cannot reach four by construction, so reporting
+    `all_four = 0` would read as a total failure of the deliverable chain.
+    """
+    records = [
+        _four_piece_record(tmp_path, tolerance={"skipped": "cli_request"}),
+        _four_piece_record(tmp_path, tolerance={"skipped": "cli_request"}),
+    ]
+    result = trial._deliverable_completeness(records)
+    assert result["status"] == "not_assessable"
+    assert result["all_four"] is None
+    assert "tolerance skipped by request on 2/2" in result["reason"]
+    # The other three pieces are still counted -- the run is not uninformative.
+    assert result["per_piece"]["prescription_zmx"] == 2
+    assert result["per_piece"]["relative_cost"] == 2
+    assert result["per_piece"]["tolerance_yield"] == 0
+
+
+def test_a_full_run_reports_a_measured_all_four_count(tmp_path) -> None:
+    """Negative control: with no request-skip, the count is a real measurement."""
+    good = _four_piece_record(tmp_path)
+    missing_cost = _four_piece_record(tmp_path, relative_cost_index={"ratio": None})
+    result = trial._deliverable_completeness([good, missing_cost])
+    assert result["status"] == "measured"
+    assert result["all_four"] == 1
+    assert result["per_piece"]["relative_cost"] == 1
+
+
+def test_the_summary_carries_the_deliverable_block(tmp_path) -> None:
+    summary = trial.summarise([_four_piece_record(tmp_path)])
+    assert set(summary["deliverables"]) == {"trials", "per_piece", "all_four", "status", "reason"}
+    assert "四件套" in trial.render(summary)
+
+
+# ---------------------------------------------------------------------------
+# The field-witness shortfall tally: P1's root cause as a headline number
+# ---------------------------------------------------------------------------
+
+
+def _witness_record(*, candidate: tuple[int, int] | None, control: tuple[int, int] | None) -> dict:
+    record: dict = {
+        "plan": {
+            "control_zmx": "c.zmx",
+            "seed_zmx": "s.zmx",
+            "control_case_id": "CTRL-1",
+            "seed_case_id": "SEED-1",
+        }
+    }
+    for side, pair in (("candidate", candidate), ("control", control)):
+        if pair is not None:
+            ok, declared = pair
+            record[f"{side}_quality"] = {"rms_fields_ok": ok, "num_fields": declared}
+    return record
+
+
+def test_a_candidate_short_of_its_declared_fields_is_counted() -> None:
+    counts = trial._witness_shortfall([_witness_record(candidate=(1, 2), control=(2, 2))])
+    assert counts["candidate_partial"] == 1
+    assert counts["control_partial"] == 0
+    assert counts["both_full"] == 0
+
+
+def test_a_candidate_that_traces_nothing_is_counted_separately_from_partial() -> None:
+    """Zero fields and one-of-two are different failures: the first means the candidate
+    does not image at all, the second that it lost the outer field."""
+    counts = trial._witness_shortfall([_witness_record(candidate=(0, 2), control=(2, 2))])
+    assert counts["candidate_zero"] == 1
+    assert counts["candidate_partial"] == 0
+
+
+def test_a_short_control_is_never_folded_into_the_candidate_count() -> None:
+    """A control that drops a field is a different problem — the corpus lens is not
+    traceable at its own declared field — and merging the two would hide it."""
+    counts = trial._witness_shortfall([_witness_record(candidate=(2, 2), control=(1, 2))])
+    assert counts["control_partial"] == 1
+    assert counts["candidate_partial"] == 0
+    assert counts["both_full"] == 0
+
+
+def test_both_sides_full_is_its_own_count() -> None:
+    counts = trial._witness_shortfall([_witness_record(candidate=(2, 2), control=(2, 2))])
+    assert counts["both_full"] == 1
+
+
+def test_a_trial_with_no_witness_is_not_counted_as_full() -> None:
+    """Absence of a witness must never read as "all fields imaged" — that is the
+    fail-open shape the witness gates exist to prevent."""
+    counts = trial._witness_shortfall([_witness_record(candidate=None, control=None)])
+    assert counts["no_witness"] == 1
+    assert counts["both_full"] == 0
+
+
+@pytest.mark.parametrize(
+    "bad", [{"rms_fields_ok": "2", "num_fields": 2}, {"rms_fields_ok": 2}, {"num_fields": 2}]
+)
+def test_a_malformed_witness_is_not_counted_as_full(bad: dict) -> None:
+    record = {"plan": {}, "candidate_quality": bad, "control_quality": bad}
+    counts = trial._witness_shortfall([record])
+    assert counts["both_full"] == 0
+    assert counts["no_witness"] == 1
+
+
+def test_the_tally_reaches_the_rendered_report() -> None:
+    summary = trial.summarise(
+        [
+            _witness_record(candidate=(1, 2), control=(2, 2)),
+            _witness_record(candidate=(2, 2), control=(2, 2)),
+        ]
+    )
+    assert summary["field_witness"]["candidate_partial"] == 1
+    assert summary["field_witness"]["both_full"] == 1
+    assert "field witness shortfall" in trial.render(summary)
+
+
+# ---------------------------------------------------------------------------
+# Run provenance: an A/B between two run directories has to be interpretable
+# ---------------------------------------------------------------------------
+
+
+def test_provenance_records_the_flags_that_change_behaviour(tmp_path) -> None:
+    """These four flags each change what the trial does, so a run directory that does
+    not name them cannot be compared against another one."""
+
+    p = trial.run_provenance(
+        census_path=tmp_path / "absent.jsonl",
+        rebuild_seed_field=False,
+        skip_tolerance=True,
+        trial_budget_seconds=1500.0,
+        timeout_seconds=180.0,
+    )
+    assert p["flags"] == {
+        "rebuild_seed_field": False,
+        "skip_tolerance": True,
+        "trial_budget_seconds": 1500.0,
+        "timeout_seconds": 180.0,
+    }
+
+
+def test_provenance_digests_the_census_and_reports_absence_honestly(tmp_path) -> None:
+    """The census is a runtime product outside the worktree, so "which census" cannot be
+    answered by a path alone."""
+
+    census = tmp_path / "c.jsonl"
+    census.write_text('{"seed": "a"}\n', encoding="utf-8")
+    with_file = trial.run_provenance(
+        census_path=census,
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert len(with_file["census_sha256"]) == 64
+
+    without = trial.run_provenance(
+        census_path=tmp_path / "absent.jsonl",
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert without["census_sha256"] is None
+
+
+def test_provenance_flags_a_dirty_tree_rather_than_letting_the_sha_imply_more() -> None:
+    """A dirty tree means the sha does not describe the code that ran. The field must
+    exist and be a bool (or None if git is unavailable) -- never silently absent, which
+    would read as clean."""
+
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert "git_dirty" in p
+    assert p["git_dirty"] is None or isinstance(p["git_dirty"], bool)
+    if p["git_dirty"]:
+        # Paths must survive intact; a fixed [3:] slice on porcelain output was observed
+        # to eat the first character ("cripts/...").
+        assert all(not name.startswith("cripts") for name in p["git_dirty_paths"])
+        assert all(not name.startswith(" ") for name in p["git_dirty_paths"])
+
+
+def test_provenance_never_raises_when_git_is_unavailable(monkeypatch) -> None:
+    """A 12-hour real-machine run must not die because provenance collection failed."""
+
+    import subprocess as _sp
+
+    def _boom(*args, **kwargs):
+        raise OSError("no git here")
+
+    monkeypatch.setattr(_sp, "run", _boom)
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert p["git_sha"] is None
+    assert p["git_dirty"] is None
+    assert p["flags"]["rebuild_seed_field"] is True
+
+
+# ---------------------------------------------------------------------------
+# Config selection audit: how much of the headline is best-of-2 on a judged metric
+# ---------------------------------------------------------------------------
+
+
+def _configs_record(*, asphere: dict, both: dict, preferred: str = "both") -> dict:
+    return {
+        "plan": {
+            "control_zmx": "c.zmx",
+            "seed_zmx": "s.zmx",
+            "control_case_id": "CTRL-1",
+            "seed_case_id": "SEED-1",
+        },
+        "configs": {"asphere": asphere, "both": both},
+        "preferred_config": preferred,
+    }
+
+
+def _cfg(*, converged: str, rms: str, fields: tuple[str, str] | None = ("2", "2")) -> dict:
+    out = {"aut_converged": converged, "post_aut.max_rms_spot_diameter_um": rms}
+    if fields is not None:
+        out["post_aut.rms_fields_ok"], out["post_aut.num_fields"] = fields
+    return out
+
+
+def test_a_choice_made_on_convergence_is_not_attributed_to_rms() -> None:
+    """The open audit item overstates the bias if convergence did the choosing:
+    `aut_converged` is not one of the three judged metrics."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="0", rms="40.0"),
+                both=_cfg(converged="1", rms="90.0"),
+            )
+        ]
+    )
+    assert audit["decided_by"] == {"aut_not_converged": 1}
+    assert audit["rms_gain"]["n"] == 0
+
+
+def test_a_choice_made_on_rms_is_counted_and_its_gain_measured() -> None:
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="1", rms="100.0"),
+                both=_cfg(converged="1", rms="50.0"),
+            )
+        ]
+    )
+    assert audit["decided_by"] == {"rms_spot": 1}
+    assert audit["rms_gain"]["n"] == 1
+    assert audit["rms_gain"]["median"] == 1.0  # 100 vs 50 -> the chosen arm is 100% better
+
+
+def test_the_gain_is_reported_only_for_the_subset_rms_decided() -> None:
+    """A gain quoted without its own n reads as applying to every trial."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="0", rms="40.0"), both=_cfg(converged="1", rms="90.0")
+            ),
+            _configs_record(
+                asphere=_cfg(converged="1", rms="100.0"), both=_cfg(converged="1", rms="50.0")
+            ),
+        ]
+    )
+    assert audit["trials_with_two_usable_configs"] == 2
+    assert audit["rms_gain"]["n"] == 1
+
+
+def test_an_errored_config_leaves_nothing_to_audit() -> None:
+    """With one arm broken there was no choice, so counting it would inflate the
+    denominator of a bias that could not have operated."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere={"error": {"kind": "timeout"}},
+                both=_cfg(converged="1", rms="50.0"),
+            )
+        ]
+    )
+    assert audit["trials_with_two_usable_configs"] == 0
+
+
+def test_field_coverage_outranks_rms_when_the_witness_is_present() -> None:
+    """With the coverage term in the rank tuple, a coverage difference must be named as
+    the decider rather than being reported as an RMS win -- otherwise the audit would
+    credit the bias for a choice that was actually made on correctness."""
+
+    audit = trial._config_selection_audit(
+        [
+            _configs_record(
+                asphere=_cfg(converged="1", rms="90.0", fields=("2", "2")),
+                both=_cfg(converged="1", rms="40.0", fields=("1", "2")),
+                preferred="asphere",
+            )
+        ]
+    )
+    assert audit["decided_by"] == {"fields_dropped": 1}
+    assert audit["rms_gain"]["n"] == 0
+
+
+def test_the_audit_reaches_the_rendered_report() -> None:
+    summary = trial.summarise(
+        [
+            _configs_record(
+                asphere=_cfg(converged="1", rms="100.0"), both=_cfg(converged="1", rms="50.0")
+            )
+        ]
+    )
+    rendered = trial.render(summary)
+    assert "config choice decided by" in rendered
+    assert "RMS gain when RMS chose" in rendered
+
+
+def test_a_clean_tree_reports_dirty_false_not_none() -> None:
+    """`_git` collapses empty output into None, so a clean tree was reporting
+    `git_dirty: null` -- indistinguishable from "git unavailable". That is the mirror
+    image of the flaw the field exists to prevent (absent reading as clean), and it
+    showed up in the first real run's plan.json.
+    """
+
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert p["git_available"] is True, "this repo is a git worktree; git must be available"
+    assert isinstance(p["git_dirty"], bool), "with git available, dirty must be a bool"
+
+
+def test_git_unavailable_is_distinguishable_from_clean(monkeypatch) -> None:
+    import subprocess as _sp
+
+    monkeypatch.setattr(_sp, "run", lambda *a, **k: (_ for _ in ()).throw(OSError("no git")))
+    p = trial.run_provenance(
+        census_path=Path("absent.jsonl"),
+        rebuild_seed_field=True,
+        skip_tolerance=False,
+        trial_budget_seconds=None,
+        timeout_seconds=180.0,
+    )
+    assert p["git_available"] is False
+    assert p["git_dirty"] is None
+
+
+def test_the_plan_records_the_reachability_quality_split() -> None:
+    """`seed_pool_basis` is the record of a real conflict, not a debug field.
+
+    Measured 2026-07-30: only 6 of 59 controls have a cross-source seed that is both
+    inside the +25% focal-stretch limit and at or below the corpus median quality. A run
+    artifact that omits this cannot be read later to tell "we chose a mediocre seed" from
+    "no good seed was reachable".
+    """
+
+    source = Path("scripts/p2_crosssource_trial.py").read_text(encoding="utf-8")
+    assert '"seed_pool_basis": census_result.get("seed_pool_basis")' in source
+    assert '"seed_quality_limit_um": census_result.get("seed_quality_limit_um")' in source
+    assert '"seed_efl_max_stretch": census_result.get("seed_efl_max_stretch")' in source

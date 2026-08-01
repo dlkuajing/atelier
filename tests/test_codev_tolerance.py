@@ -509,3 +509,71 @@ def test_a_ratified_policy_must_state_the_out_of_model_ceiling() -> None:
     """No default: the caller has to decide how much disclosure is too much."""
     with pytest.raises(ValueError, match="max_out_of_model_fraction"):
         TorYieldPolicy("MTF", 0.3, "min", True, "evidence", 1.0)
+
+
+def test_tor_forwards_the_idle_watchdog_to_the_runner(tmp_path: Path) -> None:
+    """TOR is the most expensive stage in a P2 trial; a zombie here costs the most."""
+    seen: dict[str, object] = {}
+
+    def fake(command, **kwargs):
+        seen.update(kwargs)
+        (Path(kwargs["cwd"]) / "atelier_tor_per.tsv").write_bytes(REAL_PER.read_bytes())
+        (Path(kwargs["cwd"]) / "atelier_tor_mc.tsv").write_bytes(REAL_MC.read_bytes())
+        return type("P", (), {"returncode": 0, "stderr": ""})()
+
+    run_codev_tor(
+        source_zmx=REAL_ZMX,
+        work_dir=tmp_path / "tor",
+        runner=fake,
+        tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"),
+        compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"),
+        monte_carlo=TorMonteCarlo(20),
+        metric="mtf",
+        mtf_frequency_lp_per_mm=100.0,
+        idle_timeout_seconds=45.0,
+    )
+    assert seen["idle_timeout"] == 45.0
+
+
+def test_tor_without_an_idle_watchdog_still_passes_the_key_as_none(tmp_path: Path) -> None:
+    """The default must be explicit rather than absent: `None` = pre-watchdog behaviour."""
+    seen: dict[str, object] = {}
+
+    def fake(command, **kwargs):
+        seen.update(kwargs)
+        (Path(kwargs["cwd"]) / "atelier_tor_per.tsv").write_bytes(REAL_PER.read_bytes())
+        (Path(kwargs["cwd"]) / "atelier_tor_mc.tsv").write_bytes(REAL_MC.read_bytes())
+        return type("P", (), {"returncode": 0, "stderr": ""})()
+
+    run_codev_tor(
+        source_zmx=REAL_ZMX,
+        work_dir=tmp_path / "tor",
+        runner=fake,
+        tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"),
+        compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"),
+        monte_carlo=TorMonteCarlo(20),
+        metric="mtf",
+        mtf_frequency_lp_per_mm=100.0,
+    )
+    assert "idle_timeout" in seen
+    assert seen["idle_timeout"] is None
+
+
+def test_the_default_tor_runner_hands_the_watchdog_to_the_process_layer(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Forwarding into `run_codev_tor` is useless if the default runner drops it."""
+    from app.core.engines import codev_tolerance as tolerance_module
+
+    seen: dict[str, object] = {}
+
+    def fake_process(command, **kwargs):
+        seen.update(kwargs)
+        return (type("P", (), {"returncode": 0})(), "", "", 0.0)
+
+    monkeypatch.setattr(tolerance_module, "run_codev_process", fake_process)
+    tolerance_module._default_tor_runner(["codev"], cwd=".", timeout=10.0, idle_timeout=45.0)
+    assert seen["idle_timeout_seconds"] == 45.0
+    seen.clear()
+    tolerance_module._default_tor_runner(["codev"], cwd=".", timeout=10.0, idle_timeout=None)
+    assert seen["idle_timeout_seconds"] is None

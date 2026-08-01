@@ -119,13 +119,18 @@ def test_non_angular_and_missing_inputs_are_skipped_not_guessed(tmp_path: Path) 
     }
 
 
-def test_the_real_corpus_is_mixed_and_the_zmx_side_is_the_consistent_one() -> None:
-    """Measured 2026-07-29: 253 half + 172 full, both with imh/(EFL*tan θ) ~ 1.0."""
+def test_the_real_corpus_now_carries_one_convention() -> None:
+    """The migration's witness, from the same census that found the split.
+
+    Measured before `reanchor_fov_deg` ran: 253 half + 172 full, both with
+    imh/(EFL*tan θ) ~ 1.0 -- which is what proved the ZMX side was right in both
+    groups and the manifest was what disagreed with itself. After the migration
+    every anchorable case states a full FOV. The negative control above proves
+    this census can still come back "mixed", so a clean answer here is a finding,
+    not a broken screen.
+    """
     _, summary = census()
-    assert summary["mixed"] is True
-    assert summary["half_n"] > 100
-    assert summary["full_n"] > 100
-    # Both groups agree with their own ZMX angle read as a *half* angle, so the
-    # ZMX is right in both and the manifest is what disagrees with itself.
-    assert summary["half_rectilinear_consistency_median"] == pytest.approx(1.0, abs=0.05)
+    assert summary["mixed"] is False
+    assert summary["conventions"] == {"full": summary["full_n"]}
+    assert summary["full_n"] > 400
     assert summary["full_rectilinear_consistency_median"] == pytest.approx(1.0, abs=0.05)

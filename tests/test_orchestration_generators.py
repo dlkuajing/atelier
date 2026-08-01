@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -51,6 +52,7 @@ from app.core.orchestration.generators import (
 )
 from app.core.orchestration.orchestrator import orchestrate
 from app.core.orchestration.scorecard import score_candidate
+from app.core.parameter_guards import SCENARIO_BOUNDS, ParameterGuardError, validate_scenario_params
 from app.core.zmx_ingest import ZMX_AMMO_DIR
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -770,11 +772,47 @@ def test_rank_seeds_by_target_match_recovers_real_wide_anchor_excluded_from_stag
     assert scored[0][0].metadata.case_id == "US-11719917-B2-e6"
 
 
+def _telephoto_narrowest_in_domain_fov_deg(target_efl_mm: float) -> float:
+    """本场景下 target EFL 对应的**最窄合法全视场**，由产品自己的闸导出。
+
+    `SCENARIO_BOUNDS` 逐轴独立判定，`fov_deg_min=15.0` 是**全轴**下界，不是
+    "这个 EFL 下的"下界：视场与焦距不独立，`imh = efl·tan(fov/2)`。所以在
+    给定 EFL 上真正咬合的下边界是**像高下限**，不是 `fov_deg_min` ——
+    EFL=11.5mm 时 `fov_deg_min` 对应像高 1.54mm，被 `image_height_mm_min=2.5`
+    拒收（本文件同名回归测试 `test_..._target_is_in_domain` 钉住这一点）。
+
+    2026-07-29 `fov_deg` 重锚（半视场 → 全视场）之后这条推导才有必要：重锚
+    前本测试的 target 15.3° 是按**半视场**写的（= 全视场 30.6°），语料重锚
+    了、target 没跟着重锚，于是它变成了一条产品自己不接的单。
+    """
+    bounds = SCENARIO_BOUNDS[Scenario.SMARTPHONE_TELEPHOTO]
+    return math.degrees(2.0 * math.atan(bounds.image_height_mm_min / target_efl_mm))
+
+
 def test_rank_seeds_by_target_match_recovers_real_telephoto_anchor_excluded_from_stage1_top_k():
-    """真库反例：tele target EFL=11.5mm/FOV=15.3°（贴近场景 FOV 下界
-    15.0°，仍是合法客户请求）时，`US-20210364737-A1-e8`
-    （原生 EFL≈12.012mm，ΔEFL≈-4.26%，band=lt5）同样被 stage 1 top-10
-    挡在外面，stage 1b 补齐后必须夺回第一名。"""
+    """真库反例：tele target EFL=11.5mm、FOV 取该 EFL 下**最窄的合法全视场**
+    （≈24.53°，由 `image_height_mm_min` 导出，见
+    `_telephoto_narrowest_in_domain_fov_deg`）时，`US-20210364737-A1-e8`
+    （原生 EFL≈12.012mm，ΔEFL≈-4.26%，band=lt5）被 stage 1 top-10 挡在外面，
+    stage 1b 补齐后必须夺回第一名。
+
+    target 的 FOV **不是钉住锚点自己的视场**（锚点 24.633°，target 24.530°）
+    ——它由产品闸 + target EFL 独立导出，锚点恰好落在这条边界内侧是被测出来
+    的结果，不是被写进去的前提。原始 docstring 的意图（"贴近场景 FOV 下界，
+    仍是合法客户请求"）在重锚后的表达就是这条边界。
+
+    实测（2026-07-30，0.25° 步长扫描）：锚点在 **24.00–27.25°** 整段都是 rank 1
+    （band=lt5、score=4.260），本 target 24.530° 落在这个 3.25° 平台内侧，不是
+    踩在悬崖边上。旧的 15.3° target 下 rank 1 是 `US-12571987-B2-e5`
+    （band=**gt30**、score=35.13，EFL 差 54%）——不是权重回归，是 target 过期。
+
+    另一种读法（"作者写的 15.3 就是半视场，翻倍成 30.6° 即可"）**实测不成立**：
+    30.6° 下 rank 1 是 `US-12372756-B2-e6`（band=5to15）。取 24.530° 的理由是原
+    docstring 把 15.3 的来历写死了——"贴近场景 FOV 下界 15.0°"，即照着 bound 挑
+    的，不是照着某颗镜头的半视场挑的。
+
+    详见 `.planning/evidence/seed-routing-weight-sensitivity-2026-07-30.md`。
+    """
     pool = [
         c
         for c in load_case_library()
@@ -782,7 +820,8 @@ def test_rank_seeds_by_target_match_recovers_real_telephoto_anchor_excluded_from
         and c.metadata.scenario in _candidate_scenarios(Scenario.SMARTPHONE_TELEPHOTO)
         and (ZMX_AMMO_DIR / c.metadata.source_zmx).is_file()
     ]
-    target_efl, target_fov, target_fnum = 11.5, 15.3, 2.2
+    target_efl, target_fnum = 11.5, 2.2
+    target_fov = _telephoto_narrowest_in_domain_fov_deg(target_efl)
 
     ranking = rank_seeds(pool, efl_mm=target_efl, fov_deg=target_fov, fnum=target_fnum)
     primary_ids = {c.metadata.case_id for c in ranking.ranked_cases[:10] if c.metadata is not None}
@@ -797,6 +836,47 @@ def test_rank_seeds_by_target_match_recovers_real_telephoto_anchor_excluded_from
     scored = TargetConvergedGenerator._rank_seeds_by_target_match(spec)
     assert scored[0][0].metadata is not None
     assert scored[0][0].metadata.case_id == "US-20210364737-A1-e8"
+
+
+def test_telephoto_anchor_target_is_in_domain_but_the_stale_one_is_not():
+    """钉住上一条测试改 target 的**理由**，不只是改后的数字。
+
+    `validate_scenario_params` 逐轴独立判定，从不校验 `imh ≈ efl·tan(fov/2)`
+    ——所以旧 target（EFL 11.5 / FOV 15.3）只要不报像高就能过闸，一旦把它自己
+    蕴含的像高报上去（1.5446mm）就会被产品自己拒收。这条测试保证：以后谁再
+    动 `SCENARIO_BOUNDS` 或再翻一次视场约定，"target 是合法客户请求"这句话
+    会被机器复核，而不是留在 docstring 里靠人记得。
+    """
+    target_efl = 11.5
+    stale_fov = 15.3  # 重锚前按半视场写的 target，重锚后按全视场读
+    in_domain_fov = _telephoto_narrowest_in_domain_fov_deg(target_efl)
+
+    def implied_image_height_mm(fov_deg: float) -> float:
+        return target_efl * math.tan(math.radians(fov_deg / 2.0))
+
+    # 旧 target 蕴含的像高在域外——它从来不是"合法客户请求"，只是没被问到像高。
+    with pytest.raises(ParameterGuardError):
+        validate_scenario_params(
+            Scenario.SMARTPHONE_TELEPHOTO,
+            efl_mm=target_efl,
+            f_number=2.2,
+            fov_deg=stale_fov,
+            image_height_mm=implied_image_height_mm(stale_fov),
+            n_elements=7,
+        )
+
+    # 新 target 蕴含的像高恰好落在像高下限上，逐轴闸全过。
+    bounds = SCENARIO_BOUNDS[Scenario.SMARTPHONE_TELEPHOTO]
+    assert implied_image_height_mm(in_domain_fov) == pytest.approx(bounds.image_height_mm_min)
+    assert bounds.fov_deg_min <= in_domain_fov <= bounds.fov_deg_max
+    validate_scenario_params(
+        Scenario.SMARTPHONE_TELEPHOTO,
+        efl_mm=target_efl,
+        f_number=2.2,
+        fov_deg=in_domain_fov,
+        image_height_mm=implied_image_height_mm(in_domain_fov),
+        n_elements=7,
+    )
 
 
 def test_rank_seeds_by_target_match_does_not_force_in_genuinely_far_fov_ultrawide_anchor():
@@ -815,15 +895,39 @@ def test_rank_seeds_by_target_match_does_not_force_in_genuinely_far_fov_ultrawid
     target_efl, target_fnum = 3.2, 2.1
     anchor_id = "US-12210213-B2-e3"
 
+    # 2026-07-30: the boundary moved by about one degree when `fov_deg` was re-anchored
+    # from half to full angle. It is a *recalibration*, not a regression -- rescanned and
+    # the structure this test exists to protect is intact and still sharp:
+    #
+    #     target fov 98.0 -> anchor EXCLUDED     98.5 -> anchor EXCLUDED
+    #     target fov 99.5 -> anchor RANK 1      100.5..104.5 -> anchor RANK 1
+    #
+    # Still no "excluded but recoverable" middle ground, and the anchor is still never
+    # forced in below the adaptive cap. The cap tightened because 253 of 442 cases had
+    # stored a half angle: with the pool's angles corrected, the primary pool near this
+    # target is tighter, so the adaptive cap derived from its spread is tighter too, and a
+    # 5.1-degree mismatch now falls outside it.
     spec_far = TargetSpec(
-        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.0, fnum=target_fnum
+        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.5, fnum=target_fnum
     )
     scored_far = TargetConvergedGenerator._rank_seeds_by_target_match(spec_far)
     far_ids = {c.metadata.case_id for c, _ in scored_far if c.metadata is not None}
     assert anchor_id not in far_ids  # 自适应上限正确拒绝了它——不是漏斗缺陷
 
+    # One degree lower must still reject it: the invariant is "never forced in", so the
+    # rejection has to hold on the whole far side, not only at the boundary.
+    spec_farther = TargetSpec(
+        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.0, fnum=target_fnum
+    )
+    farther_ids = {
+        c.metadata.case_id
+        for c, _ in TargetConvergedGenerator._rank_seeds_by_target_match(spec_farther)
+        if c.metadata is not None
+    }
+    assert anchor_id not in farther_ids
+
     spec_near = TargetSpec(
-        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=98.5, fnum=target_fnum
+        scenario=Scenario.SMARTPHONE_ULTRAWIDE, efl_mm=target_efl, fov_deg=99.5, fnum=target_fnum
     )
     scored_near = TargetConvergedGenerator._rank_seeds_by_target_match(spec_near)
     assert scored_near[0][0].metadata is not None

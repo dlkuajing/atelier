@@ -51,18 +51,26 @@ jobs:
         run: uv run ruff check .
 
   backend:
-    name: Backend (pytest ${{ matrix.shard }}/4)
+    name: Backend fast (pytest ${{ matrix.shard }}/2)
     runs-on: ubuntu-latest
     strategy:
-      # 分片，不是 -n 并行。两者根因不同：-n 在同一台 nproc=2 的机器上争用
-      # 且每个 worker 重复导入 Optiland/scipy/numpy（三次实测均为负优化，见下）；
-      # 分片是各自独立的 runner VM，两条根因都不成立。
+      # 分片，不是 -n 并行：-n 在 nproc=2 的 runner 上三次实测均为负优化
+      # （争用 + 每 worker 重复导入 Optiland/scipy/numpy）；分片是独立 VM。
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
-    # 单片预算。全量串行实测 53 分钟（run 30443200160），4 片本地实测均衡到
-    # 每片约 1/4，折算 CI 约 14 分钟 + setup。留足余量但不至于把挂死藏一小时。
-    timeout-minutes: 40
+        shard: [1, 2]
+    # 车道化（2026-08-01）终结了「分片轮盘」时代：40->60->120->180->240 的帽
+    # 竞赛五轮五败，根因是四个全语料扫描重文件（实测 optical_match 176 分钟 /
+    # seed_intake 97 / acceptance 59 / patent_to_zmx 48，合计占已称重总量 96%）
+    # 在 LPT 分片里随机聚落，叠加 acceptance 的 _report() memo 被拆散后 4x
+    # 冷启动与 runner 机速方差——耗时表永远追不上。四文件现走下面的
+    # backend-heavy 固定车道；本 job 只跑其余 ~4400 条轻测试（实测合计
+    # ~16 分钟），90 分钟帽 = 轻池实测的 5 倍余量。帽竞赛的完整实测脉络
+    # 见 git log 本文件。
+    #
+    # ⚠️ 真正的根治仍是查清「重锚后路由为何慢 3.5 倍」——`match_case` 在请求
+    # 路径上，这同时是生产问题。已单独立项。
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
         with:
@@ -108,9 +116,16 @@ jobs:
       # 断言各分片 node-id 并集 == 当前实际收集到的全量、且两两不相交。
       # 全量列表来自 --collect-only（运行时事实），不是 durations 文件（可能过期），
       # 所以新增的测试会被分配而不是被跳过。
+      # --exclude-file 四项必须与下面 backend-heavy 三条车道的 paths 并集逐字一致
+      # ——这是「每条测试恰好跑一次」的车道层契约。ci_shards 对收集不到测试的
+      # 排除名单会报错退出（防拼写错静默缩水覆盖面）。
       - name: Build and verify shard partition
         run: |
-          uv run python scripts/ci_shards.py             --shards 4 --index ${{ matrix.shard }} --out /tmp/shard.txt
+          uv run python scripts/ci_shards.py             --shards 2 --index ${{ matrix.shard }} --out /tmp/shard.txt \
+            --exclude-file tests/test_optical_match.py \
+            --exclude-file tests/test_seed_intake_audit.py \
+            --exclude-file tests/test_acceptance_task_export.py \
+            --exclude-file tests/test_patent_to_zmx.py
           echo "shard test count: $(wc -l < /tmp/shard.txt)"
 
       - name: Run tests
@@ -140,4 +155,71 @@ jobs:
           # 实测 1083 行 -> 默认 xargs 产出 1358 个参数，-d 换行 产出 1083 个。
           # -x: 参数超长时宁可报错也不静默分批（分批会把一片拆成多次 pytest 调用、
           # 各出一份 summary）。单片实测 112KB，远低于 2MB ARG_MAX。
-          xargs -x -d '\n' -a /tmp/shard.txt uv run pytest -q --durations=25 -m "not real_machine"
+          #
+          # --timeout: 单条测试上限，把"某片挂满一小时、日志里什么都没有"变成
+          # "某条测试超时 + 一份栈"。轻池已无已知慢测试（重文件全在 backend-heavy
+          # 车道），7200s 在这里纯是围堵帽；标定脉络（1800->3600->7200，均实测
+          # 依据）见 git log 本文件。--timeout-method=thread 跨平台可用。
+          xargs -x -d '\n' -a /tmp/shard.txt uv run pytest -q --durations=25 \
+            --timeout=7200 --timeout-method=thread -m "not real_machine"
+
+  # 重车道（2026-08-01）：四个全语料扫描重文件按文件固定分道，不进分片轮盘。
+  # 确定性（每道内容固定）、memo 友好（acceptance 的 _report() memo 同道共享，
+  # 实测拆散要付 4x 冷启动）、可预算（各道实测 176/97/107 分钟）。
+  # ⚠️ 契约：三道 paths 的并集必须与上面 backend-fast 的 --exclude-file 名单
+  # 逐字一致——fast 侧对收集不到测试的排除项会报错，heavy 侧路径拼错则
+  # pytest 因找不到文件而红，两个方向的失误都响。
+  backend-heavy:
+    name: Backend heavy (${{ matrix.lane }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lane: optical-match
+            paths: tests/test_optical_match.py
+          - lane: seed-intake
+            paths: tests/test_seed_intake_audit.py
+          - lane: acceptance-patent
+            paths: tests/test_acceptance_task_export.py tests/test_patent_to_zmx.py
+    # 300 = 最重车道（optical-match，实测 176 分钟）的 1.7 倍，容 runner 机速
+    # 方差（GitHub 托管机实测同测试 4x 波动）。挂死仍由 per-test --timeout 点名。
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: false
+
+      - name: Restore Git LFS evidence cache
+        uses: actions/cache@v4
+        with:
+          path: .git/lfs
+          key: lfs-${{ runner.os }}-${{ hashFiles('.planning/quick/260727-patent-saturation-repository-slimming/lfs-evidence-manifest.json') }}
+          restore-keys: |
+            lfs-${{ runner.os }}-
+
+      - name: Hydrate and verify patent evidence
+        run: |
+          git lfs install --local
+          git lfs pull
+          git lfs fsck
+
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies (core + dev + optical)
+        run: uv sync --frozen --group dev --group optical
+
+      - name: Run heavy lane
+        env:
+          OPENAI_API_KEY: ci-placeholder
+          OPENAI_BASE_URL: https://example.invalid/v1
+          CORS_ALLOWED_ORIGINS: "http://localhost:3000"
+        run: |
+          uv run pytest ${{ matrix.paths }} -q --durations=25 \
+            --timeout=7200 --timeout-method=thread -m "not real_machine"

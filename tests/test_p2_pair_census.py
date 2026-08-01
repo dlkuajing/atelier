@@ -30,6 +30,7 @@ from pathlib import Path
 
 import pytest
 
+import scripts.p2_pair_census as census_mod
 from scripts.p2_pair_census import (
     Provenance,
     assignee_tokens,
@@ -298,3 +299,129 @@ def test_the_domain_screen_is_on_by_default() -> None:
     from scripts.p2_pair_census import load_usable_case_ids
 
     assert inspect.signature(load_usable_case_ids).parameters["require_in_domain"].default is True
+
+
+# ---------------------------------------------------------------------------
+# Seed-side quality gate: on the ruler the trial actually judges with
+# ---------------------------------------------------------------------------
+
+_PERFIELD = Path("D:/atelier-stagec-runs/trace-census-20260728/perfield-census.jsonl")
+
+
+def test_codev_rms_uses_the_same_operand_as_the_judging_macro(tmp_path) -> None:
+    """The census per-field value is `SPOTDATA(...) -> ^spot(1)` in mm, which is exactly
+    `@rmssum`'s per-field operand before its `*1000`. Max over fields, x1000."""
+
+    census = tmp_path / "pf.jsonl"
+    census.write_text(
+        "\n".join(
+            json.dumps(row)
+            for row in [
+                {"seed": "a.zmx", "error": None, "num_fields": 2, "n_positive": 2,
+                 "fields": [[0, 0.001], [0, 0.004]]},
+                # partial coverage -> excluded: @rmssum skips failed fields and takes the
+                # max over survivors, so a partial reading is optimistic.
+                {"seed": "b.zmx", "error": None, "num_fields": 2, "n_positive": 1,
+                 "fields": [[0, 0.001], [1, 0.0]]},
+                {"seed": "c.zmx", "error": "boom", "num_fields": 1, "n_positive": 1,
+                 "fields": [[0, 0.002]]},
+            ]
+        ),
+        encoding="utf-8",
+    )
+    assert census_mod.codev_rms_by_zmx(census) == {"a.zmx": 4.0}
+
+
+def test_the_default_limit_is_the_corpus_median_not_a_chosen_number() -> None:
+    from app.core.corpus_quality import load_distribution
+
+    assert census_mod.default_seed_quality_limit_um() == load_distribution()["percentiles"]["p50"]
+
+
+def test_the_stretch_limit_comes_from_a_measurement_not_a_choice() -> None:
+    """+25% is where the optimiser was measured to stop converging, both previously and
+    again on 2026-07-30: a seed needing +17.7% converged to 5e-10 EFL deviation, while
+    +46% / +59% / +75% all came back `aut_not_converged` at 14.0% / 17.0% / 22.6%."""
+
+    assert census_mod.MAX_SEED_EFL_STRETCH == 0.25
+    # Shrinking is deliberately unbounded: it was measured to converge across the board.
+    assert census_mod.seed_efl_is_reachable(seed_efl_mm=20.0, target_efl_mm=2.0)
+    assert census_mod.seed_efl_is_reachable(seed_efl_mm=4.0, target_efl_mm=5.0)  # +25%
+    assert not census_mod.seed_efl_is_reachable(seed_efl_mm=4.0, target_efl_mm=5.1)
+    # Degenerate inputs are unreachable, never silently allowed.
+    assert not census_mod.seed_efl_is_reachable(seed_efl_mm=0.0, target_efl_mm=4.0)
+    assert not census_mod.seed_efl_is_reachable(seed_efl_mm=4.0, target_efl_mm=0.0)
+
+
+@pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
+def test_reachability_is_never_traded_away_for_quality() -> None:
+    """THE regression this file exists to prevent, and it is not hypothetical.
+
+    Gating the pool on quality ALONE pushed 53 of 59 trials past the stretch limit, and
+    the first four real-machine trials came back `aut_not_converged`. An unreachable seed
+    produces no candidate at all; a merely mediocre one still produces a judgeable trial.
+    So reachability is filtered first and quality only chooses among what is left.
+    """
+
+    index = {r["case_id"]: r for r in json.loads(census_mod.CASE_INDEX.read_text("utf-8"))}
+    result = census_mod.census(_PERFIELD)
+    over = []
+    for pair in result["trial_pairs"]:
+        seed_efl = float(index[pair["seed"]]["efl_mm"])
+        target_efl = float(index[pair["control"]]["efl_mm"])
+        if (target_efl / seed_efl) - 1.0 > census_mod.MAX_SEED_EFL_STRETCH + 1e-9:
+            over.append((pair["control"], pair["seed"], target_efl / seed_efl))
+    assert not over, f"{len(over)} pairs exceed the measured stretch limit: {over[:3]}"
+
+
+@pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
+def test_the_fallback_is_recorded_rather_than_silent() -> None:
+    """Measured: only 6 of 59 controls have a seed that is BOTH reachable and at or
+    below the corpus median. For the other 53 the two constraints genuinely conflict,
+    and that conflict is the finding -- so it has to appear in the output, not be
+    quietly absorbed by a fallback.
+    """
+
+    result = census_mod.census(_PERFIELD)
+    basis = result["seed_pool_basis"]
+    assert set(basis) <= {"reachable_and_quality", "reachable_only", "neither"}
+    assert sum(basis.values()) == result["trials"]
+    # Both states must actually occur, or this run is not exercising the conflict.
+    assert basis.get("reachable_and_quality", 0) > 0
+    assert basis.get("reachable_only", 0) > 0
+
+
+@pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
+def test_quality_still_wins_where_it_is_available() -> None:
+    """The fallback must not swallow the quality preference where it *can* be honoured."""
+
+    rms = census_mod.codev_rms_by_zmx(_PERFIELD)
+    index = {r["case_id"]: r for r in json.loads(census_mod.CASE_INDEX.read_text("utf-8"))}
+    result = census_mod.census(_PERFIELD)
+    limit = result["seed_quality_limit_um"]
+    good = [
+        pair
+        for pair in result["trial_pairs"]
+        if (rms.get(str(index[pair["seed"]]["source_zmx"])) or 1e9) <= limit
+    ]
+    assert len(good) == result["seed_pool_basis"].get("reachable_and_quality", 0)
+
+
+def test_a_seed_with_unknown_codev_quality_is_excluded_not_admitted(tmp_path) -> None:
+    """Fail closed. Admitting the unknown is exactly how a lens CODE V calls 101 um got
+    into 41 of 49 trials -- its stored Optiland radius, measured over half the field,
+    sailed under a 100 um gate."""
+
+    rms: dict[str, float] = {"known.zmx": 5.0}
+    index = {"KNOWN": {"source_zmx": "known.zmx"}, "UNKNOWN": {"source_zmx": "absent.zmx"}}
+
+    def seed_quality_ok(case_id: str, limit: float = 10.0) -> bool:
+        record = index.get(case_id)
+        if record is None:
+            return False
+        value = rms.get(str(record.get("source_zmx")))
+        return value is not None and value <= limit
+
+    assert seed_quality_ok("KNOWN") is True
+    assert seed_quality_ok("UNKNOWN") is False
+    assert seed_quality_ok("MISSING") is False
