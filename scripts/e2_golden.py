@@ -59,6 +59,27 @@ _FTAN_IMH_RE = re.compile(r"^!\s*ATELIER_FTAN_IMH_SANITY_MM\s+([-+0-9.eE]+)", re
 # Evidence: `.planning/evidence/corpus-truth-audit-triage-2026-07-30.md` (2).
 _PINNED_IMPLAUSIBLE_IMAGE_HEIGHT_CASES = frozenset(
     {
+        # --- 12 rows below became implausible when the fov_deg re-anchor
+        # (half angle -> full angle, PR #155 train) moved their first-order
+        # reference efl*tan(fov/2) up by ~2x: their ratio sits at 0.15-0.21x,
+        # i.e. beyond a pure double-count, so the stored reading and/or the
+        # re-anchored fov needs per-row physics review -- same "count the debt,
+        # let it ring" treatment as the 34 pupil-envelope rows below, and the
+        # same reason not to hand-fix here: regenerating corpus rows moves
+        # routing and belongs to the corpus-regeneration shovel.
+        "US-11899172-B2-e5",
+        "US-11927729-B2-e8",
+        "US-12429675-B2-e7",
+        "US-12429675-B2-e8",
+        "US-12468127-B2",
+        "US-12468127-B2-e1",
+        "US-12468127-B2-e2",
+        "US-20230288669-A1-e5",
+        "US-20240176110-A1-e7",
+        "US-20240176110-A1-e8",
+        "US-20250383531-A1-e7",
+        "US-20250383531-A1-e8",
+        # --- pupil-envelope era pins (see block comment above the frozenset):
         "US-10921568-B2-e2",
         "US-11719917-B2-e2",
         "US-11719917-B2-e3",
@@ -66,41 +87,45 @@ _PINNED_IMPLAUSIBLE_IMAGE_HEIGHT_CASES = frozenset(
         "US-11719917-B2-e5",
         "US-11719917-B2-e6",
         "US-11815662-B2-e3",
-        "US-11933948-B2-e12",
-        "US-11966029-B2-e5",
-        "US-11966029-B2-e6",
         "US-12032139-B2-e2",
         "US-12032139-B2-e4",
         "US-12032139-B2-e6",
         "US-12044826-B2-e3",
         "US-12105260-B2-e1",
         "US-12140735-B2-e8",
-        "US-12210142-B2-e3",
         "US-12210142-B2-e6",
         "US-12228698-B2-e2",
         "US-12228698-B2-e3",
         "US-12228698-B2-e5",
-        "US-12259531-B2-e12",
         "US-12282142-B2-e9",
-        "US-12345855-B2-e2",
-        "US-12345855-B2-e3",
-        "US-12345855-B2-e4",
         "US-12436366-B2-e3",
-        "US-12436366-B2-e6",
         "US-12607827-B2-e3",
-        "US-20240168263-A1-e12",
-        "US-20250035890-A1-e2",
-        "US-20250189767-A1-e12",
         "US-20250216655-A1-e9",
         "US-20260126622-A1-e2",
     }
 )
 
-# No corpus row currently has an unscreenable first-order reference. Pinned at
-# empty so one appearing is a failure rather than a shrug -- a row whose
-# reference blows up (half field at 90 deg, or a negative `tan`) has no screen
-# at all, which is worse than failing one.
-_PINNED_UNSCREENABLE_IMAGE_HEIGHT_CASES: frozenset[str] = frozenset()
+# Rows whose first-order reference is unusable. The fov_deg re-anchor
+# (half -> full angle, PR #155 train) pushed these 10 hemispherical-class rows
+# to full fields of 171.8-188.0 deg, so the half field crosses 90 deg and
+# `tan` blows up -- exactly the failure this pin anticipated. They are true
+# ultra-wide designs (the US-20230288669 family is confirmed ultra-wide in the
+# evidence), not bad readings; a reference-free screen for them belongs to the
+# corpus-regeneration shovel. Pinned so an eleventh appearing still rings.
+_PINNED_UNSCREENABLE_IMAGE_HEIGHT_CASES: frozenset[str] = frozenset(
+    {
+        "US-12416791-B2-e3",
+        "US-12416791-B2-e5",
+        "US-12416791-B2-e10",
+        "US-20230288669-A1-e1",
+        "US-20230288669-A1-e2",
+        "US-20230288669-A1-e4",
+        "US-20230288669-A1-e6",
+        "US-20230288669-A1-e7",
+        "US-20250370230-A1-e5",
+        "US-20250370230-A1-e10",
+    }
+)
 
 # Briefs whose routing winner + quality evidence are golden-ised. Kept in sync
 # with the eval's EvalCase requests (same source briefs).
