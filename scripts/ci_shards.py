@@ -129,14 +129,54 @@ def verify(node_ids: list[str], buckets: list[list[str]]) -> None:
         )
 
 
+def split_excluded(node_ids: list[str], exclude_files: list[str]) -> tuple[list[str], list[str]]:
+    """Total split of the collection by file membership.
+
+    Every node id lands in exactly one half by construction (the predicate is
+    total), so lane coverage reduces to one contract: the ``--exclude-file``
+    list here must equal the union of file paths the heavy lanes run wholesale.
+    A typo on THIS side excludes nothing (the test just stays in the fast
+    partition and runs twice) -- the safe direction; a typo on the heavy-lane
+    side makes pytest fail loudly on a missing path.
+    """
+
+    excluded_set = {f.replace("\\", "/") for f in exclude_files}
+    known_files = {n.split("::", 1)[0] for n in node_ids}
+    unknown = excluded_set - known_files
+    if unknown:
+        raise SystemExit(
+            f"--exclude-file names {sorted(unknown)} which collected zero tests; "
+            "a heavy lane referencing them would silently shrink coverage"
+        )
+    kept = [n for n in node_ids if n.split("::", 1)[0] not in excluded_set]
+    dropped = [n for n in node_ids if n.split("::", 1)[0] in excluded_set]
+    return kept, dropped
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--shards", type=int, required=True)
     parser.add_argument("--index", type=int, help="1-based shard to print (omit to only verify)")
     parser.add_argument("--out", type=Path, help="write the shard's node ids here")
+    parser.add_argument(
+        "--exclude-file",
+        action="append",
+        default=[],
+        help=(
+            "test file (repo-relative) whose tests are removed from the partition "
+            "because a dedicated heavy lane runs the whole file; repeatable. "
+            "Must name files that actually collect tests."
+        ),
+    )
     args = parser.parse_args(argv)
 
     node_ids = collect_node_ids()
+    if args.exclude_file:
+        node_ids, dropped = split_excluded(node_ids, args.exclude_file)
+        print(
+            f"excluded {len(dropped)} tests from {len(args.exclude_file)} heavy-lane file(s)",
+            file=sys.stderr,
+        )
     buckets = partition(node_ids, args.shards, load_durations())
     verify(node_ids, buckets)
 

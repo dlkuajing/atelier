@@ -11,11 +11,28 @@ import json
 
 import pytest
 
-from scripts.ci_shards import DEFAULT_WEIGHT, partition, verify
+from scripts.ci_shards import DEFAULT_WEIGHT, partition, split_excluded, verify
 
 
 def _ids(n: int) -> list[str]:
     return [f"tests/test_x.py::test_{i}" for i in range(n)]
+
+
+def test_split_excluded_is_a_total_partition() -> None:
+    """Every collected test lands in exactly one lane -- same coverage property
+    as verify(), one level up."""
+    ids = _ids(10) + [f"tests/test_heavy.py::test_{i}" for i in range(5)]
+    kept, dropped = split_excluded(ids, ["tests/test_heavy.py"])
+    assert sorted(kept + dropped) == sorted(ids)
+    assert len(dropped) == 5
+    assert all(n.startswith("tests/test_heavy.py::") for n in dropped)
+
+
+def test_split_excluded_rejects_a_file_that_collects_nothing() -> None:
+    """A typo'd heavy-lane file must fail loudly here, not silently shrink
+    coverage on the heavy side."""
+    with pytest.raises(SystemExit, match="collected zero tests"):
+        split_excluded(_ids(3), ["tests/test_typo.py"])
 
 
 def test_every_test_lands_in_exactly_one_shard() -> None:
