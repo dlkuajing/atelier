@@ -1,0 +1,17 @@
+30-Jul-2026	04:58:34	US-12436366-B2                                                                  	Polychromatic RMS Wavefront Error                 
+
+	Lens file name:	 
+	Independent compensation:	No
+	Linear-quadratic ratio:	1
+	Maximum number of compensators:	1
+	SVD threshold:	1.000000e-10
+	Force symmetry:	No
+	Fringe wavelength:	546.1
+	Scalar   probability density function:	1-D Uniform  
+	Decenter probability density function:	2-D Gaussian 	0.135335
+	Cylinder probability density function:	2-D Uniform  
+
+		Relative Field							Design + tolerances				Changes				Compensator Range(+/-)
+Eval Zoom	Eval Field	X	Y			Weight	Design	Criterion	50.0D0%	84.1D0%	97.7D0%	99.9D0%	50.0D0%	84.1D0%	97.7D0%	99.9D0%	DLZ S17
+1	1	0	0			1	1.00107	RMS	1.02682	1.09033	1.15034	1.20738	0.0257442	0.0892577	0.14927	0.206303	0.31861
+1	2	0	1			1	1.9405	RMS	1.94714	1.97331	1.99914	2.02463	0.00663591	0.032805	0.0586316	0.0841288	0.31861

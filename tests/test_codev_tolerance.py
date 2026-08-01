@@ -15,6 +15,7 @@ from app.core.engines.codev_tolerance import (
     TorProvenance,
     TorToleranceTable,
     build_codev_tor_sequence,
+    extract_codev_diagnosis,
     parse_codev_tor_exports,
     run_codev_tor,
 )
@@ -34,6 +35,8 @@ CMP_FIXTURES = (
     ("s19", "DLZ S20"),
 )
 REAL_ZMX = Path("data/zmx/US20170003482A1.zmx")
+#: A real candidate-side TOR listing that produced no exports (2026-07-30).
+REAL_TERMINATED_LIS = FIXTURES / "real_sample_lis_p2gated_e7_candidate_ca_trace_terminated.txt"
 
 
 def _build(**overrides: object) -> str:
@@ -231,6 +234,98 @@ def test_tor_runner_deletes_stale_exports_before_rc1_run(tmp_path: Path) -> None
     with pytest.raises(CodeVBatchError, match="fresh export"):
         run_codev_tor(source_zmx=REAL_ZMX, work_dir=work, runner=lambda *a, **k: type("P", (), {"returncode": 1, "stderr": ""})(), tolerance_table=TorToleranceTable(("DLT S1 0.01",), "expert"), compensators=TorCompensators(("CMP DLZ SI",), "expert", "assembly"), monte_carlo=TorMonteCarlo(20), metric="mtf", mtf_frequency_lp_per_mm=100)
     assert not (work / "atelier_tor_per.tsv").exists()
+
+
+def test_diagnosis_extraction_names_the_command_that_terminated() -> None:
+    """The real listing from a P2 candidate whose TOR produced no exports.
+
+    p2-gated-20260729/trial_US-20240168263-A1-e7. The whole failure is these
+    three lines: TOR never entered its option, so ``SNS`` -- a TOR sub-command --
+    hit the top level as an unknown command and took the rest of the sequence
+    (``NTR``/``GO``/``BUF EXP``) with it.
+    """
+    diagnosis = extract_codev_diagnosis(REAL_TERMINATED_LIS.read_text(encoding="utf-8"))
+    assert diagnosis == (
+        "TOR: ERROR - Ray tracing errors during clear aperture trace - OPTION TERMINATED",
+        "SNS: ERROR - Invalid command SNS",
+        "SNS: WARNING - Sequence aborted",
+    )
+
+
+def test_diagnosis_collapses_repeated_ray_errors_and_caps_the_rest() -> None:
+    listing = "CODE V> TOR\n" + "     ERROR - Total reflection at surface 3\n" * 54
+    assert extract_codev_diagnosis(listing) == (
+        "TOR: ERROR - Total reflection at surface 3 (x54)",
+    )
+    many = "CODE V> TOR\n" + "".join(f"     ERROR - distinct {i}\n" for i in range(20))
+    capped = extract_codev_diagnosis(many, max_lines=3)
+    assert len(capped) == 4
+    assert capped[-1] == "... 17 further diagnostic line(s)"
+
+
+def test_diagnosis_ignores_prose_and_unattributed_warnings() -> None:
+    """Only ERROR lines and the abort marker; the import chatter is not a fault."""
+    listing = (
+        "CODE V> OUT NO\n"
+        "     WARNING - Vignetting angles not used.\n"
+        "    Zemax command MODE ignored\n"
+        "CODE V> TOR\n"
+        "     ERROR - real fault\n"
+    )
+    assert extract_codev_diagnosis(listing) == ("TOR: ERROR - real fault",)
+
+
+def _staged_zmx(tmp_path: Path) -> Path:
+    """A copy of the real ZMX under tmp_path.
+
+    ``ensure_codev_safe_input_path`` rejects any dot-prefixed path component, so
+    the repo-relative fixture is unusable from a worktree living under
+    ``.claude/worktrees/``. Staging keeps these cases runnable from either.
+    """
+    staged = tmp_path / REAL_ZMX.name
+    staged.write_bytes(REAL_ZMX.read_bytes())
+    return staged
+
+
+def _tor_kwargs(tmp_path: Path, runner) -> dict[str, object]:
+    return {
+        "source_zmx": _staged_zmx(tmp_path),
+        "work_dir": tmp_path / "tor",
+        "runner": runner,
+        "tolerance_table": TorToleranceTable(("DLT S1 0.01",), "expert"),
+        "compensators": TorCompensators(("CMP DLZ SI",), "expert", "assembly"),
+        "monte_carlo": TorMonteCarlo(20),
+        "metric": "rms",
+    }
+
+
+def test_missing_export_error_leads_with_codev_own_diagnosis(tmp_path: Path) -> None:
+    """Regression for the message that misdirected a whole investigation.
+
+    Four trials reported「no fresh export files」with nothing but filenames while
+    the listing next door named the cause. The exception must now carry it.
+    """
+    def fake(command, **kwargs):
+        (Path(kwargs["cwd"]) / "atelier_tor.lis").write_bytes(REAL_TERMINATED_LIS.read_bytes())
+        return type("P", (), {"returncode": 0, "stderr": ""})()
+
+    with pytest.raises(CodeVBatchError) as excinfo:
+        run_codev_tor(**_tor_kwargs(tmp_path, fake))  # type: ignore[arg-type]
+
+    assert "clear aperture trace" in excinfo.value.message
+    diagnosis = excinfo.value.details["codev_diagnosis"]
+    assert diagnosis[0].startswith("TOR: ERROR - Ray tracing errors")
+    assert str(excinfo.value.details["listing_path"]).endswith("atelier_tor.lis")
+
+
+def test_missing_export_error_survives_an_absent_listing(tmp_path: Path) -> None:
+    """Diagnosis is a side-channel: no listing must not mask the real failure."""
+    silent = lambda *a, **k: type("P", (), {"returncode": 0, "stderr": ""})()  # noqa: E731
+    with pytest.raises(CodeVBatchError) as excinfo:
+        run_codev_tor(**_tor_kwargs(tmp_path, silent))  # type: ignore[arg-type]
+
+    assert "no diagnostic lines" in excinfo.value.message
+    assert excinfo.value.details["codev_diagnosis"] == []
 
 
 def test_default_tor_runner_uses_shared_process_discipline(monkeypatch, tmp_path: Path) -> None:
