@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import math
 from pathlib import Path
 
 import pytest
@@ -23,6 +22,7 @@ from scripts.evaluate_design_agent import (
 from scripts.evaluate_design_agent import (
     PATENT_GOLDEN_CASE_NAMES as EVAL_PATENT_GOLDEN_CASE_NAMES,
 )
+from scripts.image_height_gate import first_order_image_height_mm
 
 INDEX_PATH = Path(__file__).resolve().parents[1] / "app" / "data" / "optical_cases" / "index.json"
 INDEX_RECORDS = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
@@ -34,8 +34,14 @@ INDEX_BY_CASE_ID = {
 
 
 def _first_order_image_height_mm(record: dict) -> float | None:
-    first_order = float(record["efl_mm"]) * math.tan(math.radians(float(record["fov_deg"]) / 2.0))
-    return first_order if math.isfinite(first_order) and first_order != 0.0 else None
+    # Delegate to the same helper the golden generator uses, so the two sides
+    # cannot diverge on edge semantics: for hemispherical rows whose re-anchored
+    # full field crosses 180 deg the half-field `tan` stops discriminating, and
+    # the helper answers None instead of a finite-but-garbage 1.7e16 that the
+    # old inline math here would happily "pass".
+    return first_order_image_height_mm(
+        float(record["efl_mm"]), float(record["fov_deg"]) / 2.0
+    )
 
 
 def _first_order_deviation(record: dict) -> float | None:
@@ -82,7 +88,14 @@ def test_eval_golden_contains_reanchored_case_library():
     # Attribution is total, not partial: **every one** of the 153 cases that left
     # the outlier set was one the migration doubled (153/153), as were all 11 that
     # joined it. Nothing else moved.
-    assert len(first_order_outliers) == 164
+    #
+    # 164 -> 154 (2026-08-01): the shared gate helper replaced the inline
+    # `efl * tan(fov/2)` here, and it answers None for the 10 hemispherical rows
+    # whose re-anchored full field is 171.8-188.0 deg -- those rows were never
+    # legitimate members of a ">25% off its own reference" set, because their
+    # reference was tan-past-90 garbage (1.7e16 mm). Exactly those 10 left; they
+    # are pinned by id as reference-unusable in scripts/e2_golden.py.
+    assert len(first_order_outliers) == 154
     assert first_order_outliers.issubset(source_case_ids)
     assert set(CASE_GOLDEN_CASE_NAMES).issubset(_EVAL_GOLDEN)
     assert set(EVAL_PATENT_GOLDEN_CASE_NAMES).issubset(CASE_GOLDEN_CASE_NAMES)
