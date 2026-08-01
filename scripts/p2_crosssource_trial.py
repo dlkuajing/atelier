@@ -1070,9 +1070,12 @@ def run_trial(
     elif over_budget():
         record["tolerance"] = {"skipped": "wall_clock_budget", "budget_s": wall_clock_budget_s}
     else:
+        # The probe above already established, per side and for free, whether every
+        # field evaluates -- which is exactly TOR's precondition. Pass it in rather
+        # than paying CODE V to rediscover it.
         record["tolerance"] = _tolerance_pair(
             Path(str(candidate_zmx)), ZMX_DIR / plan.control_zmx,
-            work / "tolerance", timeout_seconds,
+            work / "tolerance", timeout_seconds, measurements,
         )
 
     if measurements["candidate"] is None or measurements["control"] is None:
@@ -1107,19 +1110,72 @@ def run_trial(
 TOLERANCE_COMMANDS = ("DLT S1..I 0.005", "DLR S1..I 0.01")
 COMPENSATOR_COMMANDS = ("CMP DLZ SI",)
 TOLERANCE_TRIALS = 20
+#: The TOR criterion here is polychromatic RMS wavefront error, so lower is
+#: better and the threshold is an upper bound. Stated once and passed explicitly:
+#: the orientation decides the sign of every degradation number reported.
+TOLERANCE_DIRECTION = "max"
 
 #: Illustrative, uncalibrated. Applied identically to candidate and control, so
 #: the comparison survives the number being wrong; the absolute yield does not.
+#:
+#: Measured 2026-07-30: it also does not survive sitting *below the nominal*, which
+#: it does on 13/118 stored field rows. Reported alongside
+#: ``yield_is_informative`` and the threshold-free readings in tor_sensitivity --
+#: never on its own.
 YIELD_THRESHOLD_WAVES = 0.25
 #: Above this share of samples outside TOR's linear model the yield is refused
 #: rather than disclosed -- see tor_yield for why disclosure needs a ceiling.
 MAX_OUT_OF_MODEL_FRACTION = 0.25
 
 
+def _tor_criterion_block(quality: ImageQuality | None) -> str | None:
+    """Why TOR must not be attempted on this side, or ``None`` to proceed.
+
+    TOR needs the reference rays R1-R5 traceable from object to image -- 「Although
+    reference rays can be blocked by apertures or obscurations, they must be
+    traceable from object to image」 (CODE V 11.5 TroubleshootingGuide, "Analysis
+    Errors and Warnings"). A lens that fails that gets ``ERROR - Ray tracing errors
+    during clear aperture trace - OPTION TERMINATED`` and exports nothing.
+
+    The probe above already answered it, for free, using the *same* criterion this
+    TOR runs on: polychromatic RMS wavefront error. So this is not a proxy -- a
+    withheld ``rms_wavefront_waves`` means that quantity was not obtainable from
+    this lens, and TOR cannot obtain it either.
+
+    Exact on the six p2-gated-20260729 trials: the one candidate with a wavefront
+    reading (e11, 0.348343 waves) is the one whose TOR exported; the four whose
+    reading was withheld as ``rms_wavefront_seed_value`` are the four that
+    terminated. The reading also cross-checks the number this module keys its
+    degeneracy test off -- e11's TOR PER nominal is 0.348154 waves, agreeing with
+    the probe to 0.05% by an independent CODE V path.
+
+    Not a threshold: the test is「is there a reading at all」.
+    """
+
+    if quality is None:
+        return "image-quality probe did not return; nothing attests that TOR's criterion evaluates"
+    if quality.rms_wavefront_waves is None:
+        return (
+            "probe could not measure RMS wavefront error -- TOR's own criterion; "
+            f"withheld as {list(quality.withheld) or 'unknown'}"
+        )
+    return None
+
+
 def _tolerance_pair(
-    candidate_zmx: Path, control_zmx: Path, work_dir: Path, timeout_seconds: float
+    candidate_zmx: Path,
+    control_zmx: Path,
+    work_dir: Path,
+    timeout_seconds: float,
+    quality: Mapping[str, ImageQuality | None],
 ) -> dict[str, object]:
-    """Run the same tolerance table on both sides and report yield + disclosure."""
+    """Run the same tolerance table on both sides and report sensitivity + yield.
+
+    The tolerance table and every reported quantity are uncalibrated. The headline
+    reading is the threshold-free degradation, not the absolute yield -- see
+    ``app.core.engines.tor_sensitivity`` for why the absolute one goes silent
+    whenever a lens's nominal already fails.
+    """
 
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_tolerance import (
@@ -1127,6 +1183,11 @@ def _tolerance_pair(
         TorMonteCarlo,
         TorToleranceTable,
         run_codev_tor,
+    )
+    from app.core.engines.tor_sensitivity import (
+        relative_yield_curve,
+        tolerance_sensitivity,
+        yield_is_informative,
     )
     from app.core.engines.tor_yield import TorYieldPolicy, compute_mc_yield
 
@@ -1151,6 +1212,10 @@ def _tolerance_pair(
         "calibrated": False,
     }
     for side, zmx in (("candidate", candidate_zmx), ("control", control_zmx)):
+        blocked = _tor_criterion_block(quality.get(side))
+        if blocked is not None:
+            out[side] = {"status": "unavailable", "reason": blocked, "codev_run_skipped": True}
+            continue
         try:
             run = run_codev_tor(
                 source_zmx=zmx,
@@ -1169,12 +1234,53 @@ def _tolerance_pair(
                 idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
             )
         except (CodeVBatchError, OSError, ValueError) as exc:
-            out[side] = {"error": f"{type(exc).__name__}: {exc}"[:400]}
+            out[side] = {
+                "error": f"{type(exc).__name__}: {exc}"[:400],
+                # CODE V's own account of the failure, when it left one. Reporting
+                # the error without it is what sent a whole investigation after
+                # XDAT rows and vignetting rows on 2026-07-30.
+                "codev_diagnosis": list(getattr(exc, "details", {}).get("codev_diagnosis", [])),
+            }
             continue
         computed = compute_mc_yield(run.parse_result, policy)
+        sensitivity = tolerance_sensitivity(run.parse_result, TOLERANCE_DIRECTION)
+        curve = relative_yield_curve(run.parse_result, sensitivity, TOLERANCE_DIRECTION)
+        informative = yield_is_informative(
+            sensitivity, YIELD_THRESHOLD_WAVES, TOLERANCE_DIRECTION
+        )
         out[side] = {
             "status": computed.status,
+            # Threshold-free and therefore the reading to compare across sides.
+            "sensitivity": {
+                "status": sensitivity.status,
+                "criterion": sensitivity.criterion,
+                "reason": sensitivity.reason,
+                "probability_levels": list(sensitivity.probability_levels),
+                "nominal_by_field": {
+                    f"z{row.zoom}:f{row.field}": row.nominal for row in sensitivity.fields
+                },
+                "degradation_by_field": {
+                    f"z{row.zoom}:f{row.field}": list(row.degradation)
+                    for row in sensitivity.fields
+                },
+                "worst_degradation": list(sensitivity.worst_degradation),
+                "worst_nominal": sensitivity.worst_nominal,
+            },
+            "relative_yield_curve": {
+                "status": curve.status,
+                "reason": curve.reason,
+                "judged_samples": curve.judged_samples,
+                "out_of_model_samples": curve.out_of_model_samples,
+                "points": [
+                    {"nominal_multiple": point.nominal_multiple, "yield_fraction": point.yield_fraction}
+                    for point in curve.points
+                ],
+            },
+            # Kept for continuity, but never to be read alone: when
+            # yield_is_informative is False the lens already failed unperturbed and
+            # this number measures luck, not manufacturability.
             "yield_fraction": computed.yield_fraction,
+            "yield_is_informative": informative,
             "judged_samples": computed.trials,
             "out_of_model_samples": computed.out_of_model_samples,
             "out_of_model_fraction": computed.out_of_model_fraction,
