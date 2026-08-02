@@ -236,17 +236,29 @@ def build(census_path: Path) -> dict[str, Any]:
         row = _stats(values)
         row["at_or_below_corpus_median"] = sum(1 for v in values if v <= limit)
         # The like-for-like question: is this design bad, or is its field hard?
+        # Both sides of this comparison must exclude the rows this project already
+        # calls broken. An earlier version filtered only the *yardstick*: quarantined
+        # rows were kept out of the band median but still counted toward the tally,
+        # and 11 of them scored -- 8 in DATA-09d1, **0 in DATA-10b** -- which widened
+        # the very contrast the evidence page rests on, in one direction only.
         in_band = 0
+        scored = 0
         for case_id in ids:
+            if not _healthy_for_band(case_id):
+                continue
             value = rms_of_case.get(case_id)
             record = by_case.get(case_id) or {}
             try:
                 band = fov_band(float(record["fov_deg"]))
             except (KeyError, TypeError, ValueError):
                 continue
-            if value is not None and band in band_median and value <= band_median[band]:
+            if band not in band_median or value is None:
+                continue
+            scored += 1
+            if value <= band_median[band]:
                 in_band += 1
         row["at_or_below_own_fov_band_median"] = in_band
+        row["scored_against_own_fov_band"] = scored
         return row
 
     ids_by_batch: dict[str, list[str]] = collections.defaultdict(list)

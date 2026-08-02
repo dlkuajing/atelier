@@ -62,13 +62,15 @@
    "fidelity_quarantined": 33
   },
   "efl_source": {
-   "receipt_built_optic": 205
+   "receipt_built_optic": 205,
+   "receipt_admitted_past_the_tangent_guard": 12
   },
   "receipt_join": {
    "basenames": 610,
    "with_more_than_one_receipt": 107,
    "with_disagreeing_values": 12,
-   "max_relative_spread": 0.0017447850617113858,
+   "max_relative_spread_kept": 0.0017447850617113858,
+   "max_relative_spread_rejected": 0.0,
    "spread_gate": 0.01,
    "rejected_for_spread": []
   },

@@ -59,7 +59,8 @@
    "median": 8.82717,
    "max": 17358.0,
    "at_or_below_corpus_median": 60,
-   "at_or_below_own_fov_band_median": 65,
+   "at_or_below_own_fov_band_median": 57,
+   "scored_against_own_fov_band": 90,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 58,
     "SAMSUNG ELECTRO-MECHANICS CO., LTD": 24,
@@ -74,7 +75,8 @@
    "median": 15.834000000000001,
    "max": 51.7042,
    "at_or_below_corpus_median": 8,
-   "at_or_below_own_fov_band_median": 5,
+   "at_or_below_own_fov_band_median": 4,
+   "scored_against_own_fov_band": 26,
    "brands": {
     "(unknown)": 18,
     "LARGAN DIGITAL CO., LTD.": 10,
@@ -88,6 +90,7 @@
    "max": 8.261197e+20,
    "at_or_below_corpus_median": 0,
    "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 16,
    "brands": {
     "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": 22,
     "ABILITY ENTERPRISE CO., LTD": 6
@@ -99,7 +102,8 @@
    "median": 5.60811,
    "max": 90.23349999999999,
    "at_or_below_corpus_median": 19,
-   "at_or_below_own_fov_band_median": 19,
+   "at_or_below_own_fov_band_median": 17,
+   "scored_against_own_fov_band": 23,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 25
    }
@@ -111,6 +115,7 @@
    "max": 1683.16,
    "at_or_below_corpus_median": 12,
    "at_or_below_own_fov_band_median": 9,
+   "scored_against_own_fov_band": 17,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 18
    }
@@ -122,6 +127,7 @@
    "max": 13.033100000000001,
    "at_or_below_corpus_median": 9,
    "at_or_below_own_fov_band_median": 5,
+   "scored_against_own_fov_band": 11,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 11
    }
@@ -133,6 +139,7 @@
    "max": 443.817,
    "at_or_below_corpus_median": 1,
    "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 2,
    "brands": {
     "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 2
    }
@@ -144,6 +151,7 @@
    "max": 497.704,
    "at_or_below_corpus_median": 0,
    "at_or_below_own_fov_band_median": 0,
+   "scored_against_own_fov_band": 1,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 1
    }
@@ -155,6 +163,7 @@
    "max": 57.501,
    "at_or_below_corpus_median": 0,
    "at_or_below_own_fov_band_median": 0,
+   "scored_against_own_fov_band": 1,
    "brands": {
     "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 1
    }
@@ -167,7 +176,8 @@
    "median": 7.27203,
    "max": 1683.16,
    "at_or_below_corpus_median": 85,
-   "at_or_below_own_fov_band_median": 80
+   "at_or_below_own_fov_band_median": 76,
+   "scored_against_own_fov_band": 117
   },
   "SAMSUNG ELECTRO-MECHANICS CO., LTD": {
    "n": 24,
@@ -175,7 +185,8 @@
    "median": 7.675295,
    "max": 34.2315,
    "at_or_below_corpus_median": 18,
-   "at_or_below_own_fov_band_median": 18
+   "at_or_below_own_fov_band_median": 12,
+   "scored_against_own_fov_band": 18
   },
   "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": {
    "n": 24,
@@ -183,7 +194,8 @@
    "median": 107.293,
    "max": 17358.0,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 1
+   "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 17
   },
   "(unknown)": {
    "n": 18,
@@ -191,7 +203,8 @@
    "median": 17.305,
    "max": 40.4466,
    "at_or_below_corpus_median": 4,
-   "at_or_below_own_fov_band_median": 3
+   "at_or_below_own_fov_band_median": 2,
+   "scored_against_own_fov_band": 15
   },
   "KANTATSU CO., LTD.": {
    "n": 15,
@@ -199,7 +212,8 @@
    "median": 91.9301,
    "max": 562.331,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 1
+   "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 15
   },
   "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": {
    "n": 7,
@@ -207,7 +221,8 @@
    "median": 160.89800000000002,
    "max": 443.817,
    "at_or_below_corpus_median": 1,
-   "at_or_below_own_fov_band_median": 1
+   "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 3
   },
   "ABILITY ENTERPRISE CO., LTD": {
    "n": 6,
@@ -215,7 +230,8 @@
    "median": 4.404644e+20,
    "max": 8.261197e+20,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 0
+   "at_or_below_own_fov_band_median": 0,
+   "scored_against_own_fov_band": 1
   },
   "APPLE INC.": {
    "n": 1,
@@ -223,7 +239,8 @@
    "median": 8.7515,
    "max": 8.7515,
    "at_or_below_corpus_median": 1,
-   "at_or_below_own_fov_band_median": 1
+   "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 1
   }
  },
  "quality_by_batch_and_brand": {
@@ -233,7 +250,8 @@
    "median": 5.65698,
    "max": 928.972,
    "at_or_below_corpus_median": 42,
-   "at_or_below_own_fov_band_median": 46
+   "at_or_below_own_fov_band_median": 44,
+   "scored_against_own_fov_band": 55
   },
   "DATA-06c | LARGAN DIGITAL CO., LTD.": {
    "n": 25,
@@ -241,7 +259,8 @@
    "median": 5.60811,
    "max": 90.23349999999999,
    "at_or_below_corpus_median": 19,
-   "at_or_below_own_fov_band_median": 19
+   "at_or_below_own_fov_band_median": 17,
+   "scored_against_own_fov_band": 23
   },
   "DATA-09d1 | SAMSUNG ELECTRO-MECHANICS CO., LTD": {
    "n": 24,
@@ -249,7 +268,8 @@
    "median": 7.675295,
    "max": 34.2315,
    "at_or_below_corpus_median": 18,
-   "at_or_below_own_fov_band_median": 18
+   "at_or_below_own_fov_band_median": 12,
+   "scored_against_own_fov_band": 18
   },
   "DATA-10b | NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": {
    "n": 22,
@@ -257,7 +277,8 @@
    "median": 91.95065,
    "max": 1019.0699999999999,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 1
+   "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 15
   },
   "None | (unknown)": {
    "n": 18,
@@ -265,7 +286,8 @@
    "median": 17.305,
    "max": 40.4466,
    "at_or_below_corpus_median": 4,
-   "at_or_below_own_fov_band_median": 3
+   "at_or_below_own_fov_band_median": 2,
+   "scored_against_own_fov_band": 15
   },
   "DATA-06f | LARGAN DIGITAL CO., LTD.": {
    "n": 18,
@@ -273,7 +295,8 @@
    "median": 8.199435000000001,
    "max": 1683.16,
    "at_or_below_corpus_median": 12,
-   "at_or_below_own_fov_band_median": 9
+   "at_or_below_own_fov_band_median": 9,
+   "scored_against_own_fov_band": 17
   },
   "DATA-09d1 | KANTATSU CO., LTD.": {
    "n": 15,
@@ -281,7 +304,8 @@
    "median": 91.9301,
    "max": 562.331,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 1
+   "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 15
   },
   "DATA-06f-b11 | LARGAN DIGITAL CO., LTD.": {
    "n": 11,
@@ -289,7 +313,8 @@
    "median": 7.31925,
    "max": 13.033100000000001,
    "at_or_below_corpus_median": 9,
-   "at_or_below_own_fov_band_median": 5
+   "at_or_below_own_fov_band_median": 5,
+   "scored_against_own_fov_band": 11
   },
   "None | LARGAN DIGITAL CO., LTD.": {
    "n": 10,
@@ -297,7 +322,8 @@
    "median": 14.5576,
    "max": 51.7042,
    "at_or_below_corpus_median": 3,
-   "at_or_below_own_fov_band_median": 1
+   "at_or_below_own_fov_band_median": 1,
+   "scored_against_own_fov_band": 10
   },
   "DATA-10b | ABILITY ENTERPRISE CO., LTD": {
    "n": 6,
@@ -305,7 +331,8 @@
    "median": 4.404644e+20,
    "max": 8.261197e+20,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 0
+   "at_or_below_own_fov_band_median": 0,
+   "scored_against_own_fov_band": 1
   },
   "DATA-09d1 | AAC Acoustic Technologies (Shenzhen) Co., Ltd.": {
    "n": 4,
@@ -313,7 +340,8 @@
    "median": 165.09900000000002,
    "max": 170.77200000000002,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 0
+   "at_or_below_own_fov_band_median": 0,
+   "scored_against_own_fov_band": 0
   }
  },
  "fov_band_median_um": {

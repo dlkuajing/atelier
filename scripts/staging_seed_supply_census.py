@@ -209,22 +209,33 @@ def receipt_efl_by_zmx() -> tuple[dict[str, float], dict[str, Any]]:
     disagreeing = 0
     rejected: list[str] = []
     max_spread = 0.0
+    rejected_spread = 0.0
     for name, values in collected.items():
         if len(values) > 1:
             multi += 1
         spread = (max(values) - min(values)) / max(values) if max(values) > 0 else 0.0
         if spread > 0:
             disagreeing += 1
-            max_spread = max(max_spread, spread)
         if spread > RECEIPT_EFL_MAX_SPREAD:
             rejected.append(name)
+            rejected_spread = max(rejected_spread, spread)
             continue
-        out[name] = min(values)  # deterministic; the spread gate bounds what this costs
+        # Reported over the rows that were *kept*, not over all of them: if the
+        # gate ever fires, the kept-row spread is what bounds the pick, and a
+        # metric that included the rejected rows would make the gate working
+        # correctly look like the gate being breached.
+        max_spread = max(max_spread, spread)
+        # `min` is deterministic *and* fail-closed: a smaller seed EFL is the
+        # harder side of `seed_efl_is_reachable`, so an arbitrary pick can only
+        # cost sample, never manufacture reachability. Changing it to max/mean
+        # would silently flip that.
+        out[name] = min(values)
     provenance = {
         "basenames": len(collected),
         "with_more_than_one_receipt": multi,
         "with_disagreeing_values": disagreeing,
-        "max_relative_spread": max_spread,
+        "max_relative_spread_kept": max_spread,
+        "max_relative_spread_rejected": rejected_spread,
         "spread_gate": RECEIPT_EFL_MAX_SPREAD,
         "rejected_for_spread": sorted(rejected),
     }
@@ -323,15 +334,32 @@ def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
             continue
         # Built-optic EFL, same quantity as the corpus side, or the declared one
         # with the fallback counted. Never silently mixed.
+        #
+        # ⚠️ Switching to the receipt **changed which rows are admitted**, and the
+        # first version of that switch did not say so. `read_first_order` refuses
+        # to derive an EFL past `MAX_HALF_FIELD_DEG`, because `tan` stops being a
+        # usable divisor there -- so a half field >= 85 deg used to leave via
+        # `first_order_not_derivable`. A receipt EFL needs no tangent, so those
+        # rows started arriving silently: **12 of them, 11 at or below the corpus
+        # median**, which is exactly the 80 -> 91 the evidence page reported as a
+        # bigger pool. They are real ultra-wide designs (170-176 deg full field,
+        # declared image height 1.65-3.58 mm against EFL 1.09-2.40, RMS
+        # 0.69-6.45 um), not garbage -- but they are outliers, they are all
+        # LARGAN, and they moved `served` by **zero**. Counted here so the next
+        # reader sees them instead of a pool that grew for free.
         built = receipt_efl.get(name)
+        half_field = first_order.get("half_field_deg")
         if built:
             first_order = dict(first_order, efl_mm=built)
-            efl_source["receipt_built_optic"] += 1
-        elif first_order.get("efl_mm"):
-            efl_source["trailer_declared_fallback"] += 1
-        if not first_order.get("efl_mm") or not first_order.get("half_field_deg"):
+        if not first_order.get("efl_mm") or not half_field:
             dropped["first_order_not_derivable"] += 1
             continue
+        if built:
+            efl_source["receipt_built_optic"] += 1
+            if float(half_field) >= MAX_HALF_FIELD_DEG:
+                efl_source["receipt_admitted_past_the_tangent_guard"] += 1
+        else:
+            efl_source["trailer_declared_fallback"] += 1
         try:
             fingerprint = fingerprint_zmx(path)
         except Exception:  # noqa: BLE001 - a file we cannot fingerprint is its own design

@@ -97,9 +97,15 @@ def test_the_derivation_check_covers_the_whole_index_not_a_head_slice(artefact: 
 
 
 def test_the_derivation_accuracy_is_reported_not_asserted_away(artefact: dict) -> None:
-    """No threshold here on purpose. The formula is ~80% accurate corpus-wide and
-    its accuracy tracks the parser family, so any pass/fail bar would just encode
-    today's corpus mix. What must hold is that the *unevenness stays visible*."""
+    """Not an accuracy bar -- a visibility bar.
+
+    No pass/fail threshold on the *rate*, because that would encode today's corpus
+    mix. What is asserted is that the per-batch breakdown still separates: today
+    DATA-10b sits at 0.293 while five batches are above 0.94.
+
+    ⚠️ This does assert that the defect is still there, so it goes red the day
+    `funnel` item 1 (fix the broken parser families) succeeds. That is intended --
+    the evidence page has to be rewritten then anyway -- and the failure says so."""
 
     check = artefact["efl_derivation_check"]
     rates = {
@@ -125,10 +131,10 @@ def test_the_receipt_join_is_deterministic(artefact: dict) -> None:
     assert join["with_more_than_one_receipt"] > 0, (
         "if basenames became unique this guard can go, but check before deleting"
     )
-    assert join["max_relative_spread"] <= join["spread_gate"], (
-        "a receipt disagreement now exceeds the gate; the deterministic pick would "
-        "be choosing between materially different numbers"
-    )
+    # The *kept* rows are what the deterministic pick ranges over. Asserting on a
+    # spread that included the rejected rows would turn the fail-closed path
+    # working correctly into a red test.
+    assert join["max_relative_spread_kept"] <= join["spread_gate"]
     assert join["with_disagreeing_values"] <= join["with_more_than_one_receipt"]
 
 
@@ -138,8 +144,13 @@ def test_receipts_that_disagree_too_much_are_dropped_not_picked(artefact: dict) 
     pool rather than getting an arbitrary value."""
 
     join = artefact["staging_pool"]["receipt_join"]
-    assert "rejected_for_spread" in join
     assert isinstance(join["rejected_for_spread"], list)
+    # Whatever was rejected must be *because* it breached the gate, and the
+    # rejected-side spread is reported separately so the reader can see how far.
+    if join["rejected_for_spread"]:
+        assert join["max_relative_spread_rejected"] > join["spread_gate"]
+    else:
+        assert join["max_relative_spread_rejected"] == 0.0
 
 
 def test_staging_efl_comes_from_the_built_optic_not_the_declared_one(artefact: dict) -> None:
@@ -216,6 +227,11 @@ def test_dropped_rows_are_counted_by_reason(artefact: dict) -> None:
 def test_artefact_still_matches_a_fresh_recompute() -> None:
     fresh = build(CENSUS, STAGING_CENSUS)
     stored = json.loads(ARTEFACT.read_text(encoding="utf-8"))
+    # Included deliberately: every other assertion in this file reads the
+    # committed JSON, so reverting `check_derivation` to a head slice without
+    # regenerating the artefact would leave the whole file green. This is the
+    # only place code and artefact are compared.
+    assert fresh["efl_derivation_check"] == stored["efl_derivation_check"]
     assert fresh["staging_pool"] == stored["staging_pool"]
     assert fresh["controls"] == stored["controls"]
     for key, row in stored["comparison"].items():

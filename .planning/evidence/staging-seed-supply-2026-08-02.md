@@ -46,7 +46,7 @@ uv run python scripts/staging_seed_supply_census.py \
 |---|---|
 | 盘上 ZMX | 613 |
 | 有 CODE V 全场读数 | 238 |
-| 过保真度隔离 + 受让人已知 + 一阶量可得 | **205**（唯一丢弃项：保真度隔离 33） |
+| 过保真度隔离 + 受让人已知 + 一阶量可得 | **205**（唯一丢弃项：保真度隔离 33）<br>其中 **12 颗**是半场 ≥85° 的超广角，靠 receipt EFL 才进来（见下） |
 | **且 ≤ 语料中位** | **91** = **57 个不同处方 / 30 件专利** |
 | 其中处方 `data/zmx` **已经有的** | **19** ⇒ **真正新增 38 个处方** |
 
@@ -75,6 +75,14 @@ uv run python scripts/staging_seed_supply_census.py \
 与语料侧同量。**错位风险不适用**：join 走的是 receipt 自己写下的 `published_zmx_path`
 （那次尝试实际产出的文件），不是 `{patent}-e{N}` 键猜测。
 实测覆盖：**205/205 全部走 receipt，零回退**（产物 `efl_source` 字段可查）。
+
+⚠️ **换源还静默放宽了一道闸，已披露（第二轮审查抓的）**：`read_first_order` 在半场 ≥85° 时
+拒绝推 EFL（`tan` 不再是可用除数），所以这类行原本从 `first_order_not_derivable` 出局。
+receipt 的 EFL **不需要正切**，于是它们开始悄悄进池——**12 颗，其中 11 颗达标**，
+**这正好就是 80 → 91 那个「池子更大」**。它们是真实超广角（全场 170–176°、
+声明像高 1.65–3.58 mm 对 EFL 1.09–2.40、RMS 0.69–6.45 µm），**不是垃圾**；
+但它们全是 LARGAN，而且对 `served` 的贡献是 **0**（12 档口径逐项未动）。
+⇒ **「池子更大」不是收益**，产物已新增 `receipt_admitted_past_the_tangent_guard` 计数。
 
 ⚠️ **join 的第一版是不确定的，已修**：basename 在多次 attempt 之间**会重复**——
 610 个 basename 里 **107 个有多份 receipt、12 个的 EFL 值不一致**（最大分歧 **0.174%**，
