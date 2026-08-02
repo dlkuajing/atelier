@@ -1,25 +1,32 @@
 """Gate: a patent's `1E+18` may not become a real number in any column.
 
-Patent surface tables print ``1E+18`` where a radius is plano. The conversion
-path read it with the ordinary number parser, encoded it on the **radius**
-column (`_request_radius_mm`, plus `zmx_writer._fmt_number` collapsing the
-resulting ``1e-18`` curvature to ``0``), and passed it through untouched on the
-**thickness** column. Eight corpus files therefore carry ``DISZ 1e+18`` on their
-last surface -- an image plane 1e18 mm away.
+Eight corpus files carry ``DISZ 1e+18`` on their last surface -- an image plane
+1e18 mm away. They passed every intake gate because EFL is paraxial and does not
+move when the image plane does, and they were invisible to the fidelity audit
+because it read ``FNUM`` / ``YFLN`` / aspheric terms and never read ``DISZ``.
 
-They passed every intake gate because EFL is paraxial and does not move when the
-image plane does, and they were invisible to the fidelity audit because it read
-``FNUM`` / ``YFLN`` / aspheric terms and never read ``DISZ``.
+⚠️ **The root cause is upstream of everything pinned here.** The corpus's own
+golden fixture ends ``10 Image plane 1E+18 0``; ``_consume_surface_label``
+matches ``IMAGE`` in a one-token set, so ``plane`` is read as the radius, the
+real radius ``1E+18`` slides into the thickness slot, and the real thickness
+``0`` is dropped. The value never belonged to the thickness column, and
+``_request_radius_mm`` would have caught it in its own. Disambiguating that
+label is not a token count -- the same table writes ``Aperture plane -0.412``
+where ``plane`` genuinely *is* the radius -- so it is filed separately, and
+nothing in this file may be read as having fixed it.
 
-What is pinned here:
+What is pinned here is therefore **containment**, not repair:
 
-* the **asymmetry is gone** -- both columns now go through one sentinel test;
+* both columns now go through one sentinel test;
 * the interior/last-surface distinction, because mapping an interior infinite
-  gap to ``0`` would invent geometry while mapping the post-image row to ``0``
-  adopts the corpus's own convention (375 of 442 files);
+  gap to ``0`` would invent geometry while mapping an image row to ``0`` adopts
+  the corpus's own convention (**392** of 442 files). ⚠️ Position does not prove
+  a row is the image row -- 42 files carry a real back focal distance there --
+  so the mapping is right for these eight because their real thickness is 0, not
+  because the position guarantees it;
 * the **void** that makes the magnitude cut a fact rather than a tuning knob;
-* the **set equality** that identifies the defect: the files with a huge last
-  ``DISZ`` are exactly the files whose CODE V spot is huge.
+* the **set equality** that identifies the affected files: the ones with a huge
+  last ``DISZ`` are exactly the ones whose CODE V spot is huge.
 """
 
 from __future__ import annotations
