@@ -1,0 +1,280 @@
+{
+ "schema": "atelier-staging-seed-supply-v1",
+ "inputs": {
+  "census_sha256": "fdfe52b621e6eaaaa0042e91f1733a33f1dd8262fab870dd9f3e8d941aae0e15",
+  "staging_census_sha256": "58f3c0d303eb8b8b82954e54b3220e8a921d561bc41d4b374771ad695a0e470b",
+  "case_index_sha256": "a9a37e994d0fafb92b1d441c3f84667fc4beec5a04428104fcb14305474d0212",
+  "quarantine_sha256": "286e0036c9586838e6d856189a62da4cacb3238f35e1e1bf25b2739a6da87cb9",
+  "seed_quality_limit_um": 10.231200000000001,
+  "fov_caps_deg": [
+   20.0,
+   10.0,
+   5.0
+  ]
+ },
+ "efl_derivation_check": {
+  "n": 393,
+  "scope": "whole index",
+  "within_1pct_by_intake_batch": {
+   "DATA-09d1": {
+    "n": 184,
+    "within_1pct": 173
+   },
+   "DATA-10b": {
+    "n": 75,
+    "within_1pct": 22
+   },
+   "DATA-06c": {
+    "n": 59,
+    "within_1pct": 57
+   },
+   "DATA-06f": {
+    "n": 39,
+    "within_1pct": 37
+   },
+   "DATA-06f-b11": {
+    "n": 12,
+    "within_1pct": 12
+   },
+   "DATA-06i-rescan2": {
+    "n": 10,
+    "within_1pct": 8
+   },
+   "DATA-10a": {
+    "n": 8,
+    "within_1pct": 8
+   },
+   "P12-4B": {
+    "n": 6,
+    "within_1pct": 1
+   }
+  },
+  "median": 1.000019201317527,
+  "within_1pct": 318,
+  "min": 0.2656888241277224,
+  "max": 2.080912198258687
+ },
+ "staging_pool": {
+  "zmx_on_disk": 613,
+  "full_field_readings": 238,
+  "admitted": 205,
+  "dropped": {
+   "fidelity_quarantined": 33
+  },
+  "efl_source": {
+   "receipt_built_optic": 205,
+   "receipt_admitted_past_the_tangent_guard": 12
+  },
+  "receipt_join": {
+   "basenames": 610,
+   "with_more_than_one_receipt": 107,
+   "with_disagreeing_values": 12,
+   "max_relative_spread_kept": 0.0017447850617113858,
+   "max_relative_spread_rejected": 0.0,
+   "spread_gate": 0.01,
+   "rejected_for_spread": []
+  },
+  "at_or_below_corpus_median": 91,
+  "healthy_by_brand": {
+   "LARGAN DIGITAL CO., LTD.": 59,
+   "SAMSUNG ELECTRO-MECHANICS CO., LTD": 18,
+   "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 6,
+   "APPLE INC.": 4,
+   "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": 2,
+   "ABILITY ENTERPRISE CO., LTD": 1,
+   "Raytech Optical (Changzhou) Co., Ltd.": 1
+  },
+  "healthy_distinct_prescriptions": 57,
+  "healthy_distinct_patents": 30,
+  "healthy_fov_median": 77.6,
+  "healthy_fov_range": [
+   10.0,
+   176.2
+  ]
+ },
+ "controls": 59,
+ "comparison": {
+  "corpus seeds only (two-screen) @ any": {
+   "controls": 59,
+   "served": 59,
+   "best_rms_median": 2.6428,
+   "distinct_options_median": 13,
+   "distinct_options_max": 84,
+   "controls_with_zero_options": 0,
+   "controls_with_one_option": 0,
+   "lowest_rms_pick_concentration": {
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd. | US-20200057277-A1-e1": 43,
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US-12571987-B2-e5": 11,
+    "LARGAN DIGITAL CO., LTD. | US-11933948-B2-e8": 3,
+    "LARGAN DIGITAL CO., LTD. | US-20220187578-A1-e2": 2
+   }
+  },
+  "corpus seeds only (two-screen) @ 20deg": {
+   "controls": 59,
+   "served": 11,
+   "best_rms_median": 7.11008,
+   "distinct_options_median": 0,
+   "distinct_options_max": 37,
+   "controls_with_zero_options": 48,
+   "controls_with_one_option": 2,
+   "lowest_rms_pick_concentration": {
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US-12571987-B2-e5": 4,
+    "LARGAN DIGITAL CO., LTD. | US-12210142-B2-e4": 3,
+    "APPLE INC. | US20210165194A1": 2,
+    "LARGAN DIGITAL CO., LTD. | US-12210142-B2-e9": 1,
+    "LARGAN DIGITAL CO., LTD. | US-20220187578-A1-e2": 1
+   }
+  },
+  "corpus seeds only (two-screen) @ 10deg": {
+   "controls": 59,
+   "served": 9,
+   "best_rms_median": 7.1242600000000005,
+   "distinct_options_median": 0,
+   "distinct_options_max": 25,
+   "controls_with_zero_options": 50,
+   "controls_with_one_option": 3,
+   "lowest_rms_pick_concentration": {
+    "LARGAN DIGITAL CO., LTD. | US9239447B1": 3,
+    "APPLE INC. | US20210165194A1": 2,
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US-12571987-B2-e5": 2,
+    "LARGAN DIGITAL CO., LTD. | US-12210142-B2-e9": 1,
+    "LARGAN DIGITAL CO., LTD. | US-20260160979-A1-e7": 1
+   }
+  },
+  "corpus seeds only (two-screen) @ 5deg": {
+   "controls": 59,
+   "served": 7,
+   "best_rms_median": 8.7515,
+   "distinct_options_median": 0,
+   "distinct_options_max": 7,
+   "controls_with_zero_options": 52,
+   "controls_with_one_option": 5,
+   "lowest_rms_pick_concentration": {
+    "APPLE INC. | US20210165194A1": 4,
+    "LARGAN DIGITAL CO., LTD. | US9239447B1": 1,
+    "LARGAN DIGITAL CO., LTD. | US-12210142-B2-e4": 1,
+    "LARGAN DIGITAL CO., LTD. | US-20260160979-A1-e7": 1
+   }
+  },
+  "staging seeds only @ any": {
+   "controls": 59,
+   "served": 56,
+   "best_rms_median": 1.5312299999999999,
+   "distinct_options_median": 15,
+   "distinct_options_max": 51,
+   "controls_with_zero_options": 3,
+   "controls_with_one_option": 0,
+   "lowest_rms_pick_concentration": {
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd. | US20210373285A1": 55,
+    "LARGAN DIGITAL CO., LTD. | US20250231379A1": 1
+   }
+  },
+  "staging seeds only @ 20deg": {
+   "controls": 59,
+   "served": 56,
+   "best_rms_median": 3.7289100000000004,
+   "distinct_options_median": 9,
+   "distinct_options_max": 28,
+   "controls_with_zero_options": 3,
+   "controls_with_one_option": 0,
+   "lowest_rms_pick_concentration": {
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US12560782B2": 50,
+    "LARGAN DIGITAL CO., LTD. | US11940605B2": 4,
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd. | US20210373285A1": 1,
+    "LARGAN DIGITAL CO., LTD. | US20250231379A1": 1
+   }
+  },
+  "staging seeds only @ 10deg": {
+   "controls": 59,
+   "served": 44,
+   "best_rms_median": 3.7289100000000004,
+   "distinct_options_median": 9,
+   "distinct_options_max": 17,
+   "controls_with_zero_options": 15,
+   "controls_with_one_option": 1,
+   "lowest_rms_pick_concentration": {
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US12560782B2": 40,
+    "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD. | US12078784B2": 1,
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd. | US20210373285A1": 1,
+    "LARGAN DIGITAL CO., LTD. | US11940605B2": 1,
+    "LARGAN DIGITAL CO., LTD. | US12669682B2": 1
+   }
+  },
+  "staging seeds only @ 5deg": {
+   "controls": 59,
+   "served": 26,
+   "best_rms_median": 3.7289100000000004,
+   "distinct_options_median": 0,
+   "distinct_options_max": 10,
+   "controls_with_zero_options": 33,
+   "controls_with_one_option": 1,
+   "lowest_rms_pick_concentration": {
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US12560782B2": 24,
+    "LARGAN DIGITAL CO., LTD. | US20180275373A1": 1,
+    "LARGAN DIGITAL CO., LTD. | US11940605B2": 1
+   }
+  },
+  "corpus + staging @ any": {
+   "controls": 59,
+   "served": 59,
+   "best_rms_median": 1.5312299999999999,
+   "distinct_options_median": 28,
+   "distinct_options_max": 135,
+   "controls_with_zero_options": 0,
+   "controls_with_one_option": 0,
+   "lowest_rms_pick_concentration": {
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd. | US20210373285A1": 55,
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US-12571987-B2-e5": 3,
+    "LARGAN DIGITAL CO., LTD. | US20250231379A1": 1
+   }
+  },
+  "corpus + staging @ 20deg": {
+   "controls": 59,
+   "served": 59,
+   "best_rms_median": 3.7289100000000004,
+   "distinct_options_median": 9,
+   "distinct_options_max": 65,
+   "controls_with_zero_options": 0,
+   "controls_with_one_option": 0,
+   "lowest_rms_pick_concentration": {
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US12560782B2": 50,
+    "LARGAN DIGITAL CO., LTD. | US-12210142-B2-e4": 3,
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US-12571987-B2-e5": 3,
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd. | US20210373285A1": 1,
+    "LARGAN DIGITAL CO., LTD. | US-12210142-B2-e9": 1
+   }
+  },
+  "corpus + staging @ 10deg": {
+   "controls": 59,
+   "served": 47,
+   "best_rms_median": 3.7289100000000004,
+   "distinct_options_median": 9,
+   "distinct_options_max": 42,
+   "controls_with_zero_options": 12,
+   "controls_with_one_option": 0,
+   "lowest_rms_pick_concentration": {
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US12560782B2": 40,
+    "LARGAN DIGITAL CO., LTD. | US9239447B1": 2,
+    "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD. | US12078784B2": 1,
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd. | US20210373285A1": 1,
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US-12571987-B2-e5": 1
+   }
+  },
+  "corpus + staging @ 5deg": {
+   "controls": 59,
+   "served": 31,
+   "best_rms_median": 3.7289100000000004,
+   "distinct_options_median": 1,
+   "distinct_options_max": 17,
+   "controls_with_zero_options": 28,
+   "controls_with_one_option": 4,
+   "lowest_rms_pick_concentration": {
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD | US12560782B2": 24,
+    "APPLE INC. | US20210165194A1": 4,
+    "LARGAN DIGITAL CO., LTD. | US9239447B1": 1,
+    "LARGAN DIGITAL CO., LTD. | US-12210142-B2-e4": 1,
+    "LARGAN DIGITAL CO., LTD. | US-20260160979-A1-e7": 1
+   }
+  }
+ }
+}
