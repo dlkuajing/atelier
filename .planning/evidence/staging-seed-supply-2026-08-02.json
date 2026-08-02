@@ -64,6 +64,14 @@
   "efl_source": {
    "receipt_built_optic": 205
   },
+  "receipt_join": {
+   "basenames": 610,
+   "with_more_than_one_receipt": 107,
+   "with_disagreeing_values": 12,
+   "max_relative_spread": 0.0017447850617113858,
+   "spread_gate": 0.01,
+   "rejected_for_spread": []
+  },
   "at_or_below_corpus_median": 91,
   "healthy_by_brand": {
    "LARGAN DIGITAL CO., LTD.": 59,

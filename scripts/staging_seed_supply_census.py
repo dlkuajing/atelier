@@ -157,7 +157,17 @@ def read_first_order(path: Path) -> dict[str, float | None]:
 ATTEMPTS_DIR = REPO_ROOT / "data" / "patent-conversion-attempts" / "local-replay"
 
 
-def receipt_efl_by_zmx() -> dict[str, float]:
+#: Relative spread above which two receipts naming the same published ZMX stop
+#: being rounding noise and start being a question about which attempt produced
+#: the file. Measured 2026-08-02: 107 of 613 basenames have more than one
+#: receipt, 12 of those disagree at all, and the largest disagreement is
+#: **0.174%** -- four embodiments of one continuation family published under
+#: three patent numbers. A gate at 1% therefore rejects nothing today and exists
+#: so that a future disagreement that *would* matter cannot be picked silently.
+RECEIPT_EFL_MAX_SPREAD = 0.01
+
+
+def receipt_efl_by_zmx() -> tuple[dict[str, float], dict[str, Any]]:
     """Built-optic EFL per staging ZMX, joined on the path the receipt itself wrote.
 
     ``worker_response.efl_mm`` is Optiland's computed focal length of the optic
@@ -166,27 +176,59 @@ def receipt_efl_by_zmx() -> dict[str, float]:
     across both pools. Joining on ``published_zmx_path`` avoids the
     ``{patent}-e{N}`` key guess that ``staging-domain-ceiling-2026-07-29.md``
     records 9 misalignments for.
+
+    ⚠️ **Basenames are not unique across attempts.** The first version of this
+    function assigned into a dict inside the glob loop, so a repeated basename
+    kept whichever receipt the filesystem happened to yield last -- a value that
+    is not reproducible on another machine, which is exactly what the artefact's
+    recompute test is supposed to guarantee. Every receipt is now collected, the
+    pick is deterministic (``min``), and disagreement beyond
+    :data:`RECEIPT_EFL_MAX_SPREAD` drops the file rather than choosing for it.
     """
 
+    collected: dict[str, list[float]] = collections.defaultdict(list)
+    if ATTEMPTS_DIR.is_dir():
+        for receipt_path in sorted(ATTEMPTS_DIR.glob("*/attempt-*/receipt.json")):
+            try:
+                data = json.loads(receipt_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            published = data.get("published_zmx_path") or data.get("candidate_zmx_path")
+            efl = (data.get("worker_response") or {}).get("efl_mm")
+            if not published or efl is None:
+                continue
+            try:
+                value = float(efl)
+            except (TypeError, ValueError):
+                continue
+            if value > 0:
+                collected[Path(str(published)).name].append(value)
+
     out: dict[str, float] = {}
-    if not ATTEMPTS_DIR.is_dir():
-        return out
-    for receipt_path in ATTEMPTS_DIR.glob("*/attempt-*/receipt.json"):
-        try:
-            data = json.loads(receipt_path.read_text(encoding="utf-8"))
-        except (OSError, ValueError):
+    multi = 0
+    disagreeing = 0
+    rejected: list[str] = []
+    max_spread = 0.0
+    for name, values in collected.items():
+        if len(values) > 1:
+            multi += 1
+        spread = (max(values) - min(values)) / max(values) if max(values) > 0 else 0.0
+        if spread > 0:
+            disagreeing += 1
+            max_spread = max(max_spread, spread)
+        if spread > RECEIPT_EFL_MAX_SPREAD:
+            rejected.append(name)
             continue
-        published = data.get("published_zmx_path") or data.get("candidate_zmx_path")
-        efl = (data.get("worker_response") or {}).get("efl_mm")
-        if not published or efl is None:
-            continue
-        try:
-            value = float(efl)
-        except (TypeError, ValueError):
-            continue
-        if value > 0:
-            out[Path(str(published)).name] = value
-    return out
+        out[name] = min(values)  # deterministic; the spread gate bounds what this costs
+    provenance = {
+        "basenames": len(collected),
+        "with_more_than_one_receipt": multi,
+        "with_disagreeing_values": disagreeing,
+        "max_relative_spread": max_spread,
+        "spread_gate": RECEIPT_EFL_MAX_SPREAD,
+        "rejected_for_spread": sorted(rejected),
+    }
+    return out, provenance
 
 
 def check_derivation(sample: int | None = None) -> dict[str, Any]:
@@ -261,7 +303,7 @@ def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
     # ---- the staging seed pool ----
     from app.core.engines.prescription_identity import fingerprint_zmx
 
-    receipt_efl = receipt_efl_by_zmx()
+    receipt_efl, receipt_provenance = receipt_efl_by_zmx()
     staging_pool: list[dict[str, Any]] = []
     dropped: collections.Counter[str] = collections.Counter()
     efl_source: collections.Counter[str] = collections.Counter()
@@ -398,6 +440,7 @@ def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
             "admitted": len(staging_pool),
             "dropped": dict(dropped),
             "efl_source": dict(efl_source),
+            "receipt_join": receipt_provenance,
             "at_or_below_corpus_median": len(healthy),
             "healthy_by_brand": dict(by_brand.most_common()),
             "healthy_distinct_prescriptions": len({row["fingerprint"] for row in healthy}),

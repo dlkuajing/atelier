@@ -2,16 +2,21 @@
 
 `.planning/evidence/staging-seed-supply-2026-08-02.md` argues that the material
 for the 异源 seed shortage is already in the repository. Three things about that
-artefact would change what it means if they drifted, so they are pinned:
+artefact would change what it means if they drifted, so they are pinned
+(plus two properties of how the numbers are obtained at all):
 
 * the claim is a **feasibility** claim (is such a seed in the pool), never a
   par-rate claim -- nothing here may assert a quality outcome;
 * the FOV cap is what separates the two pools. Without a cap both look fine, and
   the corpus-only pool looks fine for the wrong reason (its seeds miss the
   control's field by a median 43.9 deg);
-* EFL for staging is derived from each file's own trailer rather than looked up
-  through a conversion receipt, because the receipts are known to be misaligned
-  on 3 patents. The derivation check must keep passing.
+* staging EFL comes from the conversion receipt's **built-optic** focal length,
+  the same quantity the corpus stores -- an earlier version derived it from the
+  ZMX trailer, which is the patent's *declared* focal length and only ~80%
+  accurate, and whose disagreement is fail-open for the reachability gate;
+* the receipt join is **deterministic**: basenames repeat across attempts, so a
+  dict assignment inside a glob loop silently picked whichever the filesystem
+  yielded last.
 """
 
 from __future__ import annotations
@@ -21,7 +26,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.staging_seed_supply_census import (
+from scripts.staging_seed_supply_census import (  # noqa: I001
     DEFAULT_FOV_CAPS,
     MAX_HALF_FIELD_DEG,
     build,
@@ -107,6 +112,34 @@ def test_the_derivation_accuracy_is_reported_not_asserted_away(artefact: dict) -
         "the per-batch spread vanished; either the parser was fixed (update this "
         "test and the evidence page) or the breakdown stopped being computed"
     )
+
+
+def test_the_receipt_join_is_deterministic(artefact: dict) -> None:
+    """Basenames are not unique across conversion attempts. The first version
+    assigned into a dict inside the glob loop, so a repeated basename kept
+    whichever receipt the filesystem yielded last -- a value that changes with
+    the machine, which would quietly break the recompute test this artefact
+    relies on. Measured: 107 of 610 basenames have more than one receipt."""
+
+    join = artefact["staging_pool"]["receipt_join"]
+    assert join["with_more_than_one_receipt"] > 0, (
+        "if basenames became unique this guard can go, but check before deleting"
+    )
+    assert join["max_relative_spread"] <= join["spread_gate"], (
+        "a receipt disagreement now exceeds the gate; the deterministic pick would "
+        "be choosing between materially different numbers"
+    )
+    assert join["with_disagreeing_values"] <= join["with_more_than_one_receipt"]
+
+
+def test_receipts_that_disagree_too_much_are_dropped_not_picked(artefact: dict) -> None:
+    """Fail-closed: when two receipts name the same file with materially different
+    focal lengths, we cannot say which attempt produced it, so the file leaves the
+    pool rather than getting an arbitrary value."""
+
+    join = artefact["staging_pool"]["receipt_join"]
+    assert "rejected_for_spread" in join
+    assert isinstance(join["rejected_for_spread"], list)
 
 
 def test_staging_efl_comes_from_the_built_optic_not_the_declared_one(artefact: dict) -> None:
