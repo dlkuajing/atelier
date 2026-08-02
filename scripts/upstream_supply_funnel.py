@@ -15,14 +15,16 @@ the one the scoreboard implies:
   :func:`scripts.p2_pair_census.load_usable_case_ids` is written entirely about
   *controls* -- "A control defines the spec a customer would ask for". A seed is
   not a request, and applying the screen to seeds costs 192 -> 74;
-* after cross-brand exclusion a LARGAN control -- 45 of the 49 -- can be seeded
-  from **4 designs in the whole corpus**, which is why one seed carries 41/49
-  trials;
+* after cross-brand exclusion a LARGAN control -- most of the trials -- can be
+  seeded from a handful of designs in the whole corpus, which is why one seed
+  carries the great majority of them;
 * those few are drawn from the parts of the corpus with the worst readings, and
-  the badness is **batch-shaped**: ``DATA-09d1`` reads a median 8.83 um with 58%
-  at or below the corpus median, ``DATA-10b`` reads a median 134.71 um with
-  **0 of 28** at or below it, including five readings of 3e20-8e20 um that no
-  quarantine catches.
+  the badness groups by **assignee**, not by intake batch -- KANTATSU and AAC sit
+  inside the batch that looks healthy and are 0-for-19 against the corpus median,
+  while that batch's own median is carried by LARGAN being 58 of its 103 readings.
+  ``quality_by_batch_and_brand`` in the artefact is the cross-tab that kills the
+  batch reading; the batch table is kept only because it is what a reader tries
+  first.
 
 This script recomputes every number above from the two inputs, so the report is
 reproducible rather than transcribed. It reads only the per-field census and the
@@ -203,7 +205,32 @@ def build(census_path: Path) -> dict[str, Any]:
         with contextlib.suppress(KeyError, TypeError, ValueError):
             by_band[fov_band(float(record["fov_deg"]))].append(value)
 
-    band_median = {band: statistics.median(v) for band, v in by_band.items() if v}
+    # The peer median has to exclude the rows this project already calls broken,
+    # or "no worse than your own field band" becomes a bar set by defects. Measured
+    # 2026-08-02 on the unfiltered version: the 40-60 band's median was 927.27 um
+    # (8 rows, 2 of them diverged traces, 2 already quarantined), so "at or below
+    # the band median" there meant "better than 927 um".
+    def _healthy_for_band(case_id: str) -> bool:
+        record = by_case.get(case_id) or {}
+        if str(record.get("source_zmx")) in quarantined:
+            return False
+        value = rms_of_case.get(case_id)
+        return value is not None and value < DIVERGED_MAGNITUDE
+
+    healthy_by_band: dict[str, list[float]] = collections.defaultdict(list)
+    for case_id in measured:
+        if not _healthy_for_band(case_id):
+            continue
+        value = rms_of_case[case_id]
+        record = by_case[case_id]
+        assert value is not None
+        with contextlib.suppress(KeyError, TypeError, ValueError):
+            healthy_by_band[fov_band(float(record["fov_deg"]))].append(value)
+    band_median = {band: statistics.median(v) for band, v in healthy_by_band.items() if v}
+    band_population = {
+        band: {"all": len(by_band.get(band, [])), "healthy": len(values)}
+        for band, values in sorted(healthy_by_band.items())
+    }
 
     def group_row(values: list[float], ids: list[str]) -> dict[str, Any]:
         row = _stats(values)
@@ -378,6 +405,7 @@ def build(census_path: Path) -> dict[str, Any]:
         "quality_by_brand": brands,
         "quality_by_batch_and_brand": cross_tab,
         "fov_band_median_um": band_median,
+        "fov_band_population": band_population,
         "spot_vs_image_height": spot_vs_image,
         "diverged_traces": diverged,
         "image_height_gate": image_height_gate,
@@ -387,7 +415,8 @@ def build(census_path: Path) -> dict[str, Any]:
 def render(result: dict[str, Any]) -> str:
     funnel = result["funnel"]
     lines = [
-        "P2 上游供给漏斗（每个数字都由本脚本从 census + index 重算）",
+        "P2 上游供给漏斗（本表每个数字都由本脚本从 census + index 重算；",
+        "  证据页第二/四/八节来自一次性探针，不在本脚本内）",
         "=" * 66,
         f"  语料索引                          {funnel['case_index']}",
         f"  有 CODE V 全场读数                {funnel['full_field_codev_reading']}",

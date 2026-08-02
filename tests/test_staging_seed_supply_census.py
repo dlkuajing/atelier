@@ -73,11 +73,53 @@ def test_first_order_reader_fails_closed_on_a_field_it_cannot_divide_by() -> Non
     assert missing == {}
 
 
-def test_the_efl_derivation_is_checked_against_a_known_answer(artefact: dict) -> None:
+def test_the_derivation_check_covers_the_whole_index_not_a_head_slice(artefact: dict) -> None:
+    """The failure this test exists because of.
+
+    The first version checked `index[:200]` and reported 95.4% within 1%. The
+    index is ordered by intake batch, so that head contains **zero** DATA-10b
+    rows -- the batch where the formula is 29% accurate. The true figure is
+    318/393 = 80.9%. A self-check calibrated on the cleanest slice of the data is
+    not a self-check.
+    """
+
     check = artefact["efl_derivation_check"]
-    assert check["n"] > 50
-    assert 0.99 <= check["median"] <= 1.01
-    assert check["within_1pct"] >= 0.9 * check["n"]
+    assert check["scope"] == "whole index"
+    assert check["n"] > 350, "coverage shrank; the check is back on a slice"
+    by_batch = check["within_1pct_by_intake_batch"]
+    assert "DATA-10b" in by_batch, "the batch the formula fails on must be covered"
+    assert sum(row["n"] for row in by_batch.values()) == check["n"]
+
+
+def test_the_derivation_accuracy_is_reported_not_asserted_away(artefact: dict) -> None:
+    """No threshold here on purpose. The formula is ~80% accurate corpus-wide and
+    its accuracy tracks the parser family, so any pass/fail bar would just encode
+    today's corpus mix. What must hold is that the *unevenness stays visible*."""
+
+    check = artefact["efl_derivation_check"]
+    rates = {
+        batch: row["within_1pct"] / row["n"]
+        for batch, row in check["within_1pct_by_intake_batch"].items()
+        if row["n"] >= 5
+    }
+    assert len(rates) >= 3
+    assert max(rates.values()) - min(rates.values()) > 0.3, (
+        "the per-batch spread vanished; either the parser was fixed (update this "
+        "test and the evidence page) or the breakdown stopped being computed"
+    )
+
+
+def test_staging_efl_comes_from_the_built_optic_not_the_declared_one(artefact: dict) -> None:
+    """Both pools must be measured with one ruler or the reachability gate is
+    comparing a declared focal length against a computed one -- and the
+    disagreement is fail-open (a too-large seed EFL passes)."""
+
+    source = artefact["staging_pool"]["efl_source"]
+    assert source.get("receipt_built_optic", 0) > 0
+    assert source["receipt_built_optic"] > 10 * source.get("trailer_declared_fallback", 0), (
+        "the declared-EFL fallback is no longer a rounding error; the double-ruler "
+        "caveat in the evidence page has to be re-measured"
+    )
 
 
 def test_the_fov_cap_is_what_separates_the_pools(artefact: dict) -> None:

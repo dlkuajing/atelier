@@ -1,11 +1,19 @@
-# 上游供给漏斗：异源 seed 池只有 4 颗，而且坏在一个批次上（2026-08-02）
+# 上游供给漏斗：异源 seed 池只有 5 颗，而且坏得跟着受让人走（2026-08-02）
+
+> ⚠️ **标题改过两次**：先写「4 颗」（补受让人前的数）、再写「坏在一个批次上」——
+> 后者被同分支的交叉表推翻（第五节），前者被本 PR 自己的 backfill 修复改掉。
 
 `.planning/GOAL-PROMPT-AUTONOMOUS.md` §5 把「一阶瓶颈 = 上游供给」定成结论，但没有把
 供给是**在哪一步、被哪道闸、削成多少**说出来。本页把它算出来。
 
-所有数字由 `scripts/upstream_supply_funnel.py` 从两个输入重算，产物
+第一、三、五、六、七节的数字由 `scripts/upstream_supply_funnel.py` 从两个输入重算，产物
 `upstream-supply-funnel-2026-08-02.json` 带三份 sha256（census / index / quarantine）。
 **不跑 CODE V、不跑 Optiland、不追迹**——只读 2026-07-28 的逐视场普查与语料索引。
+
+⚠️ **第二、四、八节与 staging 页的四点五/四点六不在这个脚本里**：它们来自一次性探针
+（真机 trial 记录解析、`rank_seeds` 代理选择、`build_sample_from_optic` 探针、
+`p2_pair_census` 前后对拍），**没有已提交的生产者，复算等级低于漏斗表**。合并前对抗审查
+指出脚本表头那句「每个数字都由本脚本重算」覆盖不到它们，属实，措辞已按此更正。
 
 ```bash
 uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/trace-census-20260728/perfield-census.jsonl --json .planning/evidence/upstream-supply-funnel-2026-08-02.json
@@ -98,12 +106,19 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 
 | intake_batch | n | 中位 RMS | ≤语料中位 | ≤自身 FOV 桶中位 |
 |---|---|---|---|---|
-| DATA-09d1 | 103 | 8.83 µm | 60 | 67 |
-| DATA-06c | 25 | 5.61 | 19 | 21 |
+| DATA-09d1 | 103 | 8.83 µm | 60 | 65 |
+| DATA-06c | 25 | 5.61 | 19 | 19 |
 | **DATA-10b** | **28** | **134.71 µm** | **0** | **1** |
 
 （「≤自身 FOV 桶中位」这一列原本是用来反驳「超广角被不公平判据打成缺陷」的，
 按同桶重判 DATA-10b 仍是 1/28，那一层反驳成立且保留。）
+
+> ⚠️ **这把「同桶」尺子在合并前被对抗审查指出不干净并已修**：初版的桶中位是在
+> **未剔除隔离件与发散件**的 218 条上算的，`40-60` 桶因此是 **927.27 µm** ——
+> 在那个桶里「不高于同桶中位」等于「比 927 µm 好」。改成只用健康件后该桶是 **44.16 µm**，
+> 各批次的「≤同桶」计数随之下调（DATA-09d1 67→65、DATA-06c 21→19），
+> **DATA-10b 仍是 1/28** ——结论不变，但支撑它的尺子现在是干净的。
+> 产物新增 `fov_band_population` 记录每桶「全部 / 健康」两个 n。
 
 **但把同一份读数按「批次 × 受让人」切开，批次这个分组变量当场垮掉：**
 

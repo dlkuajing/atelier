@@ -26,15 +26,34 @@ seed that is simultaneously
 * **field-matched** within a stated FOV cap -- the constraint that killed the
   naive "just drop screen 3" idea (its seeds missed by a median 43.9 deg).
 
-EFL without receipt pairing
----------------------------
-Staging ZMX carry `! ATELIER_FTAN_IMH_SANITY_MM` = `EFL * tan(half field)` in
-their trailer and the half field in `YFLN`, so `EFL = FTAN_IMH / tan(YFLN_max)`
-is readable from the file alone. That matters: the only other route is the
-conversion receipt, and `staging-domain-ceiling-2026-07-29.md` records **9 known
-receipt-to-ZMX misalignments** across 3 patents, where a receipt lookup returns
-the neighbouring embodiment's parameters. `--check-derivation` validates the
-formula against the corpus, where `index.json` states EFL independently.
+Where staging EFL comes from, and why it changed
+------------------------------------------------
+**First version used the ZMX trailer**: `! ATELIER_FTAN_IMH_SANITY_MM` is
+`EFL * tan(half field)` and `YFLN` carries the half field, so
+`EFL = FTAN_IMH / tan(YFLN_max)` is readable from the file alone. Two problems,
+both found by adversarial review before this shipped:
+
+1. **It is the declared EFL, not the built one.** `ATELIER_FTAN_IMH_SANITY_MM`
+   traces back to `prescription.focal_length_mm * tan(hfov)` -- the number the
+   patent table states. The corpus side (`index["efl_mm"]`) is the focal length
+   Optiland computes from the surfaces. Comparing them across a single gate is
+   two rulers, and the disagreement is **fail-open for reachability**
+   (`seed_efl_is_reachable` passes when the seed EFL is large).
+2. **It is only ~80% accurate.** Measured against the receipts below:
+   462/581 within 1%, worst over-estimate 2.817x (`US-10514523-B2-e6`, derived
+   2.411 vs built 0.856).
+
+**Now it comes from the conversion receipt**: every attempt recorded
+`worker_response.efl_mm`, which *is* Optiland's computed focal length -- the same
+quantity as the corpus side. `staging-domain-ceiling-2026-07-29.md` records 9
+receipt-to-ZMX misalignments, but those come from guessing the `{patent}-e{N}`
+key; this joins on `published_zmx_path` **written inside the receipt**, which is
+the file that attempt actually produced. Files with no receipt EFL fall back to
+the trailer and are counted separately, never silently.
+
+`check_derivation` still runs -- over the **whole** index, not a head slice (the
+index is batch-ordered and a 200-row head excludes DATA-10b entirely, where the
+formula is 29% accurate) -- because the fallback still uses it.
 
 Usage
 -----
@@ -135,12 +154,55 @@ def read_first_order(path: Path) -> dict[str, float | None]:
     return {"half_field_deg": half_field, "efl_mm": ftan / tangent}
 
 
-def check_derivation(sample: int = 200) -> dict[str, Any]:
-    """Validate `EFL = FTAN_IMH / tan(half field)` where EFL is independently known."""
+ATTEMPTS_DIR = REPO_ROOT / "data" / "patent-conversion-attempts" / "local-replay"
+
+
+def receipt_efl_by_zmx() -> dict[str, float]:
+    """Built-optic EFL per staging ZMX, joined on the path the receipt itself wrote.
+
+    ``worker_response.efl_mm`` is Optiland's computed focal length of the optic
+    that attempt produced -- the same quantity the corpus stores as
+    ``index["efl_mm"]``, which is what makes a single reachability gate legitimate
+    across both pools. Joining on ``published_zmx_path`` avoids the
+    ``{patent}-e{N}`` key guess that ``staging-domain-ceiling-2026-07-29.md``
+    records 9 misalignments for.
+    """
+
+    out: dict[str, float] = {}
+    if not ATTEMPTS_DIR.is_dir():
+        return out
+    for receipt_path in ATTEMPTS_DIR.glob("*/attempt-*/receipt.json"):
+        try:
+            data = json.loads(receipt_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        published = data.get("published_zmx_path") or data.get("candidate_zmx_path")
+        efl = (data.get("worker_response") or {}).get("efl_mm")
+        if not published or efl is None:
+            continue
+        try:
+            value = float(efl)
+        except (TypeError, ValueError):
+            continue
+        if value > 0:
+            out[Path(str(published)).name] = value
+    return out
+
+
+def check_derivation(sample: int | None = None) -> dict[str, Any]:
+    """Validate `EFL = FTAN_IMH / tan(half field)` where EFL is independently known.
+
+    ``sample=None`` means the whole index, and that is the reporting default.
+    The first version defaulted to the first 200 rows; the index is ordered by
+    intake batch, so that head contains **zero** DATA-10b rows -- the batch where
+    the formula is 29% accurate -- and reported 95.4% instead of the true 80.9%.
+    """
 
     index = json.loads(CASE_INDEX.read_text(encoding="utf-8"))
+    records = index if sample is None else index[:sample]
     ratios: list[float] = []
-    for record in index[:sample]:
+    by_batch: dict[str, list[float]] = collections.defaultdict(list)
+    for record in records:
         path = ZMX_DIR / str(record["source_zmx"])
         if not path.exists():
             continue
@@ -153,11 +215,22 @@ def check_derivation(sample: int = 200) -> dict[str, Any]:
             ratio = derived / stated
             if math.isfinite(ratio):
                 ratios.append(ratio)
+                by_batch[str(record.get("intake_batch"))].append(ratio)
     ratios.sort()
     if not ratios:
         return {"n": 0}
     return {
         "n": len(ratios),
+        "scope": "whole index" if sample is None else f"first {sample} rows",
+        # Reported because the aggregate hides it: the formula's accuracy tracks
+        # the parser family, not the corpus.
+        "within_1pct_by_intake_batch": {
+            batch: {
+                "n": len(values),
+                "within_1pct": sum(1 for r in values if 0.99 <= r <= 1.01),
+            }
+            for batch, values in sorted(by_batch.items(), key=lambda kv: -len(kv[1]))
+        },
         "median": statistics.median(ratios),
         "within_1pct": sum(1 for r in ratios if 0.99 <= r <= 1.01),
         "min": ratios[0],
@@ -188,8 +261,10 @@ def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
     # ---- the staging seed pool ----
     from app.core.engines.prescription_identity import fingerprint_zmx
 
+    receipt_efl = receipt_efl_by_zmx()
     staging_pool: list[dict[str, Any]] = []
     dropped: collections.Counter[str] = collections.Counter()
+    efl_source: collections.Counter[str] = collections.Counter()
     for name, rms in staging_rms.items():
         if name in staging_defective:
             dropped["fidelity_quarantined"] += 1
@@ -204,6 +279,14 @@ def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
         if brand is None:
             dropped["provenance_unknown"] += 1
             continue
+        # Built-optic EFL, same quantity as the corpus side, or the declared one
+        # with the fallback counted. Never silently mixed.
+        built = receipt_efl.get(name)
+        if built:
+            first_order = dict(first_order, efl_mm=built)
+            efl_source["receipt_built_optic"] += 1
+        elif first_order.get("efl_mm"):
+            efl_source["trailer_declared_fallback"] += 1
         if not first_order.get("efl_mm") or not first_order.get("half_field_deg"):
             dropped["first_order_not_derivable"] += 1
             continue
@@ -314,6 +397,7 @@ def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
             "full_field_readings": len(staging_rms),
             "admitted": len(staging_pool),
             "dropped": dict(dropped),
+            "efl_source": dict(efl_source),
             "at_or_below_corpus_median": len(healthy),
             "healthy_by_brand": dict(by_brand.most_common()),
             "healthy_distinct_prescriptions": len({row["fingerprint"] for row in healthy}),

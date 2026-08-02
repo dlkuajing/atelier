@@ -13,23 +13,60 @@
   ]
  },
  "efl_derivation_check": {
-  "n": 153,
-  "median": 0.9996313480134956,
-  "within_1pct": 146,
+  "n": 393,
+  "scope": "whole index",
+  "within_1pct_by_intake_batch": {
+   "DATA-09d1": {
+    "n": 184,
+    "within_1pct": 173
+   },
+   "DATA-10b": {
+    "n": 75,
+    "within_1pct": 22
+   },
+   "DATA-06c": {
+    "n": 59,
+    "within_1pct": 57
+   },
+   "DATA-06f": {
+    "n": 39,
+    "within_1pct": 37
+   },
+   "DATA-06f-b11": {
+    "n": 12,
+    "within_1pct": 12
+   },
+   "DATA-06i-rescan2": {
+    "n": 10,
+    "within_1pct": 8
+   },
+   "DATA-10a": {
+    "n": 8,
+    "within_1pct": 8
+   },
+   "P12-4B": {
+    "n": 6,
+    "within_1pct": 1
+   }
+  },
+  "median": 1.000019201317527,
+  "within_1pct": 318,
   "min": 0.2656888241277224,
-  "max": 1.1829504131113497
+  "max": 2.080912198258687
  },
  "staging_pool": {
   "zmx_on_disk": 613,
   "full_field_readings": 238,
-  "admitted": 193,
+  "admitted": 205,
   "dropped": {
-   "fidelity_quarantined": 33,
-   "first_order_not_derivable": 12
+   "fidelity_quarantined": 33
   },
-  "at_or_below_corpus_median": 80,
+  "efl_source": {
+   "receipt_built_optic": 205
+  },
+  "at_or_below_corpus_median": 91,
   "healthy_by_brand": {
-   "LARGAN DIGITAL CO., LTD.": 48,
+   "LARGAN DIGITAL CO., LTD.": 59,
    "SAMSUNG ELECTRO-MECHANICS CO., LTD": 18,
    "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 6,
    "APPLE INC.": 4,
@@ -37,12 +74,12 @@
    "ABILITY ENTERPRISE CO., LTD": 1,
    "Raytech Optical (Changzhou) Co., Ltd.": 1
   },
-  "healthy_distinct_prescriptions": 51,
-  "healthy_distinct_patents": 27,
-  "healthy_fov_median": 76.8,
+  "healthy_distinct_prescriptions": 57,
+  "healthy_distinct_patents": 30,
+  "healthy_fov_median": 77.6,
   "healthy_fov_range": [
    10.0,
-   152.0
+   176.2
   ]
  },
  "controls": 59,
@@ -114,7 +151,7 @@
    "served": 56,
    "best_rms_median": 1.5312299999999999,
    "distinct_options_median": 15,
-   "distinct_options_max": 47,
+   "distinct_options_max": 51,
    "controls_with_zero_options": 3,
    "controls_with_one_option": 0,
    "lowest_rms_pick_concentration": {
@@ -172,7 +209,7 @@
    "served": 59,
    "best_rms_median": 1.5312299999999999,
    "distinct_options_median": 28,
-   "distinct_options_max": 131,
+   "distinct_options_max": 135,
    "controls_with_zero_options": 0,
    "controls_with_one_option": 0,
    "lowest_rms_pick_concentration": {

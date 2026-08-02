@@ -59,7 +59,7 @@
    "median": 8.82717,
    "max": 17358.0,
    "at_or_below_corpus_median": 60,
-   "at_or_below_own_fov_band_median": 67,
+   "at_or_below_own_fov_band_median": 65,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 58,
     "SAMSUNG ELECTRO-MECHANICS CO., LTD": 24,
@@ -74,7 +74,7 @@
    "median": 15.834000000000001,
    "max": 51.7042,
    "at_or_below_corpus_median": 8,
-   "at_or_below_own_fov_band_median": 6,
+   "at_or_below_own_fov_band_median": 5,
    "brands": {
     "(unknown)": 18,
     "LARGAN DIGITAL CO., LTD.": 10,
@@ -99,7 +99,7 @@
    "median": 5.60811,
    "max": 90.23349999999999,
    "at_or_below_corpus_median": 19,
-   "at_or_below_own_fov_band_median": 21,
+   "at_or_below_own_fov_band_median": 19,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 25
    }
@@ -110,7 +110,7 @@
    "median": 8.199435000000001,
    "max": 1683.16,
    "at_or_below_corpus_median": 12,
-   "at_or_below_own_fov_band_median": 10,
+   "at_or_below_own_fov_band_median": 9,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 18
    }
@@ -121,7 +121,7 @@
    "median": 7.31925,
    "max": 13.033100000000001,
    "at_or_below_corpus_median": 9,
-   "at_or_below_own_fov_band_median": 6,
+   "at_or_below_own_fov_band_median": 5,
    "brands": {
     "LARGAN DIGITAL CO., LTD.": 11
    }
@@ -167,7 +167,7 @@
    "median": 7.27203,
    "max": 1683.16,
    "at_or_below_corpus_median": 85,
-   "at_or_below_own_fov_band_median": 84
+   "at_or_below_own_fov_band_median": 80
   },
   "SAMSUNG ELECTRO-MECHANICS CO., LTD": {
    "n": 24,
@@ -191,7 +191,7 @@
    "median": 17.305,
    "max": 40.4466,
    "at_or_below_corpus_median": 4,
-   "at_or_below_own_fov_band_median": 4
+   "at_or_below_own_fov_band_median": 3
   },
   "KANTATSU CO., LTD.": {
    "n": 15,
@@ -199,7 +199,7 @@
    "median": 91.9301,
    "max": 562.331,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 3
+   "at_or_below_own_fov_band_median": 1
   },
   "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": {
    "n": 7,
@@ -241,7 +241,7 @@
    "median": 5.60811,
    "max": 90.23349999999999,
    "at_or_below_corpus_median": 19,
-   "at_or_below_own_fov_band_median": 21
+   "at_or_below_own_fov_band_median": 19
   },
   "DATA-09d1 | SAMSUNG ELECTRO-MECHANICS CO., LTD": {
    "n": 24,
@@ -265,7 +265,7 @@
    "median": 17.305,
    "max": 40.4466,
    "at_or_below_corpus_median": 4,
-   "at_or_below_own_fov_band_median": 4
+   "at_or_below_own_fov_band_median": 3
   },
   "DATA-06f | LARGAN DIGITAL CO., LTD.": {
    "n": 18,
@@ -273,7 +273,7 @@
    "median": 8.199435000000001,
    "max": 1683.16,
    "at_or_below_corpus_median": 12,
-   "at_or_below_own_fov_band_median": 10
+   "at_or_below_own_fov_band_median": 9
   },
   "DATA-09d1 | KANTATSU CO., LTD.": {
    "n": 15,
@@ -281,7 +281,7 @@
    "median": 91.9301,
    "max": 562.331,
    "at_or_below_corpus_median": 0,
-   "at_or_below_own_fov_band_median": 3
+   "at_or_below_own_fov_band_median": 1
   },
   "DATA-06f-b11 | LARGAN DIGITAL CO., LTD.": {
    "n": 11,
@@ -289,7 +289,7 @@
    "median": 7.31925,
    "max": 13.033100000000001,
    "at_or_below_corpus_median": 9,
-   "at_or_below_own_fov_band_median": 6
+   "at_or_below_own_fov_band_median": 5
   },
   "None | LARGAN DIGITAL CO., LTD.": {
    "n": 10,
@@ -317,11 +317,33 @@
   }
  },
  "fov_band_median_um": {
-  "75-85": 7.31925,
-  "60-75": 9.20091,
-  ">=85": 15.831999999999999,
-  "<40": 11.06495,
-  "40-60": 927.2745
+  "75-85": 7.157055,
+  "60-75": 8.82717,
+  ">=85": 14.2061,
+  "<40": 12.573,
+  "40-60": 44.16275
+ },
+ "fov_band_population": {
+  "40-60": {
+   "all": 8,
+   "healthy": 4
+  },
+  "60-75": {
+   "all": 37,
+   "healthy": 35
+  },
+  "75-85": {
+   "all": 56,
+   "healthy": 54
+  },
+  "<40": {
+   "all": 56,
+   "healthy": 48
+  },
+  ">=85": {
+   "all": 61,
+   "healthy": 46
+  }
  },
  "spot_vs_image_height": {
   "cases_with_both_numbers": 218,
