@@ -25,7 +25,7 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 |---|---|
 | 语料索引 | 442 |
 | 有 CODE V **全场**读数（`n_positive == num_fields`） | 218 |
-| 且过「可追迹 + 保真度」两闸 | 192 |
+| 且过「可追迹 + 保真度」两闸 | **187**（PR #170 把 8 颗发散件加进隔离名单后由 192 降下来） |
 | 且过产品参数闸（`load_usable_case_ids` 的 screen 3） | **74** |
 
 74 里按受让人（**已含本 PR 补回的受让人数据**，见第八节）：LARGAN 54 ／ **受让人未知 15**
@@ -51,7 +51,7 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 | 超过 +25% 的 | **0 / 49** |
 
 **一条都没顶到那道闸。**`reachable_only` 这个标签下面其实是**质量短缺**：
-逐对照把池子筛下去（seed 池按两闸口径），中位 60 → 43（可达）→ 13（≤语料中位）；
+逐对照把池子筛下去（seed 池按两闸口径），中位 55 → 40（可达）→ 13（≤语料中位）；
 但在**今天的三闸 seed 池**里，同一串筛只剩 5 → 更少 → 只有 **6/59** 个对照拿得到
 质量达标的可达 seed。**区别全在 screen 3，不在 +25%。**
 
@@ -72,7 +72,7 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 | seed 池口径 | 每个对照能取到的跨受让人 seed（中位） |
 |---|---|
 | 今天（三闸） | **5**（min 5, max 58） |
-| screen 3 只施于对照 | **60**（min 60, max 176） |
+| screen 3 只施于对照 | **55**（min 55, max 171） |
 
 ## 四、⚠️ 但「直接放开」会换来另一种假象——已实测，不要照做
 
@@ -196,8 +196,9 @@ SAMSUNG 18、SUNNY 17、KANTATSU 15、ABILITY 6、AAC 3（外加 APPLE 1、受�
 （34 + 10 与 `scripts/e2_golden.py` 里钉的 pin 数一致，互证。）
 
 - 被拒且仍在**域内对照池**里：**0** —— 今天没有对照拿 6e17 当 spec，这条是好消息。
-- 被拒且仍在**两闸池**里：**15** —— ⇒ 第三节那个「screen 3 只给对照」的改动，
-  **必须同时按这道闸过滤 seed 池**，否则等于把 15 行发散数据请进种子池。
+- 被拒且仍在**两闸池**里：见产物 `image_height_gate.still_inside_trace_and_fidelity_pool`
+  —— ⇒ 第三节那个「screen 3 只给对照」的改动，**必须同时按这道闸过滤 seed 池**，
+  否则等于把这些发散行请进种子池。
 
 ## 八、分母对账：49 vs 59 不是两个时点，是 main 少了一个文件
 
