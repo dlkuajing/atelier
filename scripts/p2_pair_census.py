@@ -144,14 +144,31 @@ def patent_id_of_case(case_id: str) -> str | None:
 #: Deliberately a table, not a fuzzy matcher. `Cognex` / `Fujinon` sit at 0.76
 #: string similarity and are unrelated companies, so any similarity threshold
 #: loose enough to catch `corephontonics` also merges those.
+#: Every entry is justified by **another string in the same corpus**, not by
+#: outside knowledge. An earlier draft also merged `fujinon` into `fujifilm` on
+#: the strength of the 2010 corporate absorption; that is a real fact but it is
+#: not evidence *this repository holds*, so it was removed rather than shipped as
+#: a code comment stating a fact nobody here can check. It is recorded as an open
+#: question in the evidence trail instead.
 ASSIGNEE_TOKEN_SPELLING_FIXES: dict[str, str] = {
-    # `data/patents/uspto-smartphone-batch*.jsonl` spells it `Corephontonics
-    # Ltd.` on one record and `COREPHOTONICS LTD.` / `Corephotonics Ltd.` on the
-    # others -- an `n` where an `o` belongs.
+    # `Corephontonics Ltd.` (one record) vs `COREPHOTONICS LTD.` /
+    # `Corephotonics Ltd.` -- an `n` where an `o` belongs.
     "corephontonics": "corephotonics",
-    # Fujinon Corporation was absorbed into FUJIFILM in 2010. Same house, and
-    # merging is the conservative direction regardless.
-    "fujinon": "fujifilm",
+    # `Largen Precision Co., Ltd.` vs `Largan Precision Co., Ltd.` -- 0.9615
+    # string similarity, an `e` where an `a` belongs. This one matters most:
+    # LARGAN is the dominant control brand, so a mis-bucketed Largan design reads
+    # as cross-source against Largan controls -- the exact fail-open this table
+    # exists to close.
+    "largen": "largan",
+    # `Jiangxi OFLM Optical Co., Ltd.` vs `Jiangxi OFILM Optical Co., Ltd.`
+    # -- 0.9836, a dropped `I`.
+    "oflm": "ofilm",
+    # Not a typo: the corpus itself writes `Changzhou AAC Raytech Optronics Co.,
+    # Ltd.`, so Raytech is AAC's. `Changzhou Raytech Optronics Co., Ltd.` and
+    # `Raytech Optical (Changzhou) Co., Ltd.` otherwise produce **empty** token
+    # sets -- every word in them is a stopword -- and each becomes its own brand,
+    # reading as cross-source against AAC and against each other.
+    "raytech": "aac",
 }
 
 
@@ -165,11 +182,11 @@ def assignee_tokens(raw: str) -> frozenset[str]:
     changes the token and no amount of punctuation handling recovers it.
     """
     cleaned = re.sub(r"[^0-9a-z]+", " ", raw.lower())
-    return frozenset(
-        ASSIGNEE_TOKEN_SPELLING_FIXES.get(t, t)
-        for t in cleaned.split()
-        if t and t not in ASSIGNEE_STOPWORDS
-    )
+    # The fix map is applied **before** the stopword filter on purpose: `raytech`
+    # is a stopword, so a map consulted afterwards could never reach it, and the
+    # two Raytech spellings would keep producing empty token sets.
+    mapped = (ASSIGNEE_TOKEN_SPELLING_FIXES.get(t, t) for t in cleaned.split() if t)
+    return frozenset(t for t in mapped if t not in ASSIGNEE_STOPWORDS)
 
 
 def brand_of_assignee(assignees: set[str]) -> dict[str, str]:
