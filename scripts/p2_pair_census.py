@@ -130,15 +130,46 @@ def patent_id_of_case(case_id: str) -> str | None:
     return match.group(1) if match else None
 
 
+#: Source-data token spellings that name one company but do not *share* a token
+#: with its other spellings, so the connected-components grouping below cannot
+#: merge them. Punctuation is already handled; a misspelling is not, because it
+#: changes the token itself.
+#:
+#: Every entry is a fail-**closed** correction: merging two brands can only ever
+#: shrink the 异源 sample, never inflate 打平率. Left unmerged, two publications
+#: of one company read as cross-source against each other and manufacture par
+#: pairs out of a spelling difference -- the exact failure
+#: `tests/test_p2_pair_census.py` was written to prevent.
+#:
+#: Deliberately a table, not a fuzzy matcher. `Cognex` / `Fujinon` sit at 0.76
+#: string similarity and are unrelated companies, so any similarity threshold
+#: loose enough to catch `corephontonics` also merges those.
+ASSIGNEE_TOKEN_SPELLING_FIXES: dict[str, str] = {
+    # `data/patents/uspto-smartphone-batch*.jsonl` spells it `Corephontonics
+    # Ltd.` on one record and `COREPHOTONICS LTD.` / `Corephotonics Ltd.` on the
+    # others -- an `n` where an `o` belongs.
+    "corephontonics": "corephotonics",
+    # Fujinon Corporation was absorbed into FUJIFILM in 2010. Same house, and
+    # merging is the conservative direction regardless.
+    "fujinon": "fujifilm",
+}
+
+
 def assignee_tokens(raw: str) -> frozenset[str]:
     """Distinctive tokens of an assignee string.
 
     Any punctuation (including the em-dash that appears in one Ability record)
     becomes a separator, so ``opto-electronics`` and ``opto—electronics``
-    normalise identically.
+    normalise identically. Known source-data misspellings are folded onto the
+    canonical token via :data:`ASSIGNEE_TOKEN_SPELLING_FIXES`, because a typo
+    changes the token and no amount of punctuation handling recovers it.
     """
     cleaned = re.sub(r"[^0-9a-z]+", " ", raw.lower())
-    return frozenset(t for t in cleaned.split() if t and t not in ASSIGNEE_STOPWORDS)
+    return frozenset(
+        ASSIGNEE_TOKEN_SPELLING_FIXES.get(t, t)
+        for t in cleaned.split()
+        if t and t not in ASSIGNEE_STOPWORDS
+    )
 
 
 def brand_of_assignee(assignees: set[str]) -> dict[str, str]:
