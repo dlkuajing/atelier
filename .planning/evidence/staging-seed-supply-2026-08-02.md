@@ -81,10 +81,38 @@ staging ZMX 的尾注带 `! ATELIER_FTAN_IMH_SANITY_MM` = `EFL · tan(半场)`�
 6. 读数来自 2026-07-28 的 staging 普查；产物记了 census / index / quarantine 的 sha256。
    **staging ZMX 自那以后是否变过没有验**。
 
+## 四点五、可行性已实测：12/12 能建出来，但会**继承那把坏尺子**
+
+并库最可能失败的一步是「`build_sample_from_optic` 根本建不出来」——语料里已知至少一颗
+会在 builder 里挂死，所以 `generate_cases.py` 每次 build 都套 90s 守护线程。
+拿 32 颗健康非 LARGAN 里 RMS 最低的 12 颗实跑（同样的 90s 超时隔离）：
+
+| | |
+|---|---|
+| 结果 | **ok 12 / timeout 0 / error 0** |
+| 尾注推导 EFL vs builder 实算 EFL | 中位 **1.0001**（区间 0.9871–1.0035） |
+| 场景分类 | wide 6 / telephoto 4 / ultrawide 2，无异常 |
+
+⇒ **并库这一步是通的，不需要新工具。**
+
+⚠️ **但同一次探针也复现了那把坏尺子**：12 颗**全部** `mtf_max_field_frac = 0.5`，
+存量 Optiland RMS 直径 / CODE V 全场直径 **中位 0.384**（区间 0.175–1.179）。
+也就是说，**照现状并库 = 再往语料里放 32 颗带同样系统性低估的记录**，
+而产品侧路由闸 `_SEED_ROUTING_MAX_RMS_UM = 100.0` 读的正是这个被低估的量。
+⇒ **并库必须与「像质换成同一把尺子」同批做，否则是在放大 PR #159 记的那个缺陷。**
+
+另：`US-20170090155-A1-e1` / `US-9897779-B2-e1` 被推出 EFL **0.566 mm** 却分到
+`smartphone-wide`。0.57 mm 焦距不是手机主摄。**并库前这类必须逐颗过一阶自洽闸**，
+不能因为 RMS 好看就放行——`data/zmx` 那 8 颗发散件正是这么混进去的。
+
 ## 五、下一铲
 
 1. **把 staging 里过闸的颗粒并进 case library 当 seed**（不当对照——对照侧的域判据另说）。
-   并库时逐颗过：保真度隔离 ∧ 像高闸 ∧ 一阶自洽 ∧ 有 CODE V 全场读数。
+   并库时逐颗过：保真度隔离 ∧ 像高闸 ∧ **一阶自洽**（EFL 0.57 mm 那两颗就是这道闸的对象）
+   ∧ 有 CODE V 全场读数。**且必须与「像质换尺子」同批做**（见第四点五），
+   否则等于把 PR #159 记的低估缺陷再复制 32 份。
+   路径已验通：manifest 加行 → `generate_cases.py --only <名单>` → 重建 saturation snapshot
+   → `e2_golden.py` 重生成 golden。**绝不跑 `patent_pool_replay.py freeze`。**
 2. **给 `preferred` 池加视场匹配上限**，否则质量闸会继续挑窄场 seed。
 3. 并完重跑 `p2_pair_census` 与一轮小真机 A/B（同一批对照、只换 seed 池），
    看候选 RMS 落败倍数（今天中位 16.1×）动没动。**这才是判据，池子数字不是。**
