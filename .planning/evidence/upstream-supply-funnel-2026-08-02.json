@@ -15,36 +15,36 @@
  },
  "cross_source_seed_supply": {
   "today (3 screens)": {
-   "controls": 49,
-   "cross_source_seeds_min": 4,
-   "cross_source_seeds_median": 4,
-   "cross_source_seeds_max": 48
+   "controls": 59,
+   "cross_source_seeds_min": 5,
+   "cross_source_seeds_median": 5,
+   "cross_source_seeds_max": 58
   },
   "screen 3 on controls only": {
-   "controls": 49,
-   "cross_source_seeds_min": 59,
-   "cross_source_seeds_median": 59,
-   "cross_source_seeds_max": 164
+   "controls": 59,
+   "cross_source_seeds_min": 60,
+   "cross_source_seeds_median": 60,
+   "cross_source_seeds_max": 176
   }
  },
  "per_control_pool": {
   "cross_source": {
-   "n": 49,
-   "min": 59.0,
-   "median": 59.0,
-   "max": 164.0
+   "n": 59,
+   "min": 60.0,
+   "median": 60.0,
+   "max": 176.0
   },
   "and_efl_reachable": {
-   "n": 49,
+   "n": 59,
    "min": 24.0,
    "median": 43.0,
-   "max": 127.0
+   "max": 152.0
   },
   "and_at_or_below_corpus_median": {
-   "n": 49,
+   "n": 59,
    "min": 12.0,
    "median": 13.0,
-   "max": 78.0
+   "max": 84.0
   }
  },
  "per_control_pool_zero_options": {
@@ -76,8 +76,9 @@
    "at_or_below_corpus_median": 8,
    "at_or_below_own_fov_band_median": 6,
    "brands": {
-    "(unknown)": 28,
-    "LARGAN DIGITAL CO., LTD.": 1
+    "(unknown)": 18,
+    "LARGAN DIGITAL CO., LTD.": 10,
+    "APPLE INC.": 1
    }
   },
   "DATA-10b": {
@@ -161,20 +162,12 @@
  },
  "quality_by_brand": {
   "LARGAN DIGITAL CO., LTD.": {
-   "n": 114,
+   "n": 123,
    "min": 2.0569,
-   "median": 6.99486,
+   "median": 7.27203,
    "max": 1683.16,
-   "at_or_below_corpus_median": 82,
-   "at_or_below_own_fov_band_median": 83
-  },
-  "(unknown)": {
-   "n": 28,
-   "min": 7.1242600000000005,
-   "median": 15.833,
-   "max": 51.7042,
-   "at_or_below_corpus_median": 8,
-   "at_or_below_own_fov_band_median": 6
+   "at_or_below_corpus_median": 85,
+   "at_or_below_own_fov_band_median": 84
   },
   "SAMSUNG ELECTRO-MECHANICS CO., LTD": {
    "n": 24,
@@ -191,6 +184,14 @@
    "max": 17358.0,
    "at_or_below_corpus_median": 0,
    "at_or_below_own_fov_band_median": 1
+  },
+  "(unknown)": {
+   "n": 18,
+   "min": 7.23055,
+   "median": 17.305,
+   "max": 40.4466,
+   "at_or_below_corpus_median": 4,
+   "at_or_below_own_fov_band_median": 4
   },
   "KANTATSU CO., LTD.": {
    "n": 15,
@@ -215,6 +216,14 @@
    "max": 8.261197e+20,
    "at_or_below_corpus_median": 0,
    "at_or_below_own_fov_band_median": 0
+  },
+  "APPLE INC.": {
+   "n": 1,
+   "min": 8.7515,
+   "median": 8.7515,
+   "max": 8.7515,
+   "at_or_below_corpus_median": 1,
+   "at_or_below_own_fov_band_median": 1
   }
  },
  "fov_band_median_um": {

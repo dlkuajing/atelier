@@ -20,12 +20,14 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 | 且过「可追迹 + 保真度」两闸 | 192 |
 | 且过产品参数闸（`load_usable_case_ids` 的 screen 3） | **74** |
 
-74 里按受让人：LARGAN 45 ／ **受让人未知 25** ／ KANTATSU 2 ／ AAC 1 ／ NINGBO SUNNY 1。
-受让人未知的既不能当对照（`control_provenance_unknown` 25），也不能当异源 seed
+74 里按受让人（**已含本 PR 补回的受让人数据**，见第八节）：LARGAN 54 ／ **受让人未知 15**
+／ KANTATSU 2 ／ AAC 1 ／ APPLE 1 ／ NINGBO SUNNY 1。
+受让人未知的既不能当对照（`control_provenance_unknown` 15），也不能当异源 seed
 （`brand_of_case` 返回 `None` 即被排除）。
 
-⇒ **一个 LARGAN 对照——49 条 trial 里的 45 条——在全语料里能取到的跨受让人 seed 是 4 颗。**
-这就是 `seed_reuse = [["US-12044826-B2-e4", 41], ...]` 的来历，不是打分器偏心。
+⇒ **一个 LARGAN 对照——59 条 trial 里的 54 条——在全语料里能取到的跨受让人 seed 是 5 颗**
+（补受让人之前是 4 颗）。这就是 `seed_reuse` 里一颗 seed 吃掉 **48/59** 的来历，
+不是打分器偏心。
 
 ## 二、可达性从来不是那道绑定闸（推翻一个流行说法）
 
@@ -41,9 +43,9 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 | 超过 +25% 的 | **0 / 49** |
 
 **一条都没顶到那道闸。**`reachable_only` 这个标签下面其实是**质量短缺**：
-逐对照把池子筛下去（seed 池按两闸口径），中位 59 → 43（可达）→ 13（≤语料中位）；
-但在**今天的三闸 seed 池**里，同一串筛只剩 4 → 更少 → 3/49 有质量达标的可达 seed。
-**区别全在 screen 3，不在 +25%。**
+逐对照把池子筛下去（seed 池按两闸口径），中位 60 → 43（可达）→ 13（≤语料中位）；
+但在**今天的三闸 seed 池**里，同一串筛只剩 5 → 更少 → 只有 **6/59** 个对照拿得到
+质量达标的可达 seed。**区别全在 screen 3，不在 +25%。**
 
 ## 三、screen 3 是对照侧的判据，却被同时施加在 seed 上
 
@@ -61,8 +63,8 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 
 | seed 池口径 | 每个对照能取到的跨受让人 seed（中位） |
 |---|---|
-| 今天（三闸） | **4**（min 4, max 48） |
-| screen 3 只施于对照 | **59**（min 59, max 164） |
+| 今天（三闸） | **5**（min 5, max 58） |
+| screen 3 只施于对照 | **60**（min 60, max 176） |
 
 ## 四、⚠️ 但「直接放开」会换来另一种假象——已实测，不要照做
 
@@ -71,15 +73,24 @@ uv run python scripts/upstream_supply_funnel.py --census D:/atelier-stagec-runs/
 | | 今天（三闸） | 两闸 |
 |---|---|---|
 | 被选中 seed 的 CODE V 全场 RMS，中位 | 101.27 µm | **2.64 µm** |
-| seed / 对照 RMS 中位 | 13.93 | **0.36** |
-| `seed_pool_basis` | 46 + 3 | **49 全部 reachable_and_quality** |
-| **被选中 seed 与对照的 \|ΔFOV\|，中位** | — | **43.9°（49 条里只有 2 条 ≤5°）** |
+| seed / 对照 RMS 中位 | 12.48 | **0.36** |
+| `seed_pool_basis` | 53 + 6 | **59 全部 reachable_and_quality** |
+| **被选中 seed 与对照的 \|ΔFOV\|，中位** | — | **43.9°（59 条里只有 7 条 ≤5°）** |
+| seed TTL/EFL 区间（形状还是不是手机镜头） | 0.89–1.99 | 1.22–1.99（对照 0.85–1.99） |
 
-那批「更好的」seed 好在**视场窄**：头号 seed `US-20200057277-A1-e1` 是 31.7° 全场、
+那批「更好的」seed 好在**视场窄**：头号 seed `US-20200057277-A1-e1`（41/59）是 31.7° 全场、
 像高 1.007 mm，要被重新对准到 70–90° 全场去。**起点数字漂亮，候选大概率照样烂。**
+（形状倒不是问题——TTL/EFL 仍在手机镜头区间，所以反对理由是视场不是尺寸。）
 所以正确形态是**联合**：screen 3 只留给对照，同时给 seed 加视场匹配上限——
-而不是单纯放开。加上 20° 视场上限后，能拿到「可达 + 视场匹配 + ≤语料中位」seed 的对照
-只有 **8/49**（今天是 3/49）。这是真实的天花板，不是调参能绕过去的。
+而不是单纯放开。
+
+| 20° 视场上限下，能拿到「可达 + 匹配 + 达标」seed 的对照 | 三闸 seed 池 | 两闸 seed 池 |
+|---|---|---|
+| seed ≤ 语料中位 | **6/59** | **11/59** |
+| seed 直接优于该对照 | **10/59** | **16/59** |
+
+这是真实的天花板，不是调参能绕过去的：**改 screen 3 把可用对照从 6 抬到 11，
+仍然离 59 很远。剩下的只能靠底库。**
 
 ## 五、坏得有批次形状：DATA-10b 是 0/28
 
@@ -135,7 +146,7 @@ SAMSUNG（24 颗，健康）、KANTATSU（15）、SUNNY+ABILITY（28 颗，全�
 - 被拒且仍在**两闸池**里：**15** —— ⇒ 第三节那个「screen 3 只给对照」的改动，
   **必须同时按这道闸过滤 seed 池**，否则等于把 15 行发散数据请进种子池。
 
-## 八、分母对账（收口 GOAL-PROMPT §6 第 3 项）
+## 八、分母对账：49 vs 59 不是两个时点，是 main 少了一个文件
 
 在 main（`fa5275df`）上实跑 `scripts/p2_pair_census.py`：
 
@@ -143,16 +154,33 @@ SAMSUNG（24 颗，健康）、KANTATSU（15）、SUNNY+ABILITY（28 颗，全�
 case index 442 / usable 74 / valid cross-brand trials 49
 excluded: control_provenance_unknown 25
 seed_pool_basis: {"reachable_and_quality": 3, "reachable_only": 46}
-seed_reuse: [["US-12044826-B2-e4",41], ["US-20260063869-A1-e3",4], ["US-11933948-B2-e11",2], ["US-12282142-B2-e7",1], ["US-12436366-B2-e5",1]]
 ```
 
-与 2026-08-02 真机轮 `summary.json` 的 seed 分布**逐项相同**。
+⚠️ **我先前把这个差异归给「fov 重锚前后两个时点」——错了。** 真因是：
 
-⇒ **当前口径 = 49 条 / 74 usable / 46+3。**
-记分板 `north-star-scoreboard-2026-07-30.md` 的 **59** 与 `reachable_only 53 / both 6`
-是 **fov 重锚之前**的数（`load_usable_case_ids` docstring 自述「the 55 (28.6%) this
-docstring used to claim predates the `fov_deg` re-anchor」）。两个数不冲突，是两个时点。
-**记分板那两处应标注为历史值。**
+`data/patents/uspto-legacy-assignee-backfill.jsonl` **被 `.gitignore` 吞掉，从未入仓**。
+`.gitignore` 有一条笼统的 `/data/patents/*`，只对 `uspto-smartphone-batch*` 开了口子；
+2026-07-30 的 commit `f0e5b3c7`「补齐 10 颗老式专利的受让人」把**测试**提交了、把**数据**漏了。
+而 `tests/test_legacy_assignee_backfill.py` 的每一条都挂着
+`skipif(not BACKFILL.is_file())` —— **测试在它唯一该报的那次失败上自己缴械**，
+CI 一路绿灯，`brand_of_case` 对这 10 颗一直返回 `None`。
+
+把文件补回后（本 PR）实跑：
+
+| | main（缺文件） | 补回后 |
+|---|---|---|
+| valid cross-brand trials | 49 | **59** |
+| `control_provenance_unknown` | 25 | **15** |
+| `seed_pool_basis` | 3 + 46 | **6 + 53** |
+| distinct seeds used | 5 | **6** |
+
+**与记分板 `north-star-scoreboard-2026-07-30.md` 的 59 / 53 / 6 逐项吻合。**
+⇒ 记分板一直是对的，**错的是 main**。分母对账就此收口。
+
+⚠️ 诚实边界：这 10 颗里 **9 颗是 LARGAN、1 颗是 Apple**，所以收益主要在**对照侧**
+（独立样本 27 → 37），对第一节那个「LARGAN 对照只有 4 颗异源 seed」的稀缺
+只补了 1 颗（Apple）→ 5 颗。`seed_reuse` 仍是 `US-12044826-B2-e4` 一颗吃掉 48/59。
+**供给短缺没有被这次修复解决，只是被量准了。**
 
 ## 九、下一铲（按本页证据排序）
 
@@ -160,7 +188,12 @@ docstring used to claim predates the `fov_deg` re-anchor」）。两个数不冲
    能取种的那半边语料上」。诊断走静态解析，不需要真机。
 2. **seed 池与对照池解耦**：screen 3 只施于对照 + seed 侧加像高闸 + 视场匹配上限。
    离线可先出 `seed_pool_basis` 与 `|ΔFOV|` 对照表，真机 A/B 再确认候选是否真变好。
-3. **受让人未知 25 颗补齐 provenance**：它们今天两头都用不上，是最便宜的一块供给。
+3. ~~受让人未知 25 颗补齐 provenance~~ —— **本 PR 已做掉 10 颗**（第八节）。
+   剩下 15 颗全是 `3P_/4P_/5P_...` 那批以规格命名的原始设计，**没有专利号**，
+   受让人无从查起。按 fail-closed 保持排除是对的：无法证明异源就不能当异源 seed。
+4. **seed 侧的 `_SEED_ROUTING_MAX_RMS_UM = 100.0` 与本页的尺子不是一把尺**
+   （产品侧读 Optiland 半径 / 半场，本页读 CODE V 直径 / 全场）。
+   在 DATA-10b 修好之前不建议动它——先有干净的量，再谈闸。
 
 ## 诚实边界
 

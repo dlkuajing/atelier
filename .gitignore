@@ -25,6 +25,11 @@ build/
 !/data/patents/
 /data/patents/*
 !/data/patents/uspto-smartphone-batch*.jsonl
+# Provenance, not bulk crawl output. `/data/patents/*` silently swallowed it on
+# 2026-07-30 (commit f0e5b3c7 landed the tests but not the data), which left
+# `tests/test_legacy_assignee_backfill.py` skipping itself and the scoreboard
+# quoting 59 trials that main could only produce as 49.
+!/data/patents/uspto-legacy-assignee-backfill.jsonl
 !/data/patent-ledger/
 !/data/patent-ledger/**
 *.db
