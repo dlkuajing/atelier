@@ -1,0 +1,533 @@
+"""The healthy cross-source seeds we already have, in `data/zmx-staging`.
+
+Why this exists
+---------------
+`scripts/upstream_supply_funnel.py` measures how the shipped corpus starves the
+异源 seed pool: a LARGAN control -- 54 of 59 trials -- can be seeded from **5**
+designs, and the one that carries 48/59 is a 101 um lens.
+
+`data/zmx-staging/patent-local-replay` holds **613 git-tracked ZMX with zero
+filename overlap with the 442-file corpus**, and the 2026-07-28 census already
+measured 238 of them at full field. It has been looked at once before
+(`.planning/evidence/staging-domain-ceiling-2026-07-29.md`) and only ever with
+the **control-side** question -- "how many are inside the product's parameter
+domain" (58). That screen is control-side reasoning by its own docstring in
+`p2_pair_census.load_usable_case_ids`; a seed is not a customer request. The
+seed-side question had never been asked.
+
+What it measures
+----------------
+For each corpus control, whether the staging pool can supply a cross-assignee
+seed that is simultaneously
+
+* **fidelity-clean** -- not in the staging quarantine pool,
+* **measured at full field by CODE V** and at or below the corpus median,
+* **EFL-reachable** under the measured `+25%` stretch limit,
+* **field-matched** within a stated FOV cap -- the constraint that killed the
+  naive "just drop screen 3" idea (its seeds missed by a median 43.9 deg).
+
+Where staging EFL comes from, and why it changed
+------------------------------------------------
+**First version used the ZMX trailer**: `! ATELIER_FTAN_IMH_SANITY_MM` is
+`EFL * tan(half field)` and `YFLN` carries the half field, so
+`EFL = FTAN_IMH / tan(YFLN_max)` is readable from the file alone. Two problems,
+both found by adversarial review before this shipped:
+
+1. **It is the declared EFL, not the built one.** `ATELIER_FTAN_IMH_SANITY_MM`
+   traces back to `prescription.focal_length_mm * tan(hfov)` -- the number the
+   patent table states. The corpus side (`index["efl_mm"]`) is the focal length
+   Optiland computes from the surfaces. Comparing them across a single gate is
+   two rulers, and the disagreement is **fail-open for reachability**
+   (`seed_efl_is_reachable` passes when the seed EFL is large).
+2. **It is only ~80% accurate.** Measured against the receipts below:
+   462/581 within 1%, worst over-estimate 2.817x (`US-10514523-B2-e6`, derived
+   2.411 vs built 0.856).
+
+**Now it comes from the conversion receipt**: every attempt recorded
+`worker_response.efl_mm`, which *is* Optiland's computed focal length -- the same
+quantity as the corpus side. `staging-domain-ceiling-2026-07-29.md` records 9
+receipt-to-ZMX misalignments, but those come from guessing the `{patent}-e{N}`
+key; this joins on `published_zmx_path` **written inside the receipt**, which is
+the file that attempt actually produced. Files with no receipt EFL fall back to
+the trailer and are counted separately, never silently.
+
+`check_derivation` still runs -- over the **whole** index, not a head slice (the
+index is batch-ordered and a 200-row head excludes DATA-10b entirely, where the
+formula is 29% accurate) -- because the fallback still uses it.
+
+Usage
+-----
+    uv run python scripts/staging_seed_supply_census.py \
+        --census D:/atelier-stagec-runs/trace-census-20260728/perfield-census.jsonl \
+        --staging-census D:/atelier-stagec-runs/trace-census-20260728/perfield-staging-census.jsonl \
+        --json .planning/evidence/staging-seed-supply-2026-08-02.json
+"""
+
+from __future__ import annotations
+
+import argparse
+import collections
+import hashlib
+import json
+import math
+import re
+import statistics
+import sys
+from pathlib import Path
+from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from app.core.engines.zmx_import_prep import decode_zmx_text  # noqa: E402
+from scripts.p2_pair_census import (  # noqa: E402
+    CASE_INDEX,
+    QUARANTINE,
+    codev_rms_by_zmx,
+    default_seed_quality_limit_um,
+    load_provenance,
+    load_usable_case_ids,
+    normalise_patent_id,
+    seed_efl_is_reachable,
+)
+
+STAGING_DIR = REPO_ROOT / "data" / "zmx-staging" / "patent-local-replay"
+ZMX_DIR = REPO_ROOT / "data" / "zmx"
+
+#: Full-angle degrees. Not tuned: 20 deg is simply the point at which the
+#: "drop screen 3" pool stops being field-matched at all (its picks miss by a
+#: median 43.9 deg). Every reported number is given at several caps so the
+#: reader can see the shape rather than trust one.
+DEFAULT_FOV_CAPS: tuple[float | None, ...] = (None, 20.0, 10.0, 5.0)
+
+#: `tan` stops being a usable divisor near 90 deg -- same reasoning, and the same
+#: number, as `scripts/image_height_gate.MAX_REFERENCE_HALF_FIELD_DEG`.
+MAX_HALF_FIELD_DEG = 85.0
+
+_YFLN = re.compile(r"^\s*YFLN\s+(.*)$")
+_FTYP = re.compile(r"^\s*FTYP\s+(\S+)")
+_FTAN = re.compile(r"^\s*!\s*ATELIER_FTAN_IMH_SANITY_MM\s+(\S+)")
+
+
+def read_first_order(path: Path) -> dict[str, float | None]:
+    """Half field, and EFL derived from the trailer's own first-order reference."""
+
+    try:
+        text, _ = decode_zmx_text(path.read_bytes())
+    except (OSError, ValueError, UnicodeError):
+        return {}
+    half_field: float | None = None
+    field_type: int | None = None
+    ftan: float | None = None
+    for line in text.splitlines():
+        match = _YFLN.match(line)
+        if match:
+            values = []
+            for token in match.group(1).split():
+                try:
+                    values.append(abs(float(token)))
+                except ValueError:
+                    continue
+            half_field = max(values) if values else None
+            continue
+        match = _FTYP.match(line)
+        if match:
+            try:
+                field_type = int(float(match.group(1)))
+            except ValueError:
+                field_type = None
+            continue
+        match = _FTAN.match(line)
+        if match:
+            try:
+                ftan = float(match.group(1))
+            except ValueError:
+                ftan = None
+    if field_type != 0 or not half_field or not ftan:
+        return {"half_field_deg": half_field, "efl_mm": None}
+    if not 0.0 < half_field < MAX_HALF_FIELD_DEG:
+        return {"half_field_deg": half_field, "efl_mm": None}
+    tangent = math.tan(math.radians(half_field))
+    if tangent <= 1e-9 or not math.isfinite(ftan):
+        return {"half_field_deg": half_field, "efl_mm": None}
+    return {"half_field_deg": half_field, "efl_mm": ftan / tangent}
+
+
+ATTEMPTS_DIR = REPO_ROOT / "data" / "patent-conversion-attempts" / "local-replay"
+
+
+#: Relative spread above which two receipts naming the same published ZMX stop
+#: being rounding noise and start being a question about which attempt produced
+#: the file. Measured 2026-08-02: 107 of 613 basenames have more than one
+#: receipt, 12 of those disagree at all, and the largest disagreement is
+#: **0.174%** -- four embodiments of one continuation family published under
+#: three patent numbers. A gate at 1% therefore rejects nothing today and exists
+#: so that a future disagreement that *would* matter cannot be picked silently.
+RECEIPT_EFL_MAX_SPREAD = 0.01
+
+
+def receipt_efl_by_zmx() -> tuple[dict[str, float], dict[str, Any]]:
+    """Built-optic EFL per staging ZMX, joined on the path the receipt itself wrote.
+
+    ``worker_response.efl_mm`` is Optiland's computed focal length of the optic
+    that attempt produced -- the same quantity the corpus stores as
+    ``index["efl_mm"]``, which is what makes a single reachability gate legitimate
+    across both pools. Joining on ``published_zmx_path`` avoids the
+    ``{patent}-e{N}`` key guess that ``staging-domain-ceiling-2026-07-29.md``
+    records 9 misalignments for.
+
+    ⚠️ **Basenames are not unique across attempts.** The first version of this
+    function assigned into a dict inside the glob loop, so a repeated basename
+    kept whichever receipt the filesystem happened to yield last -- a value that
+    is not reproducible on another machine, which is exactly what the artefact's
+    recompute test is supposed to guarantee. Every receipt is now collected, the
+    pick is deterministic (``min``), and disagreement beyond
+    :data:`RECEIPT_EFL_MAX_SPREAD` drops the file rather than choosing for it.
+    """
+
+    collected: dict[str, list[float]] = collections.defaultdict(list)
+    if ATTEMPTS_DIR.is_dir():
+        for receipt_path in sorted(ATTEMPTS_DIR.glob("*/attempt-*/receipt.json")):
+            try:
+                data = json.loads(receipt_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            published = data.get("published_zmx_path") or data.get("candidate_zmx_path")
+            efl = (data.get("worker_response") or {}).get("efl_mm")
+            if not published or efl is None:
+                continue
+            try:
+                value = float(efl)
+            except (TypeError, ValueError):
+                continue
+            if value > 0:
+                collected[Path(str(published)).name].append(value)
+
+    out: dict[str, float] = {}
+    multi = 0
+    disagreeing = 0
+    rejected: list[str] = []
+    max_spread = 0.0
+    rejected_spread = 0.0
+    for name, values in collected.items():
+        if len(values) > 1:
+            multi += 1
+        spread = (max(values) - min(values)) / max(values) if max(values) > 0 else 0.0
+        if spread > 0:
+            disagreeing += 1
+        if spread > RECEIPT_EFL_MAX_SPREAD:
+            rejected.append(name)
+            rejected_spread = max(rejected_spread, spread)
+            continue
+        # Reported over the rows that were *kept*, not over all of them: if the
+        # gate ever fires, the kept-row spread is what bounds the pick, and a
+        # metric that included the rejected rows would make the gate working
+        # correctly look like the gate being breached.
+        max_spread = max(max_spread, spread)
+        # `min` is deterministic *and* fail-closed: a smaller seed EFL is the
+        # harder side of `seed_efl_is_reachable`, so an arbitrary pick can only
+        # cost sample, never manufacture reachability. Changing it to max/mean
+        # would silently flip that.
+        out[name] = min(values)
+    provenance = {
+        "basenames": len(collected),
+        "with_more_than_one_receipt": multi,
+        "with_disagreeing_values": disagreeing,
+        "max_relative_spread_kept": max_spread,
+        "max_relative_spread_rejected": rejected_spread,
+        "spread_gate": RECEIPT_EFL_MAX_SPREAD,
+        "rejected_for_spread": sorted(rejected),
+    }
+    return out, provenance
+
+
+def check_derivation(sample: int | None = None) -> dict[str, Any]:
+    """Validate `EFL = FTAN_IMH / tan(half field)` where EFL is independently known.
+
+    ``sample=None`` means the whole index, and that is the reporting default.
+    The first version defaulted to the first 200 rows; the index is ordered by
+    intake batch, so that head contains **zero** DATA-10b rows -- the batch where
+    the formula is 29% accurate -- and reported 95.4% instead of the true 80.9%.
+    """
+
+    index = json.loads(CASE_INDEX.read_text(encoding="utf-8"))
+    records = index if sample is None else index[:sample]
+    ratios: list[float] = []
+    by_batch: dict[str, list[float]] = collections.defaultdict(list)
+    for record in records:
+        path = ZMX_DIR / str(record["source_zmx"])
+        if not path.exists():
+            continue
+        derived = read_first_order(path).get("efl_mm")
+        try:
+            stated = float(record["efl_mm"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if derived and stated > 0:
+            ratio = derived / stated
+            if math.isfinite(ratio):
+                ratios.append(ratio)
+                by_batch[str(record.get("intake_batch"))].append(ratio)
+    ratios.sort()
+    if not ratios:
+        return {"n": 0}
+    return {
+        "n": len(ratios),
+        "scope": "whole index" if sample is None else f"first {sample} rows",
+        # Reported because the aggregate hides it: the formula's accuracy tracks
+        # the parser family, not the corpus.
+        "within_1pct_by_intake_batch": {
+            batch: {
+                "n": len(values),
+                "within_1pct": sum(1 for r in values if 0.99 <= r <= 1.01),
+            }
+            for batch, values in sorted(by_batch.items(), key=lambda kv: -len(kv[1]))
+        },
+        "median": statistics.median(ratios),
+        "within_1pct": sum(1 for r in ratios if 0.99 <= r <= 1.01),
+        "min": ratios[0],
+        "max": ratios[-1],
+    }
+
+
+def _patent_of(zmx_name: str) -> str:
+    stem = re.sub(r"-e\d+$", "", zmx_name.rsplit(".", 1)[0], flags=re.IGNORECASE)
+    return normalise_patent_id(stem)
+
+
+def _sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
+    limit = default_seed_quality_limit_um()
+    provenance = load_provenance()
+    quarantine = json.loads(QUARANTINE.read_text(encoding="utf-8"))["pools"]
+    staging_defective = set(quarantine.get("data/zmx-staging", {}).get("defective", {}))
+
+    index = json.loads(CASE_INDEX.read_text(encoding="utf-8"))
+    by_case = {record["case_id"]: record for record in index}
+    corpus_rms = codev_rms_by_zmx(census_path)
+    staging_rms = codev_rms_by_zmx(staging_census_path)
+
+    # ---- the staging seed pool ----
+    from app.core.engines.prescription_identity import fingerprint_zmx
+
+    receipt_efl, receipt_provenance = receipt_efl_by_zmx()
+    staging_pool: list[dict[str, Any]] = []
+    dropped: collections.Counter[str] = collections.Counter()
+    efl_source: collections.Counter[str] = collections.Counter()
+    for name, rms in staging_rms.items():
+        if name in staging_defective:
+            dropped["fidelity_quarantined"] += 1
+            continue
+        path = STAGING_DIR / name
+        if not path.exists():
+            dropped["file_missing"] += 1
+            continue
+        first_order = read_first_order(path)
+        assignee = provenance.assignee_of_patent.get(_patent_of(name))
+        brand = provenance.brand_of.get(assignee) if assignee else None
+        if brand is None:
+            dropped["provenance_unknown"] += 1
+            continue
+        # Built-optic EFL, same quantity as the corpus side, or the declared one
+        # with the fallback counted. Never silently mixed.
+        #
+        # ⚠️ Switching to the receipt **changed which rows are admitted**, and the
+        # first version of that switch did not say so. `read_first_order` refuses
+        # to derive an EFL past `MAX_HALF_FIELD_DEG`, because `tan` stops being a
+        # usable divisor there -- so a half field >= 85 deg used to leave via
+        # `first_order_not_derivable`. A receipt EFL needs no tangent, so those
+        # rows started arriving silently: **12 of them, 11 at or below the corpus
+        # median**, which is exactly the 80 -> 91 the evidence page reported as a
+        # bigger pool. They are real ultra-wide designs (170-176 deg full field,
+        # declared image height 1.65-3.58 mm against EFL 1.09-2.40, RMS
+        # 0.69-6.45 um), not garbage -- but they are outliers, they are all
+        # LARGAN, and they moved `served` by **zero**. Counted here so the next
+        # reader sees them instead of a pool that grew for free.
+        built = receipt_efl.get(name)
+        half_field = first_order.get("half_field_deg")
+        if built:
+            first_order = dict(first_order, efl_mm=built)
+        if not first_order.get("efl_mm") or not half_field:
+            dropped["first_order_not_derivable"] += 1
+            continue
+        if built:
+            efl_source["receipt_built_optic"] += 1
+            if float(half_field) >= MAX_HALF_FIELD_DEG:
+                efl_source["receipt_admitted_past_the_tangent_guard"] += 1
+        else:
+            efl_source["trailer_declared_fallback"] += 1
+        try:
+            fingerprint = fingerprint_zmx(path)
+        except Exception:  # noqa: BLE001 - a file we cannot fingerprint is its own design
+            fingerprint = name
+        staging_pool.append(
+            {
+                "zmx": name,
+                "patent": _patent_of(name),
+                "brand": brand,
+                "rms_spot_diameter_um": rms,
+                "efl_mm": first_order["efl_mm"],
+                "fov_deg": float(first_order["half_field_deg"]) * 2.0,
+                "fingerprint": fingerprint,
+                "at_or_below_corpus_median": rms <= limit,
+            }
+        )
+
+    healthy = [row for row in staging_pool if row["at_or_below_corpus_median"]]
+
+    # ---- corpus controls, and the corpus's own seed pool for comparison ----
+    in_domain, _ = load_usable_case_ids(census_path)
+    two_screen, _ = load_usable_case_ids(census_path, require_in_domain=False)
+    controls = [
+        case_id
+        for case_id in in_domain
+        if provenance.brand_of_case(case_id)
+        and corpus_rms.get(str(by_case[case_id]["source_zmx"])) is not None
+    ]
+    corpus_pool = [
+        {
+            "id": case_id,
+            "brand": provenance.brand_of_case(case_id),
+            "rms_spot_diameter_um": corpus_rms[str(by_case[case_id]["source_zmx"])],
+            "efl_mm": float(by_case[case_id]["efl_mm"]),
+            "fov_deg": float(by_case[case_id]["fov_deg"]),
+            "fingerprint": case_id,
+        }
+        for case_id in two_screen
+        if provenance.brand_of_case(case_id)
+        and corpus_rms.get(str(by_case[case_id]["source_zmx"])) is not None
+    ]
+
+    def serve(pool: list[dict[str, Any]], cap: float | None) -> dict[str, Any]:
+        served = 0
+        bests: list[float] = []
+        distinct: list[int] = []
+        winners: collections.Counter[str] = collections.Counter()
+        for control_id in controls:
+            record = by_case[control_id]
+            brand = provenance.brand_of_case(control_id)
+            efl, fov = float(record["efl_mm"]), float(record["fov_deg"])
+            options = [
+                row
+                for row in pool
+                if row.get("id") != control_id
+                and row["brand"] not in (None, brand)
+                and row["rms_spot_diameter_um"] <= limit
+                and seed_efl_is_reachable(float(row["efl_mm"]), efl)
+                and (cap is None or abs(float(row["fov_deg"]) - fov) <= cap)
+            ]
+            distinct.append(len({row["fingerprint"] for row in options}))
+            if options:
+                served += 1
+                best = min(options, key=lambda row: row["rms_spot_diameter_um"])
+                bests.append(best["rms_spot_diameter_um"])
+                winners[f"{best['brand']} | {best.get('patent') or best.get('id')}"] += 1
+        ordered = sorted(distinct)
+        return {
+            "controls": len(controls),
+            "served": served,
+            "best_rms_median": statistics.median(bests) if bests else None,
+            "distinct_options_median": statistics.median(ordered) if ordered else 0,
+            "distinct_options_max": ordered[-1] if ordered else 0,
+            "controls_with_zero_options": sum(1 for value in ordered if value == 0),
+            "controls_with_one_option": sum(1 for value in ordered if value == 1),
+            "lowest_rms_pick_concentration": dict(winners.most_common(5)),
+        }
+
+    comparison: dict[str, dict[str, Any]] = {}
+    for label, pool in (
+        ("corpus seeds only (two-screen)", corpus_pool),
+        ("staging seeds only", staging_pool),
+        ("corpus + staging", corpus_pool + staging_pool),
+    ):
+        for cap in DEFAULT_FOV_CAPS:
+            key = f"{label} @ {'any' if cap is None else f'{cap:.0f}deg'}"
+            comparison[key] = serve(pool, cap)
+
+    by_brand = collections.Counter(row["brand"] for row in healthy)
+    fovs = sorted(row["fov_deg"] for row in healthy)
+
+    return {
+        "schema": "atelier-staging-seed-supply-v1",
+        "inputs": {
+            "census_sha256": _sha256(census_path),
+            "staging_census_sha256": _sha256(staging_census_path),
+            "case_index_sha256": _sha256(CASE_INDEX),
+            "quarantine_sha256": _sha256(QUARANTINE),
+            "seed_quality_limit_um": limit,
+            "fov_caps_deg": [c for c in DEFAULT_FOV_CAPS if c is not None],
+        },
+        "efl_derivation_check": check_derivation(),
+        "staging_pool": {
+            "zmx_on_disk": len(list(STAGING_DIR.glob("*.zmx"))),
+            "full_field_readings": len(staging_rms),
+            "admitted": len(staging_pool),
+            "dropped": dict(dropped),
+            "efl_source": dict(efl_source),
+            "receipt_join": receipt_provenance,
+            "at_or_below_corpus_median": len(healthy),
+            "healthy_by_brand": dict(by_brand.most_common()),
+            "healthy_distinct_prescriptions": len({row["fingerprint"] for row in healthy}),
+            "healthy_distinct_patents": len({row["patent"] for row in healthy}),
+            "healthy_fov_median": statistics.median(fovs) if fovs else None,
+            "healthy_fov_range": [fovs[0], fovs[-1]] if fovs else None,
+        },
+        "controls": len(controls),
+        "comparison": comparison,
+    }
+
+
+def render(result: dict[str, Any]) -> str:
+    pool = result["staging_pool"]
+    check = result["efl_derivation_check"]
+    lines = [
+        "staging 池能不能补上异源 seed 的缺口",
+        "=" * 72,
+        f"  EFL 推导自检（在语料上，EFL 是已知的）  n={check.get('n')} "
+        f"中位 {check.get('median', float('nan')):.4f}  ±1% 内 {check.get('within_1pct')}",
+        "",
+        f"  staging ZMX 在盘                 {pool['zmx_on_disk']}",
+        f"  其中有 CODE V 全场读数           {pool['full_field_readings']}",
+        f"  过保真度 + 受让人 + 一阶量可导    {pool['admitted']}   丢弃原因 {pool['dropped']}",
+        f"  且 ≤ 语料中位                    {pool['at_or_below_corpus_median']}"
+        f"（{pool['healthy_distinct_prescriptions']} 个不同处方 / {pool['healthy_distinct_patents']} 件专利）",
+        f"  健康件受让人构成                 {pool['healthy_by_brand']}",
+        f"  健康件视场                       中位 {pool['healthy_fov_median']}  区间 {pool['healthy_fov_range']}",
+        "",
+        f"  逐对照能不能拿到「异源 + 可达 + 视场匹配 + 达标」的 seed（对照 {result['controls']} 个）",
+    ]
+    header = f"    {'seed 池 @ 视场上限':<44}{'served':>10}{'best rms':>10}{'distinct 中位':>14}{'零选项':>8}"
+    lines.append(header)
+    for key, row in result["comparison"].items():
+        best = f"{row['best_rms_median']:.2f}" if row["best_rms_median"] else "-"
+        lines.append(
+            f"    {key:<44}{row['served']:>4}/{row['controls']:<5}{best:>10}"
+            f"{row['distinct_options_median']:>14}{row['controls_with_zero_options']:>8}"
+        )
+    return "\n".join(lines)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--census", type=Path, required=True)
+    parser.add_argument("--staging-census", type=Path, required=True)
+    parser.add_argument("--json", type=Path, default=None)
+    args = parser.parse_args(argv)
+
+    result = build(args.census, args.staging_census)
+    print(render(result))
+    if args.json:
+        args.json.parent.mkdir(parents=True, exist_ok=True)
+        args.json.write_text(
+            json.dumps(result, ensure_ascii=False, indent=1) + "\n", encoding="utf-8"
+        )
+        print(f"\nwrote {args.json}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
