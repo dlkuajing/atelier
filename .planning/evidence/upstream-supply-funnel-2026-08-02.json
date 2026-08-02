@@ -226,6 +226,96 @@
    "at_or_below_own_fov_band_median": 1
   }
  },
+ "quality_by_batch_and_brand": {
+  "DATA-09d1 | LARGAN DIGITAL CO., LTD.": {
+   "n": 58,
+   "min": 2.0569,
+   "median": 5.65698,
+   "max": 928.972,
+   "at_or_below_corpus_median": 42,
+   "at_or_below_own_fov_band_median": 46
+  },
+  "DATA-06c | LARGAN DIGITAL CO., LTD.": {
+   "n": 25,
+   "min": 2.0569,
+   "median": 5.60811,
+   "max": 90.23349999999999,
+   "at_or_below_corpus_median": 19,
+   "at_or_below_own_fov_band_median": 21
+  },
+  "DATA-09d1 | SAMSUNG ELECTRO-MECHANICS CO., LTD": {
+   "n": 24,
+   "min": 3.63088,
+   "median": 7.675295,
+   "max": 34.2315,
+   "at_or_below_corpus_median": 18,
+   "at_or_below_own_fov_band_median": 18
+  },
+  "DATA-10b | NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": {
+   "n": 22,
+   "min": 14.1961,
+   "median": 91.95065,
+   "max": 1019.0699999999999,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 1
+  },
+  "None | (unknown)": {
+   "n": 18,
+   "min": 7.23055,
+   "median": 17.305,
+   "max": 40.4466,
+   "at_or_below_corpus_median": 4,
+   "at_or_below_own_fov_band_median": 4
+  },
+  "DATA-06f | LARGAN DIGITAL CO., LTD.": {
+   "n": 18,
+   "min": 3.9749499999999998,
+   "median": 8.199435000000001,
+   "max": 1683.16,
+   "at_or_below_corpus_median": 12,
+   "at_or_below_own_fov_band_median": 10
+  },
+  "DATA-09d1 | KANTATSU CO., LTD.": {
+   "n": 15,
+   "min": 14.2161,
+   "median": 91.9301,
+   "max": 562.331,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 3
+  },
+  "DATA-06f-b11 | LARGAN DIGITAL CO., LTD.": {
+   "n": 11,
+   "min": 3.9749499999999998,
+   "median": 7.31925,
+   "max": 13.033100000000001,
+   "at_or_below_corpus_median": 9,
+   "at_or_below_own_fov_band_median": 6
+  },
+  "None | LARGAN DIGITAL CO., LTD.": {
+   "n": 10,
+   "min": 7.1242600000000005,
+   "median": 14.5576,
+   "max": 51.7042,
+   "at_or_below_corpus_median": 3,
+   "at_or_below_own_fov_band_median": 1
+  },
+  "DATA-10b | ABILITY ENTERPRISE CO., LTD": {
+   "n": 6,
+   "min": 34.1412,
+   "median": 4.404644e+20,
+   "max": 8.261197e+20,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 0
+  },
+  "DATA-09d1 | AAC Acoustic Technologies (Shenzhen) Co., Ltd.": {
+   "n": 4,
+   "min": 156.50300000000001,
+   "median": 165.09900000000002,
+   "max": 170.77200000000002,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 0
+  }
+ },
  "fov_band_median_um": {
   "75-85": 7.31925,
   "60-75": 9.20091,

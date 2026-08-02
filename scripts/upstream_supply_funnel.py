@@ -240,6 +240,27 @@ def build(census_path: Path) -> dict[str, Any]:
         for brand, values in sorted(by_brand.items(), key=lambda kv: -len(kv[1]))
     }
 
+    # ---------- which variable is quality actually grouped by? ----------
+    # "DATA-10b is a bad batch" survives a batch-level table and dies in this
+    # cross-tab: KANTATSU and AAC sit *inside* the batch called healthy and are
+    # as broken as anything in DATA-10b, while DATA-09d1's healthy median is
+    # carried by LARGAN being 58 of its 103 readings. The grouping variable is
+    # the assignee -- which is the parser family that read that assignee's
+    # patent tables -- not the intake run.
+    cells: dict[str, list[float]] = collections.defaultdict(list)
+    cell_ids: dict[str, list[str]] = collections.defaultdict(list)
+    for case_id in measured:
+        key = f"{by_case[case_id].get('intake_batch')} | {brand_of.get(case_id) or '(unknown)'}"
+        value = rms_of_case[case_id]
+        assert value is not None
+        cells[key].append(value)
+        cell_ids[key].append(case_id)
+    cross_tab = {
+        key: group_row(values, cell_ids[key])
+        for key, values in sorted(cells.items(), key=lambda kv: -len(kv[1]))
+        if len(values) >= 3
+    }
+
     # ---------- readings that describe no imaging system ----------
     # Definitional, not a chosen threshold: when the RMS spot *diameter* exceeds
     # the design's own image height, the blur from a single object point covers
@@ -355,6 +376,7 @@ def build(census_path: Path) -> dict[str, Any]:
         },
         "quality_by_intake_batch": batches,
         "quality_by_brand": brands,
+        "quality_by_batch_and_brand": cross_tab,
         "fov_band_median_um": band_median,
         "spot_vs_image_height": spot_vs_image,
         "diverged_traces": diverged,
@@ -392,6 +414,13 @@ def render(result: dict[str, Any]) -> str:
             f"  <=全库 {row['at_or_below_corpus_median']:>3}"
             f"  <=同桶 {row['at_or_below_own_fov_band_median']:>3}"
         )
+    lines += ["", "  同一份读数按 批次 × 受让人 切开（分组变量到底是哪个）"]
+    for key, row in result["quality_by_batch_and_brand"].items():
+        lines.append(
+            f"    {key[:56]:<56} n={row['n']:>4}  中位 {row.get('median', 0):>12.2f} um"
+            f"  <=全库 {row['at_or_below_corpus_median']:>3}"
+        )
+
     spot = result["spot_vs_image_height"]
     lines += [
         "",
