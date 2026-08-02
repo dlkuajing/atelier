@@ -10,21 +10,24 @@ golden fixture ends ``10 Image plane 1E+18 0``; ``_consume_surface_label``
 matches ``IMAGE`` in a one-token set, so ``plane`` is read as the radius, the
 real radius ``1E+18`` slides into the thickness slot, and the real thickness
 ``0`` is dropped. The value never belonged to the thickness column, and
-``_request_radius_mm`` would have caught it in its own. Disambiguating that
-label is not a token count -- the same table writes ``Aperture plane -0.412``
-where ``plane`` genuinely *is* the radius -- so it is filed separately, and
-nothing in this file may be read as having fixed it.
+``_request_radius_mm`` would have caught it in its own column.
+
+⚠️ An earlier version of this docstring said the label fix was blocked by a real
+ambiguity, because the same table also writes ``Aperture plane -0.412`` where
+``plane`` genuinely *is* the radius. That was **overstated**: ``APERTURE`` and
+``IMAGE`` are separate branches of the same function, so teaching ``IMAGE`` to
+consume a following ``plane``/``plano`` never reaches the aperture path. The
+honest reason it is not done here is scope -- it changes the parser and wants its
+own verification -- not impossibility.
 
 What is pinned here is therefore **containment**, not repair:
 
-* both columns now go through one sentinel test;
-* the interior/last-surface distinction, because mapping an interior infinite
-  gap to ``0`` would invent geometry while mapping an image row to ``0`` adopts
-  the corpus's own convention (**392** of 442 files). ⚠️ Position does not prove
-  a row is the image row -- 42 files carry a real back focal distance there --
-  so the mapping is right for these eight because their real thickness is 0, not
-  because the position guarantees it;
-* the **void** that makes the magnitude cut a fact rather than a tuning knob;
+* both columns go through one sentinel test, but the *justification differs per
+  column* -- see `INFINITY_SENTINEL_MM`. Thickness is argued from a void;
+  the radius column has **no void** and is argued from sag instead;
+* **both positions fail closed.** The last surface used to map to ``0``; once the
+  root cause was corrected that stopped being a convention and became laundering
+  -- it would erase the one signal the audit just learned to see;
 * the **set equality** that identifies the affected files: the ones with a huge
   last ``DISZ`` are exactly the ones whose CODE V spot is huge.
 """
@@ -95,27 +98,43 @@ def test_both_spellings_of_infinity_are_one_test() -> None:
     assert not _is_infinity_sentinel(1200.0)  # the largest real separation measured
 
 
-def test_the_radius_column_keeps_its_old_behaviour() -> None:
+def test_the_radius_column_now_encodes_numeric_sentinels_too() -> None:
+    """⚠️ A **behaviour change**, not a no-op. An earlier commit message called it
+    "行为不变" and that was wrong: the old `_request_radius_mm` tested `math.isinf`
+    only, so a numeric `1e18` passed through unchanged and survived solely because
+    `zmx_writer._fmt_number` collapses the resulting `1e-18` curvature to `0`
+    downstream. It is now encoded at the DTO boundary instead of surviving by luck.
+    """
+
     assert _request_radius_mm(math.inf) == 0.0
     assert _request_radius_mm(1e18) == 0.0
     assert _request_radius_mm(4.2) == 4.2
     assert _request_radius_mm(None) is None
 
 
-def test_the_last_surface_adopts_the_corpus_convention() -> None:
-    """The row after the image plane carries no optics; the corpus writes 0."""
+def test_both_positions_fail_closed_including_the_last_surface() -> None:
+    """The last surface used to map to 0 because the corpus writes 0 there
+    (392 of 442). Once the root cause was corrected -- the value is a misparsed
+    *radius* -- that stopped being a convention and became laundering: it would
+    turn the one signal the audit just learned to see into a silently well-formed
+    file, on every future conversion."""
 
-    assert _request_thickness_mm(1e18, is_last_surface=True) == 0.0
-    assert _request_thickness_mm(math.inf, is_last_surface=True) == 0.0
+    for last in (True, False):
+        with pytest.raises(PatentParseError, match="misparsed row"):
+            _request_thickness_mm(1e18, is_last_surface=last)
+        with pytest.raises(PatentParseError):
+            _request_thickness_mm(math.inf, is_last_surface=last)
 
 
-def test_an_interior_infinite_gap_fails_closed() -> None:
-    """A misread column is not an air gap, and 0 would be an invented number."""
+def test_the_refusal_names_the_actual_root_cause() -> None:
+    """A reader who hits this must land on the label consumer, not on a thickness
+    guard -- the wrong diagnosis is what this whole branch had to correct."""
 
-    with pytest.raises(PatentParseError, match="thickness column"):
-        _request_thickness_mm(1e18, is_last_surface=False)
-    with pytest.raises(PatentParseError):
-        _request_thickness_mm(math.inf, is_last_surface=False)
+    with pytest.raises(PatentParseError) as excinfo:
+        _request_thickness_mm(1e18, is_last_surface=True)
+    message = str(excinfo.value)
+    assert "IMAGE" in message
+    assert "radius" in message
 
 
 def test_ordinary_thicknesses_are_untouched_in_both_positions() -> None:
@@ -184,6 +203,41 @@ def test_the_magnitude_cut_sits_in_a_void() -> None:
         "real and sentinel separations are no longer separated by a void; the cut "
         "has to be re-derived rather than kept"
     )
+
+
+def test_the_radius_column_has_no_void_and_is_argued_from_sag_instead() -> None:
+    """The honest half of the shared constant. Radii run continuously
+    (3.27e7 / 1.65e5 / 7.2e4 mm), so no void argument is available. What holds is
+    that anything above the cut is optically flat: one real record sits above it
+    and its sag at a 3 mm semi-diameter is a fraction of a nanometre."""
+
+    curv = re.compile(r"(?m)^\s*CURV\s+(\S+)")
+    radii: list[float] = []
+    for _pool, root in DEFAULT_POOLS:
+        for path in sorted(root.iterdir()):
+            if path.suffix.lower() != ".zmx":
+                continue
+            for token in curv.findall(read_zmx_text(path).replace("\r\n", "\n")):
+                try:
+                    value = abs(float(token))
+                except ValueError:
+                    continue
+                if value > 0:
+                    radii.append(1.0 / value)
+    assert radii
+    above = [r for r in radii if r >= INFINITY_SENTINEL_MM]
+    below = sorted((r for r in radii if r < INFINITY_SENTINEL_MM), reverse=True)
+    # No void: unlike DISZ, the largest sub-cut radius is nowhere near the cut in
+    # orders of magnitude, so the constant cannot be defended the same way here.
+    assert below and below[0] < INFINITY_SENTINEL_MM
+    # The physical argument, re-measured: sag = r_semi^2 / (2R) at a 3 mm
+    # semi-diameter, larger than any semi-diameter this corpus uses.
+    for radius in above:
+        sag_mm = 3.0**2 / (2.0 * radius)
+        assert sag_mm < 1e-6, (
+            f"a radius above the cut (R={radius:.3g} mm) now has a sag of "
+            f"{sag_mm:.3g} mm; forcing it to plano is no longer harmless"
+        )
 
 
 def test_exactly_the_eight_known_files_trip_the_new_gate() -> None:
