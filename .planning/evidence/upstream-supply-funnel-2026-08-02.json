@@ -1,0 +1,357 @@
+{
+ "schema": "atelier-upstream-supply-funnel-v1",
+ "inputs": {
+  "census_path": "D:\\atelier-stagec-runs\\trace-census-20260728\\perfield-census.jsonl",
+  "census_sha256": "fdfe52b621e6eaaaa0042e91f1733a33f1dd8262fab870dd9f3e8d941aae0e15",
+  "case_index_sha256": "a9a37e994d0fafb92b1d441c3f84667fc4beec5a04428104fcb14305474d0212",
+  "quarantine_sha256": "286e0036c9586838e6d856189a62da4cacb3238f35e1e1bf25b2739a6da87cb9",
+  "seed_quality_limit_um": 10.231200000000001
+ },
+ "funnel": {
+  "case_index": 442,
+  "full_field_codev_reading": 218,
+  "trace_and_fidelity_clean": 192,
+  "and_in_product_domain": 74
+ },
+ "cross_source_seed_supply": {
+  "today (3 screens)": {
+   "controls": 49,
+   "cross_source_seeds_min": 4,
+   "cross_source_seeds_median": 4,
+   "cross_source_seeds_max": 48
+  },
+  "screen 3 on controls only": {
+   "controls": 49,
+   "cross_source_seeds_min": 59,
+   "cross_source_seeds_median": 59,
+   "cross_source_seeds_max": 164
+  }
+ },
+ "per_control_pool": {
+  "cross_source": {
+   "n": 49,
+   "min": 59.0,
+   "median": 59.0,
+   "max": 164.0
+  },
+  "and_efl_reachable": {
+   "n": 49,
+   "min": 24.0,
+   "median": 43.0,
+   "max": 127.0
+  },
+  "and_at_or_below_corpus_median": {
+   "n": 49,
+   "min": 12.0,
+   "median": 13.0,
+   "max": 78.0
+  }
+ },
+ "per_control_pool_zero_options": {
+  "cross_source": 0,
+  "and_efl_reachable": 0,
+  "and_at_or_below_corpus_median": 0
+ },
+ "quality_by_intake_batch": {
+  "DATA-09d1": {
+   "n": 103,
+   "min": 2.0569,
+   "median": 8.82717,
+   "max": 17358.0,
+   "at_or_below_corpus_median": 60,
+   "at_or_below_own_fov_band_median": 67,
+   "brands": {
+    "LARGAN DIGITAL CO., LTD.": 58,
+    "SAMSUNG ELECTRO-MECHANICS CO., LTD": 24,
+    "KANTATSU CO., LTD.": 15,
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 4,
+    "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": 2
+   }
+  },
+  "None": {
+   "n": 29,
+   "min": 7.1242600000000005,
+   "median": 15.834000000000001,
+   "max": 51.7042,
+   "at_or_below_corpus_median": 8,
+   "at_or_below_own_fov_band_median": 6,
+   "brands": {
+    "(unknown)": 28,
+    "LARGAN DIGITAL CO., LTD.": 1
+   }
+  },
+  "DATA-10b": {
+   "n": 28,
+   "min": 14.1961,
+   "median": 134.711,
+   "max": 8.261197e+20,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 1,
+   "brands": {
+    "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": 22,
+    "ABILITY ENTERPRISE CO., LTD": 6
+   }
+  },
+  "DATA-06c": {
+   "n": 25,
+   "min": 2.0569,
+   "median": 5.60811,
+   "max": 90.23349999999999,
+   "at_or_below_corpus_median": 19,
+   "at_or_below_own_fov_band_median": 21,
+   "brands": {
+    "LARGAN DIGITAL CO., LTD.": 25
+   }
+  },
+  "DATA-06f": {
+   "n": 18,
+   "min": 3.9749499999999998,
+   "median": 8.199435000000001,
+   "max": 1683.16,
+   "at_or_below_corpus_median": 12,
+   "at_or_below_own_fov_band_median": 10,
+   "brands": {
+    "LARGAN DIGITAL CO., LTD.": 18
+   }
+  },
+  "DATA-06f-b11": {
+   "n": 11,
+   "min": 3.9749499999999998,
+   "median": 7.31925,
+   "max": 13.033100000000001,
+   "at_or_below_corpus_median": 9,
+   "at_or_below_own_fov_band_median": 6,
+   "brands": {
+    "LARGAN DIGITAL CO., LTD.": 11
+   }
+  },
+  "DATA-10a": {
+   "n": 2,
+   "min": 2.6428,
+   "median": 223.22990000000001,
+   "max": 443.817,
+   "at_or_below_corpus_median": 1,
+   "at_or_below_own_fov_band_median": 1,
+   "brands": {
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 2
+   }
+  },
+  "DATA-06i-rescan2": {
+   "n": 1,
+   "min": 497.704,
+   "median": 497.704,
+   "max": 497.704,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 0,
+   "brands": {
+    "LARGAN DIGITAL CO., LTD.": 1
+   }
+  },
+  "P12-4B": {
+   "n": 1,
+   "min": 57.501,
+   "median": 57.501,
+   "max": 57.501,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 0,
+   "brands": {
+    "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": 1
+   }
+  }
+ },
+ "quality_by_brand": {
+  "LARGAN DIGITAL CO., LTD.": {
+   "n": 114,
+   "min": 2.0569,
+   "median": 6.99486,
+   "max": 1683.16,
+   "at_or_below_corpus_median": 82,
+   "at_or_below_own_fov_band_median": 83
+  },
+  "(unknown)": {
+   "n": 28,
+   "min": 7.1242600000000005,
+   "median": 15.833,
+   "max": 51.7042,
+   "at_or_below_corpus_median": 8,
+   "at_or_below_own_fov_band_median": 6
+  },
+  "SAMSUNG ELECTRO-MECHANICS CO., LTD": {
+   "n": 24,
+   "min": 3.63088,
+   "median": 7.675295,
+   "max": 34.2315,
+   "at_or_below_corpus_median": 18,
+   "at_or_below_own_fov_band_median": 18
+  },
+  "NINGBO SUNNY AUTOMOTIVE OPTECH CO., LTD.": {
+   "n": 24,
+   "min": 14.1961,
+   "median": 107.293,
+   "max": 17358.0,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 1
+  },
+  "KANTATSU CO., LTD.": {
+   "n": 15,
+   "min": 14.2161,
+   "median": 91.9301,
+   "max": 562.331,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 3
+  },
+  "AAC Acoustic Technologies (Shenzhen) Co., Ltd.": {
+   "n": 7,
+   "min": 2.6428,
+   "median": 160.89800000000002,
+   "max": 443.817,
+   "at_or_below_corpus_median": 1,
+   "at_or_below_own_fov_band_median": 1
+  },
+  "ABILITY ENTERPRISE CO., LTD": {
+   "n": 6,
+   "min": 34.1412,
+   "median": 4.404644e+20,
+   "max": 8.261197e+20,
+   "at_or_below_corpus_median": 0,
+   "at_or_below_own_fov_band_median": 0
+  }
+ },
+ "fov_band_median_um": {
+  "75-85": 7.31925,
+  "60-75": 9.20091,
+  ">=85": 15.831999999999999,
+  "<40": 11.06495,
+  "40-60": 927.2745
+ },
+ "spot_vs_image_height": {
+  "cases_with_both_numbers": 218,
+  "ratio_median": 0.0032820711496532474,
+  "at_or_above_1.0": 1,
+  "at_or_above_0.5": 6,
+  "at_or_above_0.1": 25,
+  "largest_ratio_below_1.0": 0.9979926814507072,
+  "cases": [
+   {
+    "case_id": "US-11719917-B2-e6",
+    "rms_spot_diameter_um": 7.811269e+20,
+    "image_height_um": 5.919063322e+20,
+    "ratio": 1.3196799180990415,
+    "intake_batch": "DATA-10b",
+    "brand": "ABILITY ENTERPRISE CO., LTD",
+    "quarantined": false
+   }
+  ]
+ },
+ "diverged_traces": {
+  "cut": 1000000.0,
+  "image_height_mm": {
+   "over_cut": 8,
+   "largest_under_cut": 51.87536782,
+   "smallest_over_cut": 5.837052829e+17,
+   "cases": [
+    "US-11719917-B2-e2",
+    "US-11719917-B2-e3",
+    "US-11719917-B2-e4",
+    "US-11719917-B2-e5",
+    "US-11719917-B2-e6",
+    "US-12032139-B2-e2",
+    "US-12032139-B2-e4",
+    "US-12032139-B2-e6"
+   ]
+  },
+  "rms_spot_diameter_um": {
+   "over_cut": 5,
+   "largest_under_cut": 17358.0,
+   "smallest_over_cut": 3.195703e+20,
+   "cases": [
+    "US-11719917-B2-e4",
+    "US-11719917-B2-e5",
+    "US-11719917-B2-e6",
+    "US-12032139-B2-e2",
+    "US-12032139-B2-e4"
+   ]
+  },
+  "union": [
+   "US-11719917-B2-e2",
+   "US-11719917-B2-e3",
+   "US-11719917-B2-e4",
+   "US-11719917-B2-e5",
+   "US-11719917-B2-e6",
+   "US-12032139-B2-e2",
+   "US-12032139-B2-e4",
+   "US-12032139-B2-e6"
+  ]
+ },
+ "image_height_gate": {
+  "verdicts_over_shipped_index": {
+   "plausible": 398,
+   "implausible": 34,
+   "reference-unusable": 10
+  },
+  "rejected": [
+   "US-10921568-B2-e2",
+   "US-11719917-B2-e2",
+   "US-11719917-B2-e3",
+   "US-11719917-B2-e4",
+   "US-11719917-B2-e5",
+   "US-11719917-B2-e6",
+   "US-11815662-B2-e3",
+   "US-11899172-B2-e5",
+   "US-11927729-B2-e8",
+   "US-12032139-B2-e2",
+   "US-12032139-B2-e4",
+   "US-12032139-B2-e6",
+   "US-12044826-B2-e3",
+   "US-12105260-B2-e1",
+   "US-12140735-B2-e8",
+   "US-12210142-B2-e6",
+   "US-12228698-B2-e2",
+   "US-12228698-B2-e3",
+   "US-12228698-B2-e5",
+   "US-12282142-B2-e9",
+   "US-12416791-B2-e10",
+   "US-12416791-B2-e3",
+   "US-12416791-B2-e5",
+   "US-12429675-B2-e7",
+   "US-12429675-B2-e8",
+   "US-12436366-B2-e3",
+   "US-12468127-B2",
+   "US-12468127-B2-e1",
+   "US-12468127-B2-e2",
+   "US-12607827-B2-e3",
+   "US-20230288669-A1-e1",
+   "US-20230288669-A1-e2",
+   "US-20230288669-A1-e4",
+   "US-20230288669-A1-e5",
+   "US-20230288669-A1-e6",
+   "US-20230288669-A1-e7",
+   "US-20240176110-A1-e7",
+   "US-20240176110-A1-e8",
+   "US-20250216655-A1-e9",
+   "US-20250370230-A1-e10",
+   "US-20250370230-A1-e5",
+   "US-20250383531-A1-e7",
+   "US-20250383531-A1-e8",
+   "US-20260126622-A1-e2"
+  ],
+  "still_inside_trace_and_fidelity_pool": [
+   "US-11719917-B2-e4",
+   "US-11719917-B2-e5",
+   "US-11719917-B2-e6",
+   "US-12032139-B2-e2",
+   "US-12032139-B2-e4",
+   "US-12282142-B2-e9",
+   "US-12468127-B2",
+   "US-12468127-B2-e1",
+   "US-12468127-B2-e2",
+   "US-20230288669-A1-e1",
+   "US-20230288669-A1-e2",
+   "US-20230288669-A1-e4",
+   "US-20230288669-A1-e6",
+   "US-20230288669-A1-e7",
+   "US-20250216655-A1-e9"
+  ],
+  "still_inside_in_domain_pool": []
+ }
+}
