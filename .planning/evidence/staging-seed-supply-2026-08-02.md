@@ -1,0 +1,90 @@
+# 补异源 seed 的料**已经在仓库里**：staging 池，613 颗，git 跟踪，与语料零重叠
+
+`upstream-supply-funnel-2026-08-02.md` 的结论是：LARGAN 对照（59 条 trial 里的 54 条）
+在全语料里只能取到 **5 颗**跨受让人 seed，其中一颗 101 µm 的吃掉 48/59；
+两闸池里唯一健康的异源族 SAMSUNG 只有 6 个长焦处方，加 20° 视场上限后只服务 4/54。
+按那页的说法「剩下的只能靠底库」。
+
+**本页发现：那份底库已经在仓库里，只是从来没被当作 seed 池看过。**
+
+`data/zmx-staging/patent-local-replay` 有 **613 颗 git 跟踪的 ZMX，与 `data/zmx` 442 颗
+文件名零重叠**，2026-07-28 那次普查已经把其中 **238 颗**测到全视场。
+它被审过一次（`staging-domain-ceiling-2026-07-29.md`），但**只问了对照侧的问题**
+——「有多少落在产品参数域内」（58）。而那道闸按 `load_usable_case_ids` 自己的
+docstring 就是对照侧论证；**seed 不是一个客户请求**。seed 侧的问题从来没人问过。
+
+```bash
+uv run python scripts/staging_seed_supply_census.py \
+  --census D:/atelier-stagec-runs/trace-census-20260728/perfield-census.jsonl \
+  --staging-census D:/atelier-stagec-runs/trace-census-20260728/perfield-staging-census.jsonl \
+  --json .planning/evidence/staging-seed-supply-2026-08-02.json
+```
+
+## 一、结论先行
+
+对 **59 个对照**逐个问：「有没有一颗 seed 同时满足 异源 + EFL 可达（+25% 内）+
+视场匹配（≤20°）+ CODE V 全场 RMS ≤ 语料中位 10.23 µm？」
+
+| seed 池 | 可服务对照 | 最优 seed RMS 中位 | 每对照可选**不同处方**中位 | 零选项对照 |
+|---|---|---|---|---|
+| 语料（两闸口径） | **11/59** | 7.11 µm | **0** | **48** |
+| **语料 + staging** | **59/59** | **3.73 µm** | **9** | **0** |
+| 仅 staging | 56/59 | 3.73 | 9 | 3 |
+
+放宽到不限视场，语料侧也能 59/59——但那是靠 |ΔFOV| 中位 43.9° 的窄场 seed 顶上去的
+（见 funnel 页第四节）。**一旦要求视场对得上，语料侧就塌到 11/59、中位可选处方为 0。**
+
+## 二、staging 池摊开
+
+| | |
+|---|---|
+| 盘上 ZMX | 613 |
+| 有 CODE V 全场读数 | 238 |
+| 过保真度隔离 + 受让人已知 + 一阶量可导 | **193**（丢弃：保真度 33、一阶量不可导 12） |
+| **且 ≤ 语料中位** | **80** = **51 个不同处方 / 27 件专利** |
+
+健康件受让人：LARGAN 48 ／ SAMSUNG 18 ／ AAC 6 ／ APPLE 4 ／ SUNNY 2 ／ ABILITY 1 ／ Raytech 1。
+**健康件视场中位 76.8°（区间 10–152°）**——不是长焦一边倒，正好覆盖对照所在的宽场区。
+
+⚠️ 对比 funnel 页的「四族全坏」要加个作用域：那句话在 `data/zmx` 上成立，
+**在 staging 上不成立**——同样是 SUNNY / AAC / ABILITY，这里有健康件。
+所以坏的**不是公司**，是**某几批表格被某一族解析器读出来的产物**。这一点反而是好消息：
+缺陷有界，且另一条转换路径已经产出了可用的东西。
+
+## 三、EFL 是从文件自己算的，没走 receipt
+
+staging ZMX 的尾注带 `! ATELIER_FTAN_IMH_SANITY_MM` = `EFL · tan(半场)`，
+`YFLN` 带半场，所以 `EFL = FTAN_IMH / tan(YFLN_max)` **只读文件就够**。
+
+这不是偷懒而是刻意避坑：另一条路是转换 receipt，而
+`staging-domain-ceiling-2026-07-29.md` 记着 **9 处 receipt↔ZMX 错位**（3 件专利），
+按 key 反查会读到隔壁 embodiment 的参数。
+
+推导本身在语料上自检（那里 `index.json` 独立给出 EFL）：
+**n=153，比值中位 0.9996，±1% 内 146/153。**
+
+## 四、诚实边界（每条都可能让上面的数字缩水）
+
+1. **这是「池子里有没有」，不是「打分器会不会选」。** `rank_seeds` 按参数邻近度选，
+   不按 RMS 选；本页的 `served` 是**可行性**上界。真正的收益要等把 staging 并进
+   case library 之后重跑配对才知道。
+2. **视场上限 20° 目前不在流水线里**，是本页提出的约束。今天的 `preferred` 池只按
+   「可达 ∧ 质量」筛，不看视场——这正是「放开 screen 3 会选到差 43.9° 的 seed」的成因。
+3. **并进来要走 ingest，不只是改一个筛**：staging 颗粒没有 `index.json` 记录、
+   没有逐案 JSON，`cases_for_scenario` / `rank_seeds` 现在看不见它们。
+4. **独立样本没被这条解决。** 若按「挑 RMS 最低的」贪心选，50/59 会落到同一件专利
+   （SAMSUNG `US-12560782-B2`）。**但池子本身是有分散度的**：每对照可选
+   **不同处方**中位 9、最多 28、只有 3 个对照零选项。分散度要靠选择规则去兑现。
+5. 有几颗健康件的一阶量看着可疑（如 APPLE 两颗 EFL 0.56 / 0.84 mm 而视场 72–75°）。
+   **并库前必须逐颗过像高闸与一阶自洽性**，不能因为 RMS 好看就放行——
+   这正是 `data/zmx` 那 8 颗发散件混进来的方式。
+6. 读数来自 2026-07-28 的 staging 普查；产物记了 census / index / quarantine 的 sha256。
+   **staging ZMX 自那以后是否变过没有验**。
+
+## 五、下一铲
+
+1. **把 staging 里过闸的颗粒并进 case library 当 seed**（不当对照——对照侧的域判据另说）。
+   并库时逐颗过：保真度隔离 ∧ 像高闸 ∧ 一阶自洽 ∧ 有 CODE V 全场读数。
+2. **给 `preferred` 池加视场匹配上限**，否则质量闸会继续挑窄场 seed。
+3. 并完重跑 `p2_pair_census` 与一轮小真机 A/B（同一批对照、只换 seed 池），
+   看候选 RMS 落败倍数（今天中位 16.1×）动没动。**这才是判据，池子数字不是。**
