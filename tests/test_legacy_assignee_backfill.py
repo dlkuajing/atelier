@@ -146,10 +146,21 @@ def test_the_backfill_does_not_pair_a_control_with_a_seed_of_the_same_design() -
     if not census_path.is_file():
         pytest.skip("runtime census not present on this machine")
 
+    # A selected seed may now be a screened `data/zmx-staging` design, which is
+    # deliberately absent from the case index (seeds only, never controls). Those
+    # are exactly the seeds this check most needs to cover: zero *filename* overlap
+    # with `data/zmx` says nothing about *prescription* identity, and a patent
+    # continuation republishes the same embodiment under a new number.
+    from scripts.p2_pair_census import STAGING_ZMX_DIR, load_staging_seeds
+
     zmx_dir = Path("data") / "zmx"
+    staging_zmx = {str(r["zmx"]).rsplit(".", 1)[0]: str(r["zmx"]) for r in load_staging_seeds()}
 
     def fingerprint(case_id: str) -> str | None:
-        return fingerprint_zmx(zmx_dir / index[case_id]["source_zmx"])
+        record = index.get(case_id)
+        if record is not None:
+            return fingerprint_zmx(zmx_dir / record["source_zmx"])
+        return fingerprint_zmx(STAGING_ZMX_DIR / staging_zmx[case_id])
 
     pairs = census(census_path)["trial_pairs"]
     same = [p for p in pairs if fingerprint(p["control"]) == fingerprint(p["seed"])]

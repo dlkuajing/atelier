@@ -353,6 +353,31 @@ def test_the_stretch_limit_comes_from_a_measurement_not_a_choice() -> None:
     assert not census_mod.seed_efl_is_reachable(seed_efl_mm=4.0, target_efl_mm=0.0)
 
 
+def _seed_efl_and_rms(perfield):
+    """seed id -> (efl_mm, CODE V full-field diameter), across BOTH seed pools.
+
+    Since 2026-08-03 a selected seed may be a screened `data/zmx-staging` design
+    that is deliberately absent from the case index (seeds only, never controls --
+    see `scripts/p2_pair_census.load_staging_seeds`). Looking the seed up in the
+    index alone would `KeyError` on exactly the seeds the change introduced, which
+    would read as a broken test rather than a broadened pool.
+    """
+
+    rms = census_mod.codev_rms_by_zmx(perfield)
+    facts = {}
+    for record in json.loads(census_mod.CASE_INDEX.read_text("utf-8")):
+        facts[record["case_id"]] = (
+            float(record["efl_mm"]),
+            rms.get(str(record["source_zmx"])),
+        )
+    for row in census_mod.load_staging_seeds():
+        facts[str(row["zmx"]).rsplit(".", 1)[0]] = (
+            float(row["efl_mm"]),
+            float(row["codev_rms_um"]),
+        )
+    return facts
+
+
 @pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
 def test_reachability_is_never_traded_away_for_quality() -> None:
     """THE regression this file exists to prevent, and it is not hypothetical.
@@ -363,11 +388,12 @@ def test_reachability_is_never_traded_away_for_quality() -> None:
     So reachability is filtered first and quality only chooses among what is left.
     """
 
+    facts = _seed_efl_and_rms(_PERFIELD)
     index = {r["case_id"]: r for r in json.loads(census_mod.CASE_INDEX.read_text("utf-8"))}
     result = census_mod.census(_PERFIELD)
     over = []
     for pair in result["trial_pairs"]:
-        seed_efl = float(index[pair["seed"]]["efl_mm"])
+        seed_efl = facts[pair["seed"]][0]
         target_efl = float(index[pair["control"]]["efl_mm"])
         if (target_efl / seed_efl) - 1.0 > census_mod.MAX_SEED_EFL_STRETCH + 1e-9:
             over.append((pair["control"], pair["seed"], target_efl / seed_efl))
@@ -376,10 +402,13 @@ def test_reachability_is_never_traded_away_for_quality() -> None:
 
 @pytest.mark.skipif(not _PERFIELD.is_file(), reason="runtime census not present")
 def test_the_fallback_is_recorded_rather_than_silent() -> None:
-    """Measured: only 6 of 59 controls have a seed that is BOTH reachable and at or
-    below the corpus median. For the other 53 the two constraints genuinely conflict,
-    and that conflict is the finding -- so it has to appear in the output, not be
-    quietly absorbed by a fallback.
+    """The conflict has to appear in the output, not be quietly absorbed.
+
+    Measured 2026-08-02, corpus seeds only: just 6 of 59 controls had a seed that
+    was BOTH reachable and at or below the corpus median; for the other 53 the two
+    constraints genuinely conflicted. Admitting the screened staging designs as
+    seeds (2026-08-03) moved that to 56 and 3 -- the conflict got much rarer but
+    did not vanish, which is why both states are still asserted to occur.
     """
 
     result = census_mod.census(_PERFIELD)
@@ -395,14 +424,13 @@ def test_the_fallback_is_recorded_rather_than_silent() -> None:
 def test_quality_still_wins_where_it_is_available() -> None:
     """The fallback must not swallow the quality preference where it *can* be honoured."""
 
-    rms = census_mod.codev_rms_by_zmx(_PERFIELD)
-    index = {r["case_id"]: r for r in json.loads(census_mod.CASE_INDEX.read_text("utf-8"))}
+    facts = _seed_efl_and_rms(_PERFIELD)
     result = census_mod.census(_PERFIELD)
     limit = result["seed_quality_limit_um"]
     good = [
         pair
         for pair in result["trial_pairs"]
-        if (rms.get(str(index[pair["seed"]]["source_zmx"])) or 1e9) <= limit
+        if (facts[pair["seed"]][1] or 1e9) <= limit
     ]
     assert len(good) == result["seed_pool_basis"].get("reachable_and_quality", 0)
 
