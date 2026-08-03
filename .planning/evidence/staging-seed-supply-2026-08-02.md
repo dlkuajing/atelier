@@ -50,7 +50,9 @@ uv run python scripts/staging_seed_supply_census.py \
 | **且 ≤ 语料中位** | **91** = **57 个不同处方 / 30 件专利** |
 | 其中处方 `data/zmx` **已经有的** | **19** ⇒ **真正新增 38 个处方** |
 
-健康件受让人：LARGAN 59 ／ SAMSUNG 18 ／ AAC 6 ／ APPLE 4 ／ SUNNY 2 ／ ABILITY 1 ／ Raytech 1。
+健康件受让人：LARGAN 59 ／ SAMSUNG 18 ／ AAC 7 ／ APPLE 4 ／ SUNNY 2 ／ ABILITY 1。
+（PR #171 把 `Raytech Optical (Changzhou)` 归入 AAC 桶——`raytech` 原本被当成停用词，
+使这两种 Raytech 拼写 token 集为空、各自成 brand；总数与所有头条数字不变。）
 **健康件视场中位 77.6°（区间 10–176°）**——不是长焦一边倒，正好覆盖对照所在的宽场区。
 
 ⚠️ 对比 funnel 页的「四族全坏」要加个作用域：那句话在 `data/zmx` 上成立，

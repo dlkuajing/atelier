@@ -78,6 +78,14 @@ ASSIGNEE_STOPWORDS = frozenset(
         "optical",
         "opto",
         "optronics",
+        # `raytech` used to sit here. It is a **company name**, not an industry
+        # word like `optics` or `precision`, and stopping it made
+        # `Changzhou Raytech Optronics Co., Ltd.` and
+        # `Raytech Optical (Changzhou) Co., Ltd.` tokenise to nothing at all --
+        # each became its own brand and both read as cross-source against AAC
+        # and against each other. Leaving it in place lets the corpus's own
+        # string `Changzhou AAC Raytech Optronics Co., Ltd.` do the merging,
+        # which is evidence rather than an attribution someone asserted.
         "electronics",
         "electro",
         "mechanics",
@@ -86,7 +94,6 @@ ASSIGNEE_STOPWORDS = frozenset(
         "technology",
         "technologies",
         "solutions",
-        "raytech",
         "imaging",
         "lens",
         "photonics",
@@ -130,15 +137,63 @@ def patent_id_of_case(case_id: str) -> str | None:
     return match.group(1) if match else None
 
 
+#: Source-data token spellings that name one company but do not *share* a token
+#: with its other spellings, so the connected-components grouping below cannot
+#: merge them. Punctuation is already handled; a misspelling is not, because it
+#: changes the token itself.
+#:
+#: Every entry is a fail-**closed** correction: merging two brands can only ever
+#: shrink the 异源 sample, never inflate 打平率. Left unmerged, two publications
+#: of one company read as cross-source against each other and manufacture par
+#: pairs out of a spelling difference -- the exact failure
+#: `tests/test_p2_pair_census.py` was written to prevent.
+#:
+#: Deliberately a table, not a fuzzy matcher. `Cognex` / `Fujinon` sit at 0.76
+#: string similarity and are unrelated companies, so any similarity threshold
+#: loose enough to catch `corephontonics` also merges those.
+#:
+#: Every entry is justified by **another string in the same corpus**, not by
+#: outside knowledge. An earlier draft also merged `fujinon` into `fujifilm` on
+#: the strength of the 2010 corporate absorption; that is a real fact but it is
+#: not evidence *this repository holds*, so it was removed rather than shipped as
+#: a code comment stating a fact nobody here can check. It is recorded as an open
+#: question in the evidence trail instead.
+ASSIGNEE_TOKEN_SPELLING_FIXES: dict[str, str] = {
+    # `Corephontonics Ltd.` (one record) vs `COREPHOTONICS LTD.` /
+    # `Corephotonics Ltd.` -- an `n` where an `o` belongs.
+    "corephontonics": "corephotonics",
+    # `Largen Precision Co., Ltd.` vs `Largan Precision Co., Ltd.` -- 0.9615
+    # string similarity, an `e` where an `a` belongs. This one matters most:
+    # LARGAN is the dominant control brand, so a mis-bucketed Largan design reads
+    # as cross-source against Largan controls -- the exact fail-open this table
+    # exists to close.
+    "largen": "largan",
+    # `Jiangxi OFLM Optical Co., Ltd.` vs `Jiangxi OFILM Optical Co., Ltd.`
+    # -- 0.9836, a dropped `I`.
+    "oflm": "ofilm",
+}
+
+
 def assignee_tokens(raw: str) -> frozenset[str]:
     """Distinctive tokens of an assignee string.
 
     Any punctuation (including the em-dash that appears in one Ability record)
     becomes a separator, so ``opto-electronics`` and ``opto—electronics``
-    normalise identically.
+    normalise identically. Known source-data misspellings are folded onto the
+    canonical token via :data:`ASSIGNEE_TOKEN_SPELLING_FIXES`, because a typo
+    changes the token and no amount of punctuation handling recovers it.
     """
     cleaned = re.sub(r"[^0-9a-z]+", " ", raw.lower())
-    return frozenset(t for t in cleaned.split() if t and t not in ASSIGNEE_STOPWORDS)
+    # Stopwords are filtered first, so a fix can never resurrect an industry word.
+    # An earlier version reversed this to reach `raytech`, which was a stopword;
+    # the right answer was that `raytech` is a company name and does not belong in
+    # the stopword list at all -- see `ASSIGNEE_STOPWORDS`. Both routes produce
+    # bit-identical buckets (40, zero members differ); this one asserts nothing.
+    return frozenset(
+        ASSIGNEE_TOKEN_SPELLING_FIXES.get(t, t)
+        for t in cleaned.split()
+        if t and t not in ASSIGNEE_STOPWORDS
+    )
 
 
 def brand_of_assignee(assignees: set[str]) -> dict[str, str]:
