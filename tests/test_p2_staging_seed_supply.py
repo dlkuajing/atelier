@@ -213,3 +213,53 @@ def test_the_honest_denominator_counts_staging_seeds_too() -> None:
 
     assert counts["unfingerprinted"] == [], counts["unfingerprinted"]
     assert counts["seeds"] == 2, "a staging seed was dropped from the honest denominator"
+
+
+# ---------------------------------------------------------------------------
+# The same two invariants, on a committed fixture, so CI actually runs them
+# ---------------------------------------------------------------------------
+
+FIXTURE = REPO_ROOT / "tests" / "data" / "perfield_census_fixture.jsonl"
+
+
+def test_the_fixture_exercises_both_seed_pools() -> None:
+    """A gate on an input that produces no trials is not a gate.
+
+    Guards the guard: if the fixture ever stops yielding staging-seeded trials --
+    because the manifest changed, or the corpus moved under it -- the two tests
+    below would keep passing while testing nothing.
+    """
+    result = census(FIXTURE, admit_staging_seeds=True)
+
+    assert result["trials"] > 0
+    assert result["trials_seeded_from_staging"] > 0
+    assert result["staging_seeds_unbuildable"] == []
+
+
+def test_the_denominator_holds_on_the_fixture() -> None:
+    """`test_admitting_staging_seeds_does_not_change_the_denominator`, minus the
+    dependency on a runtime product that exists on exactly one machine.
+
+    This is the invariant the PR rests on: a par rate measured after admitting
+    staging seeds is comparable with one measured before. It was previously
+    enforced only behind a `D:/` skipif, i.e. never on CI -- the failure mode this
+    repository already has a written post-mortem for.
+    """
+    with_ = census(FIXTURE, admit_staging_seeds=True)
+    without = census(FIXTURE, admit_staging_seeds=False)
+
+    assert with_["cases_usable"] == without["cases_usable"]
+    assert with_["trials"] == without["trials"]
+    assert {t["control"] for t in with_["trial_pairs"]} == {
+        t["control"] for t in without["trial_pairs"]
+    }
+
+
+def test_no_staging_design_is_ever_a_control_on_the_fixture() -> None:
+    """The other load-bearing invariant, likewise freed from the skipif."""
+    result = census(FIXTURE, admit_staging_seeds=True)
+    staging_ids = {str(r["zmx"]).rsplit(".", 1)[0] for r in load_staging_seeds()}
+    usable, _ = load_usable_case_ids(FIXTURE)
+
+    assert not staging_ids & set(usable)
+    assert not staging_ids & {t["control"] for t in result["trial_pairs"]}
