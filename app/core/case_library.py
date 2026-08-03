@@ -175,15 +175,20 @@ _PLANE_RADIUS_SENTINEL = 1e9
 # The bar is deliberately NOT retuned in the same change. Swapping the instrument
 # is a defect fix; moving the bar is a product decision about how good a seed must
 # be before we will show it, and the two must stay separable after the fact.
-# Measured on this corpus (442 rows, 218 with a CODE V reading):
+# Measured on this corpus (442 rows, 218 with a CODE V reading). Note the two
+# levels: this gate ORs three conditions and only the RMS one changed, so a row
+# already failing on `min_50` or the floor gap cannot flip. Quote the gate number,
+# not the branch number -- the branch number overstates the impact by 45%:
 #
-#   instrument swap alone (bar stays 100.0)     16 rows flip healthy -> violation,
-#                                                9 flip violation -> healthy
-#   additionally lowering the bar to 10.2312    111 flip healthy -> violation
-#     (the corpus median `p2_pair_census.seed_quality_ok` already screens with)
+#   instrument swap, RMS branch alone   16 flip healthy -> violation,  9 back
+#   instrument swap, at the gate        11 flip healthy -> violation,  3 back
+#     (5 branch flips are masked by an existing MTF/floor-gap violation)
+#   gate violations overall             174 -> 182 of 442
 #
-# The second step is queued for ratification, not taken here. Neither step empties
-# any scenario bucket: the sparsest is telephoto, 87 -> 85 -> 57 healthy.
+# Lowering the bar to 10.2312 as well (the corpus median
+# `p2_pair_census.seed_quality_ok` already screens with) is a much larger move and
+# is queued for ratification, not taken here. Neither step empties any scenario
+# bucket.
 _SEED_ROUTING_MAX_RMS_UM = 100.0
 _SEED_ROUTING_MIN_MTF_50 = 0.08
 _SEED_ROUTING_FLOOR_GAP_LIMIT = 3.0
