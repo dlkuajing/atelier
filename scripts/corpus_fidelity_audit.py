@@ -26,6 +26,16 @@ Two families of finding, kept apart because they carry different confidence:
         rectilinear angular field can never reach 90 deg. (Typically the patent
         quoted a *full* field of view and it was recorded as a half-angle --
         note that the same mistake below 90 deg stays invisible to this check.)
+    ``separation_beyond_physical_scale``
+        A ``DISZ`` axial separation at or past 1e6 mm. Patent surface tables
+        print ``1E+18`` where a radius is plano; the conversion path guarded the
+        radius column against it and not the thickness column, so eight corpus
+        rows carry ``DISZ 1e+18`` on their last surface -- an image plane 1e18 mm
+        away. Those eight are **exactly** the eight whose CODE V spot exceeds
+        1e6 um (set equality, measured 2026-08-02), and none of them was caught
+        here before, because this audit read ``FNUM``/``YFLN``/aspheric terms and
+        never read ``DISZ`` at all. Their EFL is unaffected -- it is paraxial --
+        which is how they passed every intake gate.
 
 ``fidelity``
     Not impossible, but the file is not the design it claims to be.
@@ -75,6 +85,14 @@ MIN_PHYSICAL_F_NUMBER = 0.5
 #: Angular field type identifier in the ZMX ``FTYP`` record.
 FTYP_ANGLE = 0
 
+#: Axial separation above which a ``DISZ`` record is an infinity sentinel rather
+#: than a long lens. Not tuned: across both pools' 17452 ``DISZ`` records the
+#: largest real separation is **1200 mm** and the next value up is **1e+18** --
+#: the cut sits inside fifteen orders of magnitude of nothing. `INFINITY` /
+#: `INF` spellings are handled separately and are legitimate (object at
+#: infinity), so only *numeric* records are screened.
+MAX_PHYSICAL_SEPARATION_MM = 1.0e6
+
 #: Aspheric surface types whose polynomial terms this audit inspects.
 ASPHERIC_SURFACE_TYPES = frozenset({"EVENASPH", "XASPHERE"})
 
@@ -91,6 +109,7 @@ _SURF_SPLIT_RE = re.compile(r"^SURF\s+\d+\s*$", re.MULTILINE)
 _TYPE_RE = re.compile(r"^\s*TYPE\s+(\S+)", re.MULTILINE)
 _PARM_RE = re.compile(rf"^\s*PARM\s+\d+\s+({_NUMBER})\s*$", re.MULTILINE)
 _XDAT_RE = re.compile(rf"^\s*XDAT\s+\d+\s+({_NUMBER})", re.MULTILINE)
+_DISZ_RE = re.compile(rf"^\s*DISZ\s+({_NUMBER})\s*$", re.MULTILINE)
 
 
 class CorpusFidelityError(ValueError):
@@ -108,6 +127,7 @@ class SeedAudit:
     max_field: float | None
     aspheric_surfaces: int
     aspheric_surfaces_without_terms: int
+    max_separation_mm: float | None = None
     hard: tuple[str, ...] = ()
     fidelity: tuple[str, ...] = ()
 
@@ -196,11 +216,19 @@ def audit_seed(path: Path, pool: str) -> SeedAudit:
         if not any(value != 0.0 for value in _aspheric_term_values(block)):
             aspheric_empty += 1
 
+    # `INFINITY`/`INF` are the legitimate spelling for an object at infinity and
+    # do not match `_DISZ_RE`; only numeric records are screened, so a normal
+    # object row cannot trip this.
+    separations = [abs(float(value)) for value in _DISZ_RE.findall(text)]
+    max_separation = max(separations, default=None)
+
     hard: list[str] = []
     if f_number is not None and f_number < MIN_PHYSICAL_F_NUMBER:
         hard.append("fno_below_physical_limit")
     if field_type == FTYP_ANGLE and max_field >= 90.0:
         hard.append("angular_field_at_or_beyond_90deg")
+    if max_separation is not None and max_separation >= MAX_PHYSICAL_SEPARATION_MM:
+        hard.append("separation_beyond_physical_scale")
 
     fidelity: list[str] = []
     if aspheric_empty:
@@ -214,6 +242,7 @@ def audit_seed(path: Path, pool: str) -> SeedAudit:
         max_field=max_field,
         aspheric_surfaces=aspheric,
         aspheric_surfaces_without_terms=aspheric_empty,
+        max_separation_mm=max_separation,
         hard=tuple(hard),
         fidelity=tuple(fidelity),
     )
@@ -298,6 +327,7 @@ def to_payload(audits: list[PoolAudit]) -> dict:
                         "max_field": s.max_field,
                         "aspheric_surfaces": s.aspheric_surfaces,
                         "aspheric_surfaces_without_terms": s.aspheric_surfaces_without_terms,
+                        "max_separation_mm": s.max_separation_mm,
                     }
                     for s in a.defective()
                 ],
