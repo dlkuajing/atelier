@@ -34,6 +34,7 @@ from scripts.p2_pair_census import codev_rms_by_zmx  # noqa: E402
 
 ARTIFACT_PATH = ROOT / "app" / "data" / "codev_seed_quality.json"
 CASE_INDEX = ROOT / "app" / "data" / "optical_cases" / "index.json"
+STAGING_MANIFEST = ROOT / "app" / "data" / "p2_staging_seed_manifest.json"
 SCHEMA = "atelier.codev_seed_quality/v1"
 
 
@@ -59,6 +60,27 @@ def build(census_paths: list[Path]) -> dict:
 
     index = json.loads(CASE_INDEX.read_text(encoding="utf-8"))
     wanted = {str(record["source_zmx"]) for record in index}
+
+    # The P2 seed pool is two pools. Seeds admitted from `data/zmx-staging` are
+    # deliberately absent from the case index, so filtering to the index alone
+    # would leave every one of them without a reading -- and the consumer falls
+    # back to twice an Optiland radius, which is the instrument this artifact
+    # exists to replace. Measured on one such seed: the fallback reads 14.08 um
+    # where CODE V measures 526.09. Their readings come from the same
+    # `codev_rms_by_zmx` rule, taken from the staging census at manifest time.
+    staging_readings: dict[str, float] = {}
+    if STAGING_MANIFEST.is_file():
+        manifest = json.loads(STAGING_MANIFEST.read_text(encoding="utf-8"))
+        for row in manifest["seeds"]:
+            staging_readings[str(row["zmx"])] = float(row["codev_rms_um"])
+        wanted |= set(staging_readings)
+        overlap = sorted(set(staging_readings) & {str(r["source_zmx"]) for r in index})
+        if overlap:
+            raise SystemExit(
+                f"{len(overlap)} staging seeds share a filename with a corpus case "
+                f"(e.g. {overlap[:3]}); one design would answer to two readings"
+            )
+    readings.update(staging_readings)
     # Only what the corpus actually contains. The censuses also cover staging
     # files that were never promoted; carrying them would be dead weight in a
     # committed artifact and would make its `n` mean something other than
@@ -69,6 +91,10 @@ def build(census_paths: list[Path]) -> dict:
     for record in index:
         if str(record["source_zmx"]) in kept:
             by_batch[str(record.get("intake_batch") or "(none)")] += 1
+    if staging_readings:
+        by_batch["(p2 staging seed pool)"] = sum(
+            1 for name in staging_readings if name in kept
+        )
 
     return {
         "schema": SCHEMA,
@@ -80,9 +106,14 @@ def build(census_paths: list[Path]) -> dict:
             "no CODE V error and every declared field produced a positive per-field "
             "SPOTDATA reading (n_positive == num_fields)"
         ),
-        "keyed_by": "index.json source_zmx",
+        "keyed_by": (
+            "index.json source_zmx, plus p2_staging_seed_manifest.json zmx for the "
+            "seed-only staging pool -- both are the filename the consumer sees as "
+            "`metadata.source_zmx`"
+        ),
         "n": len(kept),
         "corpus_rows": len(index),
+        "staging_seed_rows": len(staging_readings),
         "coverage_by_intake_batch": dict(sorted(by_batch.items())),
         "percentiles": {
             "p50": round(statistics.median(values), 4) if values else None,

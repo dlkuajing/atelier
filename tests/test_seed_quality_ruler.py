@@ -94,21 +94,40 @@ def test_a_seed_no_instrument_can_measure_is_not_healthy() -> None:
     assert _seed_max_rms_spot_diameter_um(_NoReading()) is None  # type: ignore[arg-type]
 
 
-def test_the_artifact_covers_only_the_corpus_and_says_how_much_of_it() -> None:
-    """A reading for a ZMX that is not in the corpus is dead weight, and a coverage
-    number that is not the artefact's own `n` is a second number waiting to drift."""
+def test_the_artifact_covers_exactly_the_two_seed_pools() -> None:
+    """A reading for a ZMX nothing can route to is dead weight, and a coverage
+    number that is not the artefact's own `n` is a second number waiting to drift.
+
+    "The corpus" is two pools since 2026-08-03: the case index, and the seed-only
+    staging manifest. The artifact must cover both and nothing else -- covering
+    less is what left 157 seeds on the optimistic fallback; covering more would
+    mean carrying readings for designs no consumer can reach.
+    """
 
     payload = load_seed_quality()
     index = json.loads(INDEX_PATH.read_text(encoding="utf-8"))
-    corpus_zmx = {str(r["source_zmx"]) for r in index}
+    reachable = {str(r["source_zmx"]) for r in index}
 
-    assert set(payload["readings"]) <= corpus_zmx
+    manifest = REPO_ROOT / "app" / "data" / "p2_staging_seed_manifest.json"
+    staging = (
+        {str(r["zmx"]) for r in json.loads(manifest.read_text(encoding="utf-8"))["seeds"]}
+        if manifest.is_file()
+        else set()
+    )
+    reachable |= staging
+
+    assert set(payload["readings"]) <= reachable
     assert payload["n"] == len(payload["readings"])
     assert payload["corpus_rows"] == len(index)
+    assert payload["staging_seed_rows"] == len(staging & set(payload["readings"]))
     assert sum(payload["coverage_by_intake_batch"].values()) == payload["n"]
-    # Partial coverage is the expected state, not a defect -- but full coverage
-    # would make the fallback branch dead, and zero would make the gate a no-op.
-    assert 0 < payload["n"] < payload["corpus_rows"]
+    # Partial coverage of the *index* is the expected state, not a defect -- full
+    # coverage would make the fallback branch dead, zero would make the gate a
+    # no-op. The staging pool, by contrast, is admitted only when it has a full
+    # CODE V reading, so it should be covered completely.
+    corpus_covered = payload["n"] - payload["staging_seed_rows"]
+    assert 0 < corpus_covered < payload["corpus_rows"]
+    assert payload["staging_seed_rows"] == len(staging)
 
 
 def test_every_reading_is_a_positive_finite_number() -> None:
@@ -156,3 +175,46 @@ def test_the_committed_artifact_is_what_the_builder_produces() -> None:
     committed = json.loads(SEED_QUALITY_PATH.read_text(encoding="utf-8"))
     assert rebuilt["readings"] == committed["readings"]
     assert rebuilt["n"] == committed["n"]
+
+
+def test_the_staging_seed_pool_is_not_left_on_the_optimistic_instrument() -> None:
+    """The two halves of this change have to compose.
+
+    `_seed_max_rms_spot_diameter_um` prefers CODE V and falls back to twice an
+    Optiland radius. The artifact was built by filtering to `index.json`
+    `source_zmx`, and the P2 seed pool admitted from `data/zmx-staging` is by
+    construction absent from that index -- so every one of those seeds fell back
+    to the instrument this module exists to retire. Measured on one of them: the
+    fallback reads 14.08 um where CODE V measures 526.09, so routing would call
+    healthy a seed the comparator kills, and would prefer the staging pool for a
+    reason that has nothing to do with quality.
+    """
+    import json
+
+    manifest = REPO_ROOT / "app" / "data" / "p2_staging_seed_manifest.json"
+    if not manifest.is_file():
+        pytest.skip("staging seed manifest not present")
+
+    seeds = json.loads(manifest.read_text(encoding="utf-8"))["seeds"]
+    assert seeds, "empty manifest would make this vacuous"
+
+    missing = [r["zmx"] for r in seeds if codev_rms_spot_diameter_um(str(r["zmx"])) is None]
+    assert not missing, (
+        f"{len(missing)} of {len(seeds)} staging seeds have no CODE V reading and "
+        f"would fall back to 2x an Optiland radius: {missing[:3]}"
+    )
+
+
+def test_the_artifact_reading_agrees_with_the_manifest_it_came_from() -> None:
+    """One number, two files. If they drift, the gate and the P2 screen are back
+    to disagreeing about the same lens -- the exact defect this module fixes."""
+    import json
+
+    manifest = REPO_ROOT / "app" / "data" / "p2_staging_seed_manifest.json"
+    if not manifest.is_file():
+        pytest.skip("staging seed manifest not present")
+
+    for row in json.loads(manifest.read_text(encoding="utf-8"))["seeds"]:
+        assert codev_rms_spot_diameter_um(str(row["zmx"])) == pytest.approx(
+            float(row["codev_rms_um"])
+        ), row["zmx"]
