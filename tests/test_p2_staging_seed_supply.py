@@ -190,3 +190,26 @@ def test_every_planned_seed_file_exists_where_the_plan_says_it_does() -> None:
     plans, _ = plan_trials(CENSUS)
     missing = [p.seed_case_id for p in plans if not seed_zmx_path(p).is_file()]
     assert not missing, f"{len(missing)} planned seeds have no file: {missing[:3]}"
+
+
+def test_the_honest_denominator_counts_staging_seeds_too() -> None:
+    """`distinct_seed_designs` is the number the run artifact labels as its own
+    honest denominator -- every ratio is supposed to be read next to it.
+
+    It resolved every seed through `data/zmx`, so a staging-seeded trial silently
+    contributed nothing and the count read **2** where the truth was **12**. That
+    is the same silent-drop defect `plan_trials` had, one function away, landing
+    on the one number a reader uses to judge whether the sample is independent.
+    """
+    from scripts.p2_crosssource_trial import _distinct_design_counts
+
+    records = [
+        {"plan": {"control_zmx": "US-11668898-B2-e6.zmx", "seed_zmx": "US20210165194A1.zmx",
+                  "seed_pool": "corpus"}},
+        {"plan": {"control_zmx": "US-11906710-B2-e1.zmx", "seed_zmx": "US-12560782-B2-e1.zmx",
+                  "seed_pool": "staging"}},
+    ]
+    counts = _distinct_design_counts(records)
+
+    assert counts["unfingerprinted"] == [], counts["unfingerprinted"]
+    assert counts["seeds"] == 2, "a staging seed was dropped from the honest denominator"

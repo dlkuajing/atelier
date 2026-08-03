@@ -1710,6 +1710,8 @@ def run_codev_target_standard(
     vig_ladder: tuple[float, ...] = _DEFAULT_VIG_LADDER,
     glass_bounds_nd_vd: Sequence[tuple[float, float]] | None = None,
     emit_optimized_zmx: bool = False,
+    distortion_constraint_pct: float | None = None,
+    distortion_weight: float | None = None,
 ) -> dict[str, object]:
     """C1 Mode3（TargetConvergedGenerator）③ 优化标准打包入口。
 
@@ -1808,6 +1810,8 @@ def run_codev_target_standard(
                 extra_dof=extra_dof,
                 glass_bounds_nd_vd=glass_bounds_nd_vd,
                 emit_optimized_zmx=emit_optimized_zmx,
+                distortion_constraint_pct=distortion_constraint_pct,
+                distortion_weight=distortion_weight,
             )
             configs[extra_dof] = dict(data)
         except CodeVBatchError as exc:

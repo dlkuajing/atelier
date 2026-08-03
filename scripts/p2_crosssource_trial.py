@@ -848,6 +848,8 @@ def run_trial(
     rebuild_seed_field: bool = True,
     wall_clock_budget_s: float | None = None,
     skip_tolerance: bool = False,
+    distortion_constraint_pct: float | None = None,
+    distortion_weight: float | None = None,
 ) -> dict[str, Any]:
     from app.core.engines.codev_batch import CodeVBatchError
     from app.core.engines.codev_optimize import run_codev_target_standard
@@ -906,6 +908,11 @@ def run_trial(
         # the lens; this carries the instrument (which fields/wavelengths enter the
         # extremum, MTF frequency and ray density, radius-vs-diameter, no clipping),
         # plus the metric macro source verbatim so "recompute" means "run this code".
+        # Which merit function produced this candidate. Two rounds that differ
+        # here are not comparable, and a reader holding one JSON has no other way
+        # to tell which one they have.
+        "distortion_constraint_pct": distortion_constraint_pct,
+        "distortion_weight": distortion_weight,
         "measurement_recipe": build_measurement_recipe(
             mtf_frequency_lpmm=MTF_FREQUENCY_LPMM,
             mtf_nrd=MTF_NRD,
@@ -1098,6 +1105,11 @@ def run_trial(
             # Calibration of the bound itself: see IDLE_TIMEOUT_SECONDS.
             idle_timeout_seconds=idle_timeout_seconds,
             emit_optimized_zmx=True,
+            # None (the default) leaves the merit function exactly as it was for
+            # every earlier round, so this parameter cannot silently change a
+            # baseline. See the `--distortion-bound` CLI flag for why it exists.
+            distortion_constraint_pct=distortion_constraint_pct,
+            distortion_weight=distortion_weight,
         )
     except CodeVBatchError as exc:
         record["candidate_error"] = {"kind": exc.kind, "detail": exc.message}
@@ -1542,6 +1554,8 @@ def run_provenance(
     skip_tolerance: bool,
     trial_budget_seconds: float | None,
     timeout_seconds: float,
+    distortion_constraint_pct: float | None = None,
+    distortion_weight: float | None = None,
 ) -> dict[str, Any]:
     """What produced this run. Without it an A/B between two run directories is not
     interpretable: two sets of verdicts and nothing saying which code made them.
@@ -1586,6 +1600,11 @@ def run_provenance(
         census_digest = hashlib.sha256(census_path.read_bytes()).hexdigest()
 
     return {
+        # The merit function this round optimised under. Two run directories that
+        # differ here measured different things; without it an A/B is two piles of
+        # verdicts with nothing saying which is which.
+        "distortion_constraint_pct": distortion_constraint_pct,
+        "distortion_weight": distortion_weight,
         "git_sha": _git("rev-parse", "HEAD"),
         "git_branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
         # A dirty tree means the sha does NOT describe the code that ran. Say so rather
@@ -1751,6 +1770,7 @@ def _distinct_design_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
     """
 
     from app.core.engines.prescription_identity import fingerprint_zmx
+    from scripts.p2_pair_census import STAGING_ZMX_DIR
 
     fingerprints: dict[str, set[str]] = {"controls": set(), "seeds": set()}
     unfingerprinted: list[str] = []
@@ -1762,7 +1782,17 @@ def _distinct_design_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
             name = plan.get(key)
             if not name:
                 continue
-            path = ZMX_DIR / str(name)
+            # Seeds live in two pools since 2026-08-03. Resolving both through
+            # ZMX_DIR made every staging seed unfingerprintable, and this count is
+            # the artifact's own honest denominator -- it silently read 2 when the
+            # truth was 12. Exactly the defect `plan_trials` had, one function
+            # over, and it landed on the number the caveats are written from.
+            root = (
+                STAGING_ZMX_DIR
+                if bucket == "seeds" and str(plan.get("seed_pool")) == "staging"
+                else ZMX_DIR
+            )
+            path = root / str(name)
             fingerprint = fingerprint_zmx(path) if path.is_file() else None
             if fingerprint is None:
                 unfingerprinted.append(str(name))
@@ -2004,6 +2034,44 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--distortion-bound",
+        type=float,
+        default=None,
+        metavar="PCT",
+        help=(
+            "constrain the optimiser's distortion. Pass -1 for the seed's own "
+            "measured value (`codev_optimize.SEED_BASELINE_DISTORTION`), or a "
+            "percentage for a fixed bound. Default None = unconstrained, which is "
+            "what every round before 2026-08-03 ran. "
+            "Why it exists: on the 59-trial round of 2026-08-03 the candidates beat "
+            "their controls on 43 of 49 judged trials for RMS spot and 43 of 49 for "
+            "MTF, and lost distortion on 49 of 49 -- median 8x worse. 打平 needs "
+            "every metric, so distortion alone accounts for the 0% par rate. The "
+            "merit function was never told distortion mattered. "
+            "This was measured once before (2026-07-30, see SEED_BASELINE_DISTORTION) "
+            "and rejected, but that was against seeds whose candidates read 445 um "
+            "RMS -- the optimiser had no slack for another constraint. It does now."
+        ),
+    )
+    parser.add_argument(
+        "--distortion-weight",
+        type=float,
+        default=None,
+        metavar="W",
+        help=(
+            "add a weighted distortion term to the AUT merit (drive @dstpct toward 0 "
+            "at this weight) instead of a hard bound. Mutually exclusive with "
+            "--distortion-bound. Default None = no operand at all, exactly as every "
+            "round before 2026-08-03. "
+            "Why this form rather than the bound: measured 2026-08-03, the bound is "
+            "emitted into the sequence CODE V runs and is then simply violated -- "
+            "AUT constraints are soft, and an infeasible one is left active rather "
+            "than raising. A weight cannot be ignored the same way. "
+            "`codev_optimize` records that this form has never had its real-machine "
+            "A/B; the 2026-07-29 pilot estimated it would move par 2/12 -> 5/12."
+        ),
+    )
+    parser.add_argument(
         "--no-field-rebuild",
         action="store_true",
         help=(
@@ -2048,6 +2116,8 @@ def main(argv: list[str] | None = None) -> int:
         skip_tolerance=args.skip_tolerance,
         trial_budget_seconds=args.trial_budget_seconds,
         timeout_seconds=args.timeout,
+        distortion_constraint_pct=args.distortion_bound,
+        distortion_weight=args.distortion_weight,
     )
     (out_dir / "plan.json").write_text(
         json.dumps(
@@ -2089,6 +2159,8 @@ def main(argv: list[str] | None = None) -> int:
                 rebuild_seed_field=not args.no_field_rebuild,
                 wall_clock_budget_s=args.trial_budget_seconds,
                 skip_tolerance=args.skip_tolerance,
+                distortion_constraint_pct=args.distortion_bound,
+                distortion_weight=args.distortion_weight,
             )
             (out_dir / f"trial_{plan.control_case_id}.json").write_text(
                 json.dumps(record, ensure_ascii=False, indent=2, default=str), encoding="utf-8"
