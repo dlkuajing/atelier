@@ -37,8 +37,10 @@ from __future__ import annotations
 import collections
 import difflib
 import itertools
+import re
 
 from scripts.p2_pair_census import (
+    ASSIGNEE_STOPWORDS,
     ASSIGNEE_TOKEN_SPELLING_FIXES,
     assignee_tokens,
     brand_of_assignee,
@@ -46,13 +48,21 @@ from scripts.p2_pair_census import (
 )
 
 #: How alike two member strings may look before someone has to say why they are
-#: different companies. Set from the measured distribution: after the fix table
-#: the closest surviving pair is `Cognex Corporation` / `WNC Corporation` at
-#: **0.7879**, and every real duplicate found so far scored **>= 0.8696**. The
-#: gap between those is where this sits. It is *not* comfortable -- the nearest
-#: reviewed-distinct pair (`ALTEK` / `ZEBRA`, 0.7541) is only 0.0041 above the
-#: bar -- which is why the reviewed list carries reasons rather than being tuned
-#: away by raising the number.
+#: different companies.
+#:
+#: WARNING: an earlier version of this comment claimed a clean calibration gap of
+#: [0.7879, 0.8696]. That was wrong. A full 780-pair member sweep puts
+#: `FUJIFILM Corporation` / `Fujinon Corporation` at **0.8205** -- inside the band
+#: the comment called empty -- and that pair is deliberately unmerged (see
+#: `UNRESOLVED_SAME_COMPANY`). The honest picture:
+#:
+#: * real duplicates found so far: **0.8696 - 0.9836**
+#: * the deliberately-unresolved pair: **0.8205**
+#: * nearest reviewed-distinct pair: **0.7541** (`ALTEK` / `ZEBRA`)
+#:
+#: So the bar has **0.0041** of clearance below it and no empty band above it.
+#: That discomfort is the point: the way to quiet this test is to add a reason to
+#: the reviewed list, not to raise the number.
 SIMILARITY_LIMIT = 0.75
 
 #: **Brand pairs** -- not member pairs -- that look alike and are different
@@ -97,8 +107,11 @@ REVIEWED_DISTINCT_BRANDS: frozenset[frozenset[str]] = frozenset(
 #: removed, because a code comment asserting a fact nobody here can check is the
 #: same failure as a number with no provenance.
 #:
-#: Live impact today: **none** -- neither appears in any P2 pool. The moment
-#: either does, this has to be settled from a source, not from memory.
+#: ⚠️ This constant silences **this test only**. It does not change bucketing:
+#: `census()` still treats the two as cross-source, and nothing fires when one
+#: of them enters a pool. Live impact today is none -- neither appears in any
+#: P2 pool -- but that is a fact about today's data, not a guarantee anyone
+#: enforces. Settling it needs a source, and settling it is a separate shovel.
 UNRESOLVED_SAME_COMPANY: frozenset[frozenset[str]] = frozenset(
     {frozenset({"FUJIFILM Corporation", "Fujinon Corporation"})}
 )
@@ -112,17 +125,31 @@ def _members_by_brand() -> dict[str, list[str]]:
     return members
 
 
+def _tokens_without_the_fix_table(raw: str) -> set[str]:
+    """`assignee_tokens` applies the fix table, so building the reference set with
+    it makes every fix target live *by construction*. Same function, minus that."""
+
+    cleaned = re.sub(r"[^0-9a-z]+", " ", raw.lower())
+    return {token for token in cleaned.split() if token and token not in ASSIGNEE_STOPWORDS}
+
+
 def test_the_fix_table_folds_every_entry_onto_a_token_the_data_uses() -> None:
     """A fix pointing at a token nobody produces would be inventing a company
-    rather than merging two records of one."""
+    rather than merging two records of one.
+
+    WARNING: the first version built the reference set with `assignee_tokens`,
+    which **applies the fix table** -- so every target was live by construction
+    and the test could not detect the failure it names. Raw tokenisation now.
+    """
 
     provenance = load_provenance()
     live: set[str] = set()
     for assignee in provenance.brand_of:
-        live |= set(assignee_tokens(assignee))
+        live |= _tokens_without_the_fix_table(assignee)
     for wrong, right in ASSIGNEE_TOKEN_SPELLING_FIXES.items():
         assert right != wrong
         assert right in live, f"{wrong!r} folds onto {right!r}, which no record produces"
+        assert wrong in live, f"{wrong!r} is not a spelling this corpus contains"
 
 
 def test_the_known_misspellings_land_in_one_bucket() -> None:
@@ -134,15 +161,27 @@ def test_the_known_misspellings_land_in_one_bucket() -> None:
         assert assignee_tokens(wrong) == assignee_tokens(right), (wrong, right)
 
 
-def test_the_raytech_spellings_stop_producing_empty_token_sets() -> None:
-    """Every word in these two is a stopword, so before the fix they tokenised to
-    `frozenset()`, each became its own brand, and both read as cross-source
-    against AAC -- whose own corpus string is `Changzhou AAC Raytech Optronics`."""
+def test_the_raytech_spellings_bucket_together_without_an_asserted_attribution() -> None:
+    """`raytech` sat in the stopword list, so every word in these two was stopped
+    and they tokenised to nothing -- each its own brand, both reading as
+    cross-source against AAC and against each other.
 
-    for name in ("Changzhou Raytech Optronics Co., Ltd.", "Raytech Optical (Changzhou) Co., Ltd."):
-        tokens = assignee_tokens(name)
-        assert tokens, f"{name!r} still tokenises to nothing"
-        assert "aac" in tokens
+    The fix is to take `raytech` **out of the stopword list** (it is a company
+    name, not an industry word), not to map it onto `aac`. The merge then follows
+    from the corpus's own `Changzhou AAC Raytech Optronics Co., Ltd.` carrying
+    both tokens -- evidence, not an attribution someone asserted. Both routes give
+    bit-identical buckets (40, zero members differ), so this asserts the
+    *property* and does not pin the cleaner route shut.
+    """
+
+    names = [
+        "Changzhou Raytech Optronics Co., Ltd.",
+        "Raytech Optical (Changzhou) Co., Ltd.",
+        "Changzhou AAC Raytech Optronics Co., Ltd.",
+    ]
+    for name in names:
+        assert assignee_tokens(name), f"{name!r} still tokenises to nothing"
+    assert len(set(brand_of_assignee(set(names)).values())) == 1
 
 
 def test_no_two_buckets_hold_a_string_that_names_one_company() -> None:
@@ -195,6 +234,25 @@ def test_the_hand_found_spellings_still_merge() -> None:
     }
     for group in (sunny, ability):
         assert len(set(brand_of_assignee(set(group)).values())) == 1, group
+
+
+def test_merging_only_ever_shrinks_the_bucket_count() -> None:
+    """The direction argument the whole fix table rests on, made executable: a
+    spelling fix coarsens the token partition, and union-find over a coarser
+    partition can only merge. A previous commit deleted this while widening the
+    table from 2 entries to 4 -- exactly when it was most worth keeping."""
+
+    import scripts.p2_pair_census as census_mod
+
+    assignees = set(load_provenance().brand_of)
+    merged = len(set(brand_of_assignee(assignees).values()))
+    original = census_mod.ASSIGNEE_TOKEN_SPELLING_FIXES
+    census_mod.ASSIGNEE_TOKEN_SPELLING_FIXES = {}
+    try:
+        unmerged = len(set(brand_of_assignee(assignees).values()))
+    finally:
+        census_mod.ASSIGNEE_TOKEN_SPELLING_FIXES = original
+    assert merged <= unmerged, (merged, unmerged)
 
 
 def test_every_listed_pair_is_still_a_pair_the_data_produces() -> None:
