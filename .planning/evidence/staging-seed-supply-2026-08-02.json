@@ -4,8 +4,18 @@
   "census_sha256": "fdfe52b621e6eaaaa0042e91f1733a33f1dd8262fab870dd9f3e8d941aae0e15",
   "staging_census_sha256": "58f3c0d303eb8b8b82954e54b3220e8a921d561bc41d4b374771ad695a0e470b",
   "case_index_sha256": "a9a37e994d0fafb92b1d441c3f84667fc4beec5a04428104fcb14305474d0212",
-  "quarantine_sha256": "286e0036c9586838e6d856189a62da4cacb3238f35e1e1bf25b2739a6da87cb9",
+  "quarantine_sha256": "6ef7a23c29984c9fe6914523276dc44d7d699f01ab225dd00a4b8a7b71f10e4a",
   "seed_quality_limit_um": 10.231200000000001,
+  "seed_quality_limit_basis": {
+   "limit_um": 10.231200000000001,
+   "statistic": "p50",
+   "population": "data/zmx (442 committed case ZMX)",
+   "criterion": "no CODE V error and every declared field produced a positive per-field SPOTDATA reading (n_positive == num_fields)",
+   "quantity": "max over fields of CODE V's RMS spot size, in um -- a diameter, not a radius",
+   "n": 218,
+   "census_run": "trace-census-20260728",
+   "census_sha256": "fdfe52b621e6eaaaa0042e91f1733a33f1dd8262fab870dd9f3e8d941aae0e15"
+  },
   "fov_caps_deg": [
    20.0,
    10.0,

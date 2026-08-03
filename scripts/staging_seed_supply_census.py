@@ -90,6 +90,7 @@ from scripts.p2_pair_census import (  # noqa: E402
     load_usable_case_ids,
     normalise_patent_id,
     seed_efl_is_reachable,
+    seed_quality_limit_basis,
 )
 
 STAGING_DIR = REPO_ROOT / "data" / "zmx-staging" / "patent-local-replay"
@@ -459,6 +460,7 @@ def build(census_path: Path, staging_census_path: Path) -> dict[str, Any]:
             "case_index_sha256": _sha256(CASE_INDEX),
             "quarantine_sha256": _sha256(QUARANTINE),
             "seed_quality_limit_um": limit,
+            "seed_quality_limit_basis": seed_quality_limit_basis(),
             "fov_caps_deg": [c for c in DEFAULT_FOV_CAPS if c is not None],
         },
         "efl_derivation_check": check_derivation(),
