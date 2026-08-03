@@ -32,6 +32,7 @@ from typing import NamedTuple
 import numpy as np
 
 from app.core.aberration import MTFFieldData, MTFResult, compute_mtf
+from app.core.corpus_quality import codev_rms_spot_diameter_um
 from app.core.engines.stagec_field import FieldTargetStatus, ResolvedFieldTarget
 from app.core.image_quality_floor import (
     IMAGE_QUALITY_FLOOR_MAX_RMS_UM as _IMAGE_QUALITY_FLOOR_MAX_RMS_UM,
@@ -165,6 +166,29 @@ _PLANE_RADIUS_SENTINEL = 1e9
 # these limits; everything else is decided by parameter proximity. These gate
 # routing seed selection only -- the review scorecard and optimizer/replay
 # gates keep the full continuous 200/250 lp/mm evidence.
+#
+# 2026-08-03: the *value* is unchanged; the *quantity it is compared against* was
+# corrected. It was an Optiland RMS spot **radius** over a partial field set; it is
+# now a **diameter** over the full field wherever CODE V measured one (see
+# `_seed_max_rms_spot_diameter_um`).
+#
+# The bar is deliberately NOT retuned in the same change. Swapping the instrument
+# is a defect fix; moving the bar is a product decision about how good a seed must
+# be before we will show it, and the two must stay separable after the fact.
+# Measured on this corpus (442 rows, 218 with a CODE V reading). Note the two
+# levels: this gate ORs three conditions and only the RMS one changed, so a row
+# already failing on `min_50` or the floor gap cannot flip. Quote the gate number,
+# not the branch number -- the branch number overstates the impact by 45%:
+#
+#   instrument swap, RMS branch alone   16 flip healthy -> violation,  9 back
+#   instrument swap, at the gate        11 flip healthy -> violation,  3 back
+#     (5 branch flips are masked by an existing MTF/floor-gap violation)
+#   gate violations overall             174 -> 182 of 442
+#
+# Lowering the bar to 10.2312 as well (the corpus median
+# `p2_pair_census.seed_quality_ok` already screens with) is a much larger move and
+# is queued for ratification, not taken here. Neither step empties any scenario
+# bucket.
 _SEED_ROUTING_MAX_RMS_UM = 100.0
 _SEED_ROUTING_MIN_MTF_50 = 0.08
 _SEED_ROUTING_FLOOR_GAP_LIMIT = 3.0
@@ -1540,6 +1564,37 @@ class SeedRanking(NamedTuple):
     seed_floor_gap_fn: Callable[[OpticalSampleData], float | None]
 
 
+def _seed_max_rms_spot_diameter_um(c: OpticalSampleData) -> float | None:
+    """The seed's worst RMS spot as a **diameter**, on the best instrument we have.
+
+    Prefers CODE V's max-over-fields reading, which is a diameter measured over
+    **every declared field** -- the same number `p2_pair_census.seed_quality_ok`
+    screens with, and the same one the P2 trial is judged on. Falls back to twice
+    the stored Optiland RMS spot *radius* only when no CODE V reading exists (224
+    of the 442 corpus rows), because that is a radius and the bar is a diameter.
+
+    Why the swap: the Optiland value is computed over whatever field set the case's
+    MTF was built on, which for most of the corpus is not the full field. Measured
+    2026-08-03 over the 218 rows where both exist, CODE V-diameter / Optiland-radius
+    has median **4.02** and maximum **379.6** -- a pure radius-to-diameter conversion
+    would be exactly 2.00, so the stored number is optimistic well beyond the unit
+    factor, and catastrophically so in the tail. 76 of those 218 (34.9%) are seeds
+    today's gate clears that the corpus median would not. Concretely: the seed that
+    carried 48 of the 59 P2 trials (`US-12044826-B2-e4`) stores an Optiland radius of
+    25.55 um -- 51.11 um as a diameter, both comfortably inside a 100.0 um gate --
+    while CODE V measures it at 101.27 um over the full field.
+
+    Returns None when neither instrument has anything, which the caller treats as a
+    violation -- an unmeasured seed cannot be shown to be usable.
+    """
+
+    reading = codev_rms_spot_diameter_um(str(c.metadata.source_zmx)) if c.metadata else None
+    if reading is not None:
+        return reading
+    radii = [v for v in c.mtf.rms_spot_radius_um_by_field if math.isfinite(v)]
+    return 2.0 * max(radii) if radii else None
+
+
 def rank_seeds(
     cases: Sequence[OpticalSampleData],
     *,
@@ -1637,9 +1692,8 @@ def rank_seeds(
         optimizer promotion / replay gates (unchanged).
         """
         assert c.metadata is not None
-        rms_values = [v for v in c.mtf.rms_spot_radius_um_by_field if math.isfinite(v)]
-        max_rms = max(rms_values) if rms_values else None
-        if max_rms is None or max_rms > _SEED_ROUTING_MAX_RMS_UM:
+        max_rms_diameter_um = _seed_max_rms_spot_diameter_um(c)
+        if max_rms_diameter_um is None or max_rms_diameter_um > _SEED_ROUTING_MAX_RMS_UM:
             return True
         if mtf_multiband_summary(c.mtf).min_50 < _SEED_ROUTING_MIN_MTF_50:
             return True
