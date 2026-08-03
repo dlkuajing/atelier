@@ -84,6 +84,11 @@ def test_a_leaf_script_yields_a_small_slice_not_the_whole_suite() -> None:
         # Reads IDLE_TIMEOUT_SECONDS and the calibration constants out of that
         # script, so a change to it must re-run this too.
         "test_p2_idle_timeout_calibration.py",
+        # Joined 2026-08-03 and belongs here: it imports `plan_trials` and
+        # `seed_zmx_path` to assert the planner resolves staging seeds rather than
+        # silently dropping them -- it dropped 54 of 59 the first time the seed
+        # pool grew -- so a change to that script can genuinely break it.
+        "test_p2_staging_seed_supply.py",
     }
 
 
