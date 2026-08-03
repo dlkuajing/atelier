@@ -705,6 +705,9 @@ def census(
                 "control_brand": control_brand,
                 "seed": seed_id,
                 "seed_brand": seed_brand(seed_id),
+                # Consumed by  to resolve which
+                # directory the seed file lives in. Emitted always, not only when
+                # staging seeds are admitted, so the consumer never has to guess.
                 "seed_pool": "staging" if seed_id in staging_facts else "corpus",
             }
         )

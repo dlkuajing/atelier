@@ -502,11 +502,32 @@ class TrialPlan:
     seed_case_id: str
     seed_zmx: str
     seed_brand: str
-    spec_efl_mm: float
-    spec_f_number: float
-    spec_imh_mm: float
-    spec_fov_deg: float
-    spec_n_pieces: int
+    #: Which directory `seed_zmx` lives in. Corpus seeds are in `data/zmx`;
+    #: since 2026-08-03 a seed may also be a screened `data/zmx-staging` design
+    #: (seeds only, never controls -- see `p2_pair_census.load_staging_seeds`).
+    #: Carried explicitly rather than inferred, so the run artifact records which
+    #: pool every trial was seeded from.
+    seed_pool: str = "corpus"
+    spec_efl_mm: float = 0.0
+    spec_f_number: float = 0.0
+    spec_imh_mm: float = 0.0
+    spec_fov_deg: float = 0.0
+    spec_n_pieces: int = 0
+
+
+def seed_zmx_path(plan: TrialPlan) -> Path:
+    """Where this trial's seed file actually is.
+
+    Two pools since 2026-08-03. Resolving by `plan.seed_pool` rather than by
+    "try one directory then the other" so a missing file fails loudly at the
+    place it is missing, instead of being answered by a same-named file in the
+    other pool.
+    """
+
+    from scripts.p2_pair_census import STAGING_ZMX_DIR
+
+    root = STAGING_ZMX_DIR if plan.seed_pool == "staging" else ZMX_DIR
+    return root / plan.seed_zmx
 
 
 def _first_order_imh_disclosure(plan: TrialPlan) -> dict[str, Any]:
@@ -538,16 +559,31 @@ def plan_trials(census_path: Path, *, limit: int | None = None) -> tuple[list[Tr
     """
 
     warnings.simplefilter("ignore")
-    from scripts.p2_pair_census import census
+    from scripts.p2_pair_census import census, load_staging_seeds
 
     result = census(census_path)
     index = {r["case_id"]: r for r in json.loads(CASE_INDEX.read_text(encoding="utf-8"))}
+    staging = {str(r["zmx"]).rsplit(".", 1)[0]: str(r["zmx"]) for r in load_staging_seeds()}
 
     plans: list[TrialPlan] = []
+    unresolved: list[dict] = []
     for pair in result["trial_pairs"]:
         control = index.get(pair["control"])
-        seed = index.get(pair["seed"])
-        if control is None or seed is None:
+        seed_file = (
+            index[pair["seed"]]["source_zmx"] if pair["seed"] in index else staging.get(pair["seed"])
+        )
+        if control is None or seed_file is None:
+            # Never a silent `continue`. When the seed pool grew to include
+            # `data/zmx-staging`, an index-only lookup here dropped 54 of 59
+            # trials without a word -- the plan simply came back short, and the
+            # missing trials looked like a smaller corpus rather than a bug.
+            unresolved.append(
+                {
+                    "control": pair["control"],
+                    "seed": pair["seed"],
+                    "reason": "control_not_in_index" if control is None else "seed_in_no_pool",
+                }
+            )
             continue
         plans.append(
             TrialPlan(
@@ -555,8 +591,9 @@ def plan_trials(census_path: Path, *, limit: int | None = None) -> tuple[list[Tr
                 control_zmx=control["source_zmx"],
                 control_brand=pair["control_brand"],
                 seed_case_id=pair["seed"],
-                seed_zmx=seed["source_zmx"],
+                seed_zmx=seed_file,
                 seed_brand=pair["seed_brand"],
+                seed_pool=pair.get("seed_pool", "corpus"),
                 # The spec is the control's own realised prescription: a customer
                 # asking for exactly what that patent delivers.
                 spec_efl_mm=float(control["efl_mm"]),
@@ -565,6 +602,13 @@ def plan_trials(census_path: Path, *, limit: int | None = None) -> tuple[list[Tr
                 spec_fov_deg=float(control["fov_deg"]),
                 spec_n_pieces=int(control["n_pieces"]),
             )
+        )
+
+    if unresolved:
+        raise SystemExit(
+            f"{len(unresolved)} of {len(result['trial_pairs'])} planned pairs could not be "
+            f"resolved to a ZMX; refusing to run a silently shortened plan. "
+            f"First: {unresolved[:3]}"
         )
 
     plans.sort(key=lambda p: p.control_case_id)
@@ -882,7 +926,7 @@ def run_trial(
     # distortion legitimately deviates, so the honest move is to report the figure.
     record["spec_imh_vs_first_order"] = _first_order_imh_disclosure(plan)
 
-    seed_zmx = ZMX_DIR / plan.seed_zmx
+    seed_zmx = seed_zmx_path(plan)
     seed_text = decode_zmx_text(seed_zmx.read_bytes())[0]
     num_fields = declared_field_count(seed_text)
     record["seed_declared_num_fields"] = num_fields

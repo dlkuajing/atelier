@@ -159,3 +159,34 @@ def test_no_staging_seed_republishes_a_design_the_corpus_already_has() -> None:
         if fingerprint_zmx(STAGING_ZMX_DIR / str(row["zmx"])) in corpus
     ]
     assert not duplicated, f"{len(duplicated)} staging seeds republish a corpus design: {duplicated[:3]}"
+
+
+@needs_census
+def test_the_planner_resolves_staging_seeds_instead_of_dropping_them() -> None:
+    """The defect this exists for, found by running the planner rather than by
+    reading it.
+
+    `plan_trials` looked both control and seed up in the case index and `continue`d
+    when either was missing. Staging seeds are deliberately not in the index, so
+    admitting them turned 59 planned trials into **5** -- silently. Nothing failed;
+    the plan just came back short, which reads as a smaller corpus rather than as a
+    bug, and the real-machine round would have measured 5 trials while every
+    artefact said 59 were available.
+    """
+    from scripts.p2_crosssource_trial import plan_trials
+
+    plans, result = plan_trials(CENSUS)
+
+    assert len(plans) == result["trials"], "the plan is shorter than the census it came from"
+    assert {p.seed_pool for p in plans} <= {"corpus", "staging"}
+    assert sum(1 for p in plans if p.seed_pool == "staging") > 0
+
+
+@needs_census
+def test_every_planned_seed_file_exists_where_the_plan_says_it_does() -> None:
+    """A plan that names a file nobody can open is a run that fails hours in."""
+    from scripts.p2_crosssource_trial import plan_trials, seed_zmx_path
+
+    plans, _ = plan_trials(CENSUS)
+    missing = [p.seed_case_id for p in plans if not seed_zmx_path(p).is_file()]
+    assert not missing, f"{len(missing)} planned seeds have no file: {missing[:3]}"
