@@ -41,9 +41,11 @@ import argparse
 import collections
 import json
 import re
+import threading
 import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
+from functools import cache
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -462,8 +464,109 @@ def seed_efl_is_reachable(seed_efl_mm: float, target_efl_mm: float) -> bool:
     return (target_efl_mm / seed_efl_mm) - 1.0 <= MAX_SEED_EFL_STRETCH
 
 
+STAGING_ZMX_DIR = (
+    Path(__file__).resolve().parents[1] / "data" / "zmx-staging" / "patent-local-replay"
+)
+
+#: Same budget and same reason as `generate_cases.BUILD_TIMEOUT_S`: at least one
+#: design hangs inside the builder and no amount of waiting resolves it. A staging
+#: seed that hangs is reported, never silently dropped.
+STAGING_BUILD_TIMEOUT_S = 90.0
+
+
+@cache
+def _build_staging_seed_cached(zmx: str, n_pieces: int, efl_mm: float, fov_deg: float):
+    from app.core.case_library import build_sample_from_optic
+    from app.core.zmx_ingest import load_normalized_zmx
+
+    path = STAGING_ZMX_DIR / zmx
+    holder: dict[str, object] = {}
+
+    def _worker() -> None:
+        try:
+            holder["sample"] = build_sample_from_optic(
+                load_normalized_zmx(path),
+                source_zmx=zmx,
+                n_pieces=n_pieces,
+                nominal_efl_mm=efl_mm,
+                nominal_fov_deg=fov_deg,
+                source_path=path,
+                lightweight_artifacts=True,
+            )
+        except Exception as exc:  # noqa: BLE001
+            holder["error"] = f"{type(exc).__name__}: {exc}"
+
+    thread = threading.Thread(target=_worker, daemon=True)
+    thread.start()
+    thread.join(STAGING_BUILD_TIMEOUT_S)
+    if thread.is_alive():
+        return None, f"timeout after {STAGING_BUILD_TIMEOUT_S:.0f}s"
+    if "error" in holder:
+        return None, str(holder["error"])
+    return holder.get("sample"), None
+
+
+def _build_staging_seed(row: dict):
+    """Build one staging design into the shape `rank_seeds` scores.
+
+    The EFL and field handed to the builder are the manifest's -- the receipt EFL
+    from intake and twice the first-order half field -- never the builder's own,
+    which would make the agreement check circular. Measured 2026-08-03 across all
+    187: built EFL / receipt EFL has median 1.0000 and nothing outside 1%.
+    """
+
+    return _build_staging_seed_cached(
+        str(row["zmx"]),
+        max(int(row["glass_elements"]), 1),
+        float(row["efl_mm"]),
+        float(row["fov_deg"]),
+    )
+
+
+STAGING_SEED_MANIFEST = (
+    Path(__file__).resolve().parents[1] / "app" / "data" / "p2_staging_seed_manifest.json"
+)
+
+
+def load_staging_seeds(path: Path | None = None) -> list[dict]:
+    """Screened `data/zmx-staging` designs admitted as **seeds only**.
+
+    Never as controls. That asymmetry is the whole design: a control defines the
+    spec a customer asks for and the bar the candidate must match, so admitting
+    designs our own converter minted this week would grow the 打平率 denominator
+    with lenses nobody outside this repository has ever seen. A seed is only a
+    starting point for the optimiser -- if it is a bad starting point the trial
+    simply fails, which the existing verdicts already record.
+
+    Measured 2026-08-03, the two policies on the same corpus:
+
+        excluded    59 trials, seed pool basis {quality 6,  fallback 53}
+        seeds only  59 trials, seed pool basis {quality 55, fallback 4}
+        as controls too   137 trials -- and 78 of them are self-minted controls
+
+    Under `seeds only` the control set is **bit-identical** to the excluded
+    baseline (set equality, zero in either direction), so a par rate measured
+    after this change is comparable with one measured before it.
+
+    Returns [] when the manifest is absent, so a checkout without it reproduces
+    the old numbers rather than failing.
+    """
+
+    manifest = path or STAGING_SEED_MANIFEST
+    if not manifest.is_file():
+        return []
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    if payload.get("schema") != "atelier.p2_staging_seed_manifest/v1":
+        raise ValueError(f"unexpected seed manifest schema: {payload.get('schema')!r}")
+    return list(payload["seeds"])
+
+
 def census(
-    census_path: Path, *, seed_quality_limit_um: float | None = None
+    census_path: Path,
+    *,
+    seed_quality_limit_um: float | None = None,
+    staging_seed_manifest: Path | None = None,
+    admit_staging_seeds: bool = True,
 ) -> dict:
     # Imported lazily: the optical stack costs ~2s and the pure-provenance
     # helpers above are useful (and unit-tested) without it.
@@ -485,26 +588,57 @@ def census(
 
     def seed_quality_ok(case_id: str) -> bool:
         record = index_by_case.get(case_id)
-        if record is None:
-            return False
-        value = codev_rms.get(str(record.get("source_zmx")))
+        if record is not None:
+            value = codev_rms.get(str(record.get("source_zmx")))
+        else:
+            # Staging seeds carry their own reading, taken by the same
+            # `codev_rms_by_zmx` rule from the staging census at manifest time.
+            fact = staging_facts.get(case_id)
+            value = float(fact["codev_rms_um"]) if fact else None
         # Fail closed: a seed whose CODE V quality is unknown cannot be shown to be
         # competitive, and admitting it is how a 101 um lens got in.
         return value is not None and value <= limit
 
     def seed_reachable(case_id: str, target_efl_mm: float) -> bool:
         record = index_by_case.get(case_id)
-        if record is None:
-            return False
+        efl_mm = record.get("efl_mm") if record is not None else (
+            (staging_facts.get(case_id) or {}).get("efl_mm")
+        )
         try:
-            return seed_efl_is_reachable(float(record["efl_mm"]), target_efl_mm)
+            return seed_efl_is_reachable(float(efl_mm), target_efl_mm)  # type: ignore[arg-type]
         except (KeyError, TypeError, ValueError):
             return False
+
+    def seed_brand(case_id: str) -> str | None:
+        brand = provenance.brand_of_case(case_id)
+        if brand is not None:
+            return brand
+        fact = staging_facts.get(case_id)
+        return str(fact["brand"]) if fact else None
 
     by_id: dict[str, object] = {}
     for scenario in Scenario:
         for case in cases_for_scenario(scenario):
             by_id.setdefault(case.metadata.case_id, case)
+
+    # --- extra seeds from `data/zmx-staging`, admitted as seeds and nothing else ---
+    # They are deliberately NOT added to `usable_ids`, so the control list -- and
+    # therefore the par-rate denominator -- is untouched. See `load_staging_seeds`.
+    staging_rows = load_staging_seeds(staging_seed_manifest) if admit_staging_seeds else []
+    staging_by_id: dict[str, object] = {}
+    staging_facts: dict[str, dict] = {}
+    staging_failures: list[dict] = []
+    for row in staging_rows:
+        seed_id = str(row["zmx"]).rsplit(".", 1)[0]
+        if seed_id in by_id:
+            # A name collision would make one design answer to two provenances.
+            raise ValueError(f"staging seed {seed_id} collides with a corpus case id")
+        sample, error = _build_staging_seed(row)
+        if sample is None:
+            staging_failures.append({"seed": seed_id, "error": error})
+            continue
+        staging_by_id[seed_id] = sample
+        staging_facts[seed_id] = row
 
     trials: list[dict] = []
     excluded: collections.Counter[str] = collections.Counter()
@@ -525,6 +659,10 @@ def census(
             if case_id != control_id
             and case_id in usable_set
             and provenance.brand_of_case(case_id) not in (None, control_brand)
+        ] + [
+            sample
+            for seed_id, sample in staging_by_id.items()
+            if seed_brand(seed_id) not in (None, control_brand)
         ]
         # Reachability first, quality second. The two constraints are NOT
         # interchangeable: an unreachable seed yields no candidate at all, while a
@@ -566,7 +704,8 @@ def census(
                 "control": control_id,
                 "control_brand": control_brand,
                 "seed": seed_id,
-                "seed_brand": provenance.brand_of_case(seed_id),
+                "seed_brand": seed_brand(seed_id),
+                "seed_pool": "staging" if seed_id in staging_facts else "corpus",
             }
         )
 
@@ -580,6 +719,9 @@ def census(
         "seed_quality_limit_basis": seed_quality_limit_basis(),
         "seed_efl_max_stretch": MAX_SEED_EFL_STRETCH,
         "seed_pool_basis": dict(seed_pool_basis),
+        "staging_seeds_admitted": len(staging_by_id),
+        "staging_seeds_unbuildable": staging_failures,
+        "trials_seeded_from_staging": sum(1 for t in trials if t["seed_pool"] == "staging"),
         "distinct_seeds_used": len(seed_use),
         "top5_seed_share": sum(n for _, n in seed_use.most_common(5)),
         "seed_reuse": seed_use.most_common(10),
@@ -613,6 +755,11 @@ def render(result: dict) -> str:
         f"    distinct seeds used           {result['distinct_seeds_used']}",
         f"    trials served by top-5 seeds  {result['top5_seed_share']} / {result['trials']}",
         "",
+        "  seed supply (staging designs are seeds only, never controls):",
+        f"    staging seeds admitted        {result['staging_seeds_admitted']}",
+        f"    trials seeded from staging    {result['trials_seeded_from_staging']} / {result['trials']}",
+        f"    seed pool basis               {result['seed_pool_basis']}",
+        "",
         "  usable cases by brand:",
     ]
     for brand, count in sorted(result["usable_brand_counts"].items(), key=lambda kv: -kv[1]):
@@ -631,9 +778,14 @@ def main(argv: list[str] | None = None) -> int:
         help="per-field traceability census JSONL for data/zmx (evidence, not in-repo)",
     )
     parser.add_argument("--json", type=Path)
+    parser.add_argument(
+        "--no-staging-seeds",
+        action="store_true",
+        help="reproduce the pre-2026-08-03 reading (corpus seeds only)",
+    )
     args = parser.parse_args(argv)
 
-    result = census(args.census)
+    result = census(args.census, admit_staging_seeds=not args.no_staging_seeds)
     print(render(result))
     if args.json:
         args.json.parent.mkdir(parents=True, exist_ok=True)
