@@ -4,13 +4,13 @@
   "census_path": "D:\\atelier-stagec-runs\\trace-census-20260728\\perfield-census.jsonl",
   "census_sha256": "fdfe52b621e6eaaaa0042e91f1733a33f1dd8262fab870dd9f3e8d941aae0e15",
   "case_index_sha256": "a9a37e994d0fafb92b1d441c3f84667fc4beec5a04428104fcb14305474d0212",
-  "quarantine_sha256": "286e0036c9586838e6d856189a62da4cacb3238f35e1e1bf25b2739a6da87cb9",
+  "quarantine_sha256": "6ef7a23c29984c9fe6914523276dc44d7d699f01ab225dd00a4b8a7b71f10e4a",
   "seed_quality_limit_um": 10.231200000000001
  },
  "funnel": {
   "case_index": 442,
   "full_field_codev_reading": 218,
-  "trace_and_fidelity_clean": 192,
+  "trace_and_fidelity_clean": 187,
   "and_in_product_domain": 74
  },
  "cross_source_seed_supply": {
@@ -22,23 +22,23 @@
   },
   "screen 3 on controls only": {
    "controls": 59,
-   "cross_source_seeds_min": 60,
-   "cross_source_seeds_median": 60,
-   "cross_source_seeds_max": 176
+   "cross_source_seeds_min": 55,
+   "cross_source_seeds_median": 55,
+   "cross_source_seeds_max": 171
   }
  },
  "per_control_pool": {
   "cross_source": {
    "n": 59,
-   "min": 60.0,
-   "median": 60.0,
-   "max": 176.0
+   "min": 55.0,
+   "median": 55.0,
+   "max": 171.0
   },
   "and_efl_reachable": {
    "n": 59,
    "min": 24.0,
-   "median": 43.0,
-   "max": 152.0
+   "median": 40.0,
+   "max": 149.0
   },
   "and_at_or_below_corpus_median": {
    "n": 59,
@@ -388,7 +388,7 @@
     "ratio": 1.3196799180990415,
     "intake_batch": "DATA-10b",
     "brand": "ABILITY ENTERPRISE CO., LTD",
-    "quarantined": false
+    "quarantined": true
    }
   ]
  },
@@ -485,11 +485,6 @@
    "US-20260126622-A1-e2"
   ],
   "still_inside_trace_and_fidelity_pool": [
-   "US-11719917-B2-e4",
-   "US-11719917-B2-e5",
-   "US-11719917-B2-e6",
-   "US-12032139-B2-e2",
-   "US-12032139-B2-e4",
    "US-12282142-B2-e9",
    "US-12468127-B2",
    "US-12468127-B2-e1",
