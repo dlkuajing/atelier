@@ -605,6 +605,37 @@ CONFORMANCE_RELATIVE_SLACK = 1e-3
 #: about how good the candidate is depends on it.
 EFL_PARITY_TOLERANCE = 0.02
 
+#: How far the optimiser may be asked to **open** the aperture, as
+#: ``seed F/# / spec F/#``. The mirror of `p2_pair_census.MAX_SEED_EFL_STRETCH`
+#: for the second quantity `run_codev_target_standard` targets, which nothing
+#: gated -- even though opening the aperture is the harder direction.
+#:
+#: Measured on the 49-trial round of 2026-08-02 (`p1-selectpref-ab-20260802`),
+#: growth computable on all 49:
+#:
+#:     growth > 1.05    n=11   judged  0  (0%)    13013 s (53.4% of the round)
+#:     growth <= 1.05   n=38   judged 35  (92%)
+#:
+#: What makes this causal rather than a correlation across seeds: **41 of the 49
+#: trials run the same seed** (`US-12044826-B2-e4`, F/2.03), so within that seed
+#: growth varies only because the control's aperture does, and the outcome is
+#: monotone in it --
+#:
+#:     F/2.50 .. F/1.95  (growth 0.812 .. 1.041)   judged, every one
+#:     F/1.85, F/1.75, F/1.65  (1.097 .. 1.230)    not one judged, ~1100-1900 s each
+#:
+#: The bar sits in the gap between 1.0410 (largest growth that still got judged)
+#: and 1.0973 (smallest above it). It is deliberately *not* tighter: two trials at
+#: growth 0.9902 also failed, so growth above the bar is sufficient for failure
+#: and never a complete explanation of it, and tightening to 1.02 would start
+#: rejecting a trial that did produce a verdict.
+#:
+#: Honest limit: the bar is read off the same 49 trials it is evaluated on, so
+#: "removes 0 judged trials" holds **by construction here** and is a bound
+#: observed once, not validated out of sample. It fails open when the seed states
+#: no ``FNUM``.
+MAX_PUPIL_GROWTH = 1.05
+
 
 def field_tangent(quality: ImageQuality) -> float | None:
     """``tan(max field angle)`` = paraxial image height / EFL, or ``None``.
@@ -782,7 +813,11 @@ def run_trial(
         rebuild_seed_field_angles,
         rebuilt_bytes,
     )
-    from app.core.engines.zmx_import_prep import declared_field_count, decode_zmx_text
+    from app.core.engines.zmx_import_prep import (
+        declared_f_number,
+        declared_field_count,
+        decode_zmx_text,
+    )
 
     started = time.time()
 
@@ -848,8 +883,10 @@ def run_trial(
     record["spec_imh_vs_first_order"] = _first_order_imh_disclosure(plan)
 
     seed_zmx = ZMX_DIR / plan.seed_zmx
-    num_fields = declared_field_count(decode_zmx_text(seed_zmx.read_bytes())[0])
+    seed_text = decode_zmx_text(seed_zmx.read_bytes())[0]
+    num_fields = declared_field_count(seed_text)
     record["seed_declared_num_fields"] = num_fields
+    seed_f_number = declared_f_number(seed_text)
 
     if over_budget():
         return exhausted("before_control_probe")
@@ -917,6 +954,40 @@ def run_trial(
         if control_quality.f_number is not None
         else plan.spec_f_number
     )
+
+    # --- the aperture half of reachability, which nothing was checking ---
+    # `seed_efl_is_reachable` gates how far the optimiser may stretch the focal
+    # length. `run_codev_target_standard` targets EFL **and F/#**, and nothing
+    # gated the second one -- even though opening the aperture is the harder
+    # direction: at a fixed focal length a smaller F/# is a proportionally wider
+    # pupil, which is exactly what CODE V reports as "Abnormal AUTO Completion -
+    # Unable to scale up Pupil and Field specifications".
+    #
+    # Not one trial that had to open the pupil by more than 5% produced a verdict,
+    # and they burned 53.4% of the round -- see `MAX_PUPIL_GROWTH` for the split
+    # and for the single-seed ladder that makes it causal. This preflight follows
+    # the same pattern as `seed_field_not_rebuildable` below: record the reason,
+    # keep the trial in the denominator, and do not spend CODE V time on it.
+    #
+    # It sits *after* the control probe on purpose: the spec F/# it divides by is
+    # the probe's reading, not the plan's, so that the number being gated is the
+    # one `run_codev_target_standard` will actually be handed.
+    pupil_growth = (
+        seed_f_number / spec_f_number
+        if seed_f_number and spec_f_number and spec_f_number > 0
+        else None
+    )
+    record["pupil_growth"] = {
+        "seed_f_number": seed_f_number,
+        "spec_f_number": spec_f_number,
+        "growth": pupil_growth,
+        "limit": MAX_PUPIL_GROWTH,
+    }
+    if pupil_growth is not None and pupil_growth > MAX_PUPIL_GROWTH:
+        record["verdict"] = "spec_not_met"
+        record["blocked_at"] = "pupil_growth_not_reachable"
+        record["elapsed_s"] = round(time.time() - started, 1)
+        return record
 
     # --- re-aim the seed at the requested field before optimising ---
     # Without this the candidate answers a different question: the optimiser
