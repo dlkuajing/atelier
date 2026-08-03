@@ -9,6 +9,17 @@ The danger is the opposite of the one that motivated the work. If a backfilled a
 string fails to bucket with the corpus's existing spelling for the same company, those
 patents count as cross-source *with that company* -- which manufactures par pairs out of
 a spelling difference. That is the property these tests exist to pin.
+
+Why nothing here skips any more
+-------------------------------
+It used to. Commit f0e5b3c7 landed this file but not the data it reads: `.gitignore`
+carried a blanket `/data/patents/*` with a negation only for `uspto-smartphone-batch*`,
+so `git add` silently dropped the backfill. Every test then took its own
+`skipif(not BACKFILL.is_file())` and the suite went green while `brand_of_case` returned
+None for all ten patents -- main produced 49 trials while
+`.planning/evidence/north-star-scoreboard-2026-07-30.md` reported the 59 this backfill
+was supposed to unlock. A test that disarms itself when its subject is missing cannot
+report the one failure that matters, so the file's presence is now an assertion.
 """
 
 from __future__ import annotations
@@ -46,6 +57,17 @@ _BACKFILLED = [
 ]
 
 
+def test_the_backfill_data_is_actually_committed() -> None:
+    """The failure this whole file previously could not report."""
+
+    assert BACKFILL.is_file(), (
+        f"{BACKFILL} is missing. It is provenance evidence, not crawl output: without "
+        "it `brand_of_case` returns None for ten patents and they drop out of BOTH the "
+        "control and the seed role. If .gitignore swallowed it again, re-add the "
+        "negation rather than restoring the skips."
+    )
+
+
 def _records() -> list[dict]:
     return [
         json.loads(line)
@@ -54,7 +76,6 @@ def _records() -> list[dict]:
     ]
 
 
-@pytest.mark.skipif(not BACKFILL.is_file(), reason="backfill file not present")
 def test_every_backfilled_patent_is_present_exactly_once() -> None:
     from scripts.p2_pair_census import normalise_patent_id
 
@@ -63,7 +84,6 @@ def test_every_backfilled_patent_is_present_exactly_once() -> None:
     assert set(ids) == {normalise_patent_id(p) for p in _BACKFILLED}
 
 
-@pytest.mark.skipif(not BACKFILL.is_file(), reason="backfill file not present")
 def test_no_field_was_invented() -> None:
     for record in _records():
         assert set(record) <= _ALLOWED_FIELDS, f"unexpected field in {record['id']}"
@@ -73,7 +93,6 @@ def test_no_field_was_invented() -> None:
         assert record["source"].startswith("google-patents-manual-backfill")
 
 
-@pytest.mark.skipif(not BACKFILL.is_file(), reason="backfill file not present")
 def test_every_backfilled_patent_resolves_to_a_brand() -> None:
     """None means excluded, so an unresolved record leaves the sample where it was."""
 
@@ -87,7 +106,6 @@ def test_every_backfilled_patent_resolves_to_a_brand() -> None:
         assert provenance.brand_of.get(assignee), f"{patent} assignee has no brand"
 
 
-@pytest.mark.skipif(not BACKFILL.is_file(), reason="backfill file not present")
 def test_backfilled_assignees_bucket_WITH_the_corpus_spelling_not_beside_it() -> None:
     """THE fail-open guard.
 
@@ -116,7 +134,6 @@ def test_backfilled_assignees_bucket_WITH_the_corpus_spelling_not_beside_it() ->
     assert provenance.brand_of["Apple Inc"] in brands_by_company["APPLE"]
 
 
-@pytest.mark.skipif(not BACKFILL.is_file(), reason="backfill file not present")
 def test_the_backfill_does_not_pair_a_control_with_a_seed_of_the_same_design() -> None:
     """A backfilled assignee could in principle open a pair between two publications of
     one design. Measured: it does not -- but this must stay measured, not assumed."""
