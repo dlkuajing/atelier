@@ -391,11 +391,50 @@ def codev_rms_by_zmx(census_path: Path) -> dict[str, float]:
 
 
 def default_seed_quality_limit_um() -> float:
-    """The corpus median, not a number anyone chose."""
+    """The corpus median, not a number anyone chose.
+
+    ⚠️ "Not a number anyone chose" is a statement about **provenance**, not about
+    **stability**. The value is a statistic of the reference population, so it
+    moves whenever that population does -- and the shovel most likely to move it
+    is the one that promotes staging designs into the corpus. Measured 2026-08-03
+    on the 187 files that pass the promotion screens: the median goes
+    **10.2312 -> 11.4262 um (+11.7%)**, so "at or below the corpus median" would
+    not mean the same thing before and after.
+
+    Use :func:`seed_quality_limit_basis` alongside it. `app.core.corpus_quality`
+    states the rule this project already agreed to -- "We report the number and
+    name the denominator" -- and a bare float names no denominator.
+    """
 
     from app.core.corpus_quality import load_distribution
 
     return float(load_distribution()["percentiles"]["p50"])
+
+
+def seed_quality_limit_basis() -> dict[str, object]:
+    """The limit **and** what it is a statistic of, so a reader can compare eras.
+
+    Any figure of the form "N of M seeds are at or below the limit" is
+    uninterpretable without this: change the population and both the limit and the
+    count move, in the same direction, invisibly.
+    """
+
+    from app.core.corpus_quality import load_distribution
+
+    payload = load_distribution()
+    provenance = payload.get("provenance") or {}
+    return {
+        "limit_um": float(payload["percentiles"]["p50"]),
+        "statistic": "p50",
+        # Copied from the artefact rather than restated, so this can never drift
+        # from what the distribution actually is.
+        "population": payload.get("pool"),
+        "criterion": payload.get("criterion"),
+        "quantity": payload.get("quantity"),
+        "n": payload.get("n"),
+        "census_run": provenance.get("census_run"),
+        "census_sha256": provenance.get("census_sha256"),
+    }
 
 
 #: How far the optimiser can stretch a seed's focal length and still converge.
@@ -538,6 +577,7 @@ def census(
         "trials": len(trials),
         "excluded": dict(excluded),
         "seed_quality_limit_um": limit,
+        "seed_quality_limit_basis": seed_quality_limit_basis(),
         "seed_efl_max_stretch": MAX_SEED_EFL_STRETCH,
         "seed_pool_basis": dict(seed_pool_basis),
         "distinct_seeds_used": len(seed_use),
