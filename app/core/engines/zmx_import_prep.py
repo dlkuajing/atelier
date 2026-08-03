@@ -130,6 +130,29 @@ def declared_field_count(text: str) -> int | None:
     return _ftyp_column(text, 3)
 
 
+def declared_f_number(text: str) -> float | None:
+    """Return the image-space F/# the ZMX declares in its ``FNUM`` record.
+
+    Read off the file rather than off ``index.json`` because this is the number
+    CODE V imports; an index that disagreed with the file would describe
+    something other than what runs. ``None`` when the file states no ``FNUM``
+    (8 of the 442 committed case ZMX state only ``ENPD``), and never a
+    non-positive value -- a zero here would silently read as an infinitely fast
+    lens rather than as a missing record.
+    """
+
+    for line in text.splitlines():
+        parts = line.strip().split()
+        if not parts or parts[0].upper() != "FNUM":
+            continue
+        try:
+            value = float(parts[1])
+        except (IndexError, ValueError):
+            return None
+        return value if value > 0.0 else None
+    return None
+
+
 def declared_wavelength_count(text: str) -> int | None:
     """Return the wavelength count CODE V reads from ``FTYP`` column ``j5``.
 

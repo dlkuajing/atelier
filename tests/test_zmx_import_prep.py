@@ -288,3 +288,43 @@ def test_declared_field_count_matches_a_real_corpus_seed() -> None:
     text, _ = decode_zmx_text(seed.read_bytes())
     # CODE V read (NUM F) == 2 for this seed in the 2026-07-28 pilot.
     assert declared_field_count(text) == 2
+
+
+def test_declared_f_number_agrees_with_the_codev_import_path_across_the_corpus() -> None:
+    """A second reader of the same record is a second answer waiting to happen.
+
+    `codev_roundtrip._parse_system_facts` already reads FNUM on the path that
+    feeds CODE V. This one exists so the P2 preflight can read it without
+    importing a private helper, so the two must agree on every committed file --
+    otherwise the gate would guard a number that differs from the one that runs.
+    """
+    from pathlib import Path
+
+    from app.core.engines.codev_roundtrip import _parse_system_facts
+    from app.core.engines.zmx_import_prep import declared_f_number, decode_zmx_text
+
+    files = sorted(Path("data/zmx").glob("*.[zZ][mM][xX]"))
+    assert files, "no corpus ZMX found -- the comparison would be vacuous"
+
+    stated = 0
+    for path in files:
+        text, _ = decode_zmx_text(path.read_bytes())
+        theirs = _parse_system_facts(text)["f_number"]
+        mine = declared_f_number(text)
+        # The one deliberate difference: a non-positive FNUM is a missing record,
+        # not an infinitely fast lens.
+        expected = theirs if (theirs and theirs > 0) else None
+        assert mine == expected, f"{path.name}: {mine} != {expected}"
+        stated += mine is not None
+    # Not every file states one; a run where none did would pass vacuously.
+    assert stated > len(files) // 2, f"only {stated} of {len(files)} state an FNUM"
+
+
+def test_declared_f_number_treats_a_missing_or_zero_record_as_missing() -> None:
+    from app.core.engines.zmx_import_prep import declared_f_number
+
+    assert declared_f_number("FNUM 2.03 0\n") == 2.03
+    assert declared_f_number("MODE SEQ\n") is None
+    assert declared_f_number("FNUM 0 0\n") is None
+    assert declared_f_number("FNUM\n") is None
+    assert declared_f_number("FNUM abc 0\n") is None

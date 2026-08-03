@@ -759,6 +759,146 @@ def _stub_control_probe(monkeypatch: pytest.MonkeyPatch, **overrides: object) ->
     return probed
 
 
+# ---------------------------------------------------------------------------
+# Pupil growth: the aperture half of reachability (2026-08-03)
+# ---------------------------------------------------------------------------
+
+
+_FNUM_ZMX = "\r\n".join(
+    [
+        "VERS 190513",
+        "MODE SEQ",
+        "FNUM 2.03 0",
+        "FTYP 0 0 3 3 0 0 0",
+        "XFLN 0 0 0",
+        "YFLN 0 12.5 25",
+        "SURF 0",
+        "",
+    ]
+)
+
+
+def _fnum_plan(spec_f_number: float):
+    from scripts.p2_crosssource_trial import TrialPlan
+
+    return TrialPlan(
+        control_case_id="CTL", control_zmx="ctl.zmx", control_brand="A",
+        seed_case_id="SEED", seed_zmx="seed.zmx", seed_brand="B",
+        spec_efl_mm=3.0, spec_f_number=spec_f_number, spec_imh_mm=2.5,
+        spec_fov_deg=75.0, spec_n_pieces=6,
+    )
+
+
+def test_a_seed_that_cannot_open_far_enough_blocks_before_any_codev_time(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The whole point is the CODE V time, so `_stage` asserts it is never spent."""
+    from scripts.p2_crosssource_trial import run_trial
+
+    _stage(tmp_path, monkeypatch, control=_FNUM_ZMX, seed=_FNUM_ZMX)
+    _stub_control_probe(monkeypatch, f_number=1.65)  # growth 2.03/1.65 = 1.2303
+
+    record = run_trial(_fnum_plan(1.65), out_dir=tmp_path / "out")
+
+    assert record["verdict"] == "spec_not_met"
+    assert record["blocked_at"] == "pupil_growth_not_reachable"
+    assert record["pupil_growth"]["growth"] == pytest.approx(2.03 / 1.65)
+
+
+def test_the_largest_growth_that_actually_got_judged_is_still_allowed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A gate that removes trials which do produce verdicts is worse than none.
+
+    1.0410 (`US-12044826-B2-e4` against an F/1.95 control) is the largest pupil
+    growth in the 2026-08-02 round that still returned a verdict. If the bar ever
+    moves below it this fails, which is the intended alarm.
+    """
+    import scripts.p2_crosssource_trial as trial_module
+    from scripts.p2_crosssource_trial import MAX_PUPIL_GROWTH
+
+    assert MAX_PUPIL_GROWTH >= 2.03 / 1.95
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    for name in ("ctl.zmx", "seed.zmx"):
+        (zmx_dir / name).write_bytes(_FNUM_ZMX.encode("latin-1"))
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch, f_number=1.95)
+
+    reached: dict[str, bool] = {}
+
+    def _reached(**kwargs: object) -> dict[str, object]:
+        reached["yes"] = True
+        raise RuntimeError("stop here -- reaching the optimiser is the assertion")
+
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard", _reached
+    )
+    with pytest.raises(RuntimeError):
+        run_trial = trial_module.run_trial
+        run_trial(_fnum_plan(1.95), out_dir=tmp_path / "out")
+    assert reached.get("yes"), "the trial was blocked before the optimiser"
+
+
+def test_the_bar_divides_by_the_probes_f_number_not_the_plans(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The spec handed to CODE V comes from the probe; gating the plan's number
+    would guard something other than what runs."""
+    from scripts.p2_crosssource_trial import run_trial
+
+    _stage(tmp_path, monkeypatch, control=_FNUM_ZMX, seed=_FNUM_ZMX)
+    _stub_control_probe(monkeypatch, f_number=1.65)
+
+    # The plan says F/2.03 -- growth 1.0, comfortably under the bar. The probe
+    # says F/1.65. Blocking proves the probe is what was used.
+    record = run_trial(_fnum_plan(2.03), out_dir=tmp_path / "out")
+
+    assert record["blocked_at"] == "pupil_growth_not_reachable"
+    assert record["pupil_growth"]["spec_f_number"] == pytest.approx(1.65)
+
+
+def test_a_seed_stating_no_fnum_is_disclosed_rather_than_blocked(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """8 of the 442 committed case ZMX state only ENPD. Blocking them would
+    invent a failure out of a missing record; the trial is recorded as ungated."""
+    import scripts.p2_crosssource_trial as trial_module
+
+    zmx_dir = tmp_path / "zmx"
+    zmx_dir.mkdir()
+    (zmx_dir / "ctl.zmx").write_bytes(_FNUM_ZMX.encode("latin-1"))
+    (zmx_dir / "seed.zmx").write_bytes(
+        _FNUM_ZMX.replace("FNUM 2.03 0\r\n", "").encode("latin-1")
+    )
+    monkeypatch.setattr(trial_module, "ZMX_DIR", zmx_dir)
+    _stub_control_probe(monkeypatch, f_number=1.65)
+    monkeypatch.setattr(
+        "app.core.engines.codev_optimize.run_codev_target_standard",
+        lambda **k: (_ for _ in ()).throw(RuntimeError("reached")),
+    )
+
+    with pytest.raises(RuntimeError):
+        trial_module.run_trial(_fnum_plan(1.65), out_dir=tmp_path / "out")
+
+
+def test_a_blocked_trial_still_counts_in_the_denominator() -> None:
+    """Saving CODE V time must not flatter the headline: the trial is a
+    `spec_not_met`, exactly like the field-rebuild refusal, so it stays outside
+    `judged` and cannot raise the par rate."""
+
+    records = [
+        {"verdict": "spec_not_met", "blocked_at": "pupil_growth_not_reachable",
+         "plan": {"seed_case_id": "s1"}},
+        {"verdict": "par", "plan": {"seed_case_id": "s2"}},
+    ]
+    summary = summarise(records)
+    assert summary["judged"] == 1
+    assert summary["par_rate_over_judged"] == pytest.approx(1.0)
+    assert summary["trials"] == 2
+
+
 def _budget_corpus(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     import scripts.p2_crosssource_trial as trial_module
 
