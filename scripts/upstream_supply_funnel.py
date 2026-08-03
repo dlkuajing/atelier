@@ -66,6 +66,7 @@ from scripts.p2_pair_census import (  # noqa: E402
     load_provenance,
     load_usable_case_ids,
     seed_efl_is_reachable,
+    seed_quality_limit_basis,
 )
 
 #: Magnitude above which a corpus number stops being a large reading and starts
@@ -406,6 +407,7 @@ def build(census_path: Path) -> dict[str, Any]:
             "case_index_sha256": _sha256(CASE_INDEX),
             "quarantine_sha256": _sha256(QUARANTINE),
             "seed_quality_limit_um": limit,
+            "seed_quality_limit_basis": seed_quality_limit_basis(),
         },
         "funnel": funnel,
         "cross_source_seed_supply": seed_supply,
