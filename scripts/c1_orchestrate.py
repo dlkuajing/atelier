@@ -376,7 +376,7 @@ def _parse_args(argv: list[str] | None) -> argparse.Namespace:
         dest="min_coverage_pct",
         help=(
             "必需维覆盖率下限，覆盖 score_candidate 的 min_coverage_pct（§7-E 可配"
-            "旋钮，见 scorecard.py `_rank` docstring）；省略则用其内建默认（当前 80%）"
+            "旋钮，见 scorecard.py `_rank` docstring）；省略则用其内建默认（当前 80%%）"
         ),
     )
     parser.add_argument(

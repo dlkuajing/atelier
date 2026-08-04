@@ -2104,7 +2104,7 @@ def main(argv: list[str] | None = None) -> int:
             "Why it exists: on the 59-trial round of 2026-08-03 the candidates beat "
             "their controls on 43 of 49 judged trials for RMS spot and 43 of 49 for "
             "MTF, and lost distortion on 49 of 49 -- median 8x worse. 打平 needs "
-            "every metric, so distortion alone accounts for the 0% par rate. The "
+            "every metric, so distortion alone accounts for the 0%% par rate. The "
             "merit function was never told distortion mattered. "
             "This was measured once before (2026-07-30, see SEED_BASELINE_DISTORTION) "
             "and rejected, but that was against seeds whose candidates read 445 um "
