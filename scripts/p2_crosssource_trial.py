@@ -1184,11 +1184,17 @@ def run_trial(
     # sides -- that equal treatment is what §3's 「表错了两边一起错，排序不变」
     # rests on, and it is why the sequence has to run SNS rather than TOR's
     # default inverse mode, which would derive a *different* table per lens.
-    # The tolerance pair is the most expensive stage by far (51 minutes for one
-    # trial, measured 2026-07-29), so it is the one the budget most often lands
-    # on. Skipping it does **not** make the trial `budget_exhausted`: the three
-    # P2 metrics were measured and their verdict stands. What is lost is a piece
-    # of the P3 四件套, and the record says so by name rather than by absence.
+    # The tolerance pair used to be described here as "the most expensive stage by
+    # far (51 minutes for one trial)". That is **wrong, and it cost this project a
+    # criterion**: 51 minutes was a trial whose candidate could not trace reference
+    # rays, so TOR aborted and the wall clock went to the failure, not to the
+    # tolerancing. In the same 2026-07-29 batch the one trial that actually measured
+    # both sides took **24.9 s end to end**. Measured again 2026-08-04 over a full
+    # 59-trial run with tolerance on: median trial 24.9 s, whole run 31.5 min,
+    # `budget_exhausted` 0. Tolerancing costs roughly 2.3 s per side.
+    # Skipping it does **not** make the trial `budget_exhausted`: the three P2
+    # metrics were measured and their verdict stands. What is lost is a piece of the
+    # P3 四件套, and the record says so by name rather than by absence.
     if skip_tolerance:
         # Explicit two-phase batching: P2 sample size first (the main indicator), P3
         # on a subset afterwards. Named `cli_request` so a phase-1 run can never be
@@ -2016,11 +2022,14 @@ def main(argv: list[str] | None = None) -> int:
         "--skip-tolerance",
         action="store_true",
         help=(
-            "phase 1 of a two-phase batch: measure the three P2 metrics only. The "
-            "tolerance pair is by far the most expensive stage (51 minutes for one "
-            "trial, measured), so skipping it is what makes a whole-plan P2 reading "
-            "affordable. Filed as `skipped: cli_request` -- the verdict is unaffected, "
-            "what is lost is one piece of the P3 四件套, recorded by name not by absence."
+            "phase 1 of a two-phase batch: measure the three P2 metrics only. Filed "
+            "as `skipped: cli_request` -- the verdict is unaffected, what is lost is "
+            "one piece of the P3 四件套, recorded by name not by absence. "
+            "NOTE: this flag is no longer a cost saving worth taking by default. It "
+            "was introduced when tolerancing was believed to cost 51 minutes a trial; "
+            "measured 2026-08-04 over a full 59-trial run, tolerancing on costs ~2.3 s "
+            "per side and the whole run took 31.5 min (median trial 24.9 s). Skipping "
+            "it is what kept 交付物完整度 at `not_assessable` for every prior round."
         ),
     )
     parser.add_argument(
