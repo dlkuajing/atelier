@@ -23,6 +23,7 @@ from scripts.p2_seed_pool_census import (
     RECTILINEAR_SWEEP_PCT,
     ControlSeedPool,
     SeedDistortion,
+    _first_stage_without_rectilinear,
     distinct_prescriptions,
     dominating_alternatives,
     same_brand_counterfactual,
@@ -362,6 +363,46 @@ def test_pool_for_reports_unknown_provenance_without_building_a_pool() -> None:
     assert options.excluded == "control_provenance_unknown"
     assert options.basis is None
     assert options.cross_source == ()
+
+
+# --------------------------------------------------------------------------
+# The any-field stage decomposition is near-vacuous on its own: a 10-degree
+# telephoto is rectilinear by construction, so "the corpus has a rectilinear
+# cross-source design for every control" can be true while no control has one
+# it could use. Reading only that row nearly retired the "acquire non-LARGAN
+# wide-angle prescriptions" option in PENDING-RULINGS §00.
+# --------------------------------------------------------------------------
+def _row(*, any_field: dict, in_field: dict, chosen_pct: float) -> dict:
+    return {
+        "rectilinear_counts": {"2": any_field},
+        "rectilinear_counts_in_field": {"2": in_field},
+        "chosen": {"proxy_distortion_pct": chosen_pct},
+    }
+
+
+def test_in_field_and_any_field_decompositions_can_disagree() -> None:
+    full = {"cross_source": 3, "reachable": 3, "preferred": 2}
+    none_in_field = {"cross_source": 0, "reachable": 0, "preferred": 0}
+    row = _row(any_field=full, in_field=none_in_field, chosen_pct=-18.5)
+    assert _first_stage_without_rectilinear(row, 2.0) == "chosen"
+    assert _first_stage_without_rectilinear(row, 2.0, in_field=True) == "cross_source"
+
+
+def test_in_field_flag_selects_the_in_field_counts() -> None:
+    row = _row(
+        any_field={"cross_source": 1, "reachable": 0, "preferred": 0},
+        in_field={"cross_source": 1, "reachable": 1, "preferred": 0},
+        chosen_pct=-18.5,
+    )
+    assert _first_stage_without_rectilinear(row, 2.0) == "reachable"
+    assert _first_stage_without_rectilinear(row, 2.0, in_field=True) == "preferred"
+
+
+def test_a_rectilinear_chosen_seed_exhausts_nothing() -> None:
+    counts = {"cross_source": 5, "reachable": 4, "preferred": 3}
+    row = _row(any_field=counts, in_field=counts, chosen_pct=-0.4)
+    assert _first_stage_without_rectilinear(row, 2.0) == "none"
+    assert _first_stage_without_rectilinear(row, 2.0, in_field=True) == "none"
 
 
 def test_magnitude_sorts_unreadable_to_the_bottom() -> None:

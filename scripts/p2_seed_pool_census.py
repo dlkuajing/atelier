@@ -539,17 +539,44 @@ def analyse_control(supply: SeedSupply, options: ControlSeedPool) -> dict[str, o
             }
             for threshold in RECTILINEAR_SWEEP_PCT
         },
+        # The same counts restricted to seeds that could actually serve this
+        # control's field. WITHOUT this restriction the counts are close to
+        # vacuous: a 10-degree telephoto is rectilinear by construction, so
+        # "the corpus has a rectilinear cross-source design for every control"
+        # can be true while no control has one it could use. Reading only the
+        # unrestricted row would wrongly retire the "acquire non-LARGAN
+        # wide-angle rectilinear prescriptions" option.
+        "rectilinear_counts_in_field": {
+            f"{threshold:g}": {
+                name: sum(
+                    1
+                    for e in entries
+                    if e.magnitude <= threshold
+                    and (miss := _fov_miss(e, control_entry)) is not None
+                    and miss <= FIELD_WINDOW_DEG
+                )
+                for name, entries in stages.items()
+            }
+            for threshold in RECTILINEAR_SWEEP_PCT
+        },
     }
 
 
-def _first_stage_without_rectilinear(row: dict, threshold: float) -> str:
+def _first_stage_without_rectilinear(
+    row: dict, threshold: float, *, in_field: bool = False
+) -> str:
     """The earliest screen at which this control ran out of rectilinear options.
 
     ``chosen`` means the pool still held one and the router did not pick it --
     the selection reading. The stage names are ordered from loosest to
     tightest, so the first miss is the screen that did the removing.
+
+    ``in_field=True`` restricts to seeds within ``FIELD_WINDOW_DEG`` of the
+    control. Always report both: the unrestricted answer alone cannot tell
+    "the corpus has none" from "the corpus has one at a useless field".
     """
-    counts = row["rectilinear_counts"][f"{threshold:g}"]
+    key = "rectilinear_counts_in_field" if in_field else "rectilinear_counts"
+    counts = row[key][f"{threshold:g}"]
     for stage in STAGES:
         if counts[stage] == 0:
             return stage
@@ -613,6 +640,15 @@ def run(census_path: Path, *, admit_staging_seeds: bool = True) -> dict:
             )
             for threshold in RECTILINEAR_SWEEP_PCT
         },
+        "first_stage_without_rectilinear_in_field": {
+            f"{threshold:g}": dict(
+                collections.Counter(
+                    _first_stage_without_rectilinear(row, threshold, in_field=True)
+                    for row in rows
+                )
+            )
+            for threshold in RECTILINEAR_SWEEP_PCT
+        },
         "pool_size_median": statistics.median(r["sizes"]["pool"] for r in rows)
         if rows
         else None,
@@ -661,8 +697,6 @@ def render(result: dict) -> str:
         out.append(
             f"    min {sizes[0]}  median {statistics.median(sizes):.0f}  max {sizes[-1]}"
         )
-        out.append("")
-        out.append("  where the rectilinear options run out, by threshold")
         labels = {
             "cross_source": "SUPPLY -- corpus has none for this control",
             "reachable": "removed by the +-25% EFL stretch limit",
@@ -673,15 +707,27 @@ def render(result: dict) -> str:
         header = "    stage          " + "".join(
             f"{t:g}%".rjust(7) for t in result["rectilinear_sweep_pct"]
         )
-        out.append(header + "   meaning")
-        for stage, label in labels.items():
-            cells = "".join(
-                str(
-                    result["first_stage_without_rectilinear"][f"{t:g}"].get(stage, 0)
-                ).rjust(7)
-                for t in result["rectilinear_sweep_pct"]
-            )
-            out.append(f"    {stage:14s}{cells}   {label}")
+        for key, title in (
+            (
+                "first_stage_without_rectilinear",
+                "where the rectilinear options run out -- ANY field (near-vacuous, "
+                "a 10-deg telephoto counts)",
+            ),
+            (
+                "first_stage_without_rectilinear_in_field",
+                f"...and restricted to seeds within {FIELD_WINDOW_DEG:g} deg of the "
+                "control's field (the one to read)",
+            ),
+        ):
+            out.append("")
+            out.append(f"  {title}")
+            out.append(header + "   meaning")
+            for stage, label in labels.items():
+                cells = "".join(
+                    str(result[key][f"{t:g}"].get(stage, 0)).rjust(7)
+                    for t in result["rectilinear_sweep_pct"]
+                )
+                out.append(f"    {stage:14s}{cells}   {label}")
         out.append("")
         out.append("  DOMINATING alternatives -- eligible seeds that are no worse in")
         out.append("  field match AND no worse in focal-length match AND strictly more")
