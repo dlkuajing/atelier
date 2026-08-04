@@ -24,8 +24,10 @@ from scripts.p2_seed_pool_census import (
     ControlSeedPool,
     SeedDistortion,
     _first_stage_without_rectilinear,
+    control_design_key,
     distinct_prescriptions,
     dominating_alternatives,
+    reach_summary,
     same_brand_counterfactual,
     seed_distortion,
     self_check_ratio_formula,
@@ -403,6 +405,109 @@ def test_a_rectilinear_chosen_seed_exhausts_nothing() -> None:
     row = _row(any_field=counts, in_field=counts, chosen_pct=-0.4)
     assert _first_stage_without_rectilinear(row, 2.0) == "none"
     assert _first_stage_without_rectilinear(row, 2.0, in_field=True) == "none"
+
+
+# --------------------------------------------------------------------------
+# `census(..., supply=...)` is the new seam. A prebuilt supply already fixes
+# the census file and all three screen knobs, so accepting them alongside it
+# would let `census(pathA, supply=SeedSupply(pathB))` return a report labelled
+# pathA that was measured on pathB -- silently.
+# --------------------------------------------------------------------------
+def _bare_supply(census_path: Path) -> p2_pair_census.SeedSupply:
+    supply = object.__new__(p2_pair_census.SeedSupply)
+    supply.census_path = census_path
+    return supply
+
+
+def test_census_rejects_a_supply_built_from_a_different_census() -> None:
+    supply = _bare_supply(Path("b.jsonl"))
+    with pytest.raises(ValueError, match="does not match the supply"):
+        p2_pair_census.census(Path("a.jsonl"), supply=supply)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"seed_quality_limit_um": 5.0},
+        {"staging_seed_manifest": Path("m.json")},
+        {"admit_staging_seeds": False},
+    ],
+)
+def test_census_rejects_screen_knobs_alongside_a_prebuilt_supply(kwargs: dict) -> None:
+    supply = _bare_supply(Path("a.jsonl"))
+    with pytest.raises(ValueError, match="cannot be combined with supply="):
+        p2_pair_census.census(Path("a.jsonl"), supply=supply, **kwargs)
+
+
+# --------------------------------------------------------------------------
+# The two counterfactual arms are not mutually exclusive, and control case ids
+# are not control designs. The first draft of this module reported the
+# same-brand column as if it were the total (48 when the union is 52) and
+# divided by 59 case ids that are 37 designs. Both are this repository's
+# signature error: a ratio whose denominator is not what the prose says.
+# --------------------------------------------------------------------------
+def _reach_row(control: str, *, cross: int, same: int) -> dict:
+    return {
+        "control": control,
+        "counterfactual": {
+            "2": {"cross_source": cross, "same_brand_other_patent": same}
+        },
+    }
+
+
+def test_reach_summary_unions_the_two_arms() -> None:
+    rows = [
+        _reach_row("both", cross=1, same=1),
+        _reach_row("cross_only", cross=2, same=0),
+        _reach_row("same_only", cross=0, same=3),
+        _reach_row("neither", cross=0, same=0),
+    ]
+    design_of = {r["control"]: r["control"] for r in rows}
+    reach = reach_summary(rows, design_of, 2.0)
+    assert reach["cross_source_today"] == ["both", "cross_only"]
+    assert reach["same_brand_other_patent"] == ["both", "same_only"]
+    assert reach["union"] == ["both", "cross_only", "same_only"]
+    assert reach["cross_source_only"] == ["cross_only"]
+    # Only `same_only` gains: `both` already had a cross-source option.
+    assert reach["would_newly_gain"] == ["same_only"]
+
+
+def test_reach_summary_counts_designs_not_case_ids() -> None:
+    rows = [
+        _reach_row("caseA1", cross=0, same=1),
+        _reach_row("caseA2", cross=0, same=1),
+        _reach_row("caseB", cross=1, same=0),
+    ]
+    design_of = {"caseA1": "designA", "caseA2": "designA", "caseB": "designB"}
+    reach = reach_summary(rows, design_of, 2.0)
+    assert len(reach["union"]) == 3, "three case ids"
+    assert reach["by_design"] == {
+        "total": 2,
+        "cross_source_today": 1,
+        "same_brand_other_patent": 1,
+        "union": 2,
+    }
+
+
+def test_control_design_key_folds_two_cases_of_one_prescription() -> None:
+    # A real corpus file: control fingerprints resolve through `data/zmx`,
+    # never the staging directory.
+    corpus_zmx = "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56.ZMX"
+    assert (ROOT / "data" / "zmx" / corpus_zmx).is_file()
+    supply = _supply(
+        index={
+            "caseA": {"source_zmx": corpus_zmx},
+            "caseB": {"source_zmx": corpus_zmx},
+            "caseC": {"source_zmx": "no-such-file.zmx"},
+            "caseD": {},
+        }
+    )
+    assert not control_design_key(supply, "caseA").startswith("unfingerprinted::")
+    assert control_design_key(supply, "caseA") == control_design_key(supply, "caseB")
+    # Unfingerprintable controls stay distinct: a decode failure must never
+    # merge two designs and shrink a denominator.
+    assert control_design_key(supply, "caseC") != control_design_key(supply, "caseD")
+    assert control_design_key(supply, "caseC").startswith("unfingerprinted::")
 
 
 def test_magnitude_sorts_unreadable_to_the_bottom() -> None:

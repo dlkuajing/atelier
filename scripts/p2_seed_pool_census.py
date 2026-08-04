@@ -586,6 +586,57 @@ def _first_stage_without_rectilinear(
     return "chosen"
 
 
+def control_design_key(supply: SeedSupply, case_id: str) -> str:
+    """Prescription fingerprint of a control, for use as a denominator key.
+
+    Controls repeat: 59 control case ids on the 2026-08-04 round are 37
+    prescriptions. Every ratio in this project has to name which of the two it
+    divides by, so this exists to make the design-level denominator computable
+    rather than approximated. Unreadable files get a unique key so a decode
+    failure can never merge two designs into one.
+    """
+    record = supply.index_by_case.get(case_id) or {}
+    source = record.get("source_zmx")
+    fingerprint = _fingerprint(str(source), False) if source else None
+    return fingerprint or f"unfingerprinted::{case_id}"
+
+
+def reach_summary(
+    rows: list[dict], design_of: dict[str, str], threshold: float
+) -> dict[str, object]:
+    """Who could get an on-spec rectilinear seed, today and under a family rule.
+
+    The two arms of the counterfactual are **not** mutually exclusive: a control
+    can have a cross-source option *and* a same-brand one. The population a
+    family rule could serve is therefore their **union**, not the same-brand
+    column. Reporting that column as if it were the total both understates the
+    reachable set and overstates how many controls would newly gain -- the
+    first draft of this module reported 48 for both, when the union is 52 and
+    the newly-gaining set is 46.
+
+    Every count is reported twice, by case id and by control design, because
+    control designs repeat across case ids in this corpus.
+    """
+    key = f"{threshold:g}"
+    cross = {r["control"] for r in rows if r["counterfactual"][key]["cross_source"] > 0}
+    same = {
+        r["control"] for r in rows if r["counterfactual"][key]["same_brand_other_patent"] > 0
+    }
+    return {
+        "cross_source_today": sorted(cross),
+        "same_brand_other_patent": sorted(same),
+        "union": sorted(cross | same),
+        "cross_source_only": sorted(cross - same),
+        "would_newly_gain": sorted(same - cross),
+        "by_design": {
+            "total": len(set(design_of.values())),
+            "cross_source_today": len({design_of[c] for c in cross}),
+            "same_brand_other_patent": len({design_of[c] for c in same}),
+            "union": len({design_of[c] for c in cross | same}),
+        },
+    }
+
+
 def run(census_path: Path, *, admit_staging_seeds: bool = True) -> dict:
     supply = SeedSupply(census_path, admit_staging_seeds=admit_staging_seeds)
     formula_check = self_check_ratio_formula(supply)
@@ -593,17 +644,30 @@ def run(census_path: Path, *, admit_staging_seeds: bool = True) -> dict:
     excluded: collections.Counter[str] = collections.Counter()
     eligible_cases: set[str] = set()
     eligible_patents: set[str] = set()
+    # `pool` falls back to reachable-only when no seed passes the quality gate
+    # (3 controls on the 2026-08-04 round), so a count taken over `pool` is
+    # *not* "seeds that passed the CODE V quality gate". Track both, and label
+    # them as what they are.
+    quality_passing_cases: set[str] = set()
+    quality_passing_patents: set[str] = set()
     for control_id in supply.usable_ids:
         options = supply.pool_for(control_id)
         if options.excluded is not None:
             excluded[options.excluded] += 1
             continue
-        for case in options.pool:
-            case_id = case.metadata.case_id  # type: ignore[union-attr]
-            eligible_cases.add(case_id)
-            if (patent := patent_id_of_case(case_id)) is not None:
-                eligible_patents.add(patent)
+        for bucket, cases, patents in (
+            (options.pool, eligible_cases, eligible_patents),
+            (options.preferred, quality_passing_cases, quality_passing_patents),
+        ):
+            for case in bucket:
+                case_id = case.metadata.case_id  # type: ignore[union-attr]
+                cases.add(case_id)
+                if (patent := patent_id_of_case(case_id)) is not None:
+                    patents.add(patent)
         rows.append(analyse_control(supply, options))
+
+    design_of = {row["control"]: control_design_key(supply, row["control"]) for row in rows}
+    all_designs = set(design_of.values())
 
     chosen_cases = {row["chosen"]["case_id"] for row in rows}
     chosen_patents = {row["chosen"]["patent"] for row in rows if row["chosen"]["patent"]}
@@ -614,11 +678,38 @@ def run(census_path: Path, *, admit_staging_seeds: bool = True) -> dict:
         "seed_quality_limit_um": supply.limit,
         "ratio_formula_self_check": formula_check,
         "controls_analysed": len(rows),
+        "control_designs": len(all_designs),
         "controls_excluded": dict(excluded),
+        # Named for what it is: everything `rank_seeds` was handed, INCLUDING
+        # the reachable-only fallback for controls with no quality-passing seed.
         "eligible_seed_cases": len(eligible_cases),
         "eligible_seed_patents": len(eligible_patents),
+        "quality_passing_seed_cases": len(quality_passing_cases),
+        "quality_passing_seed_patents": len(quality_passing_patents),
         "chosen_seed_cases": len(chosen_cases),
         "chosen_seed_patents": len(chosen_patents),
+        "reach": {
+            f"{t:g}": reach_summary(rows, design_of, t) for t in RECTILINEAR_SWEEP_PCT
+        },
+        "stage_by_design_in_field": {
+            f"{threshold:g}": dict(
+                collections.Counter(
+                    # A design counts as exhausted at a stage only when every
+                    # case carrying it agrees; disagreement is reported, never
+                    # resolved by picking the first row.
+                    next(iter(verdicts)) if len(verdicts) == 1 else "mixed"
+                    for verdicts in (
+                        {
+                            _first_stage_without_rectilinear(row, threshold, in_field=True)
+                            for row in rows
+                            if design_of[row["control"]] == design
+                        }
+                        for design in sorted(all_designs)
+                    )
+                )
+            )
+            for threshold in RECTILINEAR_SWEEP_PCT
+        },
         "proxy_coverage": {
             stage: {
                 "readable": sum(r["readable"][stage] for r in rows),
@@ -684,11 +775,17 @@ def render(result: dict) -> str:
     )
     out += [
         "",
+        f"  controls: {result['controls_analysed']} case ids = "
+        f"{result['control_designs']} distinct DESIGNS  <- both denominators, always",
+        "",
         "  eligible vs chosen (the claim under test)",
-        f"    distinct seed CASES eligible   {result['eligible_seed_cases']}",
-        f"    distinct seed CASES chosen     {result['chosen_seed_cases']}",
-        f"    distinct seed PATENTS eligible {result['eligible_seed_patents']}",
-        f"    distinct seed PATENTS chosen   {result['chosen_seed_patents']}",
+        f"    seed CASES handed to rank_seeds   {result['eligible_seed_cases']}"
+        "   (includes the reachable-only fallback)",
+        f"      ...of those, quality-gate passing {result['quality_passing_seed_cases']}",
+        f"    seed CASES chosen                 {result['chosen_seed_cases']}",
+        f"    seed PATENTS handed to rank_seeds {result['eligible_seed_patents']}",
+        f"      ...of those, quality-gate passing {result['quality_passing_seed_patents']}",
+        f"    seed PATENTS chosen               {result['chosen_seed_patents']}",
         "",
         "  per-control pool size (seeds handed to rank_seeds)",
     ]
@@ -794,6 +891,46 @@ def render(result: dict) -> str:
             out.append(
                 f"    {key + '%':>9s}   {cross:>12d}   {other:>12d}  {own:>11d}   {med:>20.0f}"
             )
+        out.append("")
+        out.append(
+            "  ⇒ the two columns above are NOT mutually exclusive. What a family rule"
+        )
+        out.append("    could reach is their UNION:")
+        out.append(
+            "    threshold   today (cross-source)   UNION upper bound   would newly gain"
+        )
+        for threshold in result["rectilinear_sweep_pct"]:
+            reach = result["reach"][f"{threshold:g}"]
+            by_design = reach["by_design"]
+            n = result["controls_analysed"]
+            d = by_design["total"]
+            out.append(
+                f"    {f'{threshold:g}%':>9s}   "
+                f"{len(reach['cross_source_today']):>5d}/{n}"
+                f" ({by_design['cross_source_today']}/{d} designs)"
+                f"   {len(reach['union']):>5d}/{n}"
+                f" ({by_design['union']}/{d} designs)"
+                f"   {len(reach['would_newly_gain']):>5d}"
+            )
+        out.append("")
+        out.append("  where the rectilinear options run out -- BY CONTROL DESIGN, in-field")
+        out.append(
+            "    (a design counts as exhausted at a stage only when every case "
+            "carrying it agrees)"
+        )
+        out.append(header + "   meaning")
+        for stage, label in labels.items():
+            cells = "".join(
+                str(result["stage_by_design_in_field"][f"{t:g}"].get(stage, 0)).rjust(7)
+                for t in result["rectilinear_sweep_pct"]
+            )
+            out.append(f"    {stage:14s}{cells}   {label}")
+        mixed = "".join(
+            str(result["stage_by_design_in_field"][f"{t:g}"].get("mixed", 0)).rjust(7)
+            for t in result["rectilinear_sweep_pct"]
+        )
+        out.append(f"    {'mixed':14s}{mixed}   cases of one design disagree")
+        out.append("")
         out.append(
             "    ^ 'OTHER patent' is the population a family-based 异源 rule could admit"
         )

@@ -782,14 +782,39 @@ def census(
     admit_staging_seeds: bool = True,
     supply: SeedSupply | None = None,
 ) -> dict:
+    # Before the first `app.core` import, not after: importing the optical
+    # stack is itself a warning source, and this call is what decides whether
+    # those reach stderr. Also set inside `SeedSupply.__init__` for callers who
+    # build one directly.
+    warnings.simplefilter("ignore")
     from app.core.case_library import rank_seeds
 
-    supply = supply or SeedSupply(
-        census_path,
-        seed_quality_limit_um=seed_quality_limit_um,
-        staging_seed_manifest=staging_seed_manifest,
-        admit_staging_seeds=admit_staging_seeds,
-    )
+    if supply is not None:
+        # A prebuilt supply already fixes every one of these. Silently ignoring
+        # them would let `census(pathA, supply=SeedSupply(pathB))` return a
+        # report labelled pathA that was measured on pathB.
+        if supply.census_path != census_path:
+            raise ValueError(
+                f"census_path {census_path} does not match the supply's "
+                f"{supply.census_path}; pass the same path or drop the argument"
+            )
+        conflicting = {
+            "seed_quality_limit_um": seed_quality_limit_um is not None,
+            "staging_seed_manifest": staging_seed_manifest is not None,
+            "admit_staging_seeds": admit_staging_seeds is not True,
+        }
+        if named := sorted(k for k, v in conflicting.items() if v):
+            raise ValueError(
+                f"{', '.join(named)} cannot be combined with supply=; "
+                "configure them on the SeedSupply instead"
+            )
+    else:
+        supply = SeedSupply(
+            census_path,
+            seed_quality_limit_um=seed_quality_limit_um,
+            staging_seed_manifest=staging_seed_manifest,
+            admit_staging_seeds=admit_staging_seeds,
+        )
 
     trials: list[dict] = []
     excluded: collections.Counter[str] = collections.Counter()
