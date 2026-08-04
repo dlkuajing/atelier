@@ -89,6 +89,12 @@ def test_a_leaf_script_yields_a_small_slice_not_the_whole_suite() -> None:
         # silently dropping them -- it dropped 54 of 59 the first time the seed
         # pool grew -- so a change to that script can genuinely break it.
         "test_p2_staging_seed_supply.py",
+        # Joined 2026-08-04 and belongs here **by design**: the 红线① watch imports
+        # `codev_sessions` from that script instead of re-deriving "what counts as a
+        # CODE V session", and one of its tests asserts that identity. Two rulers for
+        # one quantity is this repo's most expensive recurring defect, so the coupling
+        # is deliberate -- and this slice entry is what makes it re-run.
+        "test_codev_session_watch.py",
     }
 
 

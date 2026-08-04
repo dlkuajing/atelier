@@ -1400,8 +1400,65 @@ def test_a_full_run_reports_a_measured_all_four_count(tmp_path) -> None:
 
 def test_the_summary_carries_the_deliverable_block(tmp_path) -> None:
     summary = trial.summarise([_four_piece_record(tmp_path)])
-    assert set(summary["deliverables"]) == {"trials", "per_piece", "all_four", "status", "reason"}
+    assert set(summary["deliverables"]) == {
+        "trials",
+        "per_piece",
+        "all_four",
+        "on_spec_four",
+        "status",
+        "reason",
+    }
     assert "四件套" in trial.render(summary)
+
+
+def test_four_pieces_for_a_spec_it_missed_is_not_a_deliverable(tmp_path) -> None:
+    """Producing four pieces is not the same as delivering against the request.
+
+    Measured 2026-08-04: `US-12436366-B2-e5` produced all four while its `blocked_at`
+    was `efl_not_matched` -- EFL +3.31% off, candidate RMS 148.8 um. A design for a
+    focal length nobody asked for is a deliverable of nothing, and NORTH-STAR ① counts
+    "N 需求产 M 交付物". Both numbers are kept: `all_four` is what was produced,
+    `on_spec_four` is what was delivered.
+    """
+
+    on_spec = _four_piece_record(tmp_path)
+    off_spec = _four_piece_record(tmp_path)
+    off_spec["blocked_at"] = "efl_not_matched"
+
+    result = trial._deliverable_completeness([on_spec, off_spec])
+    assert result["all_four"] == 2, "both rows did produce four pieces"
+    assert result["on_spec_four"] == 1, "only one of them answered the spec it was given"
+    assert "on-spec 1" in trial.render(trial.summarise([on_spec, off_spec]))
+
+
+def test_the_candidate_side_gets_a_design_denominator(tmp_path) -> None:
+    """`M` was the only headline number with no design-level denominator.
+
+    Measured 2026-08-04: 50 delivered rows are 30 distinct candidate prescriptions,
+    because continuation patents hand the same control prescription a new number and
+    the pipeline re-derives an identical candidate for each. Counting rows as designs
+    is this repo's most common reporting error, and it was landing on criterion ①.
+    """
+
+    # Two files, byte-different headers, identical optical rows -- exactly the
+    # continuation-patent shape `prescription_identity` exists to collapse.
+    rows = "CURV 0.25\nDISZ 0.6\nGLAS PLASTIC\nCONI -1.2\n"
+    first = tmp_path / "cand_a.zmx"
+    second = tmp_path / "cand_b.zmx"
+    first.write_text("VERS 1\nNAME first\n" + rows, encoding="utf-8")
+    second.write_text("VERS 1\nNAME second\n" + rows, encoding="utf-8")
+    other = tmp_path / "cand_c.zmx"
+    other.write_text("VERS 1\nCURV 0.99\nDISZ 0.6\nGLAS PLASTIC\nCONI -1.2\n", encoding="utf-8")
+
+    counts = trial._distinct_design_counts([
+        _four_piece_record(tmp_path, candidate_zmx=str(first)),
+        _four_piece_record(tmp_path, candidate_zmx=str(second)),
+        _four_piece_record(tmp_path, candidate_zmx=str(other)),
+    ])
+    assert counts["candidates"] == 2, "three rows, two candidate designs"
+    # Negative control: the count must be able to disagree with the row count in the
+    # other direction too, or it is not measuring anything.
+    assert counts["candidates"] != 3
 
 
 # ---------------------------------------------------------------------------

@@ -1184,11 +1184,27 @@ def run_trial(
     # sides -- that equal treatment is what §3's 「表错了两边一起错，排序不变」
     # rests on, and it is why the sequence has to run SNS rather than TOR's
     # default inverse mode, which would derive a *different* table per lens.
-    # The tolerance pair is the most expensive stage by far (51 minutes for one
-    # trial, measured 2026-07-29), so it is the one the budget most often lands
-    # on. Skipping it does **not** make the trial `budget_exhausted`: the three
-    # P2 metrics were measured and their verdict stands. What is lost is a piece
-    # of the P3 四件套, and the record says so by name rather than by absence.
+    # The tolerance pair used to be described here as "the most expensive stage by
+    # far (51 minutes for one trial, 2026-07-29)". That is **wrong, and it cost this
+    # project a criterion** -- every round shipped `--skip-tolerance` on its strength,
+    # so 交付物完整度 stayed `not_assessable`.
+    #
+    # Where 51 minutes really went, from the artifacts' own mtimes: the only trials in
+    # that range are 4 in `D:/atelier-stagec-runs/four-piece-v2`, longest
+    # `trial_US-11668898-B2-e6` at 3072.8 s. Its `optimize/` ran 18:17:11 -> 19:08:14 =
+    # **3063.8 s, 99.7% of the trial** (the autovig ladder, rungs 300 s apart);
+    # `measure_control` took 1.3 s and the tolerance stage finished ~8 s after optimize
+    # did. The number was never a tolerance cost, and it was never a TOR failure cost
+    # either -- an earlier attempt at this comment said "TOR aborted and the clock went
+    # to the failure", which is a *second* wrong provenance. It went to the optimiser.
+    #
+    # Measured 2026-08-04 over a full 59-trial run with tolerance on: median trial
+    # 24.9 s, whole run 31.5 min, `budget_exhausted` 0, ~2.3 s per side for TOR.
+    # The 50-minute tail is real but it belongs to the autovig ladder, and it is a P1
+    # cost question, not a reason to skip P3.
+    # Skipping it does **not** make the trial `budget_exhausted`: the three P2
+    # metrics were measured and their verdict stands. What is lost is a piece of the
+    # P3 四件套, and the record says so by name rather than by absence.
     if skip_tolerance:
         # Explicit two-phase batching: P2 sample size first (the main indicator), P3
         # on a subset afterwards. Named `cli_request` so a phase-1 run can never be
@@ -1354,10 +1370,12 @@ def _tolerance_pair(
                 monte_carlo=TorMonteCarlo(TOLERANCE_TRIALS),
                 metric="rms",
                 timeout_seconds=timeout_seconds,
-                # The most expensive stage in a trial (51 minutes measured on one
-                # trial, 2026-07-29), so a zombie here costs more than anywhere
-                # else in the chain -- and it was the one stage still running
-                # without the watchdog.
+                # Not the most expensive stage -- that claim was retired 2026-08-04
+                # (see the block above: the "51 minutes" belonged to optimize, and
+                # tolerancing measures at ~2.3 s per side). The watchdog stays because
+                # TOR can still zombie on a lens whose rays misbehave, and this was the
+                # one stage that ran without one; cheap in the median is not a reason
+                # to leave the tail unbounded.
                 idle_timeout_seconds=IDLE_TIMEOUT_SECONDS,
             )
         except (CodeVBatchError, OSError, ValueError) as exc:
@@ -1732,11 +1750,21 @@ def _deliverable_completeness(records: list[dict[str, Any]]) -> dict[str, Any]:
 
     per_piece: dict[str, int] = {}
     complete = 0
+    on_spec = 0
     for record in records:
         pieces = _deliverable_pieces(record)
         for name, ok in pieces.items():
             per_piece[name] = per_piece.get(name, 0) + int(ok)
-        complete += int(all(pieces.values()))
+        four = all(pieces.values())
+        complete += int(four)
+        # Producing four pieces is not the same as delivering against the request.
+        # Measured 2026-08-04: `US-12436366-B2-e5` produced all four while its
+        # `blocked_at` was `efl_not_matched` (EFL +3.31%, candidate RMS 148.8 um) --
+        # a design for a focal length nobody asked for. NORTH-STAR ① is "N 需求产 M
+        # 交付物", so that row is a deliverable of nothing. Both numbers are reported:
+        # `all_four` stays the count of rows that produced four pieces, `on_spec_four`
+        # is the count that also hit the spec they were generated for.
+        on_spec += int(four and not record.get("blocked_at"))
 
     skipped_by_request = sum(
         1
@@ -1749,6 +1777,7 @@ def _deliverable_completeness(records: list[dict[str, Any]]) -> dict[str, Any]:
         "trials": len(records),
         "per_piece": per_piece,
         "all_four": complete if assessable else None,
+        "on_spec_four": on_spec if assessable else None,
         "status": "measured" if assessable else "not_assessable",
         "reason": (
             None
@@ -1772,9 +1801,25 @@ def _distinct_design_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
     from app.core.engines.prescription_identity import fingerprint_zmx
     from scripts.p2_pair_census import STAGING_ZMX_DIR
 
-    fingerprints: dict[str, set[str]] = {"controls": set(), "seeds": set()}
+    fingerprints: dict[str, set[str]] = {"controls": set(), "seeds": set(), "candidates": set()}
     unfingerprinted: list[str] = []
     for record in records:
+        # The candidate is what criterion ① actually counts, and it was the one side
+        # never fingerprinted here -- so `M` was the only headline number in the
+        # artifact with no design-level denominator. Measured 2026-08-04: 50 delivered
+        # rows are **30** distinct candidate prescriptions (20 rows re-derive a file
+        # that already exists, because continuation patents give the same control
+        # prescription a new number). `candidate_zmx` is an absolute path into the run
+        # directory, not a corpus-relative name, so it is resolved separately below.
+        candidate = record.get("candidate_zmx")
+        if candidate:
+            candidate_path = Path(str(candidate))
+            candidate_fp = fingerprint_zmx(candidate_path) if candidate_path.is_file() else None
+            if candidate_fp is None:
+                unfingerprinted.append(str(candidate))
+            else:
+                fingerprints["candidates"].add(candidate_fp)
+
         plan = record.get("plan")
         if not isinstance(plan, dict):
             continue
@@ -1801,6 +1846,7 @@ def _distinct_design_counts(records: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "controls": len(fingerprints["controls"]),
         "seeds": len(fingerprints["seeds"]),
+        "candidates": len(fingerprints["candidates"]),
         "unfingerprinted": sorted(set(unfingerprinted)),
     }
 
@@ -1837,6 +1883,7 @@ def summarise(records: list[dict[str, Any]]) -> dict[str, Any]:
         # two are the honest denominators for "样本量成立": report them next to any rate.
         "distinct_control_designs": designs["controls"],
         "distinct_seed_designs": designs["seeds"],
+        "distinct_candidate_designs": designs["candidates"],
         "designs_unfingerprinted": designs["unfingerprinted"],
         # NORTH-STAR criterion ③: 交付物四件套完整度（缺一不算交付）.
         "deliverables": deliverables,
@@ -1920,11 +1967,17 @@ def render(summary: dict[str, Any]) -> str:
         # prescriptions, so publication counts overstate independence.
         f"distinct CONTROL designs  {summary['distinct_control_designs']}",
         f"distinct SEED designs     {summary['distinct_seed_designs']}",
+        # Criterion ① counts *candidates*, so this is the denominator `M` belongs to.
+        # Printed next to the other two because the failure mode is reading a row
+        # count as a design count -- measured 2026-08-04: 50 delivered rows, 30 designs.
+        f"distinct CAND designs     {summary['distinct_candidate_designs']}",
         # Criterion ③. `all_four` is None on a run that skipped the tolerance pair --
         # printed as the reason, never as a zero that would read as a failure.
         "四件套 all four        "
         + (
             f"{summary['deliverables']['all_four']}/{summary['deliverables']['trials']}"
+            f"   on-spec {summary['deliverables']['on_spec_four']}"
+            "   <- on-spec is the one criterion ① counts"
             if summary["deliverables"]["all_four"] is not None
             else f"not assessable ({summary['deliverables']['reason']})"
         ),
@@ -2016,11 +2069,16 @@ def main(argv: list[str] | None = None) -> int:
         "--skip-tolerance",
         action="store_true",
         help=(
-            "phase 1 of a two-phase batch: measure the three P2 metrics only. The "
-            "tolerance pair is by far the most expensive stage (51 minutes for one "
-            "trial, measured), so skipping it is what makes a whole-plan P2 reading "
-            "affordable. Filed as `skipped: cli_request` -- the verdict is unaffected, "
-            "what is lost is one piece of the P3 四件套, recorded by name not by absence."
+            "phase 1 of a two-phase batch: measure the three P2 metrics only. Filed "
+            "as `skipped: cli_request` -- the verdict is unaffected, what is lost is "
+            "one piece of the P3 四件套, recorded by name not by absence. "
+            "NOTE: this flag is no longer a cost saving worth taking by default. It was "
+            "introduced when tolerancing was believed to cost 51 minutes a trial; that "
+            "51 minutes has since been traced to the optimiser's autovig ladder, not to "
+            "TOR (see _tolerance_pair). Measured 2026-08-04 over a full 59-trial run, "
+            "tolerancing on costs ~2.3 s per side and the whole run took 31.5 min "
+            "(median trial 24.9 s). Skipping it is what kept 交付物完整度 at "
+            "`not_assessable` for every prior round."
         ),
     )
     parser.add_argument(
