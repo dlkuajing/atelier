@@ -66,7 +66,9 @@ uv run python scripts/p2_seed_pool_census.py \
 ## 一把尺子：代理公式与仓内既有产物逐行相等
 
 `scripts/p2_staging_seed_manifest.py` 早已给每颗 staging seed 存了 `image_height_ratio`。
-本模块的重算与它 **157/157 相等，max delta 0.00e+00**。
+本模块的重算与它 **157/157 相等，max delta ≤ 2.2e-16（1 个 ULP）**。
+⚠️ 这个数**平台相关**：Windows 上恰好 0.0，CI（Linux）上是 2.22e-16——libm 的 `tan` 差最后一位。
+第一版测试断言 `== 0.0`，本机绿、CI 红，是本轮 CI 抓到的唯一一条本机抓不到的东西。
 这道自检写进了脚本本体（`self_check_ratio_formula`）与测试，因为本仓库已经出过一次
 "路由读半场 Optiland 半径、判决读全场 CODE V 直径"的两把尺子事故。
 

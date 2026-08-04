@@ -144,7 +144,12 @@ def test_ratio_formula_agrees_with_the_manifest_it_claims_to_reproduce() -> None
     check = self_check_ratio_formula(supply)
     assert check["agrees"], check["mismatches"]
     assert check["checked"] == len(payload["seeds"])
-    assert check["max_abs_delta"] == 0.0
+    # Not `== 0.0`: that passed on Windows and failed in CI at 2.22e-16, one ULP
+    # apart, because libm's `tan` differs by a last bit across platforms. The
+    # claim being tested is "same formula", and a genuinely different formula
+    # would miss by orders of magnitude, not by an ULP. Kept far tighter than
+    # `self_check_ratio_formula`'s own 1e-9 so this still fails on real drift.
+    assert check["max_abs_delta"] < 1e-12
 
 
 # --------------------------------------------------------------------------
