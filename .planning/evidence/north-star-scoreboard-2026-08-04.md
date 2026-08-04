@@ -15,8 +15,8 @@
 
 | | 值 | 分母口径 |
 |---|---|---|
-| **N** 一次运行覆盖的独立需求 | **59** | **37 个不同对照设计**（处方指纹）／**31 个不同需求 spec** |
-| **M** 完整四件套交付物 | **49 on-spec**（产出四件的行数 50） | **50 行 = 30 个不同候选处方**（20 行重算了已存在的文件） |
+| **N** 一次运行覆盖的独立需求 | **59** | **37 个不同对照设计**（处方指纹）／**37 个不同需求 spec**（`efl+fnum+fov+imh`） |
+| **M** 完整四件套交付物 | **49 on-spec**（产出四件的行数 50） | **50 行 = 30 个不同候选处方**（20 行重算了已存在的文件）／覆盖 **31 个 spec** |
 | **T** 总耗时 | **1888 s = 31.5 min** | 按行中位 **24.9 s**；**按不同候选设计 62.9 s** |
 
 **零介入**：无人选 seed、无人调参、无人工重试，`budget_exhausted 0`。
@@ -147,9 +147,22 @@ judged 48 行 = 29 个对照设计 / 9 个 seed 设计
 
 ---
 
+## 本页的每个 headline 数字都被消费者验过一遍
+
+写进 markdown 表格不等于测过。本页 **26 个 headline 数字全部从产物重算并逐条比对**，
+结果 26/26 一致——**但那是修完之后**：审计第一遍抓到一处，
+「N 的需求 spec 数」我填了 **31**，而 31 是 **M 那 50 行**覆盖的 spec 数，
+全 59 行是 **37**。把 M 侧的分母摆在 N 旁边，正是本仓库最常犯的那类错。
+（脚本：`scripts/audit_scoreboard_numbers.py`，需要 run 目录，**故意不做成测试**——
+把它挂成 `skipif(run目录不在)` 的测试，就是在唯一该报的那次自我缴械。）
+
 ## 复算
 
 ```
+uv run python scripts/audit_scoreboard_numbers.py \
+  --page .planning/evidence/north-star-scoreboard-2026-08-04.md \
+  --run D:/atelier-p1-runs/p3-fourpiece-20260804 \
+  --p4 D:/atelier-p1-runs/p4-recheck-20260804.json
 uv run python scripts/p2_crosssource_trial.py --run \
   --census D:/atelier-stagec-runs/trace-census-20260728/perfield-census.jsonl \
   --out <目录> --trial-budget-seconds 1800
