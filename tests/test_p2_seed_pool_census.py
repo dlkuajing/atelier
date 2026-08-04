@@ -31,6 +31,7 @@ from scripts.p2_seed_pool_census import (
     same_brand_counterfactual,
     seed_distortion,
     self_check_ratio_formula,
+    stretch_shortfall,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -520,3 +521,67 @@ def test_magnitude_sorts_unreadable_to_the_bottom() -> None:
     blind = SeedDistortion("b", "b", "corpus", None, None, None, None, None, None)
     assert blind.magnitude == math.inf
     assert min([blind, readable], key=lambda e: e.magnitude) is readable
+
+
+# --------------------------------------------------------------------------
+# "The EFL stretch limit removes the rectilinear option for N controls" says
+# nothing about whether RAISING it would help. Measured 2026-08-05: the blocked
+# seeds need a median +370% more stretch, so the +25%->+50% recalibration this
+# module's first draft proposed would have admitted 1 of 63 -- a real-machine
+# sweep booked on a number that could not move.
+# --------------------------------------------------------------------------
+def test_stretch_shortfall_reports_only_seeds_blocked_by_reachability() -> None:
+    class _Sup:
+        staging_facts: dict = {}
+        index_by_case = {
+            "near": {"efl_mm": 4.0, "fov_deg": 80.0, "image_height_mm": 3.3554},
+            "far": {"efl_mm": 1.0, "fov_deg": 80.0, "image_height_mm": 0.8389},
+            "reachable": {"efl_mm": 4.5, "fov_deg": 80.0, "image_height_mm": 3.7748},
+            "offfield": {"efl_mm": 1.0, "fov_deg": 30.0, "image_height_mm": 0.2679},
+            "poor": {"efl_mm": 1.0, "fov_deg": 80.0, "image_height_mm": 0.8389},
+        }
+
+        @staticmethod
+        def seed_reachable(case_id, target):
+            return case_id == "reachable"
+
+        @staticmethod
+        def seed_quality_ok(case_id):
+            return case_id != "poor"
+
+    supply = _Sup()
+    control = seed_distortion(supply, "near")
+    options = ControlSeedPool(
+        control_id="near",
+        control_brand="A",
+        control=None,
+        target_efl_mm=4.0,
+        cross_source=tuple(_Case(c) for c in _Sup.index_by_case if c != "near"),
+        reachable=(),
+        preferred=(),
+        pool=(),
+        basis="reachable_and_quality",
+        excluded=None,
+    )
+    values = stretch_shortfall(supply, options, control, threshold_pct=2.0)
+    # `reachable` is not blocked, `offfield` is out of the field window, `poor`
+    # would have died at the quality gate anyway. Only `far` qualifies, and it
+    # needs 4.0/1.0 - 1 = +300%.
+    assert values == pytest.approx([3.0])
+
+
+def test_stretch_shortfall_is_empty_without_a_target() -> None:
+    options = ControlSeedPool(
+        control_id="c",
+        control_brand="A",
+        control=None,
+        target_efl_mm=None,
+        cross_source=(),
+        reachable=(),
+        preferred=(),
+        pool=(),
+        basis=None,
+        excluded=None,
+    )
+    entry = _entry("c", fov=80.0, efl=4.0, distortion_pct=0.0)
+    assert stretch_shortfall(_supply(), options, entry, threshold_pct=2.0) == []

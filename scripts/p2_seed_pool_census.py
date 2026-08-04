@@ -482,6 +482,12 @@ def analyse_control(supply: SeedSupply, options: ControlSeedPool) -> dict[str, o
         "basis": options.basis,
         "chosen_fov_miss_deg": _fov_miss(chosen, control_entry),
         "chosen_efl_log_miss": _efl_miss(chosen, control_entry),
+        "stretch_shortfall": {
+            f"{threshold:g}": stretch_shortfall(
+                supply, options, control_entry, threshold_pct=threshold
+            )
+            for threshold in RECTILINEAR_SWEEP_PCT
+        },
         "counterfactual": {
             f"{threshold:g}": same_brand_counterfactual(
                 supply, options, control_entry, threshold_pct=threshold
@@ -601,6 +607,48 @@ def control_design_key(supply: SeedSupply, case_id: str) -> str:
     return fingerprint or f"unfingerprinted::{case_id}"
 
 
+def stretch_shortfall(
+    supply: SeedSupply,
+    options: ControlSeedPool,
+    control: SeedDistortion,
+    *,
+    threshold_pct: float,
+    field_window_deg: float = FIELD_WINDOW_DEG,
+) -> list[float]:
+    """How much MORE focal-length stretch each blocked rectilinear seed needs.
+
+    "The EFL stretch limit removes the rectilinear option for N controls" is
+    true but says nothing about whether **raising** that limit would help. If
+    the blocked seeds sit just past +25% the constant is worth recalibrating; if
+    they sit at +370% it is not, and proposing a +25%→+50% real-machine sweep
+    would burn machine time for nothing.
+
+    Returns ``target/seed - 1`` (the same quantity
+    :func:`p2_pair_census.seed_efl_is_reachable` screens on) for every
+    cross-source seed that is rectilinear, in-field, quality-passing, and
+    blocked *only* by reachability.
+    """
+    target_efl = options.target_efl_mm
+    if target_efl is None or control.fov_deg is None:
+        return []
+    out: list[float] = []
+    for case in options.cross_source:
+        case_id = case.metadata.case_id  # type: ignore[union-attr]
+        entry = seed_distortion(supply, case_id)
+        if not entry.readable or entry.magnitude > threshold_pct:
+            continue
+        if entry.fov_deg is None or abs(entry.fov_deg - control.fov_deg) > field_window_deg:
+            continue
+        if supply.seed_reachable(case_id, target_efl):
+            continue  # not blocked by this screen
+        if not supply.seed_quality_ok(case_id):
+            continue  # would have died at the quality gate regardless
+        if not entry.efl_mm:
+            continue
+        out.append(target_efl / entry.efl_mm - 1.0)
+    return out
+
+
 def reach_summary(
     rows: list[dict], design_of: dict[str, str], threshold: float
 ) -> dict[str, object]:
@@ -690,6 +738,12 @@ def run(census_path: Path, *, admit_staging_seeds: bool = True) -> dict:
         "chosen_seed_patents": len(chosen_patents),
         "reach": {
             f"{t:g}": reach_summary(rows, design_of, t) for t in RECTILINEAR_SWEEP_PCT
+        },
+        "stretch_shortfall": {
+            f"{t:g}": sorted(
+                value for r in rows for value in r["stretch_shortfall"][f"{t:g}"]
+            )
+            for t in RECTILINEAR_SWEEP_PCT
         },
         "stage_by_design_in_field": {
             f"{threshold:g}": dict(
@@ -947,6 +1001,29 @@ def render(result: dict) -> str:
             "      family -- continuations repeat one prescription across documents, so"
         )
         out.append("      this is an UPPER BOUND on what a family rule would admit.")
+        out.append("")
+        out.append(
+            "  would RAISING the EFL stretch limit help? how much more stretch each"
+        )
+        out.append("  blocked rectilinear seed actually needs (current limit +25%)")
+        for threshold in result["rectilinear_sweep_pct"]:
+            values = result["stretch_shortfall"][f"{threshold:g}"]
+            if not values:
+                out.append(f"    {f'{threshold:g}%':>9s}   (none blocked by this screen)")
+                continue
+            admits = "  ".join(
+                f"+{cap:.0%}:{sum(1 for v in values if v <= cap)}"
+                for cap in (0.30, 0.50, 1.00, 4.00)
+            )
+            out.append(
+                f"    {f'{threshold:g}%':>9s}   n={len(values):<4d} "
+                f"min +{min(values):.0%}  median +{statistics.median(values):.0%}  "
+                f"max +{max(values):.0%}   raising the cap admits  {admits}"
+            )
+        out.append(
+            "    ^ if the median is far past the current +25%, recalibrating the"
+        )
+        out.append("      constant is not the fix and must not be scheduled as one.")
         out.append("")
         out.append("  naive min-|distortion| in pool (DEGENERATE -- see _best docstring)")
         gaps = []
