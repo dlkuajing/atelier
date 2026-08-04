@@ -1,0 +1,587 @@
+"""Tests for the P2 seed-pool census.
+
+Every test here exists because the measurement got it wrong first. Two of them
+(`test_seed_distortion_reads_staging_designs`,
+`test_dominating_alternatives_rejects_offspec_rectilinear`) each fail on a real
+revision of this module that was run and believed before it was checked -- see
+`.planning/evidence/p2-seed-pool-census-2026-08-05.md`.
+
+All of them run off committed data. None needs a run directory, a real machine,
+or CODE V, so none can quietly disarm itself by skipping.
+"""
+
+from __future__ import annotations
+
+import json
+import math
+from pathlib import Path
+
+import pytest
+
+from scripts import p2_pair_census
+from scripts.p2_seed_pool_census import (
+    RECTILINEAR_SWEEP_PCT,
+    ControlSeedPool,
+    SeedDistortion,
+    _first_stage_without_rectilinear,
+    control_design_key,
+    distinct_prescriptions,
+    dominating_alternatives,
+    reach_summary,
+    same_brand_counterfactual,
+    seed_distortion,
+    self_check_ratio_formula,
+    stretch_shortfall,
+)
+
+ROOT = Path(__file__).resolve().parents[1]
+MANIFEST = ROOT / "app" / "data" / "p2_staging_seed_manifest.json"
+
+
+# --------------------------------------------------------------------------
+# A SeedSupply built by hand: no Optiland, no corpus load, no staging build.
+# Only the lookups the functions under test actually read.
+# --------------------------------------------------------------------------
+def _supply(
+    *,
+    index: dict | None = None,
+    staging: dict | None = None,
+    brands: dict[str, str] | None = None,
+    quality: dict[str, float] | None = None,
+    limit: float = 10.0,
+) -> p2_pair_census.SeedSupply:
+    supply = object.__new__(p2_pair_census.SeedSupply)
+    supply.index_by_case = index or {}
+    supply.staging_facts = staging or {}
+    supply.staging_by_id = dict.fromkeys(supply.staging_facts, object())
+    supply.by_id = dict.fromkeys(supply.index_by_case, object())
+    supply.usable_set = set(supply.index_by_case)
+    supply.usable_ids = list(supply.index_by_case)
+    supply.limit = limit
+    supply.codev_rms = {}
+    supply.seed_brand = lambda case_id: (brands or {}).get(case_id)  # type: ignore[method-assign]
+    supply.seed_quality_um = lambda case_id: (quality or {}).get(case_id)  # type: ignore[method-assign]
+    supply.seed_quality_ok = lambda case_id: (  # type: ignore[method-assign]
+        (quality or {}).get(case_id) is not None and (quality or {})[case_id] <= limit
+    )
+    supply.seed_reachable = lambda case_id, target: True  # type: ignore[method-assign]
+    return supply
+
+
+class _Case:
+    """The only two attributes `pool_for` touches on a built design."""
+
+    def __init__(self, case_id: str, efl_mm: float = 3.0) -> None:
+        self.metadata = type(
+            "M", (), {"case_id": case_id, "computed_efl_mm": efl_mm}
+        )()
+
+
+def _entry(case_id: str, *, fov: float, efl: float, distortion_pct: float) -> SeedDistortion:
+    return SeedDistortion(
+        case_id=case_id,
+        patent=case_id,
+        pool="corpus",
+        efl_mm=efl,
+        fov_deg=fov,
+        image_height_mm=1.0,
+        first_order_image_height_mm=1.0,
+        image_height_ratio=1.0 + distortion_pct / 100.0,
+        proxy_distortion_pct=distortion_pct,
+    )
+
+
+# --------------------------------------------------------------------------
+# The proxy has to be readable on staging designs. It was not, for one whole
+# revision: `_case_image_height_mm` resolves through the corpus index, staging
+# seeds are not in it, so every staging seed read image height 0.0 and produced
+# an unreadable proxy -- on exactly the 54-of-59 seeds the router picks. The
+# stage table built on top of that blamed the CODE V quality gate for 52 of 59
+# controls, which was blindness rendered as a finding.
+# --------------------------------------------------------------------------
+def test_seed_distortion_reads_staging_designs() -> None:
+    supply = _supply(
+        staging={
+            "S1": {
+                "zmx": "S1.zmx",
+                "efl_mm": 4.0,
+                "fov_deg": 80.0,
+                "image_height_mm": 2.0,
+                "image_height_ratio": 0.5,
+            }
+        }
+    )
+    entry = seed_distortion(supply, "S1")
+    assert entry.pool == "staging"
+    assert entry.readable, "staging seeds must not read as unmeasurable"
+    assert entry.image_height_mm == pytest.approx(2.0)
+
+
+def test_seed_distortion_is_unreadable_only_when_data_is_missing() -> None:
+    supply = _supply(staging={"S1": {"zmx": "S1.zmx", "efl_mm": 4.0, "fov_deg": 80.0}})
+    assert not seed_distortion(supply, "S1").readable
+    assert not seed_distortion(supply, "absent").readable
+
+
+def test_real_staging_manifest_is_fully_readable() -> None:
+    """The regression on committed data, not on a fixture."""
+    payload = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    supply = _supply(
+        staging={str(row["zmx"]).rsplit(".", 1)[0]: row for row in payload["seeds"]}
+    )
+    unreadable = [
+        case_id for case_id in supply.staging_facts if not seed_distortion(supply, case_id).readable
+    ]
+    assert unreadable == [], f"{len(unreadable)} staging seeds have no distortion proxy"
+
+
+def test_ratio_formula_agrees_with_the_manifest_it_claims_to_reproduce() -> None:
+    """One ruler. If this drifts, every distortion number in the census is on
+    a different scale than the rest of the repository."""
+    payload = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    supply = _supply(
+        staging={str(row["zmx"]).rsplit(".", 1)[0]: row for row in payload["seeds"]}
+    )
+    check = self_check_ratio_formula(supply)
+    assert check["agrees"], check["mismatches"]
+    assert check["checked"] == len(payload["seeds"])
+    # Not `== 0.0`: that passed on Windows and failed in CI at 2.22e-16, one ULP
+    # apart, because libm's `tan` differs by a last bit across platforms. The
+    # claim being tested is "same formula", and a genuinely different formula
+    # would miss by orders of magnitude, not by an ULP. Kept far tighter than
+    # `self_check_ratio_formula`'s own 1e-9 so this still fails on real drift.
+    assert check["max_abs_delta"] < 1e-12
+
+
+# --------------------------------------------------------------------------
+# Domination, and the objection it exists to survive: "the rectilinear option
+# was off-spec, the router was right to skip it". A revision that ranked purely
+# by |distortion| reported 56 of 59 pools as holding a better option -- and the
+# winner for 51 of them was a 10-degree telephoto being offered to a 90-degree
+# wide-angle spec.
+# --------------------------------------------------------------------------
+def test_dominating_alternatives_rejects_offspec_rectilinear() -> None:
+    control = _entry("C", fov=90.0, efl=3.0, distortion_pct=0.0)
+    chosen = _entry("chosen", fov=88.0, efl=3.1, distortion_pct=-18.5)
+    telephoto = _entry("telephoto", fov=10.0, efl=9.0, distortion_pct=-0.4)
+    assert dominating_alternatives([chosen, telephoto], chosen, control) == []
+
+
+def test_dominating_alternatives_accepts_a_strictly_better_seed() -> None:
+    control = _entry("C", fov=90.0, efl=3.0, distortion_pct=0.0)
+    chosen = _entry("chosen", fov=82.0, efl=3.6, distortion_pct=-18.5)
+    better = _entry("better", fov=89.0, efl=3.1, distortion_pct=-0.5)
+    assert [e.case_id for e in dominating_alternatives([chosen, better], chosen, control)] == [
+        "better"
+    ]
+
+
+def test_dominating_alternatives_rejects_a_tie_on_distortion() -> None:
+    control = _entry("C", fov=90.0, efl=3.0, distortion_pct=0.0)
+    chosen = _entry("chosen", fov=90.0, efl=3.0, distortion_pct=-4.0)
+    tie = _entry("tie", fov=90.0, efl=3.0, distortion_pct=4.0)
+    assert dominating_alternatives([chosen, tie], chosen, control) == []
+
+
+def test_dominating_alternatives_rejects_a_worse_focal_length() -> None:
+    control = _entry("C", fov=90.0, efl=3.0, distortion_pct=0.0)
+    chosen = _entry("chosen", fov=90.0, efl=3.0, distortion_pct=-18.5)
+    far = _entry("far", fov=90.0, efl=6.0, distortion_pct=-0.5)
+    assert dominating_alternatives([chosen, far], chosen, control) == []
+
+
+# --------------------------------------------------------------------------
+# The counterfactual has to answer "what does the BRAND rule cost", so it must
+# lift the brand screen and nothing else, and must not count seeds no family
+# definition could ever admit.
+# --------------------------------------------------------------------------
+def _counterfactual_fixture():
+    index = {
+        "US-1111111-B2-e1": {"efl_mm": 3.0, "fov_deg": 80.0, "image_height_mm": 2.5169},
+        # same brand, same patent as the control -> never admissible
+        "US-1111111-B2-e2": {"efl_mm": 3.0, "fov_deg": 80.0, "image_height_mm": 2.5169},
+        # same brand, different patent -> what a family rule might admit
+        "US-2222222-B2-e1": {"efl_mm": 3.0, "fov_deg": 79.0, "image_height_mm": 2.4790},
+        # different brand, rectilinear, but 40 degrees away -> out of the window
+        "US-3333333-B2-e1": {"efl_mm": 3.0, "fov_deg": 40.0, "image_height_mm": 1.0919},
+        # different brand, in window, but barrel -> fails the distortion screen
+        "US-4444444-B2-e1": {"efl_mm": 3.0, "fov_deg": 80.0, "image_height_mm": 2.0},
+    }
+    brands = {
+        "US-1111111-B2-e1": "A",
+        "US-1111111-B2-e2": "A",
+        "US-2222222-B2-e1": "A",
+        "US-3333333-B2-e1": "B",
+        "US-4444444-B2-e1": "B",
+    }
+    quality = dict.fromkeys(index, 5.0)
+    supply = _supply(index=index, brands=brands, quality=quality)
+    options = ControlSeedPool(
+        control_id="US-1111111-B2-e1",
+        control_brand="A",
+        control=None,
+        target_efl_mm=3.0,
+        cross_source=(),
+        reachable=(),
+        preferred=(),
+        pool=(),
+        basis="reachable_and_quality",
+        excluded=None,
+    )
+    return supply, options, seed_distortion(supply, "US-1111111-B2-e1")
+
+
+def test_counterfactual_separates_own_patent_from_other_patent() -> None:
+    supply, options, control = _counterfactual_fixture()
+    result = same_brand_counterfactual(supply, options, control, threshold_pct=2.0)
+    assert result["same_brand_own_patent"] == 1
+    assert result["same_brand_other_patent"] == 1
+    assert result["same_brand_other_patent_examples"] == ["US-2222222-B2-e1"]
+
+
+def test_counterfactual_still_applies_every_screen_except_brand() -> None:
+    supply, options, control = _counterfactual_fixture()
+    result = same_brand_counterfactual(supply, options, control, threshold_pct=2.0)
+    # B has two designs; one is out of the field window, one is barrel.
+    assert result["cross_source"] == 0
+    # Widening only the field window admits the rectilinear B design.
+    wide = same_brand_counterfactual(
+        supply, options, control, threshold_pct=2.0, field_window_deg=45.0
+    )
+    assert wide["cross_source_examples"] == ["US-3333333-B2-e1"]
+
+
+def test_counterfactual_never_counts_the_control_itself() -> None:
+    supply, options, control = _counterfactual_fixture()
+    for threshold in RECTILINEAR_SWEEP_PCT:
+        result = same_brand_counterfactual(supply, options, control, threshold_pct=threshold)
+        assert options.control_id not in result["same_brand_other_patent_examples"]
+        assert options.control_id not in result["cross_source_examples"]
+
+
+def test_counterfactual_quality_screen_is_not_lifted() -> None:
+    supply, options, control = _counterfactual_fixture()
+    supply.seed_quality_ok = lambda case_id: False  # type: ignore[method-assign]
+    result = same_brand_counterfactual(supply, options, control, threshold_pct=5.0)
+    assert result["same_brand_other_patent"] == 0
+    assert result["cross_source"] == 0
+
+
+# --------------------------------------------------------------------------
+# Continuations repeat one prescription across patent documents. Counting
+# patents therefore overcounts the options a router actually has.
+# --------------------------------------------------------------------------
+def test_distinct_prescriptions_folds_a_real_continuation_pair() -> None:
+    pair = ["US-10073249-B2-e12", "US-10191250-B2-e12"]
+    supply = _supply(staging={case_id: {"zmx": f"{case_id}.zmx"} for case_id in pair})
+    for case_id in pair:
+        assert (p2_pair_census.STAGING_ZMX_DIR / f"{case_id}.zmx").is_file()
+    assert distinct_prescriptions(supply, pair) == 1, (
+        "these two documents carry one prescription; counting them as two "
+        "inflates how many seeds a control can choose between"
+    )
+
+
+def test_distinct_prescriptions_counts_unreadable_files_individually() -> None:
+    supply = _supply(staging={f"X{i}": {"zmx": f"no-such-file-{i}.zmx"} for i in range(3)})
+    assert distinct_prescriptions(supply, ["X0", "X1", "X2"]) == 3
+
+
+# --------------------------------------------------------------------------
+# The refactor's contract: `census` must route out of `pool_for`, so a change
+# to one cannot leave the other describing a different pool.
+# --------------------------------------------------------------------------
+def test_pool_for_stages_are_nested_and_basis_matches() -> None:
+    supply = object.__new__(p2_pair_census.SeedSupply)
+    supply.by_id = {
+        name: _Case(name) for name in ("CTRL", "good", "far_efl", "poor")
+    }
+    supply.staging_by_id = {}
+    supply.staging_facts = {}
+    supply.usable_set = set(supply.by_id)
+    supply.index_by_case = {}
+    supply.provenance = type(
+        "P", (), {"brand_of_case": staticmethod(lambda c: "A" if c == "CTRL" else "B")}
+    )()
+    supply.seed_brand = lambda case_id: "A" if case_id == "CTRL" else "B"  # type: ignore[method-assign]
+    supply.seed_reachable = lambda case_id, target: case_id != "far_efl"  # type: ignore[method-assign]
+    supply.seed_quality_ok = lambda case_id: case_id == "good"  # type: ignore[method-assign]
+
+    options = supply.pool_for("CTRL")
+    ids = lambda seq: [c.metadata.case_id for c in seq]  # noqa: E731
+    assert sorted(ids(options.cross_source)) == ["far_efl", "good", "poor"]
+    assert sorted(ids(options.reachable)) == ["good", "poor"]
+    assert ids(options.preferred) == ["good"]
+    assert ids(options.pool) == ["good"]
+    assert options.basis == "reachable_and_quality"
+    assert options.excluded is None
+    assert set(ids(options.preferred)) <= set(ids(options.reachable)) <= set(
+        ids(options.cross_source)
+    )
+
+
+def test_pool_for_falls_back_rather_than_dropping_the_control() -> None:
+    supply = object.__new__(p2_pair_census.SeedSupply)
+    supply.by_id = {name: _Case(name) for name in ("CTRL", "poor")}
+    supply.staging_by_id = {}
+    supply.staging_facts = {}
+    supply.usable_set = set(supply.by_id)
+    supply.index_by_case = {}
+    supply.provenance = type(
+        "P", (), {"brand_of_case": staticmethod(lambda c: "A" if c == "CTRL" else "B")}
+    )()
+    supply.seed_brand = lambda case_id: "A" if case_id == "CTRL" else "B"  # type: ignore[method-assign]
+    supply.seed_reachable = lambda case_id, target: True  # type: ignore[method-assign]
+    supply.seed_quality_ok = lambda case_id: False  # type: ignore[method-assign]
+
+    options = supply.pool_for("CTRL")
+    assert [c.metadata.case_id for c in options.pool] == ["poor"]
+    assert options.basis == "reachable_only"
+    assert options.excluded is None
+
+
+def test_pool_for_reports_an_empty_pool_as_excluded() -> None:
+    supply = object.__new__(p2_pair_census.SeedSupply)
+    supply.by_id = {"CTRL": _Case("CTRL")}
+    supply.staging_by_id = {}
+    supply.staging_facts = {}
+    supply.usable_set = {"CTRL"}
+    supply.index_by_case = {}
+    supply.provenance = type("P", (), {"brand_of_case": staticmethod(lambda c: "A")})()
+    supply.seed_brand = lambda case_id: "A"  # type: ignore[method-assign]
+    supply.seed_reachable = lambda case_id, target: True  # type: ignore[method-assign]
+    supply.seed_quality_ok = lambda case_id: True  # type: ignore[method-assign]
+
+    options = supply.pool_for("CTRL")
+    assert options.pool == ()
+    assert options.basis is None
+    assert options.excluded == "no_cross_brand_seed_available"
+
+
+def test_pool_for_reports_unknown_provenance_without_building_a_pool() -> None:
+    supply = object.__new__(p2_pair_census.SeedSupply)
+    supply.by_id = {"CTRL": _Case("CTRL")}
+    supply.staging_by_id = {}
+    supply.staging_facts = {}
+    supply.usable_set = {"CTRL"}
+    supply.index_by_case = {}
+    supply.provenance = type("P", (), {"brand_of_case": staticmethod(lambda c: None)})()
+
+    options = supply.pool_for("CTRL")
+    assert options.excluded == "control_provenance_unknown"
+    assert options.basis is None
+    assert options.cross_source == ()
+
+
+# --------------------------------------------------------------------------
+# The any-field stage decomposition is near-vacuous on its own: a 10-degree
+# telephoto is rectilinear by construction, so "the corpus has a rectilinear
+# cross-source design for every control" can be true while no control has one
+# it could use. Reading only that row nearly retired the "acquire non-LARGAN
+# wide-angle prescriptions" option in PENDING-RULINGS §00.
+# --------------------------------------------------------------------------
+def _row(*, any_field: dict, in_field: dict, chosen_pct: float) -> dict:
+    return {
+        "rectilinear_counts": {"2": any_field},
+        "rectilinear_counts_in_field": {"2": in_field},
+        "chosen": {"proxy_distortion_pct": chosen_pct},
+    }
+
+
+def test_in_field_and_any_field_decompositions_can_disagree() -> None:
+    full = {"cross_source": 3, "reachable": 3, "preferred": 2}
+    none_in_field = {"cross_source": 0, "reachable": 0, "preferred": 0}
+    row = _row(any_field=full, in_field=none_in_field, chosen_pct=-18.5)
+    assert _first_stage_without_rectilinear(row, 2.0) == "chosen"
+    assert _first_stage_without_rectilinear(row, 2.0, in_field=True) == "cross_source"
+
+
+def test_in_field_flag_selects_the_in_field_counts() -> None:
+    row = _row(
+        any_field={"cross_source": 1, "reachable": 0, "preferred": 0},
+        in_field={"cross_source": 1, "reachable": 1, "preferred": 0},
+        chosen_pct=-18.5,
+    )
+    assert _first_stage_without_rectilinear(row, 2.0) == "reachable"
+    assert _first_stage_without_rectilinear(row, 2.0, in_field=True) == "preferred"
+
+
+def test_a_rectilinear_chosen_seed_exhausts_nothing() -> None:
+    counts = {"cross_source": 5, "reachable": 4, "preferred": 3}
+    row = _row(any_field=counts, in_field=counts, chosen_pct=-0.4)
+    assert _first_stage_without_rectilinear(row, 2.0) == "none"
+    assert _first_stage_without_rectilinear(row, 2.0, in_field=True) == "none"
+
+
+# --------------------------------------------------------------------------
+# `census(..., supply=...)` is the new seam. A prebuilt supply already fixes
+# the census file and all three screen knobs, so accepting them alongside it
+# would let `census(pathA, supply=SeedSupply(pathB))` return a report labelled
+# pathA that was measured on pathB -- silently.
+# --------------------------------------------------------------------------
+def _bare_supply(census_path: Path) -> p2_pair_census.SeedSupply:
+    supply = object.__new__(p2_pair_census.SeedSupply)
+    supply.census_path = census_path
+    return supply
+
+
+def test_census_rejects_a_supply_built_from_a_different_census() -> None:
+    supply = _bare_supply(Path("b.jsonl"))
+    with pytest.raises(ValueError, match="does not match the supply"):
+        p2_pair_census.census(Path("a.jsonl"), supply=supply)
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"seed_quality_limit_um": 5.0},
+        {"staging_seed_manifest": Path("m.json")},
+        {"admit_staging_seeds": False},
+    ],
+)
+def test_census_rejects_screen_knobs_alongside_a_prebuilt_supply(kwargs: dict) -> None:
+    supply = _bare_supply(Path("a.jsonl"))
+    with pytest.raises(ValueError, match="cannot be combined with supply="):
+        p2_pair_census.census(Path("a.jsonl"), supply=supply, **kwargs)
+
+
+# --------------------------------------------------------------------------
+# The two counterfactual arms are not mutually exclusive, and control case ids
+# are not control designs. The first draft of this module reported the
+# same-brand column as if it were the total (48 when the union is 52) and
+# divided by 59 case ids that are 37 designs. Both are this repository's
+# signature error: a ratio whose denominator is not what the prose says.
+# --------------------------------------------------------------------------
+def _reach_row(control: str, *, cross: int, same: int) -> dict:
+    return {
+        "control": control,
+        "counterfactual": {
+            "2": {"cross_source": cross, "same_brand_other_patent": same}
+        },
+    }
+
+
+def test_reach_summary_unions_the_two_arms() -> None:
+    rows = [
+        _reach_row("both", cross=1, same=1),
+        _reach_row("cross_only", cross=2, same=0),
+        _reach_row("same_only", cross=0, same=3),
+        _reach_row("neither", cross=0, same=0),
+    ]
+    design_of = {r["control"]: r["control"] for r in rows}
+    reach = reach_summary(rows, design_of, 2.0)
+    assert reach["cross_source_today"] == ["both", "cross_only"]
+    assert reach["same_brand_other_patent"] == ["both", "same_only"]
+    assert reach["union"] == ["both", "cross_only", "same_only"]
+    assert reach["cross_source_only"] == ["cross_only"]
+    # Only `same_only` gains: `both` already had a cross-source option.
+    assert reach["would_newly_gain"] == ["same_only"]
+
+
+def test_reach_summary_counts_designs_not_case_ids() -> None:
+    rows = [
+        _reach_row("caseA1", cross=0, same=1),
+        _reach_row("caseA2", cross=0, same=1),
+        _reach_row("caseB", cross=1, same=0),
+    ]
+    design_of = {"caseA1": "designA", "caseA2": "designA", "caseB": "designB"}
+    reach = reach_summary(rows, design_of, 2.0)
+    assert len(reach["union"]) == 3, "three case ids"
+    assert reach["by_design"] == {
+        "total": 2,
+        "cross_source_today": 1,
+        "same_brand_other_patent": 1,
+        "union": 2,
+    }
+
+
+def test_control_design_key_folds_two_cases_of_one_prescription() -> None:
+    # A real corpus file: control fingerprints resolve through `data/zmx`,
+    # never the staging directory.
+    corpus_zmx = "3P_F2.5_FOV78.0_EFL2.7_IMH2.3_TTL3.56.ZMX"
+    assert (ROOT / "data" / "zmx" / corpus_zmx).is_file()
+    supply = _supply(
+        index={
+            "caseA": {"source_zmx": corpus_zmx},
+            "caseB": {"source_zmx": corpus_zmx},
+            "caseC": {"source_zmx": "no-such-file.zmx"},
+            "caseD": {},
+        }
+    )
+    assert not control_design_key(supply, "caseA").startswith("unfingerprinted::")
+    assert control_design_key(supply, "caseA") == control_design_key(supply, "caseB")
+    # Unfingerprintable controls stay distinct: a decode failure must never
+    # merge two designs and shrink a denominator.
+    assert control_design_key(supply, "caseC") != control_design_key(supply, "caseD")
+    assert control_design_key(supply, "caseC").startswith("unfingerprinted::")
+
+
+def test_magnitude_sorts_unreadable_to_the_bottom() -> None:
+    readable = _entry("r", fov=80.0, efl=3.0, distortion_pct=-30.0)
+    blind = SeedDistortion("b", "b", "corpus", None, None, None, None, None, None)
+    assert blind.magnitude == math.inf
+    assert min([blind, readable], key=lambda e: e.magnitude) is readable
+
+
+# --------------------------------------------------------------------------
+# "The EFL stretch limit removes the rectilinear option for N controls" says
+# nothing about whether RAISING it would help. Measured 2026-08-05: the blocked
+# seeds need a median +370% more stretch, so the +25%->+50% recalibration this
+# module's first draft proposed would have admitted 1 of 63 -- a real-machine
+# sweep booked on a number that could not move.
+# --------------------------------------------------------------------------
+def test_stretch_shortfall_reports_only_seeds_blocked_by_reachability() -> None:
+    class _Sup:
+        staging_facts: dict = {}
+        index_by_case = {
+            "near": {"efl_mm": 4.0, "fov_deg": 80.0, "image_height_mm": 3.3554},
+            "far": {"efl_mm": 1.0, "fov_deg": 80.0, "image_height_mm": 0.8389},
+            "reachable": {"efl_mm": 4.5, "fov_deg": 80.0, "image_height_mm": 3.7748},
+            "offfield": {"efl_mm": 1.0, "fov_deg": 30.0, "image_height_mm": 0.2679},
+            "poor": {"efl_mm": 1.0, "fov_deg": 80.0, "image_height_mm": 0.8389},
+        }
+
+        @staticmethod
+        def seed_reachable(case_id, target):
+            return case_id == "reachable"
+
+        @staticmethod
+        def seed_quality_ok(case_id):
+            return case_id != "poor"
+
+    supply = _Sup()
+    control = seed_distortion(supply, "near")
+    options = ControlSeedPool(
+        control_id="near",
+        control_brand="A",
+        control=None,
+        target_efl_mm=4.0,
+        cross_source=tuple(_Case(c) for c in _Sup.index_by_case if c != "near"),
+        reachable=(),
+        preferred=(),
+        pool=(),
+        basis="reachable_and_quality",
+        excluded=None,
+    )
+    values = stretch_shortfall(supply, options, control, threshold_pct=2.0)
+    # `reachable` is not blocked, `offfield` is out of the field window, `poor`
+    # would have died at the quality gate anyway. Only `far` qualifies, and it
+    # needs 4.0/1.0 - 1 = +300%.
+    assert values == pytest.approx([3.0])
+
+
+def test_stretch_shortfall_is_empty_without_a_target() -> None:
+    options = ControlSeedPool(
+        control_id="c",
+        control_brand="A",
+        control=None,
+        target_efl_mm=None,
+        cross_source=(),
+        reachable=(),
+        preferred=(),
+        pool=(),
+        basis=None,
+        excluded=None,
+    )
+    entry = _entry("c", fov=80.0, efl=4.0, distortion_pct=0.0)
+    assert stretch_shortfall(_supply(), options, entry, threshold_pct=2.0) == []

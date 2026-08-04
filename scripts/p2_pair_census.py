@@ -561,108 +561,178 @@ def load_staging_seeds(path: Path | None = None) -> list[dict]:
     return list(payload["seeds"])
 
 
-def census(
-    census_path: Path,
-    *,
-    seed_quality_limit_um: float | None = None,
-    staging_seed_manifest: Path | None = None,
-    admit_staging_seeds: bool = True,
-) -> dict:
-    # Imported lazily: the optical stack costs ~2s and the pure-provenance
-    # helpers above are useful (and unit-tested) without it.
-    warnings.simplefilter("ignore")
-    from app.core.case_library import cases_for_scenario, rank_seeds
-    from app.core.lens_system import Scenario
+@dataclass(frozen=True)
+class ControlSeedPool:
+    """One control's seed options at every stage of the screen chain.
 
-    provenance = load_provenance()
-    usable_ids, all_ids = load_usable_case_ids(census_path)
-    usable_set = set(usable_ids)
+    ``census`` routes with ``rank_seeds(pool).best``. Anything that wants to ask
+    "what else was this control allowed to start from?" must read this object
+    rather than rebuild the chain, or the two answers can silently describe
+    different pools -- and the interesting questions about P2 are exactly the
+    ones where "eligible" and "chosen" differ.
 
-    # Seed-side quality gate, on the same ruler the trial judges with. `None` means
-    # "use the corpus median"; pass math.inf to disable it and reproduce the old pool.
-    limit = default_seed_quality_limit_um() if seed_quality_limit_um is None else float(
-        seed_quality_limit_um
-    )
-    codev_rms = codev_rms_by_zmx(census_path)
-    index_by_case = {r["case_id"]: r for r in json.loads(CASE_INDEX.read_text(encoding="utf-8"))}
+    ``excluded`` is set (and every list left empty) for controls ``census``
+    drops before routing; it carries the same key ``census`` counts.
+    """
 
-    def seed_quality_ok(case_id: str) -> bool:
-        record = index_by_case.get(case_id)
+    control_id: str
+    control_brand: str | None
+    control: object | None
+    target_efl_mm: float | None
+    cross_source: tuple[object, ...]
+    reachable: tuple[object, ...]
+    preferred: tuple[object, ...]
+    pool: tuple[object, ...]
+    basis: str | None
+    excluded: str | None
+
+
+class SeedSupply:
+    """The screens ``census`` admits seeds with, built once and shared.
+
+    Exists so "which seeds may this control start from" has exactly one
+    implementation. Constructing it is the expensive half of ``census`` (it
+    builds every staging design through Optiland), so callers that want both the
+    census and a downstream analysis should build one and pass it to both.
+    """
+
+    def __init__(
+        self,
+        census_path: Path,
+        *,
+        seed_quality_limit_um: float | None = None,
+        staging_seed_manifest: Path | None = None,
+        admit_staging_seeds: bool = True,
+    ) -> None:
+        # Imported lazily: the optical stack costs ~2s and the pure-provenance
+        # helpers above are useful (and unit-tested) without it.
+        warnings.simplefilter("ignore")
+        from app.core.case_library import cases_for_scenario
+        from app.core.lens_system import Scenario
+
+        self.census_path = census_path
+        self.provenance = load_provenance()
+        self.usable_ids, self.all_ids = load_usable_case_ids(census_path)
+        self.usable_set = set(self.usable_ids)
+
+        # Seed-side quality gate, on the same ruler the trial judges with. `None` means
+        # "use the corpus median"; pass math.inf to disable it and reproduce the old pool.
+        self.limit = (
+            default_seed_quality_limit_um()
+            if seed_quality_limit_um is None
+            else float(seed_quality_limit_um)
+        )
+        self.codev_rms = codev_rms_by_zmx(census_path)
+        self.index_by_case = {
+            r["case_id"]: r for r in json.loads(CASE_INDEX.read_text(encoding="utf-8"))
+        }
+
+        self.by_id: dict[str, object] = {}
+        for scenario in Scenario:
+            for case in cases_for_scenario(scenario):
+                self.by_id.setdefault(case.metadata.case_id, case)
+
+        # --- extra seeds from `data/zmx-staging`, admitted as seeds and nothing else ---
+        # They are deliberately NOT added to `usable_ids`, so the control list -- and
+        # therefore the par-rate denominator -- is untouched. See `load_staging_seeds`.
+        staging_rows = load_staging_seeds(staging_seed_manifest) if admit_staging_seeds else []
+        self.staging_by_id: dict[str, object] = {}
+        self.staging_facts: dict[str, dict] = {}
+        self.staging_failures: list[dict] = []
+        for row in staging_rows:
+            seed_id = str(row["zmx"]).rsplit(".", 1)[0]
+            if seed_id in self.by_id:
+                # A name collision would make one design answer to two provenances.
+                raise ValueError(f"staging seed {seed_id} collides with a corpus case id")
+            sample, error = _build_staging_seed(row)
+            if sample is None:
+                self.staging_failures.append({"seed": seed_id, "error": error})
+                continue
+            self.staging_by_id[seed_id] = sample
+            self.staging_facts[seed_id] = row
+
+    def seed_quality_ok(self, case_id: str) -> bool:
+        record = self.index_by_case.get(case_id)
         if record is not None:
-            value = codev_rms.get(str(record.get("source_zmx")))
+            value = self.codev_rms.get(str(record.get("source_zmx")))
         else:
             # Staging seeds carry their own reading, taken by the same
             # `codev_rms_by_zmx` rule from the staging census at manifest time.
-            fact = staging_facts.get(case_id)
+            fact = self.staging_facts.get(case_id)
             value = float(fact["codev_rms_um"]) if fact else None
         # Fail closed: a seed whose CODE V quality is unknown cannot be shown to be
         # competitive, and admitting it is how a 101 um lens got in.
-        return value is not None and value <= limit
+        return value is not None and value <= self.limit
 
-    def seed_reachable(case_id: str, target_efl_mm: float) -> bool:
-        record = index_by_case.get(case_id)
-        efl_mm = record.get("efl_mm") if record is not None else (
-            (staging_facts.get(case_id) or {}).get("efl_mm")
+    def seed_quality_um(self, case_id: str) -> float | None:
+        """The CODE V reading ``seed_quality_ok`` screens on, or ``None``.
+
+        Reported so a consumer can show *how far* a seed is from the limit
+        without re-deriving which of the two tables the reading came from.
+        """
+        record = self.index_by_case.get(case_id)
+        if record is not None:
+            value = self.codev_rms.get(str(record.get("source_zmx")))
+            return float(value) if value is not None else None
+        fact = self.staging_facts.get(case_id)
+        return float(fact["codev_rms_um"]) if fact else None
+
+    def seed_reachable(self, case_id: str, target_efl_mm: float) -> bool:
+        record = self.index_by_case.get(case_id)
+        efl_mm = (
+            record.get("efl_mm")
+            if record is not None
+            else (self.staging_facts.get(case_id) or {}).get("efl_mm")
         )
         try:
             return seed_efl_is_reachable(float(efl_mm), target_efl_mm)  # type: ignore[arg-type]
         except (KeyError, TypeError, ValueError):
             return False
 
-    def seed_brand(case_id: str) -> str | None:
-        brand = provenance.brand_of_case(case_id)
+    def seed_brand(self, case_id: str) -> str | None:
+        brand = self.provenance.brand_of_case(case_id)
         if brand is not None:
             return brand
-        fact = staging_facts.get(case_id)
+        fact = self.staging_facts.get(case_id)
         return str(fact["brand"]) if fact else None
 
-    by_id: dict[str, object] = {}
-    for scenario in Scenario:
-        for case in cases_for_scenario(scenario):
-            by_id.setdefault(case.metadata.case_id, case)
+    def seed_pool_name(self, case_id: str) -> str:
+        return "staging" if case_id in self.staging_facts else "corpus"
 
-    # --- extra seeds from `data/zmx-staging`, admitted as seeds and nothing else ---
-    # They are deliberately NOT added to `usable_ids`, so the control list -- and
-    # therefore the par-rate denominator -- is untouched. See `load_staging_seeds`.
-    staging_rows = load_staging_seeds(staging_seed_manifest) if admit_staging_seeds else []
-    staging_by_id: dict[str, object] = {}
-    staging_facts: dict[str, dict] = {}
-    staging_failures: list[dict] = []
-    for row in staging_rows:
-        seed_id = str(row["zmx"]).rsplit(".", 1)[0]
-        if seed_id in by_id:
-            # A name collision would make one design answer to two provenances.
-            raise ValueError(f"staging seed {seed_id} collides with a corpus case id")
-        sample, error = _build_staging_seed(row)
-        if sample is None:
-            staging_failures.append({"seed": seed_id, "error": error})
-            continue
-        staging_by_id[seed_id] = sample
-        staging_facts[seed_id] = row
+    def pool_for(self, control_id: str) -> ControlSeedPool:
+        """Every seed ``control_id`` may start from, at each stage of the chain."""
 
-    trials: list[dict] = []
-    excluded: collections.Counter[str] = collections.Counter()
-    seed_pool_basis: collections.Counter[str] = collections.Counter()
-    for control_id in usable_ids:
-        control = by_id.get(control_id)
+        def empty(reason: str, *, brand: str | None = None, control: object | None = None):
+            return ControlSeedPool(
+                control_id=control_id,
+                control_brand=brand,
+                control=control,
+                target_efl_mm=None,
+                cross_source=(),
+                reachable=(),
+                preferred=(),
+                pool=(),
+                basis=None,
+                excluded=reason,
+            )
+
+        control = self.by_id.get(control_id)
         if control is None:
-            excluded["control_not_in_scenario_buckets"] += 1
-            continue
-        control_brand = provenance.brand_of_case(control_id)
+            return empty("control_not_in_scenario_buckets")
+        control_brand = self.provenance.brand_of_case(control_id)
         if control_brand is None:
-            excluded["control_provenance_unknown"] += 1
-            continue
+            return empty("control_provenance_unknown", control=control)
         target_efl = control.metadata.computed_efl_mm
         cross_source = [
             case
-            for case_id, case in by_id.items()
+            for case_id, case in self.by_id.items()
             if case_id != control_id
-            and case_id in usable_set
-            and provenance.brand_of_case(case_id) not in (None, control_brand)
+            and case_id in self.usable_set
+            and self.provenance.brand_of_case(case_id) not in (None, control_brand)
         ] + [
             sample
-            for seed_id, sample in staging_by_id.items()
-            if seed_brand(seed_id) not in (None, control_brand)
+            for seed_id, sample in self.staging_by_id.items()
+            if self.seed_brand(seed_id) not in (None, control_brand)
         ]
         # Reachability first, quality second. The two constraints are NOT
         # interchangeable: an unreachable seed yields no candidate at all, while a
@@ -671,28 +741,94 @@ def census(
         reachable = [
             case
             for case in cross_source
-            if seed_reachable(case.metadata.case_id, target_efl)  # type: ignore[union-attr]
+            if self.seed_reachable(case.metadata.case_id, target_efl)  # type: ignore[union-attr]
         ]
         preferred = [
             case
             for case in reachable
-            if seed_quality_ok(case.metadata.case_id)  # type: ignore[union-attr]
+            if self.seed_quality_ok(case.metadata.case_id)  # type: ignore[union-attr]
         ]
         # Fall back rather than drop the control: "no seed both reachable and good"
         # is a real state worth measuring, and recording it beats silently shrinking
         # the sample.
         pool = preferred or reachable or cross_source
         if preferred:
-            seed_pool_basis["reachable_and_quality"] += 1
+            basis = "reachable_and_quality"
         elif reachable:
-            seed_pool_basis["reachable_only"] += 1
+            basis = "reachable_only"
         elif cross_source:
-            seed_pool_basis["neither"] += 1
-        if not pool:
-            excluded["no_cross_brand_seed_available"] += 1
+            basis = "neither"
+        else:
+            basis = None
+        return ControlSeedPool(
+            control_id=control_id,
+            control_brand=control_brand,
+            control=control,
+            target_efl_mm=target_efl,
+            cross_source=tuple(cross_source),
+            reachable=tuple(reachable),
+            preferred=tuple(preferred),
+            pool=tuple(pool),
+            basis=basis,
+            excluded=None if pool else "no_cross_brand_seed_available",
+        )
+
+
+def census(
+    census_path: Path,
+    *,
+    seed_quality_limit_um: float | None = None,
+    staging_seed_manifest: Path | None = None,
+    admit_staging_seeds: bool = True,
+    supply: SeedSupply | None = None,
+) -> dict:
+    # Before the first `app.core` import, not after: importing the optical
+    # stack is itself a warning source, and this call is what decides whether
+    # those reach stderr. Also set inside `SeedSupply.__init__` for callers who
+    # build one directly.
+    warnings.simplefilter("ignore")
+    from app.core.case_library import rank_seeds
+
+    if supply is not None:
+        # A prebuilt supply already fixes every one of these. Silently ignoring
+        # them would let `census(pathA, supply=SeedSupply(pathB))` return a
+        # report labelled pathA that was measured on pathB.
+        if supply.census_path != census_path:
+            raise ValueError(
+                f"census_path {census_path} does not match the supply's "
+                f"{supply.census_path}; pass the same path or drop the argument"
+            )
+        conflicting = {
+            "seed_quality_limit_um": seed_quality_limit_um is not None,
+            "staging_seed_manifest": staging_seed_manifest is not None,
+            "admit_staging_seeds": admit_staging_seeds is not True,
+        }
+        if named := sorted(k for k, v in conflicting.items() if v):
+            raise ValueError(
+                f"{', '.join(named)} cannot be combined with supply=; "
+                "configure them on the SeedSupply instead"
+            )
+    else:
+        supply = SeedSupply(
+            census_path,
+            seed_quality_limit_um=seed_quality_limit_um,
+            staging_seed_manifest=staging_seed_manifest,
+            admit_staging_seeds=admit_staging_seeds,
+        )
+
+    trials: list[dict] = []
+    excluded: collections.Counter[str] = collections.Counter()
+    seed_pool_basis: collections.Counter[str] = collections.Counter()
+    for control_id in supply.usable_ids:
+        options = supply.pool_for(control_id)
+        if options.basis is not None:
+            seed_pool_basis[options.basis] += 1
+        if options.excluded is not None:
+            excluded[options.excluded] += 1
             continue
+        control = options.control
         ranking = rank_seeds(
-            pool,
+            options.pool,
             efl_mm=control.metadata.computed_efl_mm,
             fov_deg=control.metadata.fov_deg,
             fnum=control.paraxial.f_number,
@@ -702,15 +838,22 @@ def census(
         trials.append(
             {
                 "control": control_id,
-                "control_brand": control_brand,
+                "control_brand": options.control_brand,
                 "seed": seed_id,
-                "seed_brand": seed_brand(seed_id),
+                "seed_brand": supply.seed_brand(seed_id),
                 # Consumed by  to resolve which
                 # directory the seed file lives in. Emitted always, not only when
                 # staging seeds are admitted, so the consumer never has to guess.
-                "seed_pool": "staging" if seed_id in staging_facts else "corpus",
+                "seed_pool": supply.seed_pool_name(seed_id),
             }
         )
+
+    provenance = supply.provenance
+    usable_ids = supply.usable_ids
+    limit = supply.limit
+    staging_by_id = supply.staging_by_id
+    staging_failures = supply.staging_failures
+    all_ids = supply.all_ids
 
     seed_use = collections.Counter(t["seed"] for t in trials)
     return {
